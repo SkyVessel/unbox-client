@@ -1,0 +1,1 @@
+{"run":"shift-v3-release-performance","samples":13845,"averageFps":307.655,"onePercentLowFps":91.199,"p95Ms":9.869,"p99Ms":10.352,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

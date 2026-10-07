@@ -1,0 +1,1 @@
+{"run":"shift-v3-atlas-batched","samples":14015,"averageFps":311.406,"onePercentLowFps":91.881,"p95Ms":9.955,"p99Ms":10.389,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

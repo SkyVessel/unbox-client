@@ -1,0 +1,1 @@
+{"run":"lunar-v4-perf-old-repeat","samples":15333,"averageFps":340.728,"onePercentLowFps":138.478,"p95Ms":6.358,"p99Ms":6.683,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

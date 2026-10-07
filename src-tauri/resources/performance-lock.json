@@ -1,0 +1,112 @@
+[
+  {
+    "slug": "fabric-api",
+    "version": "0.145.1+26.1",
+    "id": "ddqzOW93",
+    "filename": "fabric-api-0.145.1+26.1.jar",
+    "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/ddqzOW93/fabric-api-0.145.1%2B26.1.jar",
+    "sha512": "2972453fa89cd7975eaf044fcc6cb5b8bdce5fa7864f4a8c2f66f7326b15b5a133f390a7d3d84c480632f066131e972a33c891f7d8897f0315ada288d4d03abd",
+    "sha1": "088edb9dfcda202a8bdf4ea77b6a8ced41481734",
+    "gameVersions": [
+      "26.1"
+    ]
+  },
+  {
+    "slug": "sodium",
+    "version": "mc26.1.1-0.8.9-fabric",
+    "id": "uGvVQBnw",
+    "filename": "sodium-fabric-0.8.9+mc26.1.1.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/uGvVQBnw/sodium-fabric-0.8.9%2Bmc26.1.1.jar",
+    "sha512": "74f9dc8963b5258226837cc361ba6b525da734ab4fa5f05d1862bc6e9175f4fa81ca3d49443e2fb85be144d06042f0d65cbcceefc391043af857b38aa2614ae8",
+    "sha1": "48b949ec71365788dfd4e89d489f7abd504aa709",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "lithium",
+    "version": "mc26.1-0.22.1-fabric",
+    "id": "W0ZXKJy9",
+    "filename": "lithium-fabric-0.22.1+mc26.1.jar",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/W0ZXKJy9/lithium-fabric-0.22.1%2Bmc26.1.jar",
+    "sha512": "8af26b9892bbd098ba41627844f8d7e2a592a2273cd8d7638ba7946b5b9f246590dec2c9294f0bbe0d0dd826e7190d313846181a990d2bba9afa6ec03eedd250",
+    "sha1": "4075ade8217564086bfb46555c8e0858d202a073",
+    "gameVersions": [
+      "26.1"
+    ]
+  },
+  {
+    "slug": "immediatelyfast",
+    "version": "1.15.0+26.1-fabric",
+    "id": "m3ka9Hsm",
+    "filename": "ImmediatelyFast-Fabric-1.15.0+26.1.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/m3ka9Hsm/ImmediatelyFast-Fabric-1.15.0%2B26.1.jar",
+    "sha512": "ea542a2540cbfed132ac27f0f494d5b8e63399bb4d23829d9ac7bbcd29a46a68cee01f21bb54850ba7fe9862aff25dfe910e0d0a7fcc4ad3859ebded5693702e",
+    "sha1": "6abb68036a327d19c87f89676fbbc9cc9b995402",
+    "gameVersions": [
+      "26.1"
+    ]
+  },
+  {
+    "slug": "entityculling",
+    "version": "1.11.2",
+    "id": "YDFyjf5b",
+    "filename": "entityculling-fabric-1.11.2-mc26.1.jar",
+    "url": "https://cdn.modrinth.com/data/NNAgCjsB/versions/YDFyjf5b/entityculling-fabric-1.11.2-mc26.1.jar",
+    "sha512": "ae031b258e6b30999cd1387c50bde45ee2ca2016c80d7809b82ad48dcc6a6cba49403f9d90a1d99dd6abc290652cbf63ab52aea1b249dbba1a459547372dee66",
+    "sha1": "16f2fe0c762370775257a450983ec6e8a1c70b75",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "ferrite-core",
+    "version": "9.0.0-fabric",
+    "id": "d5ddUdiB",
+    "filename": "ferritecore-9.0.0-fabric.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/d5ddUdiB/ferritecore-9.0.0-fabric.jar",
+    "sha512": "d81fa97e11784c19d42f89c2f433831d007603dd7193cee45fa177e4a6a9c52b384b198586e04a0f7f63cd996fed713322578bde9a8db57e1188854ae5cbe584",
+    "sha1": "eac76ff0f3753422c61b2c44487d0d195d88d4bc",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2",
+      "26.2",
+      "26.3"
+    ]
+  },
+  {
+    "slug": "dynamic-fps",
+    "version": "3.11.7",
+    "id": "HV67Kt1R",
+    "filename": "dynamic-fps-3.11.7+minecraft-26.1.0-fabric.jar",
+    "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/HV67Kt1R/dynamic-fps-3.11.7%2Bminecraft-26.1.0-fabric.jar",
+    "sha512": "5feb34934f1f20d0fe65546f65084e9c59ed0ec8e9e80e91dd3ed80dbfc70212bf8cf31f078dc9e7a429edbe5f63774b200c8bd50c8726c4bcd9c74d9b696ab5",
+    "sha1": "2ed66a7f5cf81c8f4b17a551a1f7371ef99a45f7",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "freelook",
+    "version": "1.3.0",
+    "id": "PcFnFU7X",
+    "filename": "freelook-1.3.0.jar",
+    "url": "https://cdn.modrinth.com/data/g4pR0Fmy/versions/PcFnFU7X/freelook-1.3.0.jar",
+    "sha512": "2a3e97c56c10e3496a15f16762d39514f80cb1bdebb01874c6d789b3a0bb3755983dbfbb968ba15e9fc69c28ff2eb4b81fda8f50c55e013fcf12116657787e6f",
+    "sha1": "863aba8760dd28ed4f98775bfe443a437aee13cb",
+    "gameVersions": [
+      "26.1",
+      "26.1.1"
+    ],
+    "source": "https://github.com/Celibistrial/freelook",
+    "license": "AGPL-3.0",
+    "role": "optional-personal-control"
+  }
+]

@@ -1,0 +1,163 @@
+/* v0.1 design proposal, 2026-10-05. Based on selected references; not screenshot measurements.
+   Tokens only: no framework or application implementation implied. */
+:root {
+  color-scheme: dark;
+  --color-canvas: #121214;
+  --color-panel-solid: #1d1d20;
+  --color-panel: rgb(22 22 25 / 82%);
+  --color-popover: rgb(29 29 32 / 96%);
+  --color-control: rgb(255 255 255 / 7%);
+  --color-hover: rgb(255 255 255 / 11%);
+  --color-pressed: rgb(255 255 255 / 16%);
+  --color-selected: rgb(134 170 255 / 14%);
+  --color-text: #f5f7f8;
+  --color-text-secondary: #c1c8ce;
+  --color-text-muted: #9ba5af;
+  --color-accent: #86aaff;
+  --color-accent-hover: #adc5ff;
+  --color-accent-pressed: #7297eb;
+  --color-on-accent: #15233f;
+  --color-success: #a3dfb3;
+  --color-warning: #f2ce8e;
+  --color-danger: #ff9098;
+  --color-info: #a9cfff;
+  --color-focus: #adc5ff;
+  --color-disabled: #82909b;
+  --scene-shade: rgb(5 10 15 / 18%);
+  --scene-reading-scrim: rgb(5 10 15 / 72%);
+  --blur-panel: 24px;
+  --blur-popover: 12px;
+  --shadow-panel: 0 24px 80px rgb(0 0 0 / 28%);
+  --shadow-popover: 0 12px 40px rgb(0 0 0 / 32%);
+  --font-ui: 'Manrope', sans-serif;
+  --font-numbers: 'Bahnschrift', 'DIN Alternate', 'Noto Sans SC', sans-serif;
+  --text-caption: 12px;
+  --text-label: 13px;
+  --text-body: 14px;
+  --text-action: 15px;
+  --text-section: 20px;
+  --text-page: 28px;
+  --text-world: 36px;
+  --weight-body: 400;
+  --weight-medium: 500;
+  --weight-strong: 600;
+  --leading-body: 1.6;
+  --leading-title: 1.2;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-control: 10px;
+  --radius-popover: 16px;
+  --radius-panel: 24px;
+  --radius-avatar: 8px;
+  --radius-pill: 999px;
+  --size-icon: 20px;
+  --size-hit: 44px;
+  --size-primary: 48px;
+  --size-row: 56px;
+  --size-nav: 88px;
+  --size-dialog: 480px;
+  --size-assistant: 368px;
+  --panel-max-width: 1280px;
+  --duration-feedback: 120ms;
+  --duration-control: 180ms;
+  --duration-panel: 240ms;
+  --duration-scene: 480ms;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+  --motion-offset: 8px;
+  --z-content: 0;
+  --z-popover: 20;
+  --z-modal: 40;
+  --z-toast: 60;
+}
+/* Place the attribute on the root; components consume the same tokens. */
+:root[data-effects='low'], :root[data-transparency='reduced'] {
+  --color-panel: var(--color-panel-solid);
+  --color-popover: #1d1d20;
+  --blur-panel: 0px;
+  --blur-popover: 0px;
+  --shadow-panel: none;
+  --shadow-popover: none;
+  --duration-scene: 0ms;
+  --motion-offset: 0px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-feedback: 0ms;
+    --duration-control: 0ms;
+    --duration-panel: 0ms;
+    --duration-scene: 0ms;
+    --motion-offset: 0px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --color-panel: var(--color-panel-solid);
+    --color-popover: #1d1d20;
+    --blur-panel: 0px;
+    --blur-popover: 0px;
+  }
+}
+
+/* Home v0.2 overrides, 2026-10-06. Only the revised homepage uses this scope. */
+[data-design='home-v2'], [data-design='ui-v3'] {
+  --color-canvas: #28292d;
+  --color-panel-solid: #1b1d21;
+  --color-panel: #1b1d21;
+  --color-hero: #17191d;
+  --color-control: #35373d;
+  --color-text: #f6f7f8;
+  --color-text-muted: #979ca6;
+  --color-accent: #86aaff;
+  --color-on-accent: #15233f;
+  --color-offline: #747982;
+  --font-ui: 'Barlow', sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', sans-serif;
+  --weight-strong: 700;
+  --weight-display: 800;
+  --text-action: 29px;
+  --text-section: 21px;
+  --radius-panel: 16px;
+  --radius-control: 6px;
+  --radius-launch: 4px;
+  --size-primary: 72px;
+  --size-nav: 80px;
+  --blur-panel: 0px;
+}
+
+/* Launch-area image and frosted glass preview, 2026-10-06. */
+[data-design='home-v2'], [data-design='ui-v3'] {
+  --launch-backdrop-blur: 12px;
+  --launch-glass-start: #12191d66;
+  --launch-glass-middle: #151b226b;
+  --launch-glass-end: #161b24a6;
+}
+
+/* UI v0.3: current homepage and matching secondary screens. */
+[data-design='home-v2'], [data-design='ui-v3'] {
+  --radius-launch: 18px;
+  --radius-launch-face: 16px;
+  --radius-module: 12px;
+  --color-module: #252930;
+  --color-input: #2c3138;
+  --color-toggle-on: #6e94e8;
+  --color-toggle-off: #444952;
+  --size-skin-viewport: 178px;
+  --size-cape-viewport: 195px;
+  --size-skin-tile: 44px;
+  --size-cape-tile-width: 42px;
+  --size-cape-tile-height: 48px;
+  --blur-scroll-edge: 3px;
+  --size-home-content-width: 770px;
+  --size-home-content-height: 278px;
+  --size-home-content-column: 374px;
+  --gap-home-columns: 22px;
+}
+
+/* 2026-10-07: grayscale surfaces; blue interaction, red alerts. Green is status-only. */

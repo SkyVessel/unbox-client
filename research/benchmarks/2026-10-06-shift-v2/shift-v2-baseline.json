@@ -1,0 +1,1 @@
+{"run":"shift-v2-baseline","samples":6757,"averageFps":150.145,"onePercentLowFps":83.179,"p95Ms":8.838,"p99Ms":9.352,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

@@ -1,0 +1,1 @@
+{"run":"shift-v3-before-repeat","samples":10006,"averageFps":222.355,"onePercentLowFps":109.330,"p95Ms":7.933,"p99Ms":8.302,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Unbox Client",
+  "version": "0.1.0",
+  "identifier": "dev.unbox.client",
+  "build": { "beforeDevCommand": "npm run dev", "devUrl": "http://127.0.0.1:1420", "beforeBuildCommand": "npm run build", "frontendDist": "../dist" },
+  "app": { "windows": [{ "title": "Unbox Client", "width": 1280, "height": 820, "minWidth": 1000, "minHeight": 720, "backgroundColor": "#28292D" }], "security": { "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost" } },
+  "bundle": { "active": true, "targets": ["app"], "icon": ["icons/icon.png", "icons/icon.icns"], "resources": ["resources/*"], "macOS": { "minimumSystemVersion": "12.0" } }
+}

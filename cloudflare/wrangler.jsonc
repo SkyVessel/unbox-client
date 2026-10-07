@@ -1,0 +1,10 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+  "name": "unbox-client-metadata",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-06",
+  "workers_dev": true,
+  "triggers": {"crons": ["0 4 * * *"]}
+  // DB binding is deliberately absent until a free D1 database is provisioned
+  // in the user's authenticated account. Publishing also requires PUBLISH_TOKEN.
+}
