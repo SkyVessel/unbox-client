@@ -55,9 +55,9 @@ impl Vault {
     fn snapshot(&self,current:Option<&str>)->Value{json!({"accounts":self.accounts.iter().map(|s|public_account(s,current)).chain(self.unbox.iter().map(unbox_public)).collect::<Vec<_>>(),"account":self.selected_account(current)})}
 }
 #[cfg(target_os="macos")]
-fn read_secure(name:&str)->Result<Option<Vec<u8>>,String>{match security_framework::passwords::get_generic_password(SERVICE,name){Ok(b)=>Ok(Some(b)),Err(e) if e.code()==-25300=>Ok(None),Err(_)=>Err("macOS Keychain is locked or access was denied. Allow Unbox access and retry.".into())}}
+fn read_secure(name:&str)->Result<Option<Vec<u8>>,String>{crate::credential_cache::read(SERVICE,name,||match security_framework::passwords::get_generic_password(SERVICE,name){Ok(b)=>Ok(Some(b)),Err(e) if e.code()==-25300=>Ok(None),Err(_)=>Err("macOS Keychain is locked or access was denied. Allow Unbox access and retry.".into())})}
 #[cfg(target_os="macos")]
-fn save_vault(v:&Vault)->Result<(),String>{security_framework::passwords::set_generic_password(SERVICE,VAULT,&serde_json::to_vec(v).map_err(|_|"Could not encode accounts")?).map_err(|_|"macOS Keychain could not save accounts. Allow Unbox access and retry.".into())}
+fn save_vault(v:&Vault)->Result<(),String>{let bytes=serde_json::to_vec(v).map_err(|_|"Could not encode accounts")?;crate::credential_cache::write(SERVICE,VAULT,&bytes,||security_framework::passwords::set_generic_password(SERVICE,VAULT,&bytes).map_err(|_|"macOS Keychain could not save accounts. Allow Unbox access and retry.".into()))}
 #[cfg(not(any(target_os="macos",target_os="windows")))]
 fn read_secure(_: &str)->Result<Option<Vec<u8>>,String>{Err("Secure account storage is currently supported on macOS only".into())}
 #[cfg(not(any(target_os="macos",target_os="windows")))]

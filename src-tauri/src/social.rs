@@ -47,15 +47,11 @@ fn identity(key: &str) -> Result<Identity, String> {
     #[cfg(target_os = "macos")]
     {
         let name = format!("friends-{key}");
-        match security_framework::passwords::get_generic_password("dev.unbox.client.social", &name)
-        {
-            Ok(b) => {
-                return serde_json::from_slice(&b)
-                    .map_err(|_| "Saved friend identity is invalid".into())
+        if let Some(b)=crate::credential_cache::read("dev.unbox.client.social",&name,||{
+            match security_framework::passwords::get_generic_password("dev.unbox.client.social",&name){
+                Ok(b)=>Ok(Some(b)),Err(e) if e.code()==-25300=>Ok(None),Err(_)=>Err("Allow Unbox access to macOS Keychain".into())
             }
-            Err(e) if e.code() == -25300 => {}
-            Err(_) => return Err("Allow Unbox access to macOS Keychain".into()),
-        }
+        })?{return serde_json::from_slice(&b).map_err(|_|"Saved friend identity is invalid".into())}
         let i = Identity {
             id: uuid::Uuid::new_v4().to_string(),
             token: format!(
@@ -64,12 +60,10 @@ fn identity(key: &str) -> Result<Identity, String> {
                 uuid::Uuid::new_v4().simple()
             ),
         };
-        security_framework::passwords::set_generic_password(
-            "dev.unbox.client.social",
-            &name,
-            &serde_json::to_vec(&i).unwrap(),
-        )
-        .map_err(|_| "Could not save friend identity in Keychain")?;
+        let bytes=serde_json::to_vec(&i).unwrap();
+        crate::credential_cache::write("dev.unbox.client.social",&name,&bytes,||{
+            security_framework::passwords::set_generic_password("dev.unbox.client.social",&name,&bytes).map_err(|_|"Could not save friend identity in Keychain".into())
+        })?;
         Ok(i)
     }
     #[cfg(target_os = "windows")]

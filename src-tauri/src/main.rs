@@ -1,4 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#[cfg(any(target_os="macos",test))]
+mod credential_cache;
 #[cfg(target_os="windows")]
 mod windows_vault;
 mod launcher;
