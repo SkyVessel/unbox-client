@@ -34,6 +34,7 @@ pub fn args(values:&Value,vars:&std::collections::HashMap<&str,String>)->Vec<Str
 fn java()->Result<PathBuf,String>{
     let mut candidates=Vec::new();
     #[cfg(target_os="macos")] {if let Ok(out)=std::process::Command::new("/usr/libexec/java_home").args(["-v","25"]).output(){if out.status.success(){candidates.push(PathBuf::from(String::from_utf8_lossy(&out.stdout).trim()).join("bin/java"));}}}
+    if let Some(home)=std::env::var_os("JAVA_HOME"){candidates.push(PathBuf::from(home).join(if cfg!(windows){"bin/java.exe"}else{"bin/java"}));}
     candidates.push(PathBuf::from("java"));
     for p in candidates{if let Ok(out)=std::process::Command::new(&p).arg("-version").output(){let s=String::from_utf8_lossy(&out.stderr);if out.status.success()&&s.contains("version \"25"){return Ok(p)}}}
     Err("Java 25 is required. Install Temurin 25, then retry.".into())

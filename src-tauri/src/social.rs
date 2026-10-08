@@ -72,7 +72,15 @@ fn identity(key: &str) -> Result<Identity, String> {
         .map_err(|_| "Could not save friend identity in Keychain")?;
         Ok(i)
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "windows")]
+    {
+        let name=format!("friends-{key}");
+        if let Some(b)=crate::windows_vault::read("dev.unbox.client.social",&name)?{return serde_json::from_slice(&b).map_err(|_|"Saved friend identity is invalid".into())}
+        let i=Identity{id:uuid::Uuid::new_v4().to_string(),token:format!("{}{}",uuid::Uuid::new_v4().simple(),uuid::Uuid::new_v4().simple())};
+        crate::windows_vault::write("dev.unbox.client.social",&name,&serde_json::to_vec(&i).unwrap())?;
+        Ok(i)
+    }
+    #[cfg(not(any(target_os = "macos",target_os = "windows")))]
     Err("Secure friend identity storage is currently macOS only".into())
 }
 async fn account(rt: &Runtime) -> Result<Value, String> {

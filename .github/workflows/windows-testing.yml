@@ -1,0 +1,48 @@
+name: Windows testing build
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Draft release containing the compiled Unbox client module
+        required: true
+        default: v0.2.2
+      module_sha256:
+        description: Expected SHA-256 of unbox-client.jar
+        required: true
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Fetch verified game module
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          MODULE_SHA256: ${{ inputs.module_sha256 }}
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Invalid release tag' }
+          if ($env:MODULE_SHA256 -notmatch '^[a-f0-9]{64}$') { throw 'Invalid module digest' }
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern unbox-client.jar --dir src-tauri/resources
+          if ($LASTEXITCODE -ne 0) { throw 'Module download failed' }
+          if ((Get-FileHash src-tauri/resources/unbox-client.jar -Algorithm SHA256).Hash.ToLower() -ne $env:MODULE_SHA256) { throw 'Module checksum mismatch' }
+      - run: npm ci
+      - name: Native Windows checks
+        run: cargo test --locked --manifest-path src-tauri/Cargo.toml
+      - name: Prepare Windows icon
+        run: npm run tauri -- icon src-tauri/icons/icon.png --output src-tauri/icons
+      - name: Build testing installer with development sign-in
+        run: npm run tauri -- build --debug --config src-tauri/tauri.windows-testing.conf.json --bundles nsis
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unbox-windows-testing
+          path: src-tauri/target/debug/bundle/nsis/*.exe
+          if-no-files-found: error
+          retention-days: 7

@@ -1,4 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#[cfg(target_os="windows")]
+mod windows_vault;
 mod launcher;
 mod auth;
 mod content;

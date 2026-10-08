@@ -12,7 +12,7 @@ fn manifest(release:&Value)->Result<String,String>{
 }
 fn reserve(job:&Mutex<Value>)->Result<Value,String>{let mut job=job.lock().unwrap();if job["busy"]==true{return Err("Close Minecraft and wait for downloads to finish before installing".into())}let previous=job.clone();*job=json!({"busy":true,"stage":"Updating Unbox"});Ok(previous)}
 #[tauri::command]
-pub fn update_status(state:tauri::State<State>,app:tauri::AppHandle)->Value{let mut v=state.progress.lock().unwrap().clone();if v.is_null(){v=json!({"status":"idle"})}v["currentVersion"]=json!(app.package_info().version.to_string());v}
+pub fn update_status(state:tauri::State<State>,app:tauri::AppHandle)->Value{let mut v=state.progress.lock().unwrap().clone();if v.is_null(){v=json!({"status":"idle"})}v["currentVersion"]=json!(app.package_info().version.to_string());v["testingBuild"]=json!(cfg!(debug_assertions));v}
 #[tauri::command]
 pub async fn check_update(state:tauri::State<'_,State>,app:tauri::AppHandle)->Result<Value,String>{
  let mut pending=state.pending.try_lock().map_err(|_|"An update operation is already in progress")?;*pending=None;

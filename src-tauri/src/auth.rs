@@ -58,10 +58,14 @@ impl Vault {
 fn read_secure(name:&str)->Result<Option<Vec<u8>>,String>{match security_framework::passwords::get_generic_password(SERVICE,name){Ok(b)=>Ok(Some(b)),Err(e) if e.code()==-25300=>Ok(None),Err(_)=>Err("macOS Keychain is locked or access was denied. Allow Unbox access and retry.".into())}}
 #[cfg(target_os="macos")]
 fn save_vault(v:&Vault)->Result<(),String>{security_framework::passwords::set_generic_password(SERVICE,VAULT,&serde_json::to_vec(v).map_err(|_|"Could not encode accounts")?).map_err(|_|"macOS Keychain could not save accounts. Allow Unbox access and retry.".into())}
-#[cfg(not(target_os="macos"))]
+#[cfg(not(any(target_os="macos",target_os="windows")))]
 fn read_secure(_: &str)->Result<Option<Vec<u8>>,String>{Err("Secure account storage is currently supported on macOS only".into())}
-#[cfg(not(target_os="macos"))]
+#[cfg(not(any(target_os="macos",target_os="windows")))]
 fn save_vault(_: &Vault)->Result<(),String>{Err("Secure account storage is currently supported on macOS only".into())}
+#[cfg(target_os="windows")]
+fn read_secure(name:&str)->Result<Option<Vec<u8>>,String>{crate::windows_vault::read(SERVICE,name)}
+#[cfg(target_os="windows")]
+fn save_vault(v:&Vault)->Result<(),String>{crate::windows_vault::write(SERVICE,VAULT,&serde_json::to_vec(v).map_err(|_|"Could not encode accounts")?)}
 fn load_vault()->Result<Vault,String>{
     if let Some(b)=read_secure(VAULT)?{return serde_json::from_slice(&b).map_err(|_|"Saved account storage is invalid; it has not been overwritten.".into())}
     let mut v=Vault::default();
