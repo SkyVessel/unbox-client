@@ -31,3 +31,13 @@ test('Microsoft and registered Unbox accounts can add each other and exchange pr
   }
  }finally{globalThis.fetch=original;db.sql.close()}
 });
+test('Minecraft verification uses Workers-compatible manual redirects and rejects redirected responses',async()=>{
+ const db=database(),p=player('RedirectTest','microsoft'),original=globalThis.fetch;
+ try{
+  await send(db,p,'challenge',{id:p.id});
+  let calls=0;globalThis.fetch=async(url,options)=>{calls++;assert.equal(options.redirect,'manual');assert.equal(new URL(url).hostname,'sessionserver.mojang.com');return new Response(null,{status:302,headers:{Location:'https://untrusted.example'}})};
+  assert.equal((await send(db,p,'register',p)).status,401);assert.equal(calls,1);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM people').get().n,0);
+  globalThis.fetch=async(_url,options)=>{assert.equal(options.redirect,'manual');return Response.json({id:p.uuid})};
+  await register(db,p);assert.equal((await send(db,p,'sync',p)).self.kind,'microsoft');
+ }finally{globalThis.fetch=original;db.sql.close()}
+});

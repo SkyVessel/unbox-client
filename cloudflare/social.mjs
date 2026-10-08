@@ -20,7 +20,7 @@ export default {
     const existing=await db.prepare('SELECT token_hash FROM people WHERE id=?').bind(b.id).first();if(existing)return existing.token_hash===tokenHash?reply({id:b.id}):reply({error:'Identity already exists'},409);
     if(b.kind==='microsoft'){
      const c=await db.prepare('SELECT nonce FROM challenges WHERE id=? AND token_hash=? AND expires>?').bind(b.id,tokenHash,now).first();if(!c)return reply({error:'Account verification expired'},401);
-     const check=await fetch('https://sessionserver.mojang.com/session/minecraft/hasJoined?'+new URLSearchParams({username:b.name,serverId:c.nonce}),{redirect:'error'});if(!check.ok)return reply({error:'Minecraft session was not verified'},401);const p=await check.json();if(p.id!==b.uuid)return reply({error:'Minecraft account does not match'},401);
+     const check=await fetch('https://sessionserver.mojang.com/session/minecraft/hasJoined?'+new URLSearchParams({username:b.name,serverId:c.nonce}),{redirect:'manual'});if(!check.ok)return reply({error:'Minecraft session was not verified'},401);const p=await check.json();if(p.id!==b.uuid)return reply({error:'Minecraft account does not match'},401);
     }
     const count=await db.prepare('SELECT COUNT(*) AS n FROM people').first();if(count.n>=2000)return reply({error:'Free service registration limit reached'},503);
     await db.prepare('INSERT INTO people(id,code,token_hash,name,uuid,kind,face,seen) VALUES(?,?,?,?,?,?,?,?)').bind(b.id,b.id.replaceAll('-','').slice(0,12).toUpperCase(),tokenHash,...values,now).run();return reply({id:b.id},201);
