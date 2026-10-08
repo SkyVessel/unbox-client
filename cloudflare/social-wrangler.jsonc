@@ -1,0 +1,11 @@
+{
+ "$schema":"https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+ "name":"unbox-client-friends",
+ "account_id":"53ce1c2f645a0cd3fc4fc747535a4bb6",
+ "main":"social.mjs",
+ "compatibility_date":"2026-10-08",
+ "workers_dev":true,
+ "d1_databases":[{"binding":"DB","database_name":"unbox-friends","database_id":"33044bd1-4d2f-47c1-9aba-b4721f8a0179"}],
+ "observability":{"enabled":false},
+ "triggers":{"crons":["0 * * * *"]}
+}

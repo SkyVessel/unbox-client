@@ -1,0 +1,18 @@
+import React,{useEffect,useRef,useState} from 'react';
+import {Box,Puzzle,Image,Sun,Upload,LoaderCircle} from 'lucide-react';
+import {listen} from '@tauri-apps/api/event';
+import {call,native} from './bridge';
+type Entry={name:string;title?:string;size:number;icon?:string};
+export function ContentList({id,kind,busy,onCreate}:{id?:string;kind:string;busy:boolean;onCreate:()=>void}){
+ const root=useRef<HTMLDivElement>(null),importing=useRef(false);const [items,setItems]=useState<Entry[]>([]),[hover,setHover]=useState(false),[working,setWorking]=useState(false),[message,setMessage]=useState(''),[errors,setErrors]=useState<string[]>([]);
+ useEffect(()=>{let live=true;setItems([]);setMessage('');setErrors([]);const refresh=()=>id&&call<Entry[]>('list_content',{id,kind}).then(v=>{if(live)setItems(v)}).catch(e=>{if(live)setErrors([String(e)])});void refresh();const focus=()=>void refresh();window.addEventListener('focus',focus);
+ const unlisteners: (()=>void)[]=[];
+ if(native&&id){const within=(position:{x:number;y:number})=>{const r=root.current?.getBoundingClientRect();const x=position.x/devicePixelRatio,y=position.y/devicePixelRatio;return !!r&&x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom};
+ const attach=async()=>{for(const event of ['tauri://drag-enter','tauri://drag-over','tauri://drag-leave','tauri://drag-drop']){const off=await listen<{paths:string[];position:{x:number;y:number}}>(event,async({payload})=>{if(!live)return;if(event.endsWith('leave')){setHover(false);return}const inside=within(payload.position);setHover(inside&&!busy);if(!event.endsWith('drop'))return;setHover(false);if(!inside||importing.current)return;if(busy){setErrors(['Close this profile’s game before importing files.']);return}importing.current=true;setWorking(true);setErrors([]);try{const r=await call<{imported:string[];rejected:{name:string;reason:string}[]}>('import_content',{id,kind,paths:payload.paths});if(live){setMessage(r.imported.length?`${r.imported.length} file${r.imported.length===1?'':'s'} added`:'');setErrors(r.rejected.map(f=>`${f.name}: ${f.reason}`));await refresh()}}catch(e){if(live)setErrors([String(e)])}finally{importing.current=false;if(live)setWorking(false)}});if(!live)off();else unlisteners.push(off)}};attach().catch(e=>{if(live)setErrors([String(e)])});}
+ return()=>{live=false;window.removeEventListener('focus',focus);unlisteners.forEach(f=>f())};},[id,kind,busy]);
+ const Icon=kind==='Mods'?Puzzle:kind==='Packs'?Image:Sun;
+ return <div ref={root} className={`content-drop ${hover?'drag-over':''}`} aria-label={`${kind} file list`} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(!native)setErrors(['Open the desktop app to import files.'])}}>
+ {items.length?<div className="file-grid">{items.map(f=><article className="file-card" key={f.name}>{f.icon?<img src={f.icon} alt=""/>:<Icon size={32}/>}<div><strong>{f.title||f.name}</strong>{f.title&&<small>{f.name}</small>}<small>{(f.size/1048576).toFixed(1)} MB</small></div></article>)}</div>:<div className="empty-state"><Box size={30}/><h3>{id?`Drop ${kind==='Mods'?'.jar mods':'.zip packs'} here`:'Create your first profile'}</h3>{!id&&<button className="secondary" onClick={onCreate}>Create profile</button>}{kind==='Shaders'&&id&&<small>A compatible shader loader is required.</small>}</div>}
+ {hover&&<div className="drop-overlay"><Upload size={28}/>Drop to add</div>}{working&&<span className="import-status" role="status"><LoaderCircle className="spin" size={15}/>Importing…</span>}{message&&<span className="import-status" role="status">{message}</span>}{errors.length>0&&<div className="import-errors" role="alert">{errors.map((e,i)=><p key={i}>{e}</p>)}</div>}
+ </div>
+}

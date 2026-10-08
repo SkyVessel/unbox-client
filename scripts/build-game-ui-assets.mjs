@@ -19,5 +19,11 @@ await page.setViewportSize({width:768,height:768});
 svg=svg.replace('viewBox=', 'width="768" height="768" viewBox=');
 await page.setContent(`<style>html,body{margin:0;background:transparent}</style>${svg}`);
 await page.screenshot({path:`${out}/logo.png`,omitBackground:true});
+// Compact name badge: original paths without the large menu logo's padding.
+await page.setViewportSize({width:96,height:96});
+const badge=(await readFile('app/public/assets/badge.svg','utf8')).replace('viewBox=', 'width="96" height="96" viewBox=');
+await page.setContent(`<style>html,body{margin:0;background:transparent}</style>${badge}`);
+await page.screenshot({path:`${out}/badge.png`,omitBackground:true});
+await writeFile(`${out}/badge.png.mcmeta`,JSON.stringify({texture:{blur:true,clamp:true}}));
 await writeFile('client-mod/src/main/resources/lucide-license.txt',await readFile('node_modules/lucide-react/LICENSE','utf8'));
 await browser.close();

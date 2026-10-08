@@ -108,5 +108,20 @@
     "source": "https://github.com/Celibistrial/freelook",
     "license": "AGPL-3.0",
     "role": "optional-personal-control"
+  },
+  {
+    "slug": "e4mc",
+    "version": "6.2.3-fabric-modern",
+    "id": "RNDvrMAd",
+    "filename": "e4mc-fabric-6.2.3-modern.jar",
+    "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/RNDvrMAd/e4mc-fabric-6.2.3-modern.jar",
+    "sha1": "78a4feb50b8cb67a80ca172a56e85c9cd79d9fbb",
+    "sha512": "4e5dac0458cd533346d7a9572582a19f2f775371027ff0bfe445e025c2fa16ce22d9da924e73f64806373f82257e32b0e264cb0c29feaaa40fb03b6ff2cae8c9",
+    "gameVersions": [
+      "26.1"
+    ],
+    "role": "on-demand-world-sharing",
+    "source": "https://github.com/vgskye/e4mc-minecraft-architectury",
+    "license": "MIT"
   }
 ]

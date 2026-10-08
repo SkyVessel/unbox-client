@@ -1,0 +1,1 @@
+{"run":"sharing-perf-after","samples":24717,"averageFps":549.256,"onePercentLowFps":149.399,"p95Ms":5.407,"p99Ms":6.056,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

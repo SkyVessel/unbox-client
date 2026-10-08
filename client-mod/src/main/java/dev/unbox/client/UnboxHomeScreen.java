@@ -23,6 +23,8 @@ public final class UnboxHomeScreen extends Screen {
     @Override public void added(){entrance.reset();}
     private float scale=1;
     private int logicalWidth,logicalHeight,centerX,logoY;
+    private final FriendsOverlay friends=new FriendsOverlay();
+    private String friendsState="";private int friendsPage=-1;
     private String draggingHud;
     private int dragX,dragY;
     public UnboxHomeScreen(boolean inWorld){super(Component.literal(inWorld?"Unbox quick menu":"Unbox Client"));this.inWorld=inWorld;}
@@ -31,6 +33,7 @@ public final class UnboxHomeScreen extends Screen {
     @Override protected void init(){
         clearWidgets();scale=.85f*Math.min(width/960f,height/540f);logicalWidth=Math.round(width/scale);logicalHeight=Math.round(height/scale);centerX=logicalWidth/2;logoY=logicalHeight/2-108;
         if(inWorld){
+            centerX=Math.min(centerX,logicalWidth-410);friends.build(logicalWidth,logicalHeight,w->addRenderableWidget(w));
             add(centerX-80,logoY+132,160,38,"MODS","",()->minecraft.setScreen(new UnboxScreen(this)));
             add(centerX-128,logoY+132,40,38,"Edit HUD","move",()->{var screen=new UnboxScreen(this);minecraft.setScreen(screen);screen.editHud();});
             add(centerX+88,logoY+132,40,38,"Game settings","settings",()->minecraft.setScreen(new OptionsScreen(this,minecraft.options,false)));
@@ -45,6 +48,7 @@ public final class UnboxHomeScreen extends Screen {
             add(centerX+26,logicalHeight-49,36,29,"Game settings","settings",()->minecraft.setScreen(new OptionsScreen(this,minecraft.options,false)));
         }
     }
+    @Override public void tick(){if(inWorld){String state=SocialBridge.view.toString()+SocialBridge.hosting()+SocialBridge.relayFailed();if(!state.equals(friendsState)||friends.page()!=friendsPage){friendsState=state;friendsPage=friends.page();init();}}}
     private GlassButton add(int x,int y,int w,int h,String label,String icon,Runnable action){return addRenderableWidget(new GlassButton(x,y,w,h,label,icon,action));}
     @Override public void extractBackground(GuiGraphicsExtractor g,int mx,int my,float delta){if(inWorld)extractBlurredBackground(g);else {extractPanorama(g,delta);extractBlurredBackground(g);}g.fill(0,0,width,height,inWorld?0x30141416:0x60141416);}
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){
@@ -53,6 +57,7 @@ public final class UnboxHomeScreen extends Screen {
         g.pose().pushMatrix();g.pose().scale(scale);g.pose().translate(0,menuOffsetY());PanelStyle.opacity(opacity);
         try {PanelStyle.icon(g,"logo",centerX-40,logoY,80,0xfff5f8fa);
         PanelStyle.center(g,"U N B O X   C L I E N T",centerX,logoY+93,PanelStyle.TEXT);
+        if(inWorld)friends.draw(g);
         if(!inWorld)PanelStyle.label(g,"Unbox Client  /  Minecraft 26.1",16,logicalHeight-24,0xffa5b2b9);
         for(var child:children())if(child instanceof AbstractWidget widget)widget.extractRenderState(g,(int)(mx/scale),(int)(my/scale-menuOffsetY()),delta);
         }finally{PanelStyle.opacity(1);g.pose().popMatrix();}

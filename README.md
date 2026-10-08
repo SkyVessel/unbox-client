@@ -4,7 +4,7 @@
 
 Unbox Client combines a desktop launcher with an in-game Fabric client module for **Minecraft Java 26.1**. The goal is to make survival play smoother and help friends share a consistent modded setup without manually matching every file. The interface is English; product and research documents are Chinese.
 
-**Status: active development, not a finished release.** Local launcher and client-mod functionality are implemented. One-click multiplayer and shared modpack synchronization are planned and not yet operational. See [implementation status](IMPLEMENTATION.md) for verification and limitations. No FPS advantage over other clients is claimed.
+**Status: early testing release, under active development.** Local launcher and client-mod functionality are implemented. Friend accounts and invitations are deployed on Cloudflare Free. LAN-first joining with e4mc fallback passed a two-instance test on one Mac; Fabric gameplay-JAR synchronization now caches differences in separate friend profiles. Independent-network testing and full modpack/configuration synchronization remain outstanding. See [implementation status](IMPLEMENTATION.md) for verification and limitations. No FPS advantage over other clients is claimed.
 
 ## Focus
 
@@ -19,7 +19,7 @@ Unbox is an independent third-party project and is not affiliated with or endors
 
 Microsoft sign-in is intended to let players authenticate their own Minecraft Java accounts, retrieve their player profile and skin, and launch the game with valid session credentials. Passwords are entered on Microsoft's authorization page, not collected by Unbox. The implemented flow uses Microsoft device authorization, Xbox Live/XSTS, and Minecraft Services; account tokens are stored in macOS Keychain.
 
-Unbox's application registration and Minecraft Services access are pending. Real-account end-to-end sign-in has not yet been verified. The project does not ship another launcher's Client ID. Application registration is a developer setup task; players should only need to sign in and authorize the application. See [account setup notes](docs/09-OneClient设置对照与Shift升级.md).
+Unbox's application registration and Minecraft Services access are pending. Real-account end-to-end sign-in has not yet been verified. Release builds require Unbox's registered Client ID. Debug builds offer an explicitly selected DevLogin development provider; it is disabled in release builds and is not a substitute for Unbox registration. Changing providers requires fresh authorization. Account selection, Keychain persistence, skin preview/upload and launch integration share the same implementation for both providers. See [account and skin lifecycle](docs/11-账号与皮肤闭环.md).
 
 ## Development
 
@@ -43,14 +43,26 @@ The macOS bundle is written to `src-tauri/target/debug/bundle/macos/Unbox Client
 - `src-tauri/src`: profile persistence, verified downloads and game process management.
 - `client-mod`: Fabric client module sources for 26.1.
 - `src-tauri/resources/performance-lock.json`: exact upstream mod versions, download URLs and checksums.
-- `cloudflare`: undeployed manifest API draft; see its README for authentication limitations.
+- `cloudflare`: deployed friends/invite Worker and D1 schema, plus a separate undeployed manifest API draft.
 - `design`: design records and tokens. Local Pen files, exports and third-party reference media are excluded from the public repository.
 - `research/benchmarks`: recorded performance measurements; local visual exports referenced by older reports are not published here.
 
 ## Assets
 
-The open-box logo reuses the project's supplied FORM mark. Three scenic images were generated for this project; they are not game screenshots. Barlow fonts include their OFL notice under `app/public/assets`. See [third-party asset notices](THIRD_PARTY_NOTICES.md) for asset origins and retained notices. Third-party assets retain their respective rights; a public source repository is not a cleared binary release. Collected competitor screenshots, wallpaper references, and local account data are excluded.
+The open-box logo reuses the project's supplied FORM mark. Three scenic images were generated for this project; they are not game screenshots. Barlow fonts include their OFL notice under `app/public/assets`. See [third-party asset notices](THIRD_PARTY_NOTICES.md) for asset origins and retained notices. Third-party assets retain their respective rights; this client does not bundle Minecraft game binaries. Collected competitor screenshots, wallpaper references, and local account data are excluded.
 
 ## In-game controls
 
 Press Right Shift to open the compact Unbox quick menu, then choose Mods. The game also opens with an Unbox-branded title screen. Each card has its own settings and enable switch. Drag enabled, unlocked HUDs directly on the quick menu or Mods screen. Use Edit HUD for resizing, snapping and fine positioning; Done saves, Cancel restores the previous layout. Settings support live previews, cross-tab search, exact numeric entry and per-setting reset. See [the latest research and verification record](docs/10-Lunar参考对照与游戏内UI升级.md) for module settings, actual game screenshots, and measured performance boundaries.
+
+### Friends and direct content import
+
+Drop `.jar` mods or `.zip` packs into the selected profile list; the borderless `+` opens its folder. The friends/room service is in `cloudflare/social.mjs`, with LAN-first and on-demand [e4mc](https://e4mc.link) transport in the Fabric module. The friends service is deployed on Workers Free with D1 and bundled in the macOS app; live API checks passed, while two real accounts joining across networks remain unverified. Current private world invites require Microsoft or Unbox accounts and running Unbox Fabric profiles. Fabric gameplay JARs synchronize into separate cached friend profiles; complete modpack configuration and independent-network validation remain outstanding. See [implementation and deployment notes](docs/12-文件导入与好友联机.md). Only free Workers/D1 plans are authorized; game traffic does not pass through Cloudflare.
+
+Email/password Unbox registration, editable non-unique nicknames and mixed-identity private worlds are implemented. Email verification is deferred during development; production rollout remains pending. See [account implementation and verification](docs/13-Unbox邮箱账号与混合联机.md).
+
+## Downloads and updates
+
+[Download Unbox Client 0.2.0](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.0) for **macOS Apple Silicon (arm64)**. Extract the app archive and move Unbox Client to Applications. This early build has an updater signature, but no Apple Developer signing or notarization. Intel Macs, Windows and Linux are not included in this release.
+
+Use the borderless download icon at the bottom left, or **Settings → Updates → Check for updates**. Installation is manual and waits until Minecraft is closed. Profiles and worlds remain in the app data directory. Microsoft sign-in in this release still requires an approved Unbox Client ID; the debug-only DevLogin provider is unavailable in release builds.

@@ -11,3 +11,5 @@ This development repository contains project-created assets and the following th
 - **Scenery:** `valley.png`, `lake.png`, and `coast.png` were generated for this project; they are not captured Minecraft gameplay.
 
 The performance manifest records upstream download URLs and hashes. It does not include third-party mod JARs. Minecraft binaries, collected competitor screenshots, and wallpaper reference collections are not distributed in this repository.
+
+- **e4mc 6.2.3 (Fabric modern):** on-demand free world relay integration, [upstream source](https://github.com/vgskye/e4mc-minecraft-architectury), MIT. The original notice is retained in `notices/e4mc/LICENSE`. Its pinned binary is downloaded from Modrinth and includes its own nested-dependency notices. Unbox does not operate or guarantee the public e4mc service.

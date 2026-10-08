@@ -1,4 +1,4 @@
-export type Account={name:string;type:"local"|"microsoft";uuid?:string;skin?:string;skinModel?:"classic"|"slim"};
+export type Account={accountId?:string;provider?:string;needsSignIn?:boolean;skinStatus?:"ready"|"cached"|"unavailable";name:string;type:"local"|"microsoft"|"unbox";uuid?:string;skin?:string;skinModel?:"classic"|"slim"};
 export type Profile = { id:string; name:string; version:'26.1'; loader:'fabric'|'vanilla'; icon:string };
 export type Config = Record<string,boolean|number|string>;
 export type State = {profiles:Profile[];selected:string|null;settings:{memory:number;reducedMotion:boolean;reducedTransparency:boolean;minimize:boolean};account:Account|null;modules?:Record<string,Config>};

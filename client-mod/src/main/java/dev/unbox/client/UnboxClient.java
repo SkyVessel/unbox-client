@@ -37,12 +37,12 @@ public class UnboxClient implements ClientModInitializer {
     public static float clickLight(int button){if(buttonDown[button]&&Minecraft.getInstance().screen==null)return 1;return Math.max(0,1-(System.nanoTime()-clickTime[button])/(UnboxClient.number("cps.fade",180,50,500)*1_000_000f));}
     public static void click(int button){if(Minecraft.getInstance().screen!=null||Minecraft.getInstance().player==null)return;long now=System.nanoTime();if(button>=0&&button<2)clickTime[button]=now;if(button==0)LEFT.addLast(now);if(button==1)RIGHT.addLast(now);}
     @Override public void onInitializeClient(){
-        reload();
+        reload();SocialBridge.init();
         menuKey=KeyMappingHelper.registerKeyMapping(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
         zoomKey=KeyMappingHelper.registerKeyMapping(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
         ClientTickEvents.END_CLIENT_TICK.register(client->{
             if(++ticks%40==0)reload();
-            UiSmokeTest.tick(client);HomeSmokeTest.tick(client);
+            UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);
             while(menuKey.consumeClick())if(client.screen==null)client.setScreen(new UnboxHomeScreen(true));
             long cutoff=System.nanoTime()-1_000_000_000L;while(!LEFT.isEmpty()&&LEFT.peekFirst()<cutoff)LEFT.removeFirst();while(!RIGHT.isEmpty()&&RIGHT.peekFirst()<cutoff)RIGHT.removeFirst();
             ClientHud.update(LEFT.size(),RIGHT.size());

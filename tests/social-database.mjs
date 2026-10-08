@@ -1,0 +1,3 @@
+import {DatabaseSync} from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+export function database(){const sql=new DatabaseSync(':memory:');sql.exec(readFileSync(new URL('../cloudflare/social-schema.sql',import.meta.url),'utf8'));sql.exec(readFileSync(new URL('../cloudflare/accounts-schema.sql',import.meta.url),'utf8'));return {sql,prepare(query){let values=[];const run=()=>sql.prepare(query);return {bind(...v){values=v;return this},async first(){return run().get(...values)||null},async all(){return {results:run().all(...values)}},async run(){return run().run(...values)}}},async batch(q){sql.exec('BEGIN');try{const results=[];for(const s of q)results.push(await s.run());sql.exec('COMMIT');return results}catch(e){sql.exec('ROLLBACK');throw e}}}}

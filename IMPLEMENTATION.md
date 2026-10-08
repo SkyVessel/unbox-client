@@ -1,5 +1,7 @@
 # Unbox Client — implementation status
 
+
+Working-tree v2 adds email/password Unbox accounts, editable non-unique nicknames and encrypted mixed-identity invitations. Email verification is deferred by user request; Resend is not required. Production remains v1 pending deployment. See `docs/13-Unbox邮箱账号与混合联机.md`.
 Updated 2026-10-07. This is a local development build, not a finished public release.
 
 ## Verified
@@ -10,7 +12,7 @@ Updated 2026-10-07. This is a local development build, not a finished public rel
 - Official game assets and pinned mods are downloaded with checksum checks. Profiles have separate directories. Existing unrelated mod files are preserved.
 - Local account selection, module preferences and launcher settings persist. Local identities do not authenticate to Microsoft or online-mode servers.
 - Home layout follows viewport size, including live resizing from 1280×800 to 1920×1080 and 3840×2160 and back. Side rail and margins use bounded responsive values; the launch area takes approximately 43% of the inner panel. News and content lists use the remaining area. The compact 1000×720 layout is also tested.
-- Nine Node/Playwright tests cover profile flow, persistence, responsive layout, reduced motion and the undeployed cloud API's validation, plus mocked Microsoft sign-in/cancellation and account-skin UI. Ten Rust unit tests cover profile paths, launch argument rules, offline UUIDs, safe managed-mod upgrades and separation of client files from gameplay mods, plus sanitized authentication errors and skin-origin restrictions.
+- Thirteen Node/Playwright tests cover profile flow, persistence, responsive layout, reduced motion, cloud API validation, simulated Microsoft authorization/cancellation, multiple accounts, skin preview/upload failures and startup error recovery. Seventeen Rust tests cover launcher rules, account isolation/serialization, sanitized errors, PNG decoding and actual HTTP requests against a local mock for OAuth refresh, Xbox/XSTS, Minecraft ownership/profile and skin upload. These tests do not authenticate a real Microsoft account.
 
 ## Implemented, further game testing required
 
@@ -38,10 +40,10 @@ The v4.1 visual fix scales in-game menus to 85% of their previous size without c
 
 ## Not connected or not yet implemented
 
-- Cloudflare CLI reports unauthenticated. No cloud resources were deployed and no paid plan was enabled. The `cloudflare` directory contains a bounded manifest API draft, not a functioning friends, identity or relay service. User login is required before deployment.
-- Microsoft device authorization, Xbox/XSTS, Minecraft ownership/profile checks, Keychain storage, token refresh and launch credentials are implemented. A registered Unbox Client ID and Minecraft Services approval are still missing, so real-account end-to-end sign-in remains unverified. No borrowed third-party client ID is used.
+- The Cloudflare friends service is deployed through the plugin on Workers Free with D1 at `https://unbox-client-friends.printoria-studio.workers.dev`. Health and 36 live API assertions passed; all synthetic fixtures were removed. The rebuilt macOS app includes this endpoint. No paid plan was enabled. Two real Microsoft accounts joining across networks remain unverified. See `docs/12-文件导入与好友联机.md`.
+- Microsoft device authorization, Xbox/XSTS, Minecraft ownership/profile checks, Keychain storage, token refresh and launch credentials are implemented. A registered Unbox Client ID and Minecraft Services approval are still missing, so real-account end-to-end sign-in remains unverified. Debug builds now provide an opt-in DevLogin development provider; release builds reject that provider. Multiple accounts, provider isolation, secure refresh rotation, selection/removal and startup restoration are implemented. See `docs/11-账号与皮肤闭环.md`.
 - Forge and NeoForge are explicitly marked integration pending; this does not mean upstream 26.1 releases are unavailable.
-- Authenticated account skin retrieval, face avatars and Classic/Slim 3D preview are implemented and covered with a simulated account fixture; real account verification awaits app registration. Skin uploads, cape selection, infinite thumbnail lists, friends, one-click multiplayer and shared environment synchronization remain unfinished. Local accounts retain a labelled sample preview.
+- Authenticated account skin retrieval, face avatars, Classic/Slim 3D preview, PNG upload and profile refresh are implemented and covered with simulated account fixtures/local HTTP tests. Live skin changes and authenticated server entry still require real-account verification. Cape selection, infinite thumbnail lists and shared environment synchronization remain unfinished. Friend and world-invitation code is implemented and the cloud service is deployed; a live two-account, two-network gameplay test remains outstanding. Local accounts retain a labelled sample preview.
 - AI/MCP game control and controlled extension hot loading remain unfinished.
 - Java 25 must already be installed. Automatic Java installation, download cancellation and a complete mod dependency/conflict resolver are not implemented.
 - No release signing/notarization, clean-machine build verification, or Windows/Linux validation has been completed. Third-party distribution notices need a release audit.
@@ -55,3 +57,21 @@ The v4.1 visual fix scales in-game menus to 85% of their previous size without c
 - App data: `~/Library/Application Support/dev.unbox.client`
 
 The verification profile is named `Unbox Verification` and uses the test local identity `UnboxTest`. These are test data, not a Microsoft account.
+
+## File drops and friends (2026-10-08)
+
+Mods/Packs/Shaders accept native drag-drop events, copy valid files without overwriting, and have icon-only folder buttons. Friends support request/accept/remove and invitations; the game quick menu includes a borderless right rail. Authenticated invite-only worlds probe LAN first and request the pinned e4mc relay only on failure. Invitations now support Microsoft and Unbox identities with UUID-bound encrypted admission. Same-name Unbox guests were tested in two real game instances through e4mc on one Mac; a real Microsoft + Unbox pair and two independent networks remain unverified. Gameplay JAR synchronization is implemented for Fabric 26.1 with isolated friend profiles and a content-addressed cache; configuration and full modpack synchronization remain unfinished. Build and validation details, free-service boundaries and deployment blocker: `docs/12-文件导入与好友联机.md`.
+
+## Account deployment and manual updates (2026-10-08)
+
+Cloudflare v2 is deployed on the existing Workers Free/D1 service. Seven groups of live API checks cover password registration, normalized-email uniqueness, authentication, same-name renaming, friendships, per-friend v2 invitations and session revocation. Synthetic accounts and related data were removed. No email verification or Resend is enabled. See document 13 for authentication limits and game-test scope.
+
+The launcher adds a borderless update shortcut and Settings → Updates. Checks read stable GitHub Releases; installation uses the Tauri updater signature verifier and only assets from SkyVessel/unbox-client. Checking is allowed while playing; installation reserves the same job lock as game launch and requires the game to be closed. No release is built or published in this pass, so end-to-end self-replacement with a published package remains untested. Future signing/manifest instructions: docs/14-客户端更新.md.
+
+The upper-left logo uses the original cropped vector artwork at 44px, without the previous SVG viewport padding. Account badges remain separately sized.
+
+## Shared gameplay mods and logo rendering (2026-10-08)
+
+Authenticated login now exchanges a bounded SHA-256 manifest and streams missing gameplay JARs over the existing encrypted LAN/e4mc connection. Native preparation uses a separate friend profile and resumes joining after a necessary restart. Two real game processes loaded a transferred test JAR and joined successfully; subsequent matching downloaded zero bytes. Production-cloud, two-location and large-modpack validation remain outstanding. See docs/15-共享模组与性能复查.md for protocol, cache, timeout and testing limits.
+
+The launcher header now draws the six original logo paths directly, removing the SVG mask. WebKit 2× rendering was inspected. No mouse smoothing or input filtering was added; the reported physical-mouse stutter remains unlocalized.
