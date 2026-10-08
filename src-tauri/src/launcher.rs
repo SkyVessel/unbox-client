@@ -27,7 +27,7 @@ pub fn allowed(v:&Value)->bool {
         pass=rule["action"]=="allow";
     }pass
 }
-fn safe_path(root:&Path,relative:&str)->Result<PathBuf,String>{let p=Path::new(relative);if p.is_absolute()||p.components().any(|c|matches!(c,std::path::Component::ParentDir|std::path::Component::Prefix(_))){return Err("Unsafe download path".into())}Ok(root.join(p))}
+fn safe_path(root:&Path,relative:&str)->Result<PathBuf,String>{let p=Path::new(relative);if p.has_root()||p.components().any(|c|matches!(c,std::path::Component::ParentDir|std::path::Component::Prefix(_))){return Err("Unsafe download path".into())}Ok(root.join(p))}
 pub fn args(values:&Value,vars:&std::collections::HashMap<&str,String>)->Vec<String>{
     let mut out=Vec::new();if let Some(values)=values.as_array(){for v in values{if !allowed(v){continue}let items=if let Some(s)=v.as_str(){vec![s.to_string()]}else if let Some(s)=v["value"].as_str(){vec![s.to_string()]}else{v["value"].as_array().map(|a|a.iter().filter_map(|v|v.as_str().map(str::to_owned)).collect()).unwrap_or_default()};for mut s in items{for(k,v)in vars{s=s.replace(&format!("${{{k}}}"),v)}out.push(s)}}}out
 }
@@ -135,7 +135,9 @@ fn md5_offline(name:&str)->String{
 }
 #[cfg(test)]mod tests{
     use super::*;
-    #[test]fn disallow_traversal(){assert!(safe_path(Path::new("/tmp/root"),"../escape.jar").is_err());assert!(safe_path(Path::new("/tmp/root"),"/absolute.jar").is_err());}
+    #[test]fn disallow_traversal(){assert!(safe_path(Path::new("/tmp/root"),"../escape.jar").is_err());assert!(safe_path(Path::new("/tmp/root"),"/absolute.jar").is_err());assert!(safe_path(Path::new("/tmp/root"),"group/mod.jar").is_ok());
+        #[cfg(target_os="windows")]for path in [r"\absolute.jar",r"C:escape.jar",r"C:\absolute.jar",r"\\server\share\mod.jar"]{assert!(safe_path(Path::new("C:/root"),path).is_err(),"{path}");}
+    }
     #[test]fn optional_features_are_not_enabled(){assert!(!allowed(&json!({"rules":[{"action":"allow","features":{"is_demo_user":true}}]})));}
     #[test]fn offline_identity_matches_java(){assert_eq!(md5_offline("Notch"),"b50ad385829d3141a2167e7d7539ba7f");}
     #[test]fn managed_update_backs_up_only_verified_old_mods(){
