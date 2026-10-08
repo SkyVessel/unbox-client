@@ -36,8 +36,13 @@ test('Minecraft verification uses Workers-compatible manual redirects and reject
  try{
   await send(db,p,'challenge',{id:p.id});
   let calls=0;globalThis.fetch=async(url,options)=>{calls++;assert.equal(options.redirect,'manual');assert.equal(new URL(url).hostname,'sessionserver.mojang.com');return new Response(null,{status:302,headers:{Location:'https://untrusted.example'}})};
-  assert.equal((await send(db,p,'register',p)).status,401);assert.equal(calls,1);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM people').get().n,0);
+  assert.equal((await send(db,p,'register',p)).status,503);assert.equal(calls,1);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM people').get().n,0);
   globalThis.fetch=async(_url,options)=>{assert.equal(options.redirect,'manual');return Response.json({id:p.uuid})};
   await register(db,p);assert.equal((await send(db,p,'sync',p)).self.kind,'microsoft');
  }finally{globalThis.fetch=original;db.sql.close()}
+});
+
+test('invalid player proof never falls back to session checks or creates an identity',async()=>{
+ const db=database(),p=player('ProofTest','microsoft'),original=globalThis.fetch;
+ try{const c=await send(db,p,'challenge',{id:p.id});assert.equal(c.verification,'player-certificate-v2');globalThis.fetch=async()=>{throw Error('Unexpected cloud authentication request')};assert.equal((await send(db,p,'register',{...p,proof:{version:1}})).status,401);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM people').get().n,0);}finally{globalThis.fetch=original;db.sql.close()}
 });

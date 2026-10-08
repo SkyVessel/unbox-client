@@ -5,7 +5,7 @@ on:
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.2
+        default: v0.2.3
       module_sha256:
         description: Expected SHA-256 of unbox-client.jar
         required: true

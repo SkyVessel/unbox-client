@@ -361,6 +361,30 @@ pub async fn prove_social(rt:&Runtime,challenge:&str)->Result<(),String>{
  if !response.status().is_success(){return Err(format!("Minecraft account verification failed (HTTP {})",response.status()))}Ok(())
 }
 
+// The private player key and Microsoft tokens never leave this process for social proof.
+// Only Mojang's certificate and a signature of the Unbox challenge go to our Worker.
+pub async fn social_player_proof(rt:&Runtime,challenge:&str,id:&str,token:&str)->Result<Value,String>{
+ if challenge.len()!=32||!challenge.bytes().all(|b|b.is_ascii_hexdigit()){return Err("Invalid account challenge".into())}
+ let (session,_)=launch_account(rt).await?;let s=session.ok_or("Microsoft account required")?;
+ let response=client()?.post("https://api.minecraftservices.com/player/certificates").bearer_auth(&s.token).send().await.map_err(|_|"Minecraft certificate service is unreachable")?;
+ if !response.status().is_success(){return Err(format!("Minecraft certificate request failed (HTTP {})",response.status()))}
+ let cert:Value=response.json().await.map_err(|_|"Invalid Minecraft certificate response")?;
+ make_social_proof(&cert,challenge,id,token,&s.uuid)
+}
+fn make_social_proof(cert:&Value,challenge:&str,id:&str,token:&str,uuid:&str)->Result<Value,String>{
+ use sha2::{Digest,Sha256};
+ use ring::{rand::SystemRandom,signature::{RsaKeyPair,RSA_PKCS1_SHA256}};
+ let decode=|pem:&str|STANDARD.decode(pem.lines().filter(|l|!l.starts_with("-----")).collect::<String>()).map_err(|_|"Invalid Minecraft player key".to_owned());
+ let private=decode(field(&cert["keyPair"],"privateKey")?)?;
+ let key=RsaKeyPair::from_pkcs8(&private).map_err(|_|"Invalid Minecraft player key")?;
+ let public=decode(field(&cert["keyPair"],"publicKey")?)?;
+ let token_hash=format!("{:x}",Sha256::digest(token.as_bytes()));
+ let message=["Unbox friends certificate proof v1",id,&token_hash,challenge,uuid].join("\n");
+ let mut signature=vec![0;key.public().modulus_len()];
+ key.sign(&RSA_PKCS1_SHA256,&SystemRandom::new(),message.as_bytes(),&mut signature).map_err(|_|"Could not sign friend verification")?;
+ Ok(json!({"version":1,"publicKey":STANDARD.encode(public),"certificateSignature":field(cert,"publicKeySignatureV2")?,"expiresAt":field(cert,"expiresAt")?,"signature":STANDARD.encode(signature)}))
+}
+
 // Passwords are sent over HTTPS and never persisted; only session tokens enter the Keychain vault.
 async fn unbox_request(rt:&Runtime,path:&str,b:Value,token:Option<&str>)->Result<Value,String>{
  let mut r=client()?.post(format!("{}/v1/{path}",crate::social::endpoint(rt)?)).json(&b);if let Some(t)=token{r=r.bearer_auth(t)}
@@ -401,5 +425,27 @@ pub fn unbox_identity(account:&Value)->Result<(String,String),String>{let vault=
   v.unbox.push(UnboxStored{id:"00000000-0000-4000-8000-000000000001".into(),token:"secret-session".into(),expires:(now()+60)*1000,account:json!({"accountId":id,"name":"EmailPlayer","uuid":"00000000000040008000000000000002","type":"unbox"})});v.selected=Some(id.into());
   let restored:Vault=serde_json::from_slice(&serde_json::to_vec(&v).unwrap()).unwrap();let public=restored.snapshot(None);assert_eq!(public["account"]["name"],"EmailPlayer");assert_eq!(public["account"]["needsSignIn"],false);assert!(!public.to_string().contains("secret-session"));
   v.unbox[0].expires=0;assert_eq!(v.snapshot(None)["account"]["needsSignIn"],true);v.remove(id);assert!(v.selected_account(None).is_null());assert!(v.unbox.is_empty());
+ }
+}
+
+#[cfg(test)]mod player_proof_tests{
+ use super::*;
+ #[test]fn proof_signs_bound_challenge_and_contains_no_private_credentials(){
+  use sha2::{Digest,Sha256};
+  use ring::signature::{RsaKeyPair,UnparsedPublicKey,RSA_PKCS1_2048_8192_SHA256};
+  let cert:Value=serde_json::from_str(include_str!("../test-data/player-proof-key.json")).unwrap();
+  let proof=make_social_proof(&cert,&"b".repeat(32),"test-id","test-social-token",&"c".repeat(32)).unwrap();
+  let private=STANDARD.decode(cert["keyPair"]["privateKey"].as_str().unwrap().lines().filter(|l|!l.starts_with("-----")).collect::<String>()).unwrap();
+  let key=RsaKeyPair::from_pkcs8(&private).unwrap();
+  let message=format!("Unbox friends certificate proof v1\ntest-id\n{:x}\n{}\n{}",Sha256::digest(b"test-social-token"),"b".repeat(32),"c".repeat(32));
+  let signature=STANDARD.decode(proof["signature"].as_str().unwrap()).unwrap();
+  let verifier=UnparsedPublicKey::new(&RSA_PKCS1_2048_8192_SHA256,key.public().as_ref());
+  assert!(verifier.verify(message.as_bytes(),&signature).is_ok());
+  assert!(verifier.verify(b"other challenge",&signature).is_err());
+  assert!(!proof.to_string().contains("PRIVATE"));assert!(!proof.to_string().contains("test-social-token"));assert!(proof.get("keyPair").is_none());
+ }
+ #[test]fn invalid_private_certificate_fails_without_exposing_it(){
+  let bad=json!({"keyPair":{"privateKey":"private-invalid-value","publicKey":"public"}});
+  let error=make_social_proof(&bad,"nonce","id","token","uuid").unwrap_err();assert!(!error.contains("private-invalid-value"));
  }
 }

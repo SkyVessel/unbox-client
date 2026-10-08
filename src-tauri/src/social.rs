@@ -217,13 +217,10 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
         Err(e) if e == "Sign in to Unbox friends again" && a["type"]!="unbox" => {
             if a["type"] == "microsoft" {
                 let c = request(&url, &i, "challenge", json!({"id":i.id})).await?;
-                auth::prove_social(
-                    rt,
-                    c["challenge"]
-                        .as_str()
-                        .ok_or("Invalid verification challenge")?,
-                )
-                .await?;
+                let challenge=c["challenge"].as_str().ok_or("Invalid verification challenge")?;
+                if c["verification"]=="player-certificate-v2"{
+                    b["proof"]=auth::social_player_proof(rt,challenge,&i.id,&i.token).await?;
+                }else{auth::prove_social(rt,challenge).await?;}
             }
             b["id"] = json!(i.id);
             request(&url, &i, "register", b.clone()).await?;

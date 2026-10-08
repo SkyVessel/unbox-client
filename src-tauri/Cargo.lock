@@ -4218,13 +4218,14 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 
 [[package]]
 name = "unbox-client"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "base64 0.22.1",
  "futures-util",
  "md-5",
  "png 0.17.16",
  "reqwest 0.12.28",
+ "ring",
  "security-framework",
  "serde",
  "serde_json",

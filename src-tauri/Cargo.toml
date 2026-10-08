@@ -1,6 +1,6 @@
 [package]
 name = "unbox-client"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 
 [build-dependencies]
@@ -19,6 +19,7 @@ uuid = { version = "1", features = ["v4", "v3"] }
 zip = { version = "2", default-features = false, features = ["deflate"] }
 futures-util = "0.3"
 base64 = "0.22"
+ring = "0.17"
 png = "0.17"
 tauri-plugin-updater = "2"
 

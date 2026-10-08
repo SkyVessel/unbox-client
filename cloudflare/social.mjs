@@ -1,4 +1,5 @@
 import {accountRoute,cleanupAccounts} from './accounts.mjs';
+import {verifyPlayerProof} from './player-proof.mjs';
 const reply=(b,s=200)=>Response.json(b,{status:s,headers:{'Cache-Control':'no-store'}});
 export const hash=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const uuid=s=>typeof s==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(s);
@@ -13,14 +14,18 @@ export default {
    const path=new URL(request.url).pathname;const b=await body(request);if(path.startsWith('/v1/accounts/')&&request.method==='POST'){const response=await accountRoute(path,b,request,env);if(response)return response;}const token=request.headers.get('Authorization')?.replace(/^Bearer /,'')||'';if(!/^[a-f0-9]{64}$/.test(token))return reply({error:'Unauthorized'},401);
    const tokenHash=await hash(token);const db=env.DB,now=Date.now();
    if(path==='/v1/challenge'&&request.method==='POST'){
-    if(!uuid(b.id))return reply({error:'Invalid identity'},400);const total=await db.prepare('SELECT COUNT(*) AS n FROM challenges').first();if(total.n>=2000)return reply({error:'Verification capacity reached. Try later.'},429);const nonce=crypto.randomUUID().replaceAll('-','');await db.prepare('INSERT INTO challenges(id,token_hash,nonce,expires) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET token_hash=excluded.token_hash,nonce=excluded.nonce,expires=excluded.expires').bind(b.id,tokenHash,nonce,now+120000).run();return reply({challenge:nonce});
+    if(!uuid(b.id))return reply({error:'Invalid identity'},400);const total=await db.prepare('SELECT COUNT(*) AS n FROM challenges').first();if(total.n>=2000)return reply({error:'Verification capacity reached. Try later.'},429);const nonce=crypto.randomUUID().replaceAll('-','');await db.prepare('INSERT INTO challenges(id,token_hash,nonce,expires) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET token_hash=excluded.token_hash,nonce=excluded.nonce,expires=excluded.expires').bind(b.id,tokenHash,nonce,now+120000).run();return reply({challenge:nonce,verification:"player-certificate-v2"});
    }
    if(path==='/v1/register'&&request.method==='POST'){
     if(!uuid(b.id)||!['microsoft','local'].includes(b.kind))return reply({error:'Invalid identity'},400);const values=profile(b);
     const existing=await db.prepare('SELECT token_hash FROM people WHERE id=?').bind(b.id).first();if(existing)return existing.token_hash===tokenHash?reply({id:b.id}):reply({error:'Identity already exists'},409);
     if(b.kind==='microsoft'){
      const c=await db.prepare('SELECT nonce FROM challenges WHERE id=? AND token_hash=? AND expires>?').bind(b.id,tokenHash,now).first();if(!c)return reply({error:'Account verification expired'},401);
-     const check=await fetch('https://sessionserver.mojang.com/session/minecraft/hasJoined?'+new URLSearchParams({username:b.name,serverId:c.nonce}),{redirect:'manual'});if(!check.ok)return reply({error:`Minecraft session was not verified (HTTP ${check.status})`},401);const p=await check.json();if(p.id!==b.uuid)return reply({error:'Minecraft account does not match'},401);
+     if(b.proof){
+      if(!await verifyPlayerProof(b.proof,{id:b.id,tokenHash,nonce:c.nonce,uuid:b.uuid,now}))return reply({error:'Minecraft player proof was not verified'},401);
+     }else{
+     const check=await fetch('https://sessionserver.mojang.com/session/minecraft/hasJoined?'+new URLSearchParams({username:b.name,serverId:c.nonce}),{redirect:'manual'});if(check.status===204)return reply({error:'Minecraft session was not verified'},401);if(!check.ok)return reply({error:'Update Unbox to use player certificate verification. Mojang is rejecting cloud session checks.'},503);const p=await check.json();if(p.id!==b.uuid)return reply({error:'Minecraft account does not match'},401);
+     }
     }
     const count=await db.prepare('SELECT COUNT(*) AS n FROM people').first();if(count.n>=2000)return reply({error:'Free service registration limit reached'},503);
     await db.prepare('INSERT INTO people(id,code,token_hash,name,uuid,kind,face,seen) VALUES(?,?,?,?,?,?,?,?)').bind(b.id,b.id.replaceAll('-','').slice(0,12).toUpperCase(),tokenHash,...values,now).run();return reply({id:b.id},201);
