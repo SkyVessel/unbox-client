@@ -10,7 +10,8 @@ on:
         description: Expected SHA-256 of unbox-client.jar
         required: true
 permissions:
-  contents: read
+  # GitHub restricts draft release downloads to tokens with push access.
+  contents: write
 jobs:
   windows:
     runs-on: windows-latest
