@@ -94,3 +94,7 @@ NeoForge 26.1 now has a separately compiled Unbox module using native key/HUD/ev
 ## 2026-10-10 标题返回修复与玩法模组同步复测
 
 修复无世界时 `setScreen(null)` 在内部新建原版标题页、绕过品牌替换的问题。Fabric/NeoForge 各 25 项标题页检查通过。两种加载器分别完成仅房主安装独立玩法测试 JAR、访客下载、原生共享 Profile 准备、重启加入、双方实际使用新物品并由服务器同步奖励的双进程实测；再次加入下载量均为 0，无再次重启。本地 macOS 调试包已重建并校验，未发布 Release。测试为同机 LAN 与本地好友服务，不是异地或真实微软双账号实测。证据与限制见 `docs/23-标题返回修复与玩法模组同步实测.md`。
+
+## 2026-10-10 0.2.6 已公开发布
+
+用户授权后已发布 GitHub v0.2.6，并设为 latest。Windows x64 NSIS 与 macOS ARM64 更新归档均可公开下载，沿用原公钥；匿名下载、远端哈希、签名验证及篡改拒绝通过。Node 37 / macOS Rust 32 / Windows Rust 34 项检查通过。最新版源码和限制见 `docs/24-0.2.6测试更新发布.md`，此次发布覆盖此前仅本地构建的功能。真实测试者电脑上的安装与 Windows 游戏实玩尚待反馈。
