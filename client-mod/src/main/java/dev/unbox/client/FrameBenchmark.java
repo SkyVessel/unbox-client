@@ -1,6 +1,6 @@
 package dev.unbox.client;
 import net.minecraft.client.Minecraft;
-import net.fabricmc.loader.api.FabricLoader;
+
 import java.nio.file.*;
 import java.util.*;
 import java.io.*;
@@ -23,7 +23,7 @@ public final class FrameBenchmark {
         if(now-start<45_000_000_000L)return;
         done=true;
         try{
-            Path dir=FabricLoader.getInstance().getGameDir().resolve("logs");Files.createDirectories(dir);
+            Path dir=Platform.gameDir().resolve("logs");Files.createDirectories(dir);
             try(var writer=Files.newBufferedWriter(dir.resolve("frame-times.csv"))){writer.write("frame_ms\n");for(double d:times)writer.write(d+"\n");}
             double total=times.stream().mapToDouble(d->d).sum();times.sort(Double::compare);
             int slow=Math.max(1,(int)Math.ceil(times.size()*.01));double slowMean=times.subList(times.size()-slow,times.size()).stream().mapToDouble(d->d).average().orElse(0);

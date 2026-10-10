@@ -1,0 +1,45 @@
+[
+  {
+    "slug": "sodium",
+    "filename": "sodium-neoforge-0.8.9+mc26.1.1.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/Fg5Mk6Y3/sodium-neoforge-0.8.9%2Bmc26.1.1.jar",
+    "sha1": "594e301055e2cbf3afdc4338d6a7a59d7b17216f",
+    "version": "mc26.1.1-0.8.9-neoforge"
+  },
+  {
+    "slug": "lithium",
+    "filename": "lithium-neoforge-0.24.7+mc26.1.2.jar",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/eZ0KJiEA/lithium-neoforge-0.24.7%2Bmc26.1.2.jar",
+    "sha1": "4771c7950131f4be684ca286656632f554f36fa5",
+    "version": "mc26.1.2-0.24.7-neoforge"
+  },
+  {
+    "slug": "ferrite-core",
+    "filename": "ferritecore-9.0.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/LtVvw4uS/ferritecore-9.0.0-neoforge.jar",
+    "sha1": "b8bfb14ba6ce7068aae08c3a132ca40bda6bd143",
+    "version": "9.0.0-neoforge"
+  },
+  {
+    "slug": "immediatelyfast",
+    "filename": "ImmediatelyFast-NeoForge-1.15.3+26.1.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/adbrNJLm/ImmediatelyFast-NeoForge-1.15.3%2B26.1.jar",
+    "sha1": "bb10bdde4199da3cb7a2a64f9e3274a46218c9f1",
+    "version": "1.15.3+26.1-neoforge"
+  },
+  {
+    "slug": "dynamic-fps",
+    "filename": "dynamic-fps-3.11.7+minecraft-26.1.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/V6JHyPSD/dynamic-fps-3.11.7%2Bminecraft-26.1.0-neoforge.jar",
+    "sha1": "2ebba7ae4153f168b056db885898fdda3d8af1eb",
+    "version": "3.11.7"
+  },
+  {
+    "slug": "e4mc",
+    "filename": "e4mc-neoforge-6.2.3.jar",
+    "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/HXD8kS5O/e4mc-neoforge-6.2.3.jar",
+    "sha1": "7127478b19531091257b3f58cd734a638200e481",
+    "sha512": "6d029c61c71503dbf03710a0a944b462fc0351a862db773d4ffe39ffe8d8a205d12a4f031361d82867d365a2335abbdc91859a2777108ca4c9c14fe243b92197",
+    "version": "6.2.3-neoforge"
+  }
+]

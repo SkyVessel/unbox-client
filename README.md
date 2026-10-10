@@ -19,7 +19,7 @@ Unbox is an independent third-party project and is not affiliated with or endors
 
 Microsoft sign-in is intended to let players authenticate their own Minecraft Java accounts, retrieve their player profile and skin, and launch the game with valid session credentials. Passwords are entered on Microsoft's authorization page, not collected by Unbox. The implemented flow uses Microsoft device authorization, Xbox Live/XSTS, and Minecraft Services; account tokens are stored in macOS Keychain.
 
-Unbox's application registration and Minecraft Services access are pending. Real-account end-to-end sign-in has not yet been verified. Release builds require Unbox's registered Client ID. Debug builds offer an explicitly selected DevLogin development provider; it is disabled in release builds and is not a substitute for Unbox registration. Changing providers requires fresh authorization. Account selection, Keychain persistence, skin preview/upload and launch integration share the same implementation for both providers. See [account and skin lifecycle](docs/11-账号与皮肤闭环.md).
+Microsoft sign-in uses Unbox's built-in public application ID in both debug and release builds. Players do not enter a Client ID or Client Secret. Previous DevLogin accounts require fresh Microsoft authorization; they remain saved until the same Minecraft identity signs in successfully through Unbox. Tokens stay in OS-protected storage. Microsoft's device-code endpoint accepts the registered ID, but a real-account end-to-end login, Minecraft Services access and restart/renewal still require verification with the new authorization. See [Unbox Microsoft application integration](docs/22-Unbox微软应用接入.md).
 
 ## Development
 
@@ -63,6 +63,6 @@ Email/password Unbox registration, editable non-unique nicknames and mixed-ident
 
 ## Downloads and updates
 
-[Download Unbox Client 0.2.0](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.0) for **macOS Apple Silicon (arm64)**. Extract the app archive and move Unbox Client to Applications. This early build has an updater signature, but no Apple Developer signing or notarization. Intel Macs, Windows and Linux are not included in this release.
+[Download Unbox Client](https://github.com/SkyVessel/unbox-client/releases/latest) for **macOS Apple Silicon (arm64)** and **Windows x64**. Existing testers can use Settings → Updates. On macOS, extract the app archive and move Unbox Client to Applications; on Windows, run the setup executable. Testing builds have updater signatures, but no Apple notarization or Windows publisher certificate. Intel Macs and Linux packages are not included.
 
-Use the borderless download icon at the bottom left, or **Settings → Updates → Check for updates**. Installation is manual and waits until Minecraft is closed. Profiles and worlds remain in the app data directory. Microsoft sign-in in this release still requires an approved Unbox Client ID; the debug-only DevLogin provider is unavailable in release builds.
+Use the borderless download icon at the bottom left, or **Settings → Updates → Check for updates**. Installation is manual and waits until Minecraft is closed. Profiles and worlds remain in the app data directory. The current source embeds Unbox's registered Microsoft Client ID; older published builds retain their original login configuration.

@@ -75,3 +75,22 @@ The upper-left logo uses the original cropped vector artwork at 44px, without th
 Authenticated login now exchanges a bounded SHA-256 manifest and streams missing gameplay JARs over the existing encrypted LAN/e4mc connection. Native preparation uses a separate friend profile and resumes joining after a necessary restart. Two real game processes loaded a transferred test JAR and joined successfully; subsequent matching downloaded zero bytes. Production-cloud, two-location and large-modpack validation remain outstanding. See docs/15-共享模组与性能复查.md for protocol, cache, timeout and testing limits.
 
 The launcher header now draws the six original logo paths directly, removing the SVG mask. WebKit 2× rendering was inspected. No mouse smoothing or input filtering was added; the reported physical-mouse stutter remains unlocalized.
+
+## 0.2.4 local testing work (2026-10-08)
+
+The current pass adds account-isolated offline friend snapshots, fixes the in-game face rectangle coordinates, and restores signed skin properties after private invitation authentication. Key conflicts now transfer the binding, and launcher options are generated from the game catalogue. Fabric adds draggable minimap/latency HUDs, M-map controls, server-sourced teammate death markers and permission-checked vanilla teleport commands. NeoForge 26.1 installation and five compatible optimization mods have entered an actual test world; Unbox custom in-game modules/private invites are still Fabric-only. See `docs/20-好友修复与地图及NeoForge.md` for measured results and remaining manual verification. This section supersedes older claims above that NeoForge cannot be selected or that key conflicts are rejected.
+
+
+## 2026-10-09 · 0.2.5 NeoForge native modules
+
+NeoForge 26.1 now has a separately compiled Unbox module using native key/HUD/events and a direct login transport. Shared UI, settings, HUD, terrain map, invitation proof and transfer code remain common source. No Fabric API or Fabric Loader references are allowed in the NeoForge artifact. Two-client LAN, public e4mc relay, and gameplay-JAR download/restart/rejoin checks passed. See `docs/21-NeoForge原生适配.md` for current verification and limits. This supersedes the previous Fabric-only module/invitation status. Local testing build only; no Release published.
+
+## 2026-10-10 · Unbox Microsoft 应用
+
+- 内置自有 Client ID，调试/发布统一，忽略旧应用配置，移除 DevLogin 和玩家填写 ID 的入口。
+- 旧凭证要求重新授权；同 UUID 新授权成功后替换旧应用凭证，保留其他账号。
+- 设备码真实接口 HTTP 200；32 项 Rust、37 项启动器测试通过。真实账号授权、Minecraft 权益与重启续期尚待用户登录验证，详见 `docs/22-Unbox微软应用接入.md`。
+
+## 2026-10-10 标题返回修复与玩法模组同步复测
+
+修复无世界时 `setScreen(null)` 在内部新建原版标题页、绕过品牌替换的问题。Fabric/NeoForge 各 25 项标题页检查通过。两种加载器分别完成仅房主安装独立玩法测试 JAR、访客下载、原生共享 Profile 准备、重启加入、双方实际使用新物品并由服务器同步奖励的双进程实测；再次加入下载量均为 0，无再次重启。本地 macOS 调试包已重建并校验，未发布 Release。测试为同机 LAN 与本地好友服务，不是异地或真实微软双账号实测。证据与限制见 `docs/23-标题返回修复与玩法模组同步实测.md`。

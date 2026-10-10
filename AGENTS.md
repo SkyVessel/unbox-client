@@ -107,3 +107,15 @@
 - 用户明确：鼠标移动卡顿可能来自系统或硬件，找不到证据便暂缓，禁止通过新增鼠标平滑、滤波来掩盖问题。本轮未修改输入路径，未排除客户端，也未定位根因。
 - 顶部 Logo 改为原始六条投影路径直接内联，去除 SVG mask，保持 44px；WebKit 高分屏已检查。
 - Fabric 26.1 是当前游戏内功能与同步的实现；NeoForge/Forge 保持不可选，原生层拒绝未支持加载器。继续只构建本地调试包，不发布 Release。
+
+### 2026-10-09 NeoForge 原生适配（覆盖旧的不可选说明）
+
+- 用户明确要求逐加载器原生适配、最大限度共用功能与 UI，不引入 Fabric 兼容加载器或运行时模组转换。
+- Minecraft 仍精确为 26.1。Fabric 与 NeoForge 各自编译独立 Unbox JAR，共同源码在 `client-mod/src/main/java`，加载器专属接口分别在 `src/fabric/java` / `src/neoforge/java`。
+- NeoForge 已接入 Client Mods、地图、私密邀请及玩法 JAR 同步。具体测试证据与边界见 `docs/21-NeoForge原生适配.md`；不把同机公网中继测试称为两个异地家庭网络实测，不承诺跨加载器 JAR 转换。
+- 继续只构建本地调试包，不发布 Release。
+
+### 2026-10-10 测试版本发布授权
+
+- 用户明确要求将最新修复上传 GitHub，供其他测试者通过更新功能获取；此前“仅本地调试包”的限制在此次发布范围内解除。
+- 本次版本为 0.2.6，分别构建 macOS ARM64 / Windows x64，沿用原 updater 公钥与 GitHub Release 更新渠道；不把 Windows 构建通过等同于游戏实玩验证。

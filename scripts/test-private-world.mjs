@@ -13,7 +13,7 @@ const http=createServer(async(req,res)=>{try{let chunks=[];for await(const b of 
 await new Promise(r=>http.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'+http.address().port;
 async function call(path,b,token){const r=await fetch(url+'/v1/'+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(b)});const v=await r.json();if(!r.ok)throw Error(v.error||path);return v}
 const children=[],publicChecks=[],paths={};let stopping=false;
-const fixtureRoot=resolve('.cache/network-tests',run),ids={host:crypto.randomUUID(),guest:crypto.randomUUID()};let guestProcess,restarted=false;
+const fixtureRoot=resolve('.cache/network-tests',run),ids={host:crypto.randomUUID(),guest:crypto.randomUUID()};let guestProcess,restarted=false,firstDownload;
 function launch(role,p,resume=false){const child=spawn('python3',['scripts/benchmark.py','private-'+role,source,run+'-'+role],{env:{...process.env,UNBOX_TEST_PROFILE:JSON.stringify(p.account),...(syncMods?{UNBOX_SYNC_FIXTURE:'1',UNBOX_BENCH_GAME_DIR:paths[role],UNBOX_SHARED_CACHE:fixtureRoot+'/shared-cache',UNBOX_BENCH_RESUME:resume?'1':'0'}:{})},detached:true,stdio:['ignore','pipe','pipe']});children.push(child);child.stdout.on('data',b=>process.stdout.write(b));child.stderr.on('data',b=>process.stderr.write(b));child.on('exit',code=>{child.result=code});if(role==='guest')guestProcess=child;return child;}
 async function register(email){const password=crypto.randomUUID()+crypto.randomUUID();await call('accounts/register',{email,password});return call('accounts/login',{email,password})}
 async function load(path){try{return JSON.parse(await readFile(path,'utf8'))}catch{return null}}
@@ -36,7 +36,10 @@ try{
   }
   if(syncMods&&!restarted&&guestProcess.result!=null){
    const request=await load(paths.guest+'/unbox-sync-request.json');if(request){
-    const sourceFile=paths.guest+'/profile.json';await save(sourceFile,{id:ids.guest,loader:'fabric',version:'26.1'});
+    firstDownload=await load(paths.guest+'/logs/environment-sync.json');if(!firstDownload?.restart||firstDownload.downloadedBytes<=0)throw Error('Guest did not transfer the host gameplay JAR');
+    try{await access(paths.guest+'/mods/shared-fixture.jar');throw Error('Guest was preloaded with host fixture')}catch(e){if(e.code!=='ENOENT')throw e;}
+    publicChecks.push('Guest started without the host gameplay mod; first join downloaded missing bytes and requested restart');
+    const sourceFile=paths.guest+'/profile.json';await save(sourceFile,{id:ids.guest,loader:process.env.UNBOX_TEST_LOADER||'fabric',version:'26.1'});
     const native=spawn(resolve('src-tauri/target/debug/unbox-client'),['--apply-sync-fixture',fixtureRoot,sourceFile,paths.guest+'/unbox-sync-request.json'],{stdio:['ignore','pipe','inherit']});let output='';native.stdout.on('data',b=>output+=b);const code=await new Promise(r=>native.on('exit',r));if(code!==0)throw Error('Native environment preparation failed');const profile=JSON.parse(output.trim());
     const manifest=request.manifest;for(const f of manifest.files)await access(fixtureRoot+'/shared-cache/'+f.hash+'.jar');publicChecks.push('Gameplay JAR downloaded through encrypted game login and verified in native shared cache');
     paths.guest=fixtureRoot+'/profiles/'+profile.id;await save(paths.guest+'/unbox-rejoin.json',{id:request.inviteId,at:Date.now()});restarted=true;guestProcess.result=0;launch('guest',guest,true);
@@ -48,6 +51,6 @@ try{
   await new Promise(r=>setTimeout(r,500));
  }
  if(!hostDone||!guestDone)throw Error('Two-player test did not complete');
- const result={publicChecks,host:hostDone,guest:guestDone,transport:relay?'Real e4mc public relay':'Direct LAN',scope:'Two real clients and an integrated server, local Cloudflare-compatible password service; no live cloud deployment or Microsoft login'};
+ const result={publicChecks,host:hostDone,guest:guestDone,transport:relay?'Real e4mc public relay':'Direct LAN',...(syncMods?{sync:{firstDownload,rejoin:await load(paths.guest+'/logs/environment-sync.json')}}:{}),scope:'Two real clients and an integrated server, local Cloudflare-compatible password service; no live cloud deployment or Microsoft login'};
  await mkdir('.cache/network-tests',{recursive:true});await save('.cache/network-tests/'+run+'.json',result);console.log(JSON.stringify(result));
 }finally{stopping=true;for(const c of children)if(c.result==null)try{process.kill(-c.pid,'SIGTERM')}catch{};http.closeAllConnections();http.close();db.sql.close()}

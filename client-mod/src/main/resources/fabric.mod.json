@@ -1,1 +1,22 @@
-{"schemaVersion":1,"id":"unbox","version":"0.2.2","name":"Unbox Client","description":"Personal HUD, controls and visual settings for Unbox Client.","environment":"client","entrypoints":{"client":["dev.unbox.client.UnboxClient"]},"mixins":["unbox.mixins.json"],"depends":{"fabricloader":">=0.18.4","minecraft":"26.1","java":">=25","fabric-api":"*"}}
+{
+  "schemaVersion": 1,
+  "id": "unbox",
+  "version": "0.2.6",
+  "name": "Unbox Client",
+  "description": "Personal HUD, controls and visual settings for Unbox Client.",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.unbox.client.FabricEntrypoint"
+    ]
+  },
+  "mixins": [
+    "unbox.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "26.1",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

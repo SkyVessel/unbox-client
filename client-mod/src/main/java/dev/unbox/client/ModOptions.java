@@ -7,7 +7,7 @@ public final class ModOptions {
     public record Mod(String id,String title,String group,String hint) {}
     public record Option(String key,String label,String kind,String fallback,int min,int max,String[] choices) {}
     public static final List<Mod> MODS=List.of(
-        new Mod("fps","FPS","HUD","Frame rate"),new Mod("cps","CPS","HUD","Left and right clicks"),
+        new Mod("minimap","Minimap","HUD","Terrain and death markers"),new Mod("ping","Latency","HUD","Server round-trip latency"),new Mod("fps","FPS","HUD","Frame rate"),new Mod("cps","CPS","HUD","Left and right clicks"),
         new Mod("keystrokes","Keystrokes","HUD","Movement and mouse feedback"),new Mod("coordinates","Coordinates","HUD","Position and direction"),new Mod("armor","Armor Status","HUD","Equipment durability"),
         new Mod("crosshair","Crosshair","Visuals","Shape and color"),new Mod("particles","Particles","Visuals","Effect visibility"),
         new Mod("sprint","Auto Sprint","Controls","Sprint while moving forward"),new Mod("zoom","Zoom","Controls","A closer look"),
@@ -22,6 +22,7 @@ public final class ModOptions {
         List<Option> o=new ArrayList<>();
         if(tab.equals("Visibility")&&mod(id).group.equals("HUD"))return List.of(toggle(id+".locked","Lock position",false),toggle(id+".inChat","Show in chat",true),toggle(id+".inDebug","Show in debug screen",false));
         if(id.equals("armor")&&tab.equals("Equipment"))return List.of(toggle("armor.helmet","Helmet",true),toggle("armor.chestplate","Chestplate",true),toggle("armor.leggings","Leggings",true),toggle("armor.boots","Boots",true),toggle("armor.hand","Main hand",true),toggle("armor.offhand","Offhand",false),toggle("armor.empty","Show empty slots",false));
+        if(id.equals("minimap")&&tab.equals("Appearance"))return List.of(slider("minimap.scale","Scale %",100,50,200));
         if(tab.equals("Appearance")&&mod(id).group.equals("HUD")){
             o.add(slider(id+".scale","Scale %",100,50,200));o.add(color(id+".color","Text color","#F4F6F8"));
             o.add(toggle(id+".shadow","Text shadow",true));if(!id.equals("fps")&&!id.equals("cps")&&!id.equals("keystrokes")){o.add(toggle(id+".background","Background",true));
@@ -44,6 +45,8 @@ public final class ModOptions {
         if(id.equals("crosshair")&&tab.equals("Presets"))return o;
         if(id.equals("crosshair")&&tab.equals("Canvas")){o.add(choice("crosshair.mirror","Mirror","Off","Off","Horizontal","Both"));return o;}
         switch(id){
+            case "minimap" -> {o.add(slider("minimap.zoom","Blocks per pixel",2,1,8));o.add(toggle("minimap.deaths","Death markers",true));o.add(slider("minimap.budget","Maximum samples per tick",512,128,1024));}
+            case "ping" -> o.add(toggle("ping.label","Show ms label",true));
             case "fps" -> {o.add(toggle("fps.label","Show FPS label",true));o.add(choice("fps.interval","Refresh interval","250 ms","100 ms","250 ms","500 ms","1000 ms"));}
             case "keystrokes" -> {o.add(toggle("keystrokes.movement","Movement keys",true));o.add(toggle("keystrokes.mouse","Mouse buttons",true));o.add(toggle("keystrokes.space","Jump key",true));o.add(toggle("keystrokes.cps","Show CPS",true));o.add(toggle("keystrokes.arrows","Use arrows",false));o.add(slider("keystrokes.size","Key size",24,18,36));o.add(slider("keystrokes.gap","Key spacing",3,0,8));o.add(slider("keystrokes.fade","Release fade (ms)",180,0,500));}
             case "cps" -> {o.add(slider("cps.width","Button width",48,36,80));o.add(slider("cps.height","Button height",32,28,48));o.add(slider("cps.spacing","Button spacing",4,0,16));o.add(color("cps.pressText","Pressed text color","#FFFFFF"));o.add(choice("cps.mode","Mouse buttons","Both","Both","Left","Right"));o.add(toggle("cps.feedback","Click feedback",true));o.add(color("cps.pressColor","Pressed color","#FFFFFF"));o.add(slider("cps.pressOpacity","Pressed opacity %",35,10,100));o.add(slider("cps.fade","Fade duration (ms)",180,50,500));}

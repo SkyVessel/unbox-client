@@ -187,6 +187,21 @@ fn game_status(rt: &Runtime, a: &Value) -> Value {
         })
         .unwrap_or(Value::Null)
 }
+// Persist only display data, isolated by account. Cached presence is always offline.
+fn cached_view(v: &Value) -> Value {
+    let mut friends=v["friends"].as_array().cloned().unwrap_or_default();
+    for f in &mut friends { f["online"]=json!(false); f["state"]=json!("Offline"); }
+    json!({"connected":false,"self":v["self"],"friends":friends,"invites":[],"canInvite":false,"updated":now()})
+}
+fn cache_path(rt:&Runtime, account:&Value)->std::path::PathBuf {
+    use sha2::{Digest,Sha256};
+    rt.root.join("friends-cache").join(format!("{:x}.json",Sha256::digest(key(account).as_bytes())))
+}
+fn load_cache(rt:&Runtime, account:&Value)->Value {
+    fs::read(cache_path(rt,account)).ok().filter(|b|b.len()<2_000_000)
+        .and_then(|b|serde_json::from_slice::<Value>(&b).ok()).map(|v|cached_view(&v))
+        .unwrap_or_else(||cached_view(&Value::Null))
+}
 async fn sync(rt: &Runtime) -> Result<Value, String> {
     let io = rt.social.lock().await.io.clone();
     let _guard = io.lock().await;
@@ -248,6 +263,8 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
     state.account_key = key(&a);
     state.view = result.clone();
     drop(state);
+    let path=cache_path(rt,&a);
+    if fs::create_dir_all(path.parent().unwrap()).is_ok(){let _=atomic(&path,&serde_json::to_vec(&cached_view(&result)).unwrap());}
     if let Some(g) = game(rt) {
         let game_view = if world.is_null() {
             json!({"connected":false,"friends":[],"invites":[],"updated":now()})
@@ -292,16 +309,14 @@ fn public_view(mut v:Value)->Value{if let Some(invites)=v["invites"].as_array_mu
 #[tauri::command]
 pub async fn social_status(rt: tauri::State<'_, Runtime>) -> Result<Value, String> {
     let a = account(&rt).await.ok();
-    let s = rt.social.lock().await;
-    let mut view = if a.as_ref().is_some_and(|a| key(a) == s.account_key) {
-        s.view.clone()
-    } else {
-        Value::Null
-    };
-    drop(s);
-    if view.is_null() {
-        view = json!({"connected":false,"friends":[],"invites":[],"error":endpoint(&rt).err().unwrap_or_else(||if a.is_none(){"Choose an account to use friends".into()}else{"Connecting…".into()})})
+    let mut s = rt.social.lock().await;
+    let account_key=a.as_ref().map(key).unwrap_or_default();
+    if s.account_key!=account_key||s.view.is_null(){
+        s.view=a.as_ref().map(|a|load_cache(&rt,a)).unwrap_or_else(||cached_view(&Value::Null));
+        s.account_key=account_key;s.last_room.clear();
+        if a.is_none(){s.view["error"]=json!("Choose an account to use friends");}
     }
+    let view=s.view.clone();
     Ok(public_view(view))
 }
 #[tauri::command]
@@ -388,8 +403,10 @@ pub fn start(rt: Runtime) {
                 if let Err(e) = sync(&rt).await {
                     let current = account(&rt).await.ok();
                     let mut s = rt.social.lock().await;
-                    s.account_key = current.as_ref().map(key).unwrap_or_default();
-                    s.view = json!({"connected":false,"friends":[],"invites":[],"error":e,"updated":now()});
+                    let account_key=current.as_ref().map(key).unwrap_or_default();
+                    s.view=if account_key==s.account_key {cached_view(&s.view)}else{current.as_ref().map(|a|load_cache(&rt,a)).unwrap_or_else(||cached_view(&Value::Null))};
+                    s.account_key=account_key;
+                    s.view["error"]=json!(e);
                     if let Some(g) = game(&rt) {
                         let _ = atomic(
                             &g.join("unbox-social-view.json"),
@@ -400,4 +417,13 @@ pub fn start(rt: Runtime) {
             }
         }
     });
+}
+
+#[cfg(test)] mod cache_tests {
+ use super::*;
+ #[test] fn cached_friends_include_offline_and_strip_invitation_credentials(){
+  let v=cached_view(&json!({"self":{"id":"a","code":"123"},"friends":[{"id":"b","online":true,"accepted":1}],"invites":[{"join_secret":"secret"}],"canInvite":true,"connected":true}));
+  assert_eq!(v["friends"][0]["id"],"b");assert_eq!(v["friends"][0]["online"],false);
+  assert_eq!(v["connected"],false);assert_eq!(v["canInvite"],false);assert_eq!(v["invites"],json!([]));assert!(!v.to_string().contains("secret"));
+ }
 }

@@ -1,10 +1,5 @@
 package dev.unbox.client;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,10 +10,10 @@ import java.nio.file.*;
 import java.util.*;
 import java.io.*;
 
-public class UnboxClient implements ClientModInitializer {
+public class UnboxClient {
     public static final Properties CONFIG = new Properties();
-    private static final Path FILE=FabricLoader.getInstance().getConfigDir().resolve("unbox.properties");
-    public static KeyMapping zoomKey;
+    private static final Path FILE=Platform.configDir().resolve("unbox.properties");
+    public static KeyMapping zoomKey,mapKey;
     private static KeyMapping menuKey;
     private static int ticks;
     private static long modified=-1;
@@ -36,15 +31,17 @@ public class UnboxClient implements ClientModInitializer {
     public static void mouse(int button,int action){if(button<0||button>1)return;buttonDown[button]=action==1&&Minecraft.getInstance().screen==null;if(action==1)click(button);}
     public static float clickLight(int button){if(buttonDown[button]&&Minecraft.getInstance().screen==null)return 1;return Math.max(0,1-(System.nanoTime()-clickTime[button])/(UnboxClient.number("cps.fade",180,50,500)*1_000_000f));}
     public static void click(int button){if(Minecraft.getInstance().screen!=null||Minecraft.getInstance().player==null)return;long now=System.nanoTime();if(button>=0&&button<2)clickTime[button]=now;if(button==0)LEFT.addLast(now);if(button==1)RIGHT.addLast(now);}
-    @Override public void onInitializeClient(){
-        reload();SocialBridge.init();
-        menuKey=KeyMappingHelper.registerKeyMapping(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
-        zoomKey=KeyMappingHelper.registerKeyMapping(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
-        ClientTickEvents.END_CLIENT_TICK.register(client->{
-            if(++ticks%40==0)reload();
+    public static void initialize(){
+        reload();SocialBridge.init();MapSharing.init();Freelook.init();
+        menuKey=Platform.key(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
+        zoomKey=Platform.key(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
+        mapKey=Platform.key(new KeyMapping("key.unbox.map",GLFW.GLFW_KEY_M,KeyMapping.Category.MISC));
+        Platform.onTick(client->{
+            if(++ticks%40==0){reload();ModuleBindings.apply();}
             UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);
             while(menuKey.consumeClick())if(client.screen==null)client.setScreen(new UnboxHomeScreen(true));
             long cutoff=System.nanoTime()-1_000_000_000L;while(!LEFT.isEmpty()&&LEFT.peekFirst()<cutoff)LEFT.removeFirst();while(!RIGHT.isEmpty()&&RIGHT.peekFirst()<cutoff)RIGHT.removeFirst();
+            Freelook.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
             ClientHud.update(LEFT.size(),RIGHT.size());
             boolean held=zoomKey.isDown();if(ClientHud.value("zoom.mode","Hold").equals("Toggle")){if(held&&!zoomHeld&&client.screen==null)zoomToggled=!zoomToggled;}else zoomToggled=false;zoomHeld=held;
             if(!enabled("zoom")||client.player==null)zoomToggled=false;
@@ -55,7 +52,7 @@ public class UnboxClient implements ClientModInitializer {
                 if(client.options.chatScale().get()!=scale||client.options.chatWidth().get()!=width){client.options.chatScale().set(scale);client.options.chatWidth().set(width);client.gui.getChat().rescaleChat();}
             }else if(priorChatScale!=null){client.options.chatScale().set(priorChatScale);client.options.chatWidth().set(priorChatWidth);client.options.chatHeightFocused().set(priorChatFocused);client.options.chatHeightUnfocused().set(priorChatUnfocused);client.options.chatLineSpacing().set(priorChatSpacing);client.options.chatOpacity().set(priorChatText);priorChatScale=null;client.gui.getChat().rescaleChat();}
         });
-        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("unbox","hud"),(g,t)->drawHud(g));
+        Platform.hud(Identifier.fromNamespaceAndPath("unbox","hud"),(g,t)->drawHud(g));
         System.out.println("[Unbox] 26.1 client modules initialized");
     }
     public static void drawHud(GuiGraphicsExtractor g){ClientHud.render(g);}

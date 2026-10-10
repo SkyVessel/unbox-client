@@ -39,3 +39,8 @@ research/benchmarks/**/*.jar
 **/crash-reports/
 **/saves/
 client-mod/run/
+src-tauri/resources/unbox-client-neoforge.jar
+
+# Python caches and sanitized verification reports
+__pycache__/
+!research/verification/

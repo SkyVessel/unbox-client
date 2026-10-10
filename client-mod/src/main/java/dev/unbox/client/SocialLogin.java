@@ -3,8 +3,6 @@ package dev.unbox.client;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import dev.unbox.client.mixin.SocialLoginAccess;
-import net.fabricmc.fabric.api.networking.v1.*;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -42,23 +40,32 @@ public final class SocialLogin {
  public static void clearHost(){GRANTS.clear();QUERIES.clear();VERIFIED.clear();CLAIMS.clear();}
  public static void prepareJoin(JsonObject invite,UUID uuid,String name){JsonObject room=invite.getAsJsonObject("room");String secret=SocialBridge.text(invite,"join_secret");if(!secret.matches("[a-f0-9]{64}")||!room.has("protocol")||room.get("protocol").getAsInt()!=2)throw new IllegalArgumentException("Update Unbox on both computers");joining=new Grant(SocialBridge.text(invite,"receiver"),uuid,name,secret,SocialBridge.text(room,"id"),invite.get("expires").getAsLong());}
  public static void init(){
-  ServerLoginConnectionEvents.QUERY_START.register((h,server,sender,sync)->{
+  LoginTransport.onStart((h,server,sender,sync)->{
    if(!SocialBridge.privateAuthentication()||((SocialLoginAccess)h).unboxConnection().isMemoryConnection())return;
    try{UUID claimed=CLAIMS.remove(h);Grant g=GRANTS.values().stream().filter(x->x.uuid.equals(claimed)&&x.expires>System.currentTimeMillis()).findFirst().orElse(null);if(g==null){h.disconnect(Component.literal("Ask your friend for a new Unbox invitation."));return;}
     String nonce=UUID.randomUUID().toString(),key=keyHash(server.getKeyPair().getPublic());QUERIES.put(h,new Pending(g,nonce,key));FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeUtf(g.room,40);out.writeUtf(g.person,40);out.writeUtf(nonce,40);out.writeByteArray(proof(g.secret,"host",g.room,g.person,nonce,key));sender.sendPacket(CHANNEL,out);
    }catch(Exception e){h.disconnect(Component.literal("Private world verification failed."));}
   });
-  ServerLoginNetworking.registerGlobalReceiver(CHANNEL,(server,h,understood,buf,sync,sender)->{
+  LoginTransport.server(CHANNEL,(server,h,understood,buf,sync,sender)->{
    Pending q=QUERIES.remove(h);try{if(q==null||!understood||q.grant.expires<=System.currentTimeMillis()||GRANTS.get(q.grant.person)!=q.grant||!MessageDigest.isEqual(buf.readByteArray(32),proof(q.grant.secret,"guest",q.grant.room,q.grant.person,q.nonce,q.keyHash))||buf.isReadable())throw new IllegalArgumentException();
-    ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,q.grant.name));VERIFIED.add(h);EnvironmentSync.begin(h,sync);
+    ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,q.grant.name));VERIFIED.add(h);
+    // Invitation proves identity; retrieve signed textures for that exact UUID separately.
+    // This runs outside the render/server tick and is awaited before login completes.
+    sync.waitFor(CompletableFuture.supplyAsync(()->{
+     try{return server.services().sessionService().fetchProfile(q.grant.uuid,true);}
+     catch(Exception ignored){return null;}
+    }).completeOnTimeout(null,8,TimeUnit.SECONDS).thenAccept(result->{
+     if(result!=null&&q.grant.uuid.equals(result.profile().id()))
+      ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,q.grant.name,result.profile().properties()));
+    }));EnvironmentSync.begin(h,sync);
    }catch(Exception e){h.disconnect(Component.literal("Invalid or expired Unbox invitation."));}
   });
-  ClientLoginNetworking.registerGlobalReceiver(CHANNEL,(mc,h,buf,listener)->{
+  LoginTransport.client(CHANNEL,(mc,h,buf,listener)->{
    try{Grant g=joining;String room=buf.readUtf(40),person=buf.readUtf(40),nonce=buf.readUtf(40),key=KEYS.get(h);byte[] signed=buf.readByteArray(32);
     if(g==null||key==null||g.expires<=System.currentTimeMillis()||!g.room.equals(room)||!g.person.equals(person)||!g.uuid.equals(mc.getUser().getProfileId())||!g.name.equals(mc.getUser().getName())||buf.isReadable()||!MessageDigest.isEqual(signed,proof(g.secret,"host",room,person,nonce,key)))return CompletableFuture.completedFuture(null);
     FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeByteArray(proof(g.secret,"guest",room,person,nonce,key));joining=null;KEYS.remove(h);TRUSTED.add(h);return CompletableFuture.completedFuture(out);
    }catch(Exception e){return CompletableFuture.completedFuture(null);}
   });
-  ServerLoginConnectionEvents.DISCONNECT.register((h,server)->{QUERIES.remove(h);VERIFIED.remove(h);CLAIMS.remove(h);});
+  LoginTransport.onServerDisconnect((h,server)->{QUERIES.remove(h);VERIFIED.remove(h);CLAIMS.remove(h);});
  }
 }

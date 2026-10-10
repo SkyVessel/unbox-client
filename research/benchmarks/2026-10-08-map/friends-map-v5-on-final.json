@@ -1,0 +1,1 @@
+{"run":"friends-map-v5-on-final","samples":33472,"averageFps":743.821,"onePercentLowFps":209.049,"p95Ms":3.373,"p99Ms":3.886,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

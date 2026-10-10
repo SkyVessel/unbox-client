@@ -1,0 +1,9 @@
+{
+  "commonClassNames": 89,
+  "byteIdenticalCommonClasses": 80,
+  "neoforgeHasFabricReferences": false,
+  "artifacts": {
+    "unbox-client.jar": "17461f65c31aec3d37bc61948b1ad6094de62b71b748285d98e25ed363beb740",
+    "unbox-client-neoforge.jar": "a0999b6af7776367b17341abd904b7091f5f4762844223d133c4f1686387c13d"
+  }
+}

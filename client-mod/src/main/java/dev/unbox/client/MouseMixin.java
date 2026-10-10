@@ -18,12 +18,12 @@ public class MouseMixin {
  @Redirect(method="turnPlayer",at=@At(value="INVOKE",target="Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
  private void unboxTurn(net.minecraft.client.player.LocalPlayer player,double x,double y){
   long now=System.nanoTime();double dt=unboxTurnTime==0?.016:Math.min(.1,(now-unboxTurnTime)/1e9);unboxTurnTime=now;
-  if(freelook.freelook.FreeLookMod.isFreeLooking&&UnboxClient.enabled("freelook")){
+  if(dev.unbox.client.Freelook.active()&&UnboxClient.enabled("freelook")){
    if(dev.unbox.client.ClientHud.flag("freelook.invertX",false))x=-x;if(dev.unbox.client.ClientHud.flag("freelook.invertY",false))y=-y;
    if(dev.unbox.client.ClientHud.flag("freelook.smooth",false)){x=unboxX.getNewDeltaValue(x,Math.min(1,dt*20));y=unboxY.getNewDeltaValue(y,Math.min(1,dt*20));}else{unboxX.reset();unboxY.reset();}
   }else {unboxX.reset();unboxY.reset();}
   if(UnboxClient.zooming()&&dev.unbox.client.ClientHud.flag("zoom.adaptive",true)){double f=UnboxClient.number("zoom.factor",3,2,12);x/=f;y/=f;}
-  player.turn(x,y);
+  dev.unbox.client.Freelook.turn(player,x,y);
  }
 
  @Inject(method="onButton",at=@At("HEAD"))

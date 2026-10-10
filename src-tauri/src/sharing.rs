@@ -3,8 +3,9 @@ use serde_json::{json,Value};
 use sha2::{Digest,Sha256};
 use std::{fs,io::Read,path::Path};
 fn digest(path:&Path)->Result<String,String>{let mut f=fs::File::open(path).map_err(|_|"Missing cached mod")?;let mut sha=Sha256::new();let mut b=[0u8;65536];loop{let n=f.read(&mut b).map_err(|_|"Cannot read cached mod")?;if n==0{break}sha.update(&b[..n]);}Ok(format!("{:x}",sha.finalize()))}
+fn managed_id(id:&str)->bool{["unbox","fabric-api","sodium","lithium","ferritecore","entityculling","immediatelyfast","dynamic_fps","e4mc","freelook"].contains(&id)}
 fn entries(manifest:&Value)->Result<Vec<(String,u64)>,String>{
- if manifest["schema"]!=1||manifest["minecraft"]!="26.1"||manifest["loader"]!="fabric"||manifest["loaderVersion"]!="0.19.5"{return Err("Unsupported shared environment".into())}
+ if manifest["schema"]!=1||manifest["minecraft"]!="26.1"||!((manifest["loader"]=="fabric"&&manifest["loaderVersion"]=="0.19.5")||(manifest["loader"]=="neoforge"&&manifest["loaderVersion"]=="26.1.0.19-beta")){return Err("Unsupported shared environment".into())}
  let files=manifest["files"].as_array().ok_or("Invalid shared mod list")?;if files.len()>512{return Err("Too many shared mods".into())}
  let mut out=Vec::new();let mut ids=std::collections::HashSet::new();let mut hashes=std::collections::HashSet::new();let mut total=0;
  for e in files{let hash=e["hash"].as_str().ok_or("Missing mod checksum")?;let id=e["id"].as_str().ok_or("Missing mod id")?;let size=e["size"].as_u64().ok_or("Invalid mod size")?;if hash.len()!=64||!hash.bytes().all(|c|c.is_ascii_digit()||(b'a'..=b'f').contains(&c))||size==0||size>512*1024*1024||id.len()<2||id.len()>64||!id.bytes().all(|c|c.is_ascii_lowercase()||c.is_ascii_digit()||c==b'_'||c==b'-')||["unbox","fabric-api","sodium","lithium","ferritecore","entityculling","immediatelyfast","dynamic_fps","e4mc","freelook"].contains(&id)||!hashes.insert(hash)||!ids.insert(id){return Err("Invalid or duplicate shared mod".into())}total+=size;if total>4*1024*1024*1024u64{return Err("Shared environment exceeds 4 GB".into())}out.push((hash.to_owned(),size));}Ok(out)
@@ -15,15 +16,19 @@ pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
  let manifest=&request["manifest"];let files=entries(manifest)?;let cache=rt.root.join("shared-cache");
  // Validate every cached file before changing the active environment.
  for(hash,size)in &files{let p=cache.join(format!("{hash}.jar"));let meta=fs::symlink_metadata(&p).map_err(|_|"Shared mod download is incomplete")?;if !meta.is_file()||meta.file_type().is_symlink()||meta.len()!=*size||digest(&p)?!=*hash{return Err("Shared mod checksum failed; join again to retry".into())}
-  let mut zip=zip::ZipArchive::new(fs::File::open(&p).map_err(|_|"Cannot read downloaded mod")?).map_err(|_|"Invalid downloaded JAR")?;let metadata=zip.by_name("fabric.mod.json").map_err(|_|"Downloaded mod is not for Fabric")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let m:Value=serde_json::from_reader(metadata).map_err(|_|"Invalid mod metadata")?;let expected=manifest["files"].as_array().unwrap().iter().find(|e|e["hash"]==*hash).unwrap();if m["id"]!=expected["id"]||m["environment"]=="client"||m["environment"]=="server"{return Err("Downloaded mod metadata does not match the shared list".into())}
+  let mut zip=zip::ZipArchive::new(fs::File::open(&p).map_err(|_|"Cannot read downloaded mod")?).map_err(|_|"Invalid downloaded JAR")?;let expected=manifest["files"].as_array().unwrap().iter().find(|e|e["hash"]==*hash).unwrap();
+  if manifest["loader"]=="neoforge"{let metadata=zip.by_name("META-INF/neoforge.mods.toml").map_err(|_|"Downloaded mod is not for NeoForge")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let mut text=String::new();metadata.take(262145).read_to_string(&mut text).map_err(|_|"Invalid mod metadata")?;let m:toml::Value=toml::from_str(&text).map_err(|_|"Invalid NeoForge metadata")?;let mods=m.get("mods").and_then(|v|v.as_array()).ok_or("Missing NeoForge mod entries")?;
+   if mods.is_empty()||mods.len()>64||mods[0].get("modId").and_then(|v|v.as_str())!=expected["id"].as_str()||mods.iter().any(|v|v.get("modId").and_then(|v|v.as_str()).is_some_and(managed_id))||m.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)||mods.iter().all(|v|v.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)){return Err("Downloaded mod metadata does not match the shared list".into())}
+  }else{let metadata=zip.by_name("fabric.mod.json").map_err(|_|"Downloaded mod is not for Fabric")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let m:Value=serde_json::from_reader(metadata).map_err(|_|"Invalid mod metadata")?;if m["id"]!=expected["id"]||m["environment"]=="client"||m["environment"]=="server"{return Err("Downloaded mod metadata does not match the shared list".into())}}
+
  }
- let id=uuid::Uuid::new_v3(&host_uuid,b"Unbox shared Fabric 26.1").to_string();let dir=profile_dir(rt,&id)?;let original=profile_dir(rt,source["id"].as_str().ok_or("Missing source profile")?)?;
+ let loader=manifest["loader"].as_str().unwrap();let namespace=if loader=="neoforge"{b"Unbox shared NeoForge 26.1".as_slice()}else{b"Unbox shared Fabric 26.1".as_slice()};let id=uuid::Uuid::new_v3(&host_uuid,namespace).to_string();let dir=profile_dir(rt,&id)?;let original=profile_dir(rt,source["id"].as_str().ok_or("Missing source profile")?)?;
  fs::create_dir_all(&dir).map_err(|e|e.to_string())?;let stage=dir.join(format!(".mods-{}",uuid::Uuid::new_v4()));fs::create_dir(&stage).map_err(|e|e.to_string())?;
  let result=(||->Result<(),String>{
   // Keep only personal client-side mods. Gameplay is exactly the host manifest.
   let personal=if dir.join("profile.json").exists(){&dir}else{&original};
   let managed=crate::managed_mod_names(personal);
-  if let Ok(list)=fs::read_dir(personal.join("mods")){for e in list.flatten(){let p=e.path();if managed.contains(&e.file_name().to_string_lossy().into_owned()) {continue;}if client_only(&p){fs::copy(&p,stage.join(e.file_name())).map_err(|e|e.to_string())?;}}}
+  if let Ok(list)=fs::read_dir(personal.join("mods")){for e in list.flatten(){let p=e.path();if managed.contains(&e.file_name().to_string_lossy().into_owned()) {continue;}if client_only(&p,loader){fs::copy(&p,stage.join(e.file_name())).map_err(|e|e.to_string())?;}}}
   for(hash,size)in &files{let name=format!("{hash}.jar");let old=dir.join("mods").join(&name);let dest=stage.join(&name);let reuse=fs::symlink_metadata(&old).is_ok_and(|m|m.is_file()&&m.len()==*size)&&digest(&old).is_ok_and(|h|h==*hash);if !reuse||fs::hard_link(&old,&dest).is_err(){fs::copy(cache.join(&name),&dest).map_err(|e|e.to_string())?;}}
   // Journal the directory swap so interruption never leaves an empty active environment.
   let mods=dir.join("mods");let backup=dir.join(".mods-previous");recover(&dir)?;
@@ -32,11 +37,11 @@ pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
   if backup.exists(){fs::remove_dir_all(backup).map_err(|e|e.to_string())?;}
   Ok(())})();if result.is_err(){let _=fs::remove_dir_all(&stage);}result?;
  if !dir.join("profile.json").exists(){for rel in ["options.txt","config/unbox.properties"]{let from=original.join(rel);let to=dir.join(rel);if from.is_file(){if let Some(p)=to.parent(){fs::create_dir_all(p).map_err(|e|e.to_string())?;}fs::copy(from,to).map_err(|e|e.to_string())?;}}}
- let profile=json!({"id":id,"name":format!("Friend · {}",&host[..8]),"version":"26.1","loader":"fabric","icon":"grass_block","sharedHost":host});
+ let profile=json!({"id":id,"name":format!("Friend · {}",&host[..8]),"version":"26.1","loader":loader,"icon":"grass_block","sharedHost":host});
  atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;atomic(&dir.join("unbox-shared-manifest.json"),&serde_json::to_vec(manifest).unwrap())?;
  Ok(profile)
 }
-fn client_only(p:&Path)->bool{( ||->Option<bool>{if !fs::symlink_metadata(p).ok()?.is_file(){return None}let mut zip=zip::ZipArchive::new(fs::File::open(p).ok()?).ok()?;let f=zip.by_name("fabric.mod.json").ok()?;if f.size()>262144{return None}let m:Value=serde_json::from_reader(f).ok()?;Some(m["environment"]=="client")})().unwrap_or(false)}
+fn client_only(p:&Path,loader:&str)->bool{( ||->Option<bool>{if !fs::symlink_metadata(p).ok()?.is_file(){return None}let mut zip=zip::ZipArchive::new(fs::File::open(p).ok()?).ok()?;if loader=="neoforge"{let mut f=zip.by_name("META-INF/neoforge.mods.toml").ok()?;if f.size()>262144{return None}let mut text=String::new();f.read_to_string(&mut text).ok()?;let m:toml::Value=toml::from_str(&text).ok()?;return Some(m.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)||m.get("mods")?.as_array()?.iter().all(|v|v.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)))}let f=zip.by_name("fabric.mod.json").ok()?;if f.size()>262144{return None}let m:Value=serde_json::from_reader(f).ok()?;Some(m["environment"]=="client")})().unwrap_or(false)}
 pub fn recover(dir:&Path)->Result<(),String>{let backup=dir.join(".mods-previous");let mods=dir.join("mods");if backup.exists(){if mods.exists(){fs::remove_dir_all(backup).map_err(|e|e.to_string())?}else{fs::rename(backup,mods).map_err(|e|e.to_string())?}}Ok(())}
 pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
  let dir=profile_dir(rt,source["id"].as_str().ok_or("Missing profile")?)?;let path=dir.join("unbox-sync-request.json");if !path.exists(){return Ok(None)}let bytes=fs::read(&path).map_err(|e|e.to_string())?;fs::remove_file(path).map_err(|e|e.to_string())?;if bytes.len()>200000{return Err("Shared manifest is too large".into())}let request:Value=serde_json::from_slice(&bytes).map_err(|_|"Invalid sync completion")?;
@@ -50,6 +55,16 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
 #[cfg(test)]mod tests{
  use super::*;use std::io::Write;
  fn jar(p:&Path,id:&str,environment:&str){let mut z=zip::ZipWriter::new(fs::File::create(p).unwrap());z.start_file("fabric.mod.json",zip::write::SimpleFileOptions::default()).unwrap();write!(z,"{}",json!({"id":id,"environment":environment})).unwrap();z.finish().unwrap();}
+ #[test]fn neoforge_sync_preserves_loader_and_rejects_wrong_metadata(){
+  let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:std::sync::Arc::default(),auth:std::sync::Arc::default(),social:std::sync::Arc::default()};
+  let source=json!({"id":uuid::Uuid::new_v4().to_string(),"loader":"neoforge"});fs::create_dir_all(profile_dir(&rt,source["id"].as_str().unwrap()).unwrap().join("mods")).unwrap();fs::create_dir_all(root.join("shared-cache")).unwrap();
+  let jar=root.join("neo.jar");let mut z=zip::ZipWriter::new(fs::File::create(&jar).unwrap());z.start_file("META-INF/neoforge.mods.toml",zip::write::SimpleFileOptions::default()).unwrap();write!(z,"modLoader='javafml'\n[[mods]]\nmodId='example'\nversion='1.0'\n").unwrap();z.finish().unwrap();
+  let hash=digest(&jar).unwrap();let size=fs::metadata(&jar).unwrap().len();fs::copy(&jar,root.join(format!("shared-cache/{hash}.jar"))).unwrap();
+  let mut request=json!({"hostId":uuid::Uuid::new_v4().to_string(),"manifest":{"schema":1,"minecraft":"26.1","loader":"neoforge","loaderVersion":"26.1.0.19-beta","files":[{"hash":hash,"size":size,"id":"example"}]}});
+  let profile=apply(&rt,&source,&request).unwrap();assert_eq!(profile["loader"],"neoforge");assert_eq!(apply(&rt,&source,&request).unwrap()["id"],profile["id"]);
+  request["manifest"]["loader"]=json!("fabric");request["manifest"]["loaderVersion"]=json!("0.19.5");assert!(apply(&rt,&source,&request).is_err());request["manifest"]["files"]=json!([]);assert_ne!(apply(&rt,&source,&request).unwrap()["id"],profile["id"]);
+  fs::remove_dir_all(root).unwrap();
+ }
  #[test]fn shared_environment_is_exact_cached_and_never_overwrites_source(){
   let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:std::sync::Arc::default(),auth:std::sync::Arc::default(),social:std::sync::Arc::default()};let source=json!({"id":uuid::Uuid::new_v4().to_string()});let dir=profile_dir(&rt,source["id"].as_str().unwrap()).unwrap();fs::create_dir_all(dir.join("mods")).unwrap();fs::create_dir_all(root.join("shared-cache")).unwrap();jar(&dir.join("mods/personal.jar"),"personal","client");jar(&dir.join("mods/old-gameplay.jar"),"old","*");fs::write(dir.join("options.txt"),"personal settings").unwrap();
   let input=root.join("fixture.jar");jar(&input,"example","*");let hash=digest(&input).unwrap();let size=fs::metadata(&input).unwrap().len();fs::copy(&input,root.join("shared-cache").join(format!("{hash}.jar"))).unwrap();let mut request=json!({"hostId":uuid::Uuid::new_v4().to_string(),"manifest":{"schema":1,"minecraft":"26.1","loader":"fabric","loaderVersion":"0.19.5","files":[{"hash":hash,"size":size,"id":"example"}]}});

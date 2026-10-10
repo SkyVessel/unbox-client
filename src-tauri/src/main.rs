@@ -4,6 +4,7 @@ mod credential_cache;
 #[cfg(target_os="windows")]
 mod windows_vault;
 mod launcher;
+mod neoforge;
 mod auth;
 mod content;
 mod social;
@@ -45,7 +46,7 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<()
 #[tauri::command]
 fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String) -> Result<Value,String> {
     if version!="26.1" {return Err("Unbox Client supports Minecraft 26.1 only".into())}
-    if !["fabric","vanilla"].contains(&loader.as_str()) {return Err("This loader has not passed Unbox launch validation yet".into())}
+    if !["fabric","vanilla","neoforge"].contains(&loader.as_str()) {return Err("This loader has not passed Unbox launch validation yet".into())}
     let name=name.trim(); if name.is_empty() || name.chars().count()>48 {return Err("Use a name between 1 and 48 characters".into())}
     if !["grass_block","stone","dirt","oak_planks","bricks","tnt","gold_block","iron_block"].contains(&icon.as_str()){return Err("Unknown block icon".into())}
     let id=uuid::Uuid::new_v4().to_string(); let dir=profile_dir(&rt,&id)?;
@@ -136,5 +137,5 @@ fn main() {
             tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
         social::start(rt.clone());app.manage(rt);Ok(())
-    }).invoke_handler(tauri::generate_handler![updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_setup,auth::auth_development_setup,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
+    }).invoke_handler(tauri::generate_handler![updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
 }

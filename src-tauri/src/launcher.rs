@@ -7,7 +7,7 @@ use tauri::Manager;
 fn phase(rt:&Runtime,name:&str,progress:usize){let mut j=rt.job.lock().unwrap();j["stage"]=json!(name);j["progress"]=json!(progress);}
 fn verified(path:&Path,hash:&str)->bool{fs::read(path).map(|b|format!("{:x}",Sha1::digest(b))==hash).unwrap_or(false)}
 async fn json_get(client:&reqwest::Client,url:&str)->Result<Value,String>{client.get(url).send().await.map_err(|e|e.to_string())?.error_for_status().map_err(|e|e.to_string())?.json().await.map_err(|e|e.to_string())}
-async fn download(client:&reqwest::Client,url:&str,path:&Path,hash:Option<&str>)->Result<(),String>{
+pub(crate) async fn download(client:&reqwest::Client,url:&str,path:&Path,hash:Option<&str>)->Result<(),String>{
     if let Some(hash)=hash {if verified(path,hash){return Ok(())}}
     let parsed=reqwest::Url::parse(url).map_err(|e|e.to_string())?;
     if parsed.scheme()!="https" {return Err("Downloads must use HTTPS".into())}
@@ -27,7 +27,7 @@ pub fn allowed(v:&Value)->bool {
         pass=rule["action"]=="allow";
     }pass
 }
-fn safe_path(root:&Path,relative:&str)->Result<PathBuf,String>{let p=Path::new(relative);if p.has_root()||p.components().any(|c|matches!(c,std::path::Component::ParentDir|std::path::Component::Prefix(_))){return Err("Unsafe download path".into())}Ok(root.join(p))}
+pub(crate) fn safe_path(root:&Path,relative:&str)->Result<PathBuf,String>{let p=Path::new(relative);if p.has_root()||p.components().any(|c|matches!(c,std::path::Component::ParentDir|std::path::Component::Prefix(_))){return Err("Unsafe download path".into())}Ok(root.join(p))}
 pub fn args(values:&Value,vars:&std::collections::HashMap<&str,String>)->Vec<String>{
     let mut out=Vec::new();if let Some(values)=values.as_array(){for v in values{if !allowed(v){continue}let items=if let Some(s)=v.as_str(){vec![s.to_string()]}else if let Some(s)=v["value"].as_str(){vec![s.to_string()]}else{v["value"].as_array().map(|a|a.iter().filter_map(|v|v.as_str().map(str::to_owned)).collect()).unwrap_or_default()};for mut s in items{for(k,v)in vars{s=s.replace(&format!("${{{k}}}"),v)}out.push(s)}}}out
 }
@@ -40,7 +40,7 @@ fn java()->Result<PathBuf,String>{
     Err("Java 25 is required. Install Temurin 25, then retry.".into())
 }
 pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_only:bool,verification:bool,app:&tauri::AppHandle)->Result<(),String>{
-    if profile["version"]!="26.1"||!["fabric","vanilla"].contains(&profile["loader"].as_str().unwrap_or("")){return Err("This game version or mod loader is not supported by Unbox yet".into())}
+    if profile["version"]!="26.1"||!["fabric","vanilla","neoforge"].contains(&profile["loader"].as_str().unwrap_or("")){return Err("This game version or mod loader is not supported by Unbox yet".into())}
     let (session,local_name)=if prepare_only||(verification&&cfg!(debug_assertions)){(None,username.to_owned())}else{crate::auth::launch_account(rt).await?};
     let java=java()?;
     let client=reqwest::Client::builder().no_proxy().user_agent("UnboxClient/0.1 (local desktop launcher)").connect_timeout(Duration::from_secs(15)).timeout(Duration::from_secs(180)).build().map_err(|e|e.to_string())?;
@@ -73,7 +73,7 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
         let rel=format!("{}/{}",&hash[..2],hash);download(client,&format!("https://resources.download.minecraft.net/{rel}"),&assets.join("objects").join(rel),Some(&hash)).await?;
         let n=count.fetch_add(1,std::sync::atomic::Ordering::Relaxed)+1;phase(rt,&format!("Game assets · {n}/{total}"),30+n*45/total);Ok::<(),String>(())
     }})).buffer_unordered(12).try_collect::<Vec<_>>().await?;
-    let mut main=meta["mainClass"].as_str().ok_or("Missing entry point")?.to_string();let mut extra_jvm=vec![];
+    let mut main=meta["mainClass"].as_str().ok_or("Missing entry point")?.to_string();let mut extra_jvm=vec![];let mut extra_game=Value::Null;let mut library_root=libs.clone();
     if profile["loader"]=="fabric"{
         phase(rt,"Installing Fabric",78);let loader_path=shared.join("fabric-0.19.5.json");
         let fabric:Value=if loader_path.exists(){serde_json::from_slice(&fs::read(&loader_path).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{let v=json_get(&client,"https://meta.fabricmc.net/v2/versions/loader/26.1/0.19.5/profile/json").await?;atomic(&loader_path,&serde_json::to_vec(&v).unwrap())?;v};
@@ -92,7 +92,20 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
         migrate_managed_mods(&game,&lock)?;
         atomic(&game.join("unbox-performance-lock.json"),&serde_json::to_vec_pretty(&lock).unwrap())?;
     }
-    classpath.push(jar.to_string_lossy().to_string());
+    if profile["loader"]=="neoforge"{
+        phase(rt,"Installing NeoForge 26.1",78);
+        let neo=crate::neoforge::prepare(rt,&java,&client,&meta).await?;
+        classpath=crate::neoforge::classpath(&meta,&neo,&libs)?;
+        main=neo["mainClass"].as_str().ok_or("Missing NeoForge entry point")?.into();
+        extra_jvm.extend(neo["arguments"]["jvm"].as_array().unwrap().iter().filter_map(|v|v.as_str().map(str::to_owned)));
+        extra_game=neo["arguments"]["game"].clone();library_root=PathBuf::from(neo["libraryRoot"].as_str().unwrap());
+        let lock:Value=serde_json::from_str(include_str!("../resources/neoforge-performance-lock.json")).map_err(|e|e.to_string())?;
+        for m in lock.as_array().unwrap(){phase(rt,&format!("Installing {}",m["slug"].as_str().unwrap()),85);download(&client,m["url"].as_str().unwrap(),&safe_path(&game.join("mods"),m["filename"].as_str().unwrap())?,m["sha1"].as_str()).await?;}
+        let own=rt.resources.join("resources/unbox-client-neoforge.jar");
+        atomic(&game.join("mods/unbox-client.jar"),&fs::read(own).map_err(|_|"Unbox NeoForge module is missing from this build")?)?;
+        migrate_managed_mods(&game,&lock)?;atomic(&game.join("unbox-performance-lock.json"),&serde_json::to_vec_pretty(&lock).unwrap())?;
+    }
+    if profile["loader"]!="neoforge"{classpath.push(jar.to_string_lossy().to_string());}
     for folder in ["resourcepacks","shaderpacks","logs"]{fs::create_dir_all(game.join(folder)).map_err(|e|e.to_string())?;}
     atomic(&game.join("unbox-ready.json"),br#"{"version":"26.1","verified":true}"#)?;
     if prepare_only{return Ok(())}
@@ -100,10 +113,10 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
     let digest=session.as_ref().map(|s|s.uuid.clone()).unwrap_or_else(||md5_offline(&local_name));
     let player=session.as_ref().map(|s|s.name.as_str()).unwrap_or(&local_name);
     let vars=std::collections::HashMap::from([
-        ("natives_directory",natives.to_string_lossy().into_owned()),("launcher_name","Unbox Client".into()),("launcher_version",env!("CARGO_PKG_VERSION").into()),("classpath",classpath.join(sep)),
+        ("library_directory",library_root.to_string_lossy().into_owned()),("natives_directory",natives.to_string_lossy().into_owned()),("launcher_name","Unbox Client".into()),("launcher_version",env!("CARGO_PKG_VERSION").into()),("classpath",classpath.join(sep)),
         ("auth_player_name",player.into()),("version_name","26.1".into()),("game_directory",game.to_string_lossy().into_owned()),("assets_root",assets.to_string_lossy().into_owned()),("assets_index_name",index_id.into()),("auth_uuid",digest),
         ("auth_access_token",session.as_ref().map(|s|s.token.clone()).unwrap_or("0".into())),("clientid",session.as_ref().map(|s|s.client_id.clone()).unwrap_or_default()),("auth_xuid",session.as_ref().map(|s|s.xuid.clone()).unwrap_or_default()),("user_type",if session.as_ref().is_some_and(|s|s.token!="0"){"msa"}else{"legacy"}.into()),("version_type","release".into())]);
-    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(extra_jvm);argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));
+    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
     if argv.iter().any(|s|s.contains("${")){return Err("Unresolved launch argument".into())}
     let log=fs::File::create(game.join("logs/unbox-launch.log")).map_err(|e|e.to_string())?;
     let mut child=tokio::process::Command::new(java).args(argv).current_dir(&game).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).spawn().map_err(|e|e.to_string())?;

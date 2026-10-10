@@ -1,0 +1,1 @@
+{"run":"neo-native-025-perf-off","samples":29181,"averageFps":648.465,"onePercentLowFps":133.235,"p95Ms":3.726,"p99Ms":4.639,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

@@ -1,0 +1,2676 @@
+{
+  "sourceSha256": "569667ba54ac2f7c76956db55d1cf62838700f839ec682dce0c8f1b5024cbfbf",
+  "modules": {
+    "minimap": {
+      "General": [
+        {
+          "key": "minimap.zoom",
+          "label": "Blocks per pixel",
+          "kind": "slider",
+          "fallback": "2",
+          "min": 1,
+          "max": 8
+        },
+        {
+          "key": "minimap.deaths",
+          "label": "Death markers",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "minimap.budget",
+          "label": "Maximum samples per tick",
+          "kind": "slider",
+          "fallback": "512",
+          "min": 128,
+          "max": 1024
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "minimap.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "minimap.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "minimap.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "minimap.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "ping": {
+      "General": [
+        {
+          "key": "ping.label",
+          "label": "Show ms label",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "ping.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "ping.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.background",
+          "label": "Background",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.backgroundColor",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#191E24",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "60",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "ping.padding",
+          "label": "Padding",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 0,
+          "max": 12
+        },
+        {
+          "key": "ping.rounded",
+          "label": "Rounded corners",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "ping.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "ping.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "fps": {
+      "General": [
+        {
+          "key": "fps.label",
+          "label": "Show FPS label",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "fps.interval",
+          "label": "Refresh interval",
+          "kind": "choice",
+          "fallback": "250 ms",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "100 ms",
+            "250 ms",
+            "500 ms",
+            "1000 ms"
+          ]
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "fps.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "fps.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "fps.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "fps.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "fps.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "fps.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "cps": {
+      "General": [
+        {
+          "key": "cps.width",
+          "label": "Button width",
+          "kind": "slider",
+          "fallback": "48",
+          "min": 36,
+          "max": 80
+        },
+        {
+          "key": "cps.height",
+          "label": "Button height",
+          "kind": "slider",
+          "fallback": "32",
+          "min": 28,
+          "max": 48
+        },
+        {
+          "key": "cps.spacing",
+          "label": "Button spacing",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 0,
+          "max": 16
+        },
+        {
+          "key": "cps.pressText",
+          "label": "Pressed text color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.mode",
+          "label": "Mouse buttons",
+          "kind": "choice",
+          "fallback": "Both",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Both",
+            "Left",
+            "Right"
+          ]
+        },
+        {
+          "key": "cps.feedback",
+          "label": "Click feedback",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.pressColor",
+          "label": "Pressed color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.pressOpacity",
+          "label": "Pressed opacity %",
+          "kind": "slider",
+          "fallback": "35",
+          "min": 10,
+          "max": 100
+        },
+        {
+          "key": "cps.fade",
+          "label": "Fade duration (ms)",
+          "kind": "slider",
+          "fallback": "180",
+          "min": 50,
+          "max": 500
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "cps.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "cps.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "cps.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "cps.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "keystrokes": {
+      "General": [
+        {
+          "key": "keystrokes.movement",
+          "label": "Movement keys",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.mouse",
+          "label": "Mouse buttons",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.space",
+          "label": "Jump key",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.cps",
+          "label": "Show CPS",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.arrows",
+          "label": "Use arrows",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.size",
+          "label": "Key size",
+          "kind": "slider",
+          "fallback": "24",
+          "min": 18,
+          "max": 36
+        },
+        {
+          "key": "keystrokes.gap",
+          "label": "Key spacing",
+          "kind": "slider",
+          "fallback": "3",
+          "min": 0,
+          "max": 8
+        },
+        {
+          "key": "keystrokes.fade",
+          "label": "Release fade (ms)",
+          "kind": "slider",
+          "fallback": "180",
+          "min": 0,
+          "max": 500
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "keystrokes.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "keystrokes.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.idleColor",
+          "label": "Key background",
+          "kind": "color",
+          "fallback": "#191E24",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.opacity",
+          "label": "Key opacity %",
+          "kind": "slider",
+          "fallback": "40",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "keystrokes.pressColor",
+          "label": "Pressed background",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.pressText",
+          "label": "Pressed text",
+          "kind": "color",
+          "fallback": "#171D23",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.borderColor",
+          "label": "Border color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.border",
+          "label": "Key border",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "keystrokes.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "keystrokes.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "coordinates": {
+      "General": [
+        {
+          "key": "coordinates.direction",
+          "label": "Show direction",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.labels",
+          "label": "Show XYZ labels",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.layout",
+          "label": "Layout",
+          "kind": "choice",
+          "fallback": "Stacked",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Stacked",
+            "Single line"
+          ]
+        },
+        {
+          "key": "coordinates.decimals",
+          "label": "Decimal places",
+          "kind": "slider",
+          "fallback": "0",
+          "min": 0,
+          "max": 2
+        },
+        {
+          "key": "coordinates.biome",
+          "label": "Show biome",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.dimension",
+          "label": "Show dimension",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.nether",
+          "label": "Nether / Overworld position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "coordinates.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "coordinates.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.background",
+          "label": "Background",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.backgroundColor",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#191E24",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "60",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "coordinates.padding",
+          "label": "Padding",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 0,
+          "max": 12
+        },
+        {
+          "key": "coordinates.rounded",
+          "label": "Rounded corners",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "coordinates.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "coordinates.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "armor": {
+      "General": [
+        {
+          "key": "armor.layout",
+          "label": "Layout",
+          "kind": "choice",
+          "fallback": "Vertical",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Vertical",
+            "Horizontal"
+          ]
+        },
+        {
+          "key": "armor.format",
+          "label": "Durability",
+          "kind": "choice",
+          "fallback": "Remaining",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Remaining",
+            "Percentage",
+            "Both",
+            "Remaining / Max",
+            "Off"
+          ]
+        },
+        {
+          "key": "armor.names",
+          "label": "Item names",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.count",
+          "label": "Stack count",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.spacing",
+          "label": "Slot spacing",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 0,
+          "max": 12
+        },
+        {
+          "key": "armor.reverse",
+          "label": "Reverse order",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.bar",
+          "label": "Durability bars",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.dynamic",
+          "label": "Dynamic durability color",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.warning",
+          "label": "Warning below %",
+          "kind": "slider",
+          "fallback": "20",
+          "min": 0,
+          "max": 50
+        },
+        {
+          "key": "armor.warningColor",
+          "label": "Warning color",
+          "kind": "color",
+          "fallback": "#EF7078",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Equipment": [
+        {
+          "key": "armor.helmet",
+          "label": "Helmet",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.chestplate",
+          "label": "Chestplate",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.leggings",
+          "label": "Leggings",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.boots",
+          "label": "Boots",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.hand",
+          "label": "Main hand",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.offhand",
+          "label": "Offhand",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.empty",
+          "label": "Show empty slots",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Appearance": [
+        {
+          "key": "armor.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "armor.color",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#F4F6F8",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.background",
+          "label": "Background",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.backgroundColor",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#191E24",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "60",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "armor.padding",
+          "label": "Padding",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 0,
+          "max": 12
+        },
+        {
+          "key": "armor.rounded",
+          "label": "Rounded corners",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Visibility": [
+        {
+          "key": "armor.locked",
+          "label": "Lock position",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.inChat",
+          "label": "Show in chat",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "armor.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "crosshair": {
+      "General": [
+        {
+          "key": "crosshair.shape",
+          "label": "Shape",
+          "kind": "choice",
+          "fallback": "Cross",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Cross",
+            "Dot",
+            "T",
+            "Custom"
+          ]
+        },
+        {
+          "key": "crosshair.color",
+          "label": "Color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.size",
+          "label": "Arm length",
+          "kind": "slider",
+          "fallback": "5",
+          "min": 2,
+          "max": 20
+        },
+        {
+          "key": "crosshair.gap",
+          "label": "Center gap",
+          "kind": "slider",
+          "fallback": "2",
+          "min": 0,
+          "max": 10
+        },
+        {
+          "key": "crosshair.thickness",
+          "label": "Thickness",
+          "kind": "slider",
+          "fallback": "1",
+          "min": 1,
+          "max": 5
+        },
+        {
+          "key": "crosshair.dot",
+          "label": "Center dot",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.dotSize",
+          "label": "Dot size",
+          "kind": "slider",
+          "fallback": "1",
+          "min": 1,
+          "max": 7
+        },
+        {
+          "key": "crosshair.outline",
+          "label": "Outline",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.outlineWidth",
+          "label": "Outline thickness",
+          "kind": "slider",
+          "fallback": "1",
+          "min": 1,
+          "max": 3
+        },
+        {
+          "key": "crosshair.outlineColor",
+          "label": "Outline color",
+          "kind": "color",
+          "fallback": "#000000",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.opacity",
+          "label": "Opacity %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 10,
+          "max": 100
+        },
+        {
+          "key": "crosshair.attack",
+          "label": "Attack cooldown",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Presets": [],
+      "Canvas": [
+        {
+          "key": "crosshair.mirror",
+          "label": "Mirror",
+          "kind": "choice",
+          "fallback": "Off",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Off",
+            "Horizontal",
+            "Both"
+          ]
+        }
+      ],
+      "Behavior": [
+        {
+          "key": "crosshair.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "crosshair.rotation",
+          "label": "Rotation",
+          "kind": "slider",
+          "fallback": "0",
+          "min": -180,
+          "max": 180
+        },
+        {
+          "key": "crosshair.target",
+          "label": "Target color",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.targetColor",
+          "label": "Target color",
+          "kind": "color",
+          "fallback": "#FF7979",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.inDebug",
+          "label": "Show in debug screen",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.thirdPerson",
+          "label": "Show in third person",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "crosshair.spectator",
+          "label": "Show in spectator",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "particles": {
+      "General": [
+        {
+          "key": "particles.density",
+          "label": "Density %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "particles.crit",
+          "label": "Critical",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.smoke",
+          "label": "Smoke",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.flame",
+          "label": "Flames",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.portal",
+          "label": "Portal",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.explosion",
+          "label": "Explosions",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.block",
+          "label": "Block",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.potion",
+          "label": "Potion",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.water",
+          "label": "Water",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.enchant",
+          "label": "Enchant",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.heart",
+          "label": "Hearts",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.lava",
+          "label": "Lava",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.snow",
+          "label": "Snow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.cloud",
+          "label": "Clouds",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.totem",
+          "label": "Totem",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "Types": [
+        {
+          "key": "particles.family",
+          "label": "Particle type",
+          "kind": "choice",
+          "fallback": "Critical",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Critical",
+            "Smoke",
+            "Flames",
+            "Portal",
+            "Explosions",
+            "Block",
+            "Potion",
+            "Water",
+            "Enchant",
+            "Hearts",
+            "Lava",
+            "Snow",
+            "Clouds",
+            "Totem"
+          ]
+        },
+        {
+          "key": "particles.crit",
+          "label": "Show this type",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.crit.density",
+          "label": "Type density %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "particles.crit.size",
+          "label": "Size %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 25,
+          "max": 200
+        },
+        {
+          "key": "particles.crit.opacity",
+          "label": "Opacity %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "particles.crit.lifetime",
+          "label": "Lifetime %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 25,
+          "max": 200
+        },
+        {
+          "key": "particles.crit.tint",
+          "label": "Custom color",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "particles.crit.color",
+          "label": "Particle color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        }
+      ],
+      "families": {
+        "Critical": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.crit",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.crit.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.crit.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.crit.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.crit.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.crit.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.crit.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Smoke": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.smoke",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.smoke.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.smoke.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.smoke.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.smoke.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.smoke.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.smoke.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Flames": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.flame",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.flame.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.flame.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.flame.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.flame.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.flame.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.flame.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Portal": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.portal",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.portal.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.portal.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.portal.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.portal.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.portal.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.portal.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Explosions": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.explosion",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.explosion.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.explosion.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.explosion.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.explosion.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.explosion.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.explosion.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Block": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.block",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.block.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.block.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.block.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.block.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.block.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.block.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Potion": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.potion",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.potion.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.potion.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.potion.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.potion.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.potion.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.potion.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Water": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.water",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.water.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.water.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.water.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.water.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.water.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.water.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Enchant": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.enchant",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.enchant.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.enchant.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.enchant.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.enchant.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.enchant.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.enchant.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Hearts": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.heart",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.heart.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.heart.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.heart.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.heart.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.heart.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.heart.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Lava": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.lava",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.lava.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.lava.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.lava.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.lava.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.lava.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.lava.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Snow": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.snow",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.snow.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.snow.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.snow.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.snow.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.snow.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.snow.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Clouds": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.cloud",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.cloud.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.cloud.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.cloud.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.cloud.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.cloud.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.cloud.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ],
+        "Totem": [
+          {
+            "key": "particles.family",
+            "label": "Particle type",
+            "kind": "choice",
+            "fallback": "Critical",
+            "min": 0,
+            "max": 0,
+            "choices": [
+              "Critical",
+              "Smoke",
+              "Flames",
+              "Portal",
+              "Explosions",
+              "Block",
+              "Potion",
+              "Water",
+              "Enchant",
+              "Hearts",
+              "Lava",
+              "Snow",
+              "Clouds",
+              "Totem"
+            ]
+          },
+          {
+            "key": "particles.totem",
+            "label": "Show this type",
+            "kind": "toggle",
+            "fallback": "true",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.totem.density",
+            "label": "Type density %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.totem.size",
+            "label": "Size %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.totem.opacity",
+            "label": "Opacity %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 0,
+            "max": 100
+          },
+          {
+            "key": "particles.totem.lifetime",
+            "label": "Lifetime %",
+            "kind": "slider",
+            "fallback": "100",
+            "min": 25,
+            "max": 200
+          },
+          {
+            "key": "particles.totem.tint",
+            "label": "Custom color",
+            "kind": "toggle",
+            "fallback": "false",
+            "min": 0,
+            "max": 0
+          },
+          {
+            "key": "particles.totem.color",
+            "label": "Particle color",
+            "kind": "color",
+            "fallback": "#FFFFFF",
+            "min": 0,
+            "max": 0
+          }
+        ]
+      }
+    },
+    "sprint": {
+      "General": [
+        {
+          "key": "sprint.indicator",
+          "label": "Show sprint status",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "zoom": {
+      "General": [
+        {
+          "key": "zoom.factor",
+          "label": "Magnification",
+          "kind": "slider",
+          "fallback": "3",
+          "min": 2,
+          "max": 12
+        },
+        {
+          "key": "zoom.mode",
+          "label": "Activation",
+          "kind": "choice",
+          "fallback": "Hold",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "Hold",
+            "Toggle"
+          ]
+        },
+        {
+          "key": "zoom.smooth",
+          "label": "Smooth transition",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "zoom.duration",
+          "label": "Transition time (ms)",
+          "kind": "slider",
+          "fallback": "170",
+          "min": 50,
+          "max": 500
+        },
+        {
+          "key": "zoom.scroll",
+          "label": "Scroll to zoom",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "zoom.adaptive",
+          "label": "Adjust mouse sensitivity",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "chat": {
+      "General": [
+        {
+          "key": "chat.color",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#000000",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "chat.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "50",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "chat.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 100
+        },
+        {
+          "key": "chat.width",
+          "label": "Width %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 20,
+          "max": 100
+        },
+        {
+          "key": "chat.lines",
+          "label": "Visible lines (maximum)",
+          "kind": "slider",
+          "fallback": "20",
+          "min": 1,
+          "max": 40
+        },
+        {
+          "key": "chat.focused",
+          "label": "Open chat height %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 20,
+          "max": 100
+        },
+        {
+          "key": "chat.unfocused",
+          "label": "Closed chat height %",
+          "kind": "slider",
+          "fallback": "44",
+          "min": 10,
+          "max": 100
+        },
+        {
+          "key": "chat.spacing",
+          "label": "Line spacing %",
+          "kind": "slider",
+          "fallback": "0",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "chat.textOpacity",
+          "label": "Text opacity %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 10,
+          "max": 100
+        }
+      ]
+    },
+    "freelook": {
+      "General": [
+        {
+          "key": "freelook.invertX",
+          "label": "Invert horizontal",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "freelook.invertY",
+          "label": "Invert vertical",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "freelook.smooth",
+          "label": "Smooth camera",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "cape": {
+      "General": [
+        {
+          "key": "cape.selfOnly",
+          "label": "Only my cape",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "performance": {
+      "General": []
+    }
+  }
+}

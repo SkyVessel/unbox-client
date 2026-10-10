@@ -1,16 +1,16 @@
 //! Microsoft device authorization. Only public account metadata crosses IPC.
-use crate::{atomic, Runtime};
+use crate::Runtime;
 use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::{fs, io::Cursor, time::{Duration, Instant, SystemTime, UNIX_EPOCH}};
+use std::{io::Cursor, time::{Duration, Instant, SystemTime, UNIX_EPOCH}};
 const TOKEN: &str = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
 const DEVICE: &str = "https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode";
 const SCOPE: &str = "XboxLive.signin offline_access";
 const SERVICE: &str = "dev.unbox.client.microsoft";
 const VAULT: &str = "accounts-v2";
-// DevLogin's published development provider. Never selected implicitly or enabled in release builds.
-const DEVLOGIN: &str = "170105bd-9573-4222-b09c-6f24c3b77cd8";
+// Public application identifier shared by debug and release builds; never a secret.
+const UNBOX_CLIENT_ID: &str = "0136aeab-bc7a-41b1-988e-08bf665fd53c";
 const MAX_SKIN: usize = 1024 * 1024;
 #[derive(Default)] pub struct AuthState { pending: Option<Pending>, generation: u64 }
 struct Pending { id:String, device:String, client_id:String, expires:Instant, next:Instant, interval:u64, polling:bool }
@@ -31,15 +31,9 @@ fn client()->Result<reqwest::Client,String>{reqwest::Client::builder().no_proxy(
 fn field<'a>(v:&'a Value,k:&str)->Result<&'a str,String>{v[k].as_str().filter(|s|!s.is_empty()).ok_or_else(||format!("The account service did not return {k}"))}
 fn canonical_uuid(id:&str)->Result<String,String>{uuid::Uuid::parse_str(id).map(|u|u.simple().to_string()).map_err(|_|"Invalid Minecraft profile ID".into())}
 fn key(s:&Stored)->String{format!("{}:{}",s.client_id,s.account["uuid"].as_str().unwrap_or_default())}
-fn valid_provider(id:&str,development:bool)->Result<String,String>{
-    let id=uuid::Uuid::parse_str(id).map_err(|_|"Enter a UUID Client ID")?.to_string();
-    if id==DEVLOGIN&&!development{return Err("Development sign-in is unavailable in release builds. Configure Unbox's Client ID and sign in again.".into())}Ok(id)
-}
-fn client_id(rt:&Runtime)->Result<String,String>{
-    let v:Value=serde_json::from_slice(&fs::read(rt.root.join("auth-config.json")).map_err(|_|"Add Unbox's Microsoft Client ID in application setup.")?).map_err(|_|"Invalid account configuration")?;
-    valid_provider(field(&v,"clientId")?,cfg!(debug_assertions))
-}
-fn provider_name(id:&str)->&'static str{if id==DEVLOGIN{"DevLogin · Development"}else{"Unbox"}}
+// Ignore legacy auth-config.json so an upgrade cannot keep using another application's grants.
+fn client_id(_rt:&Runtime)->Result<String,String>{Ok(UNBOX_CLIENT_ID.into())}
+fn provider_name(id:&str)->&'static str{if id==UNBOX_CLIENT_ID{"Unbox"}else{"Previous application"}}
 fn public_account(s:&Stored,current:Option<&str>)->Value{
     let mut a=json!({"accountId":key(s),"name":s.account["name"],"uuid":s.account["uuid"],"type":"microsoft","skinModel":s.account["skinModel"],"provider":provider_name(&s.client_id),"needsSignIn":s.refresh.is_empty()||current!=Some(s.client_id.as_str())});
     for k in ["skin","skinStatus"]{if !s.account[k].is_null(){a[k]=s.account[k].clone();}}a
@@ -51,6 +45,8 @@ impl Vault {
         self.accounts.iter().find(|a|Some(key(a))==self.selected).map(|a|public_account(a,current)).unwrap_or(Value::Null)
     }
     fn upsert(&mut self,s:Stored,select:bool){let id=key(&s);self.accounts.retain(|a|key(a)!=id);self.accounts.push(s);if select{self.selected=Some(id);self.local=None;}}
+    // Replace the same Minecraft identity only after fresh Unbox authorization has succeeded.
+    fn authorize(&mut self,s:Stored){self.accounts.retain(|a|a.account["uuid"]!=s.account["uuid"]);self.upsert(s,true);}
     fn remove(&mut self,id:&str){self.unbox.retain(|s|s.account["accountId"]!=id);self.accounts.retain(|s|key(s)!=id);if self.selected.as_deref()==Some(id){self.selected=None;}}
     fn snapshot(&self,current:Option<&str>)->Value{json!({"accounts":self.accounts.iter().map(|s|public_account(s,current)).chain(self.unbox.iter().map(unbox_public)).collect::<Vec<_>>(),"account":self.selected_account(current)})}
 }
@@ -86,18 +82,7 @@ pub fn restore_account(rt:&Runtime,previous:&Value)->Result<Value,String>{
     if account.is_null()&&read_secure(VAULT)?.is_none()&&previous["type"]=="local"{let mut migrated=v;migrated.local=Some(field(previous,"name")?.to_owned());save_vault(&migrated)?;return Ok(migrated.selected_account(None))}Ok(account)
 }
 #[tauri::command]
-pub async fn auth_setup(rt:tauri::State<'_,Runtime>,client_id:String)->Result<Value,String>{
-    let id=valid_provider(&client_id,cfg!(debug_assertions))?;
-    let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;
-    atomic(&rt.root.join("auth-config.json"),&serde_json::to_vec(&json!({"clientId":id})).unwrap())?;
-    Ok(load_vault()?.snapshot(Some(&id)))
-}
-#[tauri::command]
-pub async fn auth_development_setup(rt:tauri::State<'_,Runtime>)->Result<Value,String>{
-    if !cfg!(debug_assertions){return Err("Development sign-in is unavailable in release builds".into())}auth_setup(rt,DEVLOGIN.into()).await
-}
-#[tauri::command]
-pub fn auth_info(rt:tauri::State<Runtime>)->Value{let id=client_id(&rt).ok();json!({"configured":id.is_some(),"clientId":id,"provider":id.as_deref().map(provider_name),"developmentAvailable":cfg!(debug_assertions)})}
+pub fn auth_info()->Value{json!({"configured":true,"clientId":UNBOX_CLIENT_ID,"provider":"Unbox"})}
 #[tauri::command]
 pub async fn auth_accounts(rt:tauri::State<'_,Runtime>)->Result<Value,String>{let _guard=rt.auth.lock().await;Ok(load_vault()?.snapshot(client_id(&rt).ok().as_deref()))}
 #[tauri::command]
@@ -149,7 +134,7 @@ pub async fn auth_poll(rt:tauri::State<'_,Runtime>,id:String)->Result<Value,Stri
     a.pending=None;drop(a);
     let saved=minecraft(&api,&v,&client_id).await?;
     let a=rt.auth.lock().await;if a.generation!=generation{return Err("Sign-in canceled".into())}
-    let mut vault=load_vault()?;vault.upsert(saved,true);save_vault(&vault)?;
+    let mut vault=load_vault()?;vault.authorize(saved);save_vault(&vault)?;
     let mut result=vault.snapshot(Some(&client_id));result["status"]=json!("complete");Ok(result)
 }
 async fn checked(r:reqwest::Response,stage:&str)->Result<Value,String>{
@@ -219,7 +204,7 @@ async fn refresh(api:&Api,s:&Stored)->Result<Stored,String>{
 // Must be called under rt.auth's mutex: refresh rotation, removal and uploads cannot race.
 async fn usable(rt:&Runtime,v:&mut Vault,id:&str,api:&Api)->Result<Stored,String>{
     let current=client_id(rt)?;let mut s=v.accounts.iter().find(|s|key(s)==id).cloned().ok_or("Saved account not found. Sign in again.")?;
-    if s.client_id!=current||s.refresh.is_empty(){return Err("Sign in again with the configured application to use this account.".into())}
+    if s.client_id!=current||s.refresh.is_empty(){return Err("Sign in with Microsoft again to authorize Unbox. Your previous application login cannot be reused.".into())}
     if s.expires<=now()+120{
         let tokens=match refresh(api,&s).await{Ok(t)=>t,Err(e)=>{if e.contains("Sign in again"){s.refresh.clear();s.access.clear();s.expires=0;v.upsert(s,false);save_vault(v)?;}return Err(e)}};
         // Persist the rotated refresh token even when a later Xbox/Minecraft request fails.
@@ -306,7 +291,25 @@ mod lifecycle_tests {
         v.upsert(saved(PLAYER,"app-b"),true);assert_eq!(v.accounts.len(),3);assert_eq!(v.snapshot(Some("app-b"))["accounts"][0]["needsSignIn"],true);
         let public=v.snapshot(Some("app-b")).to_string();for secret in ["refresh-private","mc-private","must-not-leak"]{assert!(!public.contains(secret));}
         v.local=Some("LocalPlayer".into());assert_eq!(v.selected_account(Some("app-b"))["type"],"local");assert_eq!(v.accounts.len(),3);
-        assert!(valid_provider(DEVLOGIN,false).is_err());assert_eq!(valid_provider(DEVLOGIN,true).unwrap(),DEVLOGIN);
+
+    }
+    #[tokio::test]
+    async fn unbox_registration_ignores_old_config_and_requires_fresh_authorization(){
+        let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());std::fs::create_dir_all(&root).unwrap();
+        let rt=Runtime{root:root.clone(),resources:root.clone(),job:std::sync::Arc::default(),auth:std::sync::Arc::default(),social:std::sync::Arc::default()};
+        assert_eq!(client_id(&rt).unwrap(),UNBOX_CLIENT_ID);
+        std::fs::write(root.join("auth-config.json"),r#"{"clientId":"170105bd-9573-4222-b09c-6f24c3b77cd8"}"#).unwrap();
+        assert_eq!(client_id(&rt).unwrap(),UNBOX_CLIENT_ID);assert_eq!(auth_info()["configured"],true);
+        let old=saved(PLAYER,"170105bd-9573-4222-b09c-6f24c3b77cd8");let mut v=Vault::default();v.upsert(old.clone(),true);
+        assert_eq!(v.selected_account(Some(UNBOX_CLIENT_ID))["needsSignIn"],true);
+        assert!(usable(&rt,&mut v,&key(&old),&Api::new().unwrap()).await.err().unwrap().contains("authorize Unbox"));
+        assert_eq!(v.accounts.len(),1);assert_eq!(v.accounts[0].refresh,"refresh-private");
+        v.upsert(saved("00000000000040008000000000000002","old-app"),false);
+        v.authorize(saved(PLAYER,UNBOX_CLIENT_ID));assert_eq!(v.accounts.len(),2);
+        let restored:Vault=serde_json::from_slice(&serde_json::to_vec(&v).unwrap()).unwrap();
+        assert_eq!(restored.selected_account(Some(UNBOX_CLIENT_ID))["needsSignIn"],false);
+        assert_eq!(restored.selected_account(Some(UNBOX_CLIENT_ID))["uuid"],PLAYER);
+        std::fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn skin_validation_decodes_pixels_and_rejects_wrong_sizes_and_legacy_slim(){
@@ -332,23 +335,23 @@ mod lifecycle_tests {
     #[tokio::test]
     async fn refresh_and_full_auth_chain_keep_tokens_in_correct_stages(){
         let(api,requests)=mock(vec![(200,json!({"access_token":"ms-new","refresh_token":"refresh-rotated"})),(200,json!({"Token":"xbox-token"})),(200,json!({"Token":"xsts-token","DisplayClaims":{"xui":[{"uhs":"hash","xid":"123"}]}})),(200,json!({"access_token":"minecraft-new","expires_in":86400})),(200,json!({"items":[{"name":"game_minecraft"}]})),(200,json!({"id":PLAYER,"name":"Fixture","skins":[]}))]).await;
-        let s=refresh(&api,&saved(PLAYER,DEVLOGIN)).await.unwrap();assert_eq!(s.refresh,"refresh-rotated");
-        let result=minecraft(&api,&json!({"access_token":s.access,"refresh_token":s.refresh}),DEVLOGIN).await.unwrap();assert_eq!(result.access,"minecraft-new");assert_eq!(result.refresh,"refresh-rotated");assert_eq!(result.account["uuid"],PLAYER);
+        let s=refresh(&api,&saved(PLAYER,UNBOX_CLIENT_ID)).await.unwrap();assert_eq!(s.refresh,"refresh-rotated");
+        let result=minecraft(&api,&json!({"access_token":s.access,"refresh_token":s.refresh}),UNBOX_CLIENT_ID).await.unwrap();assert_eq!(result.access,"minecraft-new");assert_eq!(result.refresh,"refresh-rotated");assert_eq!(result.account["uuid"],PLAYER);
         let req=requests.await.unwrap().into_iter().map(|b|String::from_utf8(b).unwrap()).collect::<Vec<_>>();
-        assert!(req[0].contains("grant_type=refresh_token"));assert!(req[0].contains(DEVLOGIN));assert!(req[1].contains("d=ms-new"));assert!(req[2].contains("xbox-token"));assert!(req[3].contains("XBL3.0 x=hash;xsts-token"));
+        assert!(req[0].contains("grant_type=refresh_token"));assert!(req[0].contains(UNBOX_CLIENT_ID));assert!(req[1].contains("d=ms-new"));assert!(req[2].contains("xbox-token"));assert!(req[3].contains("XBL3.0 x=hash;xsts-token"));
         assert!(req[4].contains("Bearer minecraft-new"));assert!(req[5].contains("Bearer minecraft-new"));assert!(!req[5].contains("refresh-rotated"));
     }
     #[tokio::test]
     async fn upload_uses_minecraft_token_and_only_returns_preview_after_confirmation(){
         let(api,request)=mock(vec![(200,json!({"id":PLAYER}))]).await;let bytes=png_skin(64,64);
-        let result=upload_skin(&api,&saved(PLAYER,DEVLOGIN),bytes.clone(),"slim").await.unwrap();assert_eq!(result["skinModel"],"slim");assert_eq!(result["skin"],format!("data:image/png;base64,{}",STANDARD.encode(&bytes)));
+        let result=upload_skin(&api,&saved(PLAYER,UNBOX_CLIENT_ID),bytes.clone(),"slim").await.unwrap();assert_eq!(result["skinModel"],"slim");assert_eq!(result["skin"],format!("data:image/png;base64,{}",STANDARD.encode(&bytes)));
         let req=request.await.unwrap().remove(0);let text=String::from_utf8_lossy(&req);assert!(text.starts_with("POST /minecraft/profile/skins"));assert!(text.contains("Bearer mc-private"));assert!(text.contains("name=\"variant\"\r\n\r\nslim"));assert!(text.contains("filename=\"skin.png\""));assert!(!text.contains("refresh-private"));assert!(req.windows(bytes.len()).any(|w|w==bytes));
-        let(api,task)=mock(vec![(200,json!({"id":"00000000000040008000000000000002"}))]).await;assert!(upload_skin(&api,&saved(PLAYER,DEVLOGIN),bytes,"classic").await.unwrap_err().contains("different account"));task.await.unwrap();
+        let(api,task)=mock(vec![(200,json!({"id":"00000000000040008000000000000002"}))]).await;assert!(upload_skin(&api,&saved(PLAYER,UNBOX_CLIENT_ID),bytes,"classic").await.unwrap_err().contains("different account"));task.await.unwrap();
     }
     #[tokio::test]
     async fn refresh_revocation_and_missing_entitlement_are_actionable(){
         let(api,t)=mock(vec![(400,json!({"error":"invalid_grant","error_description":"private details"}))]).await;
-        let e=refresh(&api,&saved(PLAYER,DEVLOGIN)).await.err().unwrap();assert!(e.contains("Sign in again"));assert!(!e.contains("private details"));t.await.unwrap();
+        let e=refresh(&api,&saved(PLAYER,UNBOX_CLIENT_ID)).await.err().unwrap();assert!(e.contains("Sign in again"));assert!(!e.contains("private details"));t.await.unwrap();
         assert!(!owns_java(&json!({"items":[{"name":"other_product"}]})));assert!(!owns_java(&json!({"items":[]})));
     }
 }

@@ -10,7 +10,7 @@ import java.util.*;
 
 /** HUD geometry is shared by the renderer, preview, and direct-manipulation editor. */
 public final class ClientHud {
-    public static final List<String> IDS=List.of("fps","cps","coordinates","armor","keystrokes");
+    public static final List<String> IDS=List.of("fps","cps","coordinates","armor","keystrokes","ping","minimap");
     private static final Map<String,List<String>> TEXT=new HashMap<>();
     private static final Map<String,Integer> TEXT_WIDTH=new HashMap<>();
     private static final EquipmentSlot[] SLOTS={EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET,EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND};
@@ -25,6 +25,9 @@ public final class ClientHud {
     public static void update(int left,int right){
         Minecraft m=Minecraft.getInstance();leftClicks=left;rightClicks=right;
         int interval=switch(value("fps.interval","250 ms")){case "100 ms"->100;case "500 ms"->500;case "1000 ms"->1000;default->250;};if(System.nanoTime()-fpsUpdate>interval*1_000_000L){TEXT.put("fps",List.of(m.getFps()+(flag("fps.label",true)?" FPS":"")));fpsUpdate=System.nanoTime();}
+        var connection=m.getConnection();var info=connection==null||m.player==null?null:connection.getPlayerInfo(m.player.getUUID());
+        TEXT.put("ping",List.of(m.hasSingleplayerServer()?"Local":info==null?"— ms":Math.max(0,info.getLatency())+(flag("ping.label",true)?" ms":"")));
+        TEXT_WIDTH.put("ping",PanelStyle.hudWidth(lines("ping").getFirst()));
         TEXT_WIDTH.put("fps",PanelStyle.hudWidth(lines("fps").getFirst()));
         if(m.player==null||System.nanoTime()-positionUpdate<100_000_000L)return;positionUpdate=System.nanoTime();
         int decimals=UnboxClient.number("coordinates.decimals",0,0,2);String f="%."+decimals+"f";
@@ -44,7 +47,7 @@ public final class ClientHud {
     public static float unit(){return Math.min(1f,2f/Minecraft.getInstance().getWindow().getGuiScale());}
     public static float scale(String id){return UnboxClient.number(id+".scale",100,50,200)/100f;}
     static int[] size(String id,boolean preview){
-        int p=UnboxClient.number(id+".padding",4,0,12);if(id.equals("keystrokes"))return KeystrokesHud.size();if(id.equals("cps")){int w=UnboxClient.number("cps.width",48,36,80);return new int[]{value("cps.mode","Both").equals("Both")?w*2+UnboxClient.number("cps.spacing",4,0,16):w,UnboxClient.number("cps.height",32,28,48)};}if(id.equals("armor")){int n=equipment(preview).size();if(n==0)return new int[]{0,0};int[] cell=armorCell(preview);return value("armor.layout","Vertical").equals("Vertical")?new int[]{p*2+cell[0],p*2+n*cell[1]}:new int[]{p*2+n*cell[0],p*2+cell[1]};}
+        int p=UnboxClient.number(id+".padding",4,0,12);if(id.equals("minimap"))return new int[]{128,128};if(id.equals("keystrokes"))return KeystrokesHud.size();if(id.equals("cps")){int w=UnboxClient.number("cps.width",48,36,80);return new int[]{value("cps.mode","Both").equals("Both")?w*2+UnboxClient.number("cps.spacing",4,0,16):w,UnboxClient.number("cps.height",32,28,48)};}if(id.equals("armor")){int n=equipment(preview).size();if(n==0)return new int[]{0,0};int[] cell=armorCell(preview);return value("armor.layout","Vertical").equals("Vertical")?new int[]{p*2+cell[0],p*2+n*cell[1]}:new int[]{p*2+n*cell[0],p*2+cell[1]};}
         var m=Minecraft.getInstance();List<String> ls=lines(id);return new int[]{TEXT_WIDTH.getOrDefault(id,60)+p*2,ls.size()*12+p*2};
     }
     static String durability(ItemStack item){int left=item.getMaxDamage()-item.getDamageValue(),pct=left*100/Math.max(1,item.getMaxDamage());return switch(value("armor.format","Remaining")){case "Percentage"->pct+"%";case "Both"->left+" ("+pct+"%)";case "Remaining / Max"->left+" / "+item.getMaxDamage();case "Off"->"";default->""+left;};}
@@ -52,15 +55,15 @@ public final class ClientHud {
     static int clicks(int button){return button==0?leftClicks:rightClicks;}
     public static Bounds bounds(String id,int width,int height,boolean preview){
         int[] sz=size(id,preview);int w=Math.round(sz[0]*scale(id)),h=Math.round(sz[1]*scale(id));float unit=unit();width=Math.round(width/unit);height=Math.round(height/unit);
-        int defaultY=switch(id){case "fps"->12;case "cps"->48;case "coordinates"->84;case "keystrokes"->320;default->164;};
-        int x=UnboxClient.number(id+".x",id.equals("keystrokes")?150:UnboxClient.number("hud.x",12,0,width),0,Math.max(0,width-w));
+        int defaultY=switch(id){case "minimap"->60;case "ping"->36;case "fps"->12;case "cps"->48;case "coordinates"->84;case "keystrokes"->320;default->164;};
+        int x=UnboxClient.number(id+".x",id.equals("minimap")?Math.max(0,width-w-12):id.equals("keystrokes")?150:UnboxClient.number("hud.x",12,0,width),0,Math.max(0,width-w));
         int y=UnboxClient.number(id+".y",defaultY,0,Math.max(0,height-h));return new Bounds(Math.round(x*unit),Math.round(y*unit),Math.round(w*unit),Math.round(h*unit));
     }
     public static void render(GuiGraphicsExtractor g){
         var m=Minecraft.getInstance();if(m.player==null||m.options.hideGui)return;
         boolean editor=m.screen instanceof UnboxScreen s&&s.isEditingHud();
         // Menus have their own live previews; HUD editor deliberately shows every module.
-        if(m.screen instanceof UnboxScreen||m.screen instanceof UnboxHomeScreen)return;
+        if(m.screen instanceof UnboxScreen||m.screen instanceof UnboxHomeScreen||m.screen instanceof WorldMap.MapScreen)return;
         for(String id:IDS){if(!editor&&!UnboxClient.enabled(id))continue;if(!editor&&m.screen instanceof ChatScreen&&!flag(id+".inChat",true))continue;if(!editor&&m.getDebugOverlay().showDebugScreen()&&!flag(id+".inDebug",false))continue;
             Bounds b=bounds(id,g.guiWidth(),g.guiHeight(),editor);draw(g,id,b.x,b.y,editor);
         }
@@ -71,7 +74,8 @@ public final class ClientHud {
         g.pose().pushMatrix();g.pose().translate(x,y);g.pose().scale(scale(id)*unit());
         if(!id.equals("fps")&&!id.equals("cps")&&!id.equals("keystrokes")&&flag(id+".background",true)){int rgb=color(id+".backgroundColor","#191E24")&0xffffff;int a=UnboxClient.number(id+".opacity",60,0,100)*255/100;PanelStyle.round(g,0,0,sz[0],sz[1],flag(id+".rounded",true)?4:0,(a<<24)|rgb);}
         int color=color(id+".color","#F4F6F8");boolean shadow=flag(id+".shadow",true);
-        if(id.equals("keystrokes")){KeystrokesHud.draw(g,preview);}
+        if(id.equals("minimap")){WorldMap.draw(g,0,0,128,false);}
+        else if(id.equals("keystrokes")){KeystrokesHud.draw(g,preview);}
         else if(id.equals("cps")){
             int bw=UnboxClient.number("cps.width",48,36,80),bh=UnboxClient.number("cps.height",32,28,48),gap=UnboxClient.number("cps.spacing",4,0,16);
             String mode=value("cps.mode","Both");int n=0;for(int button=0;button<2;button++){if(mode.equals("Left")&&button==1||mode.equals("Right")&&button==0)continue;int bx=n++*(bw+gap);float flash=UnboxClient.clickLight(button);if(!flag("cps.feedback",true))flash=0;if(flash>0)g.fill(bx,0,bx+bw,bh,((int)(flash*UnboxClient.number("cps.pressOpacity",35,10,100)*255/100)<<24)|(color("cps.pressColor","#FFFFFF")&0xffffff));g.outline(bx,0,bw,bh,0xffffffff);int text=PanelStyle.mix(color,color("cps.pressText","#FFFFFF"),flash);PanelStyle.hudCenter(g,button==0?"LCPS":"RCPS",bx+bw/2,4,text,shadow);PanelStyle.hudCenter(g,""+(button==0?leftClicks:rightClicks),bx+bw/2,bh-14,text,shadow);}

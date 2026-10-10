@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[11,)"
+license="All Rights Reserved"
+[[mods]]
+modId="unbox"
+version="0.2.6"
+displayName="Unbox Client"
+description="Personal HUD, controls, maps and private worlds."
+[[mixins]]
+config="unbox.mixins.json"
+[[dependencies.unbox]]
+modId="neoforge"
+type="required"
+versionRange="[26.1.0.19-beta,26.2)"
+side="CLIENT"
+[[dependencies.unbox]]
+modId="minecraft"
+type="required"
+versionRange="[26.1]"
+side="CLIENT"
+[[dependencies.unbox]]
+modId="e4mc"
+type="required"
+versionRange="[6.2.3,)"
+side="CLIENT"

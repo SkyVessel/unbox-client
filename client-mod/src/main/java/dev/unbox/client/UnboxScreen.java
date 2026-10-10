@@ -89,8 +89,8 @@ public class UnboxScreen extends Screen {
         bodyTop=top+101;bodyBottom=top+ph-32;refreshSettings();
     }
     private void resetDetail(){
-        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():null;
-        var cfg=freelook.freelook.FreeLookMod.config;
+        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():detail.equals("minimap")?UnboxClient.mapKey:null;
+        var cfg=Freelook.config;
         if(resetUndo.isEmpty()){
             for(String section:ModOptions.tabs(detail))for(var o:ModOptions.options(detail,section))resetUndo.put(o.key(),UnboxClient.CONFIG.getProperty(o.key(),"\u0000"));
             UnboxClient.CONFIG.forEach((k,v)->{String name=k.toString();if(name.startsWith(detail+".")&&!name.equals(detail+".x")&&!name.equals(detail+".y"))resetUndo.put(name,v.toString());});
@@ -130,14 +130,14 @@ public class UnboxScreen extends Screen {
             body(new Action(left+120,y,82,26,"Copy design",()->{minecraft.keyboardHandler.setClipboard(CrosshairPattern.share());notice="Crosshair copied";}));
             body(new Action(left+210,y,82,26,"Paste design",()->{notice=CrosshairPattern.importCode(minecraft.keyboardHandler.getClipboard())?"Crosshair imported":"Invalid Unbox crosshair code";}));y+=40;
         }
-        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook"))){
-            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:freelookKey();
+        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook")||detail.equals("minimap"))){
+            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("minimap")?UnboxClient.mapKey:freelookKey();
             if(key!=null){rows.add(new Row(y,"Keybind"));Action b=body(new Action(x+w/2,y+9,w/2-12,27,"Change keybind",()->{recording=key;notice="Press a key. Esc cancels. Delete clears.";}));b.key=key;y+=46;}
         }
         if(settingQuery.isBlank()&&detail.equals("freelook")){
-            var cfg=freelook.freelook.FreeLookMod.config;
-            rows.add(new Row(y,"Activation"));Action mode=body(new Action(x+w/2,y+9,w/2-12,27,cfg.isToggle()?"Toggle":"Hold",()->{cfg.setToggle(!cfg.isToggle());cfg.save();refreshSettings();}));y+=46;
-            rows.add(new Row(y,"Camera"));body(new Action(x+w/2,y+9,w/2-12,27,cfg.getPerspective().name().replace('_',' '),()->{cfg.nextPerspective();cfg.save();refreshSettings();}));y+=46;
+            var cfg=Freelook.config;
+            rows.add(new Row(y,"Activation"));Action mode=body(new Action(x+w/2,y+9,w/2-12,27,cfg.isToggle()?"Toggle":"Hold",()->{cfg.setToggle(!cfg.isToggle());cfg.save();UnboxClient.set("freelook.mode",cfg.isToggle()?"Toggle":"Hold");UnboxClient.save();refreshSettings();}));y+=46;
+            rows.add(new Row(y,"Camera"));body(new Action(x+w/2,y+9,w/2-12,27,cfg.getPerspective().name().replace('_',' '),()->{cfg.nextPerspective();cfg.save();UnboxClient.set("freelook.camera",cfg.getPerspective().name());UnboxClient.save();refreshSettings();}));y+=46;
         }
         maxScroll=Math.max(0,y+scroll-bodyBottom);scroll=Math.clamp(scroll,0,maxScroll);updateVisibility();
     }
@@ -154,16 +154,16 @@ public class UnboxScreen extends Screen {
     private void initPerformance(){
         int y=bodyTop-scroll;
         for(String id:List.of("sodium","lithium","immediatelyfast","entityculling","ferritecore","dynamic_fps")){
-            var mod=net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer(id);
-            rows.add(new Row(y,mod.map(m->m.getMetadata().getName()).orElse(id)));
-            body(new Action(left+pw/2,y+9,pw/2-33,27,mod.map(m->m.getMetadata().getVersion().getFriendlyString()).orElse("Not installed"),()->{})).active=false;y+=46;
+            var mod=Platform.mod(id);
+            rows.add(new Row(y,mod==null?id:mod.name()));
+            body(new Action(left+pw/2,y+9,pw/2-33,27,mod==null?"Not installed":mod.version(),()->{})).active=false;y+=46;
         }
         body(new Action(left+18,y+6,180,28,"Open video settings",this::openVideoSettings));y+=46;
         maxScroll=Math.max(0,y+scroll-bodyBottom);updateVisibility();
     }
     private void openVideoSettings(){
         // Sodium 0.8.9 exposes this factory; use its own controls instead of duplicating engine options.
-        if(net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("sodium")){
+        if(Platform.loaded("sodium")){
             try{var factory=Class.forName("net.caffeinemc.mods.sodium.client.gui.VideoSettingsScreen").getMethod("createScreen",Screen.class);minecraft.setScreen((Screen)factory.invoke(null,this));return;}
             catch(ReflectiveOperationException e){System.err.println("[Unbox] Sodium settings unavailable: "+e.getMessage());}
         }
@@ -362,7 +362,7 @@ public class UnboxScreen extends Screen {
         e=scaledMouse(e);
         if(!editing&&colorKey==null&&numberKey==null&&!detail.isEmpty()){int rw=Math.max(192,pw/3),px=left+pw-rw-18;if(e.x()>=px&&e.x()<=px+rw&&e.y()>=bodyTop&&e.y()<=bodyBottom){if(detail.equals("crosshair")){previewScene=(previewScene+1)%3;return true;}if(ClientHud.IDS.contains(detail)){startEditor();return true;}}}
         if(editing&&e.button()==0){for(String id:ClientHud.IDS.reversed()){if(ClientHud.flag(id+".locked",false))continue;var b=ClientHud.bounds(id,width,height,true);if(new ClientHud.Bounds(b.x()-3,b.y()-3,b.w()+9,b.h()+9).contains(e.x(),e.y())){selected=id;dragging=true;resizing=e.x()>b.x()+b.w()-8&&e.y()>b.y()+b.h()-8;dragX=(int)e.x()-b.x();dragY=(int)e.y()-b.y();return true;}}}
-        if(recording!=null)return true;
+        if(recording!=null){recording=null;notice="Keybind unchanged.";}
         if(!editing&&colorKey==null&&numberKey==null&&e.button()==1&&e.y()>=bodyTop&&e.y()<bodyBottom){for(var widget:content){if(!widget.isMouseOver(e.x(),e.y()))continue;ModOptions.Option o=widget instanceof Slider v?v.option:widget instanceof Choice v?v.option:widget instanceof Action v?v.option:null;if(o!=null){UnboxClient.CONFIG.remove(o.key());UnboxClient.save();notice=o.label()+" reset to default.";refreshSettings();return true;}}}
         for(var w:content)if(w.isMouseOver(e.x(),e.y())&&(e.y()<bodyTop||e.y()>bodyBottom))return false;
         return super.mouseClicked(e,doubled);
@@ -381,13 +381,14 @@ public class UnboxScreen extends Screen {
         if(numberKey!=null&&e.isConfirmation()){applyNumber();return true;}
         if(expandedChoice!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){expandedChoice=null;return true;}if(e.key()==GLFW.GLFW_KEY_DOWN||e.key()==GLFW.GLFW_KEY_UP){dropdownIndex=Math.floorMod(dropdownIndex+(e.key()==GLFW.GLFW_KEY_DOWN?1:-1),expandedChoice.option.choices().length);return true;}if(e.isConfirmation()){Choice choice=expandedChoice;expandedChoice=null;choice.choose(dropdownIndex);return true;}}
         if(recording!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){recording=null;notice="Keybind unchanged.";return true;}var candidate=e.key()==GLFW.GLFW_KEY_DELETE?InputConstants.UNKNOWN:InputConstants.Type.KEYSYM.getOrCreate(e.key());
-            if(e.key()!=GLFW.GLFW_KEY_DELETE){for(KeyMapping other:minecraft.options.keyMappings)if(other!=recording&&other.matches(e)){notice="Already assigned: "+Component.translatable(other.getName()).getString()+". Choose another key.";return true;}}
-            recording.setKey(candidate);KeyMapping.resetMapping();minecraft.options.save();recording=null;notice="Keybind saved.";return true;}
+            if(e.key()!=GLFW.GLFW_KEY_DELETE){for(KeyMapping other:minecraft.options.keyMappings)if(other!=recording&&other.matches(e)){other.setKey(InputConstants.UNKNOWN);}}
+            recording.setKey(candidate);KeyMapping.resetMapping();minecraft.options.save();UnboxClient.set(detail+".key",candidate.getValue());UnboxClient.save();recording=null;notice="Keybind saved.";return true;}
         if(e.key()==GLFW.GLFW_KEY_RIGHT_SHIFT){if(numberKey!=null||colorKey!=null||editing){onClose();return true;}UnboxClient.save();minecraft.setScreen(minecraft.level==null?parent:null);return true;}
         if(editing&&!ClientHud.flag(selected+".locked",false)){var b=ClientHud.bounds(selected,width,height,true);int dx=e.key()==GLFW.GLFW_KEY_LEFT?-1:e.key()==GLFW.GLFW_KEY_RIGHT?1:0,dy=e.key()==GLFW.GLFW_KEY_UP?-1:e.key()==GLFW.GLFW_KEY_DOWN?1:0;if(dx!=0||dy!=0){boolean previous=snap;snap=false;moveHud(b.x()+dx,b.y()+dy);snap=previous;return true;}}
         return super.keyPressed(e);
     }
     @Override public void onClose(){
+        recording=null;
         if(numberKey!=null){numberKey=null;init();return;}
         if(colorKey!=null){UnboxClient.set(colorKey.key(),colorBefore);UnboxClient.save();colorKey=null;init();return;}
         if(editing){finishEditor(false);return;}

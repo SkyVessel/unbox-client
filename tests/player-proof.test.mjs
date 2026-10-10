@@ -22,7 +22,7 @@ test('player proof requires both the trusted certificate and possession of its p
 });
 test('certificate proof cannot be replayed for another challenge, account, session token or UUID',async()=>{
  const {proof,context}=fixture();
- for(const key of ['id','tokenHash','nonce','uuid'])assert.equal(await verifyPlayerProof(proof,{...context,[key]:context[key].replace(/^./,'f')},[rootDer]),false,key);
+ for(const key of ['id','tokenHash','nonce','uuid'])assert.equal(await verifyPlayerProof(proof,{...context,[key]:(context[key][0]==='f'?'e':'f')+context[key].slice(1)},[rootDer]),false,key);
  assert.equal(await verifyPlayerProof(proof,{...context,now:context.now+3600000},[rootDer]),false,'expired');
 });
 test('modified certificates, malformed keys, oversized input and unsupported proof versions fail closed',async()=>{

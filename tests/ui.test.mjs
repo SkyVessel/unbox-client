@@ -18,7 +18,7 @@ test('profile wizard validates input, retains draft on Back, and persists only o
  await p.getByRole('button',{name:'Back',exact:true}).click();
  assert.equal(await p.getByRole('textbox',{name:'Profile name'}).inputValue(),'  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Confirm',exact:true}).click();
- assert.equal(await p.getByRole('button',{name:'Forge Integration pending',exact:true}).isDisabled(),true);assert.equal(await p.getByRole('button',{name:'NeoForge Integration pending',exact:true}).isDisabled(),true);
+ assert.equal(await p.getByRole('button',{name:'Forge Integration pending',exact:true}).isDisabled(),true);assert.equal(await p.getByRole('button',{name:'NeoForge Native client modules',exact:true}).isDisabled(),false);
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Stone',exact:true}).click();
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')||'{}').profiles?.length||0),0);
  await p.getByRole('button',{name:'Create profile',exact:true}).last().click();await p.getByRole('button',{name:'LAUNCH 26.1',exact:true}).waitFor();await p.reload();
@@ -71,7 +71,7 @@ test('Microsoft sign-in completes through IPC without storing tokens in frontend
   }};
  });
  await p.goto('http://127.0.0.1:1420');await p.getByRole('button',{name:'Sign in',exact:true}).click();await p.getByRole('button',{name:'Sign in with Microsoft',exact:true}).click();
- await p.getByText('TEST-CODE',{exact:true}).waitFor();await p.getByRole('button',{name:'Open Microsoft',exact:false}).click();
+ await p.getByText('TEST-CODE',{exact:true}).waitFor();assert.ok(await p.evaluate(()=>window.__authCalls.includes('auth_open')));assert.equal(await p.getByRole('button',{name:'Application setup'}).count(),0);
  await p.locator('.account').getByText('SkinFixture',{exact:true}).waitFor();await p.getByLabel("SkinFixture's Minecraft skin. Drag to rotate.").waitFor();
  assert.equal(await p.locator('.avatar .skin-face').count(),1);
  const result=await p.evaluate(()=>({saved:window.__saved,calls:window.__authCalls}));assert.equal(result.saved.account.type,'microsoft');assert.equal('access_token' in result.saved.account,false);assert.equal('refresh_token' in result.saved.account,false);assert.ok(result.calls.includes('auth_open'));
@@ -91,7 +91,7 @@ async function accountFixture(p){
   const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#467bac';g.fillRect(0,0,64,64);g.fillStyle='#d9a174';g.fillRect(8,8,8,8);g.clearRect(32,0,32,16);
   const a={accountId:'a',name:'AlexFixture',type:'microsoft',uuid:'00000000000040008000000000000001',skin:c.toDataURL(),skinModel:'slim',skinStatus:'ready',provider:'Unbox',needsSignIn:false};
   const b={...a,accountId:'b',name:'SteveFixture',uuid:'00000000000040008000000000000002',skinModel:'classic'};
-  window.__accounts=[a,b];window.__selected='a';window.__calls=[];window.__uploadFail=false;window.__info={configured:true,provider:'Unbox',clientId:'fixture',developmentAvailable:true};
+  window.__accounts=[a,b];window.__selected='a';window.__calls=[];window.__uploadFail=false;window.__info={configured:true,provider:'Unbox'};
   const snapshot=()=>({accounts:window.__accounts,account:window.__accounts.find(a=>a.accountId===window.__selected)||null});
   window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{window.__calls.push({cmd,args});
    if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096,minimize:false},account:snapshot().account},dataDirectory:'/test'};
@@ -100,7 +100,8 @@ async function accountFixture(p){
    if(cmd==='auth_accounts')return snapshot();
    if(cmd==='auth_select'){window.__selected=args.accountId;return snapshot();}
    if(cmd==='auth_sign_out'){window.__accounts=window.__accounts.filter(a=>a.accountId!==args.accountId);return snapshot();}
-   if(cmd==='auth_development_setup'){window.__info={...window.__info,provider:'DevLogin · Development'};window.__accounts.forEach(a=>a.needsSignIn=true);return snapshot();}
+   if(cmd==='auth_begin')return {id:'fresh',code:'NEW-UNBOX',interval:5,expiresIn:900,provider:'Unbox'};
+   if(cmd==='auth_poll')return {status:'pending'};
    if(cmd==='auth_upload_skin'){if(window.__uploadFail)throw Error('Skin upload: connection failed');Object.assign(window.__accounts.find(a=>a.accountId===args.accountId),{skin:'data:image/png;base64,'+args.pngBase64,skinModel:args.model});return snapshot();}
    if(cmd==='auth_refresh_profile')return snapshot();
    if(cmd==='save_state'){window.__saved=args.state;return;}
@@ -119,10 +120,16 @@ test('restored accounts switch immediately and removal clears only the chosen id
  await p.getByRole('button',{name:'Remove SteveFixture · Unbox'}).click();await p.locator('.account').getByText('Sign in').waitFor();
  assert.equal(await p.evaluate(()=>window.__saved.account),null);assert.equal(await p.getByLabel('Saved accounts').count(),0);await p.close();
 });
-test('provider changes preserve accounts and explicitly require new authorization',async()=>{
- const p=await browser.newPage();await accountFixture(p);await p.locator('.account').click();await p.getByRole('button',{name:'Application setup'}).click();
- await p.getByRole('button',{name:'Use DevLogin for development'}).click();await p.getByText('Sign in again',{exact:true}).first().waitFor();
- assert.equal(await p.getByText('Sign in again',{exact:true}).count(),2);assert.equal(await p.evaluate(()=>window.__saved.account.needsSignIn),true);await p.close();
+test('legacy accounts start fresh Unbox authorization without exposing application setup',async()=>{
+ const p=await browser.newPage();await accountFixture(p);
+ await p.evaluate(()=>{window.__accounts[0].needsSignIn=true;window.__accounts[0].provider='Previous application'});
+ await p.locator('.account').click();await p.getByText('Sign in again',{exact:true}).waitFor();
+ assert.equal(await p.getByRole('button',{name:'Application setup'}).count(),0);
+ assert.equal(await p.getByText('Use DevLogin for development',{exact:true}).count(),0);
+ await p.getByRole('button',{name:'Use AlexFixture · Previous application',exact:true}).click();
+ await p.getByText('NEW-UNBOX',{exact:true}).waitFor();
+ const calls=await p.evaluate(()=>window.__calls.map(c=>c.cmd));assert.ok(calls.includes('auth_begin'));assert.ok(calls.includes('auth_open'));assert.ok(!calls.includes('auth_select'));
+ await p.getByRole('button',{name:'Cancel sign-in'}).click();assert.equal(await p.evaluate(()=>window.__accounts.length),2);assert.equal(await p.evaluate(()=>window.__selected),'a');await p.close();
 });
 test('skin preview stays local until Apply; failures preserve saved skin; upload and refresh use selected identity',async()=>{
  const p=await browser.newPage({viewport:{width:1280,height:820}});await accountFixture(p);await p.getByRole('button',{name:'Skins',exact:true}).click();
@@ -210,4 +217,17 @@ test('updates are manual, recover from check errors, and cannot install while pl
  await p.evaluate(()=>{window.__gameBusy=false});await p.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Install and restart'&&!b.disabled));assert.equal(await p.evaluate(()=>window.__installs),0);
  await install.click();await p.getByRole('alert').getByText('Download or signature verification failed.',{exact:false}).waitFor();assert.equal(await p.evaluate(()=>window.__installs),1);assert.equal(await install.isDisabled(),false);
  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:'.cache/client-updates.png'});await p.close();
+});
+test('cached offline friends render while reconnecting silently',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>{window.__TAURI_INTERNALS__={invoke:async cmd=>cmd==='bootstrap'?{state:{profiles:[],selected:null,settings:{memory:4096,minimize:false},account:null},dataDirectory:'/test'}:cmd==='status'?{busy:false,stage:'Idle'}:cmd==='social_status'?{connected:false,self:{id:'me',code:'ABCD12345678'},friends:[{id:'friend',name:'OfflineFriend',code:'12345678ABCD',accepted:1,online:false,state:'Offline',kind:'microsoft'}],invites:[],error:'Connecting…'}:[]}});
+ await p.goto('http://127.0.0.1:1420');await p.getByText('OfflineFriend',{exact:true}).waitFor();assert.equal(await p.getByText('Offline',{exact:true}).count(),1);assert.equal(await p.getByText('Connecting…',{exact:true}).count(),0);assert.equal(await p.getByRole('button',{name:'Invite',exact:true}).isDisabled(),true);await p.close();
+});
+test('launcher exposes game settings across all particle families and HUD tabs',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[{id:'test',name:'Test',version:'26.1',loader:'fabric',icon:'stone'}],selected:'test',settings:{memory:4096,minimize:false},modules:{},account:null})));
+ await p.goto('http://127.0.0.1:1420');await p.getByRole('button',{name:'Client Mods',exact:true}).click();await p.getByRole('button',{name:'Particles settings',exact:true}).click();await p.getByRole('tab',{name:'Types',exact:true}).click();await p.getByLabel('Particle type',{exact:true}).selectOption('Totem');await p.locator('[data-setting="particles.totem.lifetime"] input').fill('75');await p.waitForFunction(()=>JSON.parse(localStorage.getItem('unbox-preview')).modules.test['particles.totem.lifetime']===75);assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')).modules.test['particles.totem.lifetime']),75);await p.keyboard.press('Escape');await p.getByRole('button',{name:'Armor settings',exact:true}).click();await p.getByRole('tab',{name:'Equipment',exact:true}).click();assert.equal(await p.getByRole('switch',{name:'Offhand',exact:true}).count(),1);await p.close();
+});
+
+test('NeoForge profile exposes the shared module settings and toggles',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[{id:'neo',name:'Neo',version:'26.1',loader:'neoforge',icon:'stone'}],selected:'neo',settings:{memory:4096,minimize:false},modules:{},account:null})));
+ await p.goto('http://127.0.0.1:1420');await p.getByRole('button',{name:'Client Mods',exact:true}).click();const toggle=p.getByRole('switch',{name:'Enable Minimap',exact:true});assert.equal(await toggle.isDisabled(),false);await toggle.click();await p.getByRole('button',{name:'Minimap settings',exact:true}).click();await p.getByRole('tab',{name:'General',exact:true}).waitFor();assert.equal(await p.getByText('Select a Fabric or NeoForge profile to configure in-game modules.',{exact:true}).count(),0);await p.close();
 });

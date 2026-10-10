@@ -1,0 +1,8 @@
+{
+  "result": "failed",
+  "loader": "fabric",
+  "step": 8,
+  "assertion": "Esc from a screen without a parent returns to Unbox home",
+  "cause": "setScreen(null) creates TitleScreen internally, after the existing HEAD replacement",
+  "log": ".cache/benchmarks/title-esc-before/logs/launch.log"
+}

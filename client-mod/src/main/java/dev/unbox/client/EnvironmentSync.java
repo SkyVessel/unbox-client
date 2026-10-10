@@ -2,8 +2,6 @@ package dev.unbox.client;
 
 import com.google.gson.*;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.*;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +17,7 @@ import java.util.concurrent.*;
 public final class EnvironmentSync {
  private static final Identifier CHANNEL=Identifier.fromNamespaceAndPath("unbox","environment_v1");
  private static final int CHUNK=262144;
- private static final Path ROOT=net.fabricmc.loader.api.FabricLoader.getInstance().getGameDir(),CACHE=Path.of(System.getProperty("unbox.sharedCache",ROOT.resolve("unbox-cache").toString()));
+ private static final Path ROOT=Platform.gameDir(),CACHE=Path.of(System.getProperty("unbox.sharedCache",ROOT.resolve("unbox-cache").toString()));
  private static final ExecutorService IO=Executors.newFixedThreadPool(2,Thread.ofVirtual().name("unbox-mod-sync-",0).factory());
  private static CompletableFuture<EnvironmentManifest.Snapshot> loaded;
  private static final Map<ServerLoginPacketListenerImpl,Session> HOSTS=new ConcurrentHashMap<>();
@@ -35,15 +33,15 @@ public final class EnvironmentSync {
  public static void init(){
   // Snapshot only once per game process, off the render/server threads.
   loaded=CompletableFuture.supplyAsync(()->{try{return EnvironmentManifest.scan(ROOT);}catch(Exception e){throw new CompletionException(e);}},IO);
-  ServerLoginNetworking.registerGlobalReceiver(CHANNEL,(server,h,understood,b,sync,sender)->{
+  LoginTransport.server(CHANNEL,(server,h,understood,b,sync,sender)->{
    try{if(!understood){HOSTS.remove(h);h.disconnect(Component.literal("Update Unbox on both computers to synchronize mods."));return;}Session s=HOSTS.get(h);if(s==null||!understood||!SocialLogin.verified(h)||!SocialBridge.allowed(((dev.unbox.client.mixin.SocialLoginAccess)h).unboxProfile().id())||!active(h))throw new IOException();int op=b.readUnsignedByte();
     if(op==0){if(b.isReadable())throw new IOException();HOSTS.remove(h);return;}
     if(op==2){HOSTS.remove(h);h.disconnect(Component.literal("Mods ready. Restarting Unbox to join…"));return;}
     String hash=b.readUtf(64);long offset=b.readLong();if(op!=1||b.isReadable()||!s.sizes.containsKey(hash)||offset<0||offset>=s.sizes.get(hash)||s.sent.addAndGet(CHUNK)>EnvironmentManifest.MAX_TOTAL+512L*CHUNK)throw new IOException();
-    var future=CompletableFuture.runAsync(()->{try{Path file=s.snapshot.files().get(hash);if(!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)||Files.size(file)!=s.sizes.get(hash)||Files.getLastModifiedTime(file).toMillis()!=s.modified.get(hash))throw new IOException("Host mods changed. Restart the host game.");byte[] data;try(var f=new RandomAccessFile(file.toFile(),"r")){f.seek(offset);data=new byte[(int)Math.min(CHUNK,f.length()-offset)];f.readFully(data);}FriendlyByteBuf out=buffer();out.writeByte(1);out.writeUtf(hash,64);out.writeLong(offset);out.writeByteArray(data);ServerLoginNetworking.getSender(h).sendPacket(CHANNEL,out);}catch(Exception e){HOSTS.remove(h);h.disconnect(Component.literal("Mod transfer interrupted. Ask your friend to restart and invite again."));}},IO);sync.waitFor(future);
+    var future=CompletableFuture.runAsync(()->{try{Path file=s.snapshot.files().get(hash);if(!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)||Files.size(file)!=s.sizes.get(hash)||Files.getLastModifiedTime(file).toMillis()!=s.modified.get(hash))throw new IOException("Host mods changed. Restart the host game.");byte[] data;try(var f=new RandomAccessFile(file.toFile(),"r")){f.seek(offset);data=new byte[(int)Math.min(CHUNK,f.length()-offset)];f.readFully(data);}FriendlyByteBuf out=buffer();out.writeByte(1);out.writeUtf(hash,64);out.writeLong(offset);out.writeByteArray(data);LoginTransport.sender(h).sendPacket(CHANNEL,out);}catch(Exception e){HOSTS.remove(h);h.disconnect(Component.literal("Mod transfer interrupted. Ask your friend to restart and invite again."));}},IO);sync.waitFor(future);
    }catch(Exception e){HOSTS.remove(h);h.disconnect(Component.literal("Invalid mod synchronization request."));}
   });
-  ClientLoginNetworking.registerGlobalReceiver(CHANNEL,(mc,h,b,listener)->{
+  LoginTransport.client(CHANNEL,(mc,h,b,listener)->{
    byte[] bytes=new byte[b.readableBytes()];b.readBytes(bytes);
    return CompletableFuture.supplyAsync(()->{try{if(!h.isAcceptingMessages()||!SocialLogin.trustedHost(h))throw new IOException("Unauthenticated mod source");FriendlyByteBuf in=new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes));try{int op=in.readUnsignedByte();Download d;
     if(op==0){if(GUESTS.containsKey(h))throw new IOException();d=new Download();d.invite=invitation;if(d.invite==null)throw new IOException();d.manifest=JsonParser.parseString(in.readUtf(200000)).getAsJsonObject();d.files=EnvironmentManifest.validate(d.manifest);if(in.isReadable())throw new IOException();Files.createDirectories(CACHE);var local=loaded.get();d.different=!EnvironmentManifest.hashes(local.manifest()).equals(EnvironmentManifest.hashes(d.manifest));if(!d.different){report(0,false,d.files.size());SocialBridge.message="Mods are up to date. Joining…";return buffer().writeByte(0);}GUESTS.put(h,d);
@@ -55,13 +53,13 @@ public final class EnvironmentSync {
     if(!h.isAcceptingMessages())throw new IOException("Connection cancelled");JsonObject request=new JsonObject();request.addProperty("hostId",SocialBridge.text(d.invite,"sender"));request.addProperty("inviteId",SocialBridge.text(d.invite,"id"));request.addProperty("accountUuid",mc.getUser().getProfileId().toString());request.addProperty("at",System.currentTimeMillis());request.add("manifest",d.manifest);Path tmp=ROOT.resolve("unbox-sync-request.tmp");Files.writeString(tmp,new Gson().toJson(request));Files.move(tmp,ROOT.resolve("unbox-sync-request.json"),StandardCopyOption.REPLACE_EXISTING);GUESTS.remove(h);report(d.received,true,d.files.size());SocialBridge.message="Mods synced. Restarting to join…";restart=true;return buffer().writeByte(2);
    }finally{in.release();}}catch(Exception e){cleanup(h);SocialBridge.message="Mod sync failed. Retry the invitation; completed files are cached.";mc.execute(()->((dev.unbox.client.mixin.SocialClientLoginAccess)h).unboxConnection().disconnect(Component.literal(SocialBridge.message)));return null;}},IO);
   });
-  ServerLoginConnectionEvents.DISCONNECT.register((h,s)->HOSTS.remove(h));
-  net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents.DISCONNECT.register((h,m)->{IO.submit(()->cleanup(h));});
+  LoginTransport.onServerDisconnect((h,s)->HOSTS.remove(h));
+  LoginTransport.onClientDisconnect((h,m)->{IO.submit(()->cleanup(h));});
  }
  private static void report(long bytes,boolean restart,int count)throws IOException{Files.createDirectories(ROOT.resolve("logs"));Files.writeString(ROOT.resolve("logs/environment-sync.json"),new Gson().toJson(Map.of("downloadedBytes",bytes,"restart",restart,"modCount",count)));}
  private static boolean valid(Path p,EnvironmentManifest.Entry e)throws Exception{return Files.isRegularFile(p,LinkOption.NOFOLLOW_LINKS)&&Files.size(p)==e.size()&&EnvironmentManifest.hash(p).equals(e.hash());}
  private static void cleanup(ClientHandshakePacketListenerImpl h){Download d=GUESTS.remove(h);if(d!=null)try{if(d.out!=null)d.out.close();if(d.temp!=null)Files.deleteIfExists(d.temp);}catch(IOException ignored){}}
- public static void begin(ServerLoginPacketListenerImpl h,ServerLoginNetworking.LoginSynchronizer sync){
-  var f=loaded.thenAcceptAsync(snapshot->{try{Map<String,Long>sizes=new HashMap<>(),modified=new HashMap<>();for(var e:EnvironmentManifest.validate(snapshot.manifest())){Path p=snapshot.files().get(e.hash());sizes.put(e.hash(),e.size());modified.put(e.hash(),Files.getLastModifiedTime(p).toMillis());}HOSTS.put(h,new Session(snapshot,System.currentTimeMillis(),sizes,modified,new java.util.concurrent.atomic.AtomicLong()));FriendlyByteBuf out=buffer();out.writeByte(0);out.writeUtf(new Gson().toJson(snapshot.manifest()),200000);ServerLoginNetworking.getSender(h).sendPacket(CHANNEL,out);}catch(Exception e){h.disconnect(Component.literal("Host mod list is unavailable. Restart the host game."));}},IO).exceptionally(e->{h.disconnect(Component.literal("Host mods could not be prepared for sharing."));return null;});sync.waitFor(f);
+ public static void begin(ServerLoginPacketListenerImpl h,LoginHooks.Barrier sync){
+  var f=loaded.thenAcceptAsync(snapshot->{try{Map<String,Long>sizes=new HashMap<>(),modified=new HashMap<>();for(var e:EnvironmentManifest.validate(snapshot.manifest())){Path p=snapshot.files().get(e.hash());sizes.put(e.hash(),e.size());modified.put(e.hash(),Files.getLastModifiedTime(p).toMillis());}HOSTS.put(h,new Session(snapshot,System.currentTimeMillis(),sizes,modified,new java.util.concurrent.atomic.AtomicLong()));FriendlyByteBuf out=buffer();out.writeByte(0);out.writeUtf(new Gson().toJson(snapshot.manifest()),200000);LoginTransport.sender(h).sendPacket(CHANNEL,out);}catch(Exception e){h.disconnect(Component.literal("Host mod list is unavailable. Restart the host game."));}},IO).exceptionally(e->{h.disconnect(Component.literal("Host mods could not be prepared for sharing."));return null;});sync.waitFor(f);
  }
 }
