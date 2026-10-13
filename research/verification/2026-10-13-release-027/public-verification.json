@@ -1,0 +1,20 @@
+{
+  "version": "0.2.7",
+  "anonymousDownload": true,
+  "platforms": {
+    "darwin-aarch64": {
+      "bytes": 21837463,
+      "sha256": "bd6eb587b793aeaf850bebcc2ffab2b0e29fce20a1a467754fbd4dd21cbf50a5",
+      "signatureVerified": true,
+      "tamperedPayloadRejected": true,
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.7/Unbox.Client_0.2.7_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "bytes": 12624099,
+      "sha256": "483d822e977ccdc814f36d9006a6c5514dd906b8b4bf6a49a0b6c73f6e4197cc",
+      "signatureVerified": true,
+      "tamperedPayloadRejected": true,
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.7/Unbox.Client_0.2.7_windows-x64-setup.exe"
+    }
+  }
+}

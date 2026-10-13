@@ -102,3 +102,7 @@ NeoForge 26.1 now has a separately compiled Unbox module using native key/HUD/ev
 ## 2026-10-13 · 邀请、26.1.2 与共享资源
 
 新增 26.1.2 的 Fabric/NeoForge 原生模块和独立依赖锁，保留 26.1。补齐文件/Profile 可撤销删除、目录入口、紧凑邀请通知、游戏内好友管理和未启动游戏时的自动加入。共享清单覆盖玩法 JAR、ZIP 材质包/光影包及启用选择；两加载器均完成真实双客户端首次下载、启用与零字节重入。名字徽章按可选原生通道识别，不给原版玩家加图标；未修改的 Mojang 客户端分别通过普通 LAN 加入两种加载器的 Unbox 世界。Node 40 / Rust 35 / 两加载器游戏 UI 各 130 项通过。真实微软双账号与异地/Windows 游戏测试未覆盖。完整证据与限制见 `docs/25-邀请与26.1.2共享环境.md`。本机 Cloudflare MCP 已部署房间版本支持；本轮尚未发布 GitHub Release。
+
+## 2026-10-13 · 0.2.7 已公开发布
+
+用户授权后已推送源码 main 并发布 GitHub v0.2.7/latest，包含 macOS ARM64、Windows x64 安装/更新包及四份原生游戏模块。Node 40 / macOS Rust 35 / Windows Rust 37 项通过；两平台公开匿名下载、哈希、现有公钥签名和篡改拒绝检查通过。测试者可通过 Settings → Updates 获取；发布记录和实测边界见 `docs/26-0.2.7测试更新发布.md`。这覆盖前一条“本轮尚未发布”的历史状态。

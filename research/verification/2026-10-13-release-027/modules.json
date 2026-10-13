@@ -1,0 +1,26 @@
+[
+  {
+    "name": "unbox-client.jar",
+    "bytes": 515970,
+    "sha256": "2391299cba9e5fd4c067ad8627680cf7288aac1478351dd0d1ae4fd3e0d13f6d",
+    "version": "0.2.7"
+  },
+  {
+    "name": "unbox-client-neoforge.jar",
+    "bytes": 526862,
+    "sha256": "46c344f376f549f2322130f09fb4725cd79cdbbcf4c72b3984aabddbb7300c93",
+    "version": "0.2.7"
+  },
+  {
+    "name": "unbox-client-26.1.2.jar",
+    "bytes": 515971,
+    "sha256": "c947098890e573968ac60d4b9a52cff5951c9f59aa7f9d99d84c5ccec943654d",
+    "version": "0.2.7"
+  },
+  {
+    "name": "unbox-client-neoforge-26.1.2.jar",
+    "bytes": 526863,
+    "sha256": "b516d035c38b291a696b3b466ddba7a1a8a95c2d9b5c8dcd47bf8d86ca128982",
+    "version": "0.2.7"
+  }
+]
