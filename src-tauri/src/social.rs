@@ -322,11 +322,25 @@ pub async fn social_status(rt: tauri::State<'_, Runtime>) -> Result<Value, Strin
 #[tauri::command]
 pub async fn social_action(
     rt: tauri::State<'_, Runtime>,
+    app: tauri::AppHandle,
     op: String,
     id: String,
 ) -> Result<Value, String> {
+    if op=="join" && rt.job.lock().unwrap()["busy"]!=true {
+        sync(&rt).await?;
+        let _guard=rt.auth.lock().await;
+        let a=auth::restore_account(&rt,&Value::Null)?;
+        let uuid=a["uuid"].as_str().filter(|s|!s.is_empty()).ok_or("Sign in before joining")?;
+        let view=rt.social.lock().await.view.clone();
+        let profile={let mut job=rt.job.lock().unwrap();if job["busy"]==true{return Err("A game started while preparing this invitation. Please try Join again.".into())}
+            let profile=crate::sharing::invite_profile(&rt,&view,&id,uuid)?;
+            *job=json!({"busy":true,"stage":"Preparing friend’s world","profileId":profile["id"]});profile};
+        let settings:Value=fs::read(rt.root.join("state.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).unwrap_or(Value::Null);
+        crate::run_profile(rt.inner().clone(),app,profile,"Player".into(),settings["settings"]["memory"].as_u64().unwrap_or(4096)as u32,false);
+        return Ok(public_view(view));
+    }
     if op == "invite" || op == "join" {
-        let g = game(&rt).ok_or("Launch a Fabric profile first")?;
+        let g = game(&rt).ok_or("Wait for the game to finish preparing")?;
         let a = account(&rt).await?;
         let world = game_status(&rt, &a);
         if world.is_null() {

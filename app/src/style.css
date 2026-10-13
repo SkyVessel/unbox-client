@@ -27,3 +27,18 @@
 .updates .release-notes{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto;color:var(--muted);line-height:1.5}.updates progress{width:100%;margin-top:20px}.updates .setting{gap:20px}.updates .secondary{white-space:nowrap}
 
 .mod-settings-catalogue .filters{margin:16px 0;flex-wrap:wrap}.settings-search{width:100%;padding:12px;background:#ffffff08;border:0;border-radius:8px;color:var(--text)}.option-number{width:100px}.crosshair-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.crosshair-presets button{flex-direction:column;padding:15px 5px}.crosshair-pixels{display:grid;grid-template-columns:repeat(15,3px);grid-template-rows:repeat(15,3px)}.crosshair-pixels i.lit{background:white}.crosshair-editor{display:grid;grid-template-columns:repeat(15,16px);gap:1px;justify-content:center;margin:24px auto}.crosshair-editor button{width:16px;height:16px;border:0;padding:0;background:#ffffff10}.crosshair-editor button.lit{background:#eee}
+
+/* Quiet file actions; removals are reversible and never destroy worlds. */
+.file-card{position:relative;padding-right:42px}.file-remove{position:absolute;right:8px;top:12px;color:var(--muted)}
+.file-remove:hover,.danger-icon:hover{color:#ff9098;background:#d95d7020}.file-remove:disabled{opacity:.3}
+.removed-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 2px;font-size:13px}.removed-notice span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recovery-toast{position:fixed;bottom:20px;left:90px;z-index:45;display:flex;align-items:center;gap:14px;padding:12px 16px;background:#303239;border-radius:12px;box-shadow:0 8px 30px #0005}
+.destructive{background:#9e4552!important}.profile-rail>.icon-btn{flex-shrink:0}
+.invitation-stack{position:fixed;z-index:50;right:16px;bottom:16px;width:min(276px,calc(100vw - 32px));display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.invitation-popup{pointer-events:auto;background:#24262ef2;backdrop-filter:blur(20px);border-radius:7px;padding:5px 7px;box-shadow:0 4px 16px #0004;display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:6px;transform-origin:bottom right;animation:invitation-pop .45s both}
+.invitation-face{width:22px;height:22px;display:grid;place-items:center;color:#c9cdd5}.invitation-face img{width:22px;height:22px;image-rendering:pixelated;border-radius:3px}.invitation-face svg{width:20px;height:20px}
+.invitation-copy{min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.1}.invitation-copy strong{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.invitation-copy span{font-size:10px;color:#aeb3bc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.invitation-actions{display:flex;gap:4px}.invitation-actions button{min-height:0;height:24px;padding:3px 6px;font-size:10px;line-height:1;border-radius:4px}.invitation-popup .error{grid-column:1/-1;margin:0}
+@keyframes invitation-pop{0%{opacity:0;transform:translateY(28px) scale(.85)}55%{opacity:1;transform:translateY(-4px) scale(1.035,.985)}78%{transform:translateY(1px) scale(.99,1.015)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.reduced-motion .invitation-popup{animation:none}.opaque .invitation-popup{backdrop-filter:none;background:#24262e}
+@media(prefers-reduced-motion:reduce){.invitation-popup{animation:none}}

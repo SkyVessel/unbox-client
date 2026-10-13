@@ -12,7 +12,7 @@ public final class Platform {
  public record Mod(String name,String version){}
  public static Path gameDir(){return FabricLoader.getInstance().getGameDir();}
  public static Path configDir(){return FabricLoader.getInstance().getConfigDir();}
- public static String loader(){return "fabric";}public static String loaderVersion(){return "0.19.5";}
+ public static String loader(){return "fabric";}public static String loaderVersion(){return FabricLoader.getInstance().getModContainer("fabricloader").orElseThrow().getMetadata().getVersion().getFriendlyString();}
  public static boolean loaded(String id){return FabricLoader.getInstance().isModLoaded(id);}
  public static Mod mod(String id){return FabricLoader.getInstance().getModContainer(id).map(m->new Mod(m.getMetadata().getName(),m.getMetadata().getVersion().getFriendlyString())).orElse(null);}
  public static KeyMapping key(KeyMapping k){return KeyMappingHelper.registerKeyMapping(k);}

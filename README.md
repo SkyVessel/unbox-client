@@ -2,15 +2,15 @@
 
 **A Minecraft Java client focused on survival quality-of-life mods, performance optimization, and easier multiplayer with friends.**
 
-Unbox Client combines a desktop launcher with an in-game Fabric client module for **Minecraft Java 26.1**. The goal is to make survival play smoother and help friends share a consistent modded setup without manually matching every file. The interface is English; product and research documents are Chinese.
+Unbox Client combines a desktop launcher with native Fabric and NeoForge in-game modules for **Minecraft Java 26.1 / 26.1.2**. The goal is to make survival play smoother and help friends share a consistent modded setup without manually matching every file. The interface is English; product and research documents are Chinese.
 
-**Status: early testing release, under active development.** Local launcher and client-mod functionality are implemented. Friend accounts and invitations are deployed on Cloudflare Free. LAN-first joining with e4mc fallback passed a two-instance test on one Mac; Fabric gameplay-JAR synchronization now caches differences in separate friend profiles. Independent-network testing and full modpack/configuration synchronization remain outstanding. See [implementation status](IMPLEMENTATION.md) for verification and limitations. No FPS advantage over other clients is claimed.
+**Status: early testing release, under active development.** Local launcher and client-mod functionality are implemented. Friend accounts and invitations are deployed on Cloudflare Free. LAN-first joining with e4mc fallback passed a two-instance test on one Mac; Fabric / NeoForge shared environments cache gameplay JARs and ZIP resource/shader packs in separate friend profiles. Independent-network testing and full modpack/configuration synchronization remain outstanding. See [implementation status](IMPLEMENTATION.md) for verification and limitations. No FPS advantage over other clients is claimed.
 
 ## Focus
 
 - **Survival quality of life:** armor durability, coordinates and direction, configurable HUDs, zoom, auto sprint, chat controls, crosshair customization, and particle settings.
 - **Performance:** a pinned optimization-mod stack, including Sodium, Lithium, ImmediatelyFast, EntityCulling, FerriteCore, and DynamicFPS, with repeatable frame-time measurements. Frame pacing still needs improvement.
-- **Simple multiplayer (in development):** invite friends, prepare matching gameplay mods, and join with fewer setup steps while keeping personal HUD and visual preferences separate.
+- **Simple multiplayer (in development):** invite friends, prepare matching gameplay mods, and join with fewer setup steps while keeping personal HUD and key bindings separate.
 - **An integrated client:** profile management, a branded game menu, and a compact Right Shift panel with per-mod settings and draggable HUDs.
 
 ## Microsoft / Minecraft account integration
@@ -41,7 +41,7 @@ The macOS bundle is written to `src-tauri/target/debug/bundle/macos/Unbox Client
 
 - `app/src`: React interface and native bridge.
 - `src-tauri/src`: profile persistence, verified downloads and game process management.
-- `client-mod`: Fabric client module sources for 26.1.
+- `client-mod`: Shared client-module sources with native Fabric / NeoForge integrations for 26.1 and 26.1.2.
 - `src-tauri/resources/performance-lock.json`: exact upstream mod versions, download URLs and checksums.
 - `cloudflare`: deployed friends/invite Worker and D1 schema, plus a separate undeployed manifest API draft.
 - `design`: design records and tokens. Local Pen files, exports and third-party reference media are excluded from the public repository.

@@ -5,8 +5,10 @@ mod credential_cache;
 mod windows_vault;
 mod launcher;
 mod neoforge;
+mod versions;
 mod auth;
 mod content;
+mod removal;
 mod social;
 mod updates;
 mod sharing;
@@ -39,13 +41,15 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<()
     for p in state["profiles"].as_array().unwrap() {profile_dir(&rt,p["id"].as_str().ok_or("Missing ID")?)?;}
     let _guard=rt.auth.lock().await;
     state["account"]=auth::restore_account(&rt,&state["account"])?;
+    state["profiles"].as_array_mut().unwrap().retain(|p|profile_dir(&rt,p["id"].as_str().unwrap()).is_ok_and(|d|d.join("profile.json").is_file()));
+    if !state["profiles"].as_array().unwrap().iter().any(|p|p["id"]==state["selected"]){state["selected"]=state["profiles"].get(0).map(|p|p["id"].clone()).unwrap_or(Value::Null)}
     // A settings write queued before sync finished must not erase the new friend profile.
     if let Ok(bytes)=fs::read(rt.root.join("state.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){if let Some(existing)=saved["profiles"].as_array(){let profiles=state["profiles"].as_array_mut().unwrap();for p in existing{if p["sharedHost"].is_string()&&!profiles.iter().any(|v|v["id"]==p["id"]){profiles.push(p.clone());}}}}}
     atomic(&rt.root.join("state.json"),serde_json::to_vec_pretty(&state).map_err(|e|e.to_string())?.as_slice())
 }
 #[tauri::command]
 fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String) -> Result<Value,String> {
-    if version!="26.1" {return Err("Unbox Client supports Minecraft 26.1 only".into())}
+    if !versions::supported(&version) {return Err("Unsupported Minecraft version".into())}
     if !["fabric","vanilla","neoforge"].contains(&loader.as_str()) {return Err("This loader has not passed Unbox launch validation yet".into())}
     let name=name.trim(); if name.is_empty() || name.chars().count()>48 {return Err("Use a name between 1 and 48 characters".into())}
     if !["grass_block","stone","dirt","oak_planks","bricks","tnt","gold_block","iron_block"].contains(&icon.as_str()){return Err("Unknown block icon".into())}
@@ -79,17 +83,23 @@ fn read_modules(rt: tauri::State<Runtime>, id:String)->Result<Value,String>{Ok(V
 fn status(rt: tauri::State<Runtime>) -> Value {rt.job.lock().unwrap().clone()}
 #[tauri::command]
 fn start_game(rt: tauri::State<Runtime>, app: tauri::AppHandle, id: String, username: String, memory: u32, prepare_only: bool) -> Result<(),String> {
+    launch_profile(rt.inner().clone(),app,id,username,memory,prepare_only)
+}
+pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:String,memory:u32,prepare_only:bool)->Result<(),String>{
+    let rt=&runtime;
     if username.is_empty()||username.len()>16||!username.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_'){return Err("Local name must be 1–16 letters, numbers or underscores".into())}
     let dir=profile_dir(&rt,&id)?;
     let profile:Value=serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
     {let mut job=rt.job.lock().unwrap();if job["busy"]==true{return Err("A game or preparation is already running".into())}*job=json!({"busy":true,"stage":"Checking files","progress":0,"profileId":id});}
-    let runtime=rt.inner().clone();
+    run_profile(runtime,app,profile,username,memory,prepare_only);Ok(())
+}
+pub fn run_profile(runtime:Runtime,app:tauri::AppHandle,profile:Value,username:String,memory:u32,prepare_only:bool){
     tauri::async_runtime::spawn(async move {
         let mut current=profile.clone();
         let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,&app).await?;if prepare_only{return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
         let mut job=runtime.job.lock().unwrap();
         *job=match result {Ok(_)=>json!({"busy":false,"stage":if prepare_only{"Ready"}else{"Game closed"},"progress":100,"profileId":current["id"]}),Err(e)=>json!({"busy":false,"stage":"Failed","error":e,"profileId":current["id"]})};
-    }); Ok(())
+    });
 }
 #[tauri::command]
 async fn list_content(rt: tauri::State<'_,Runtime>, id: String, kind: String) -> Result<Value,String> {
@@ -120,6 +130,13 @@ fn open_folder(rt: tauri::State<Runtime>, id: Option<String>) -> Result<(),Strin
     std::process::Command::new(program).arg(p).spawn().map_err(|e|e.to_string())?;Ok(())
 }
 fn main() {
+    #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--prepare-invite-fixture") {
+        let args:Vec<String>=std::env::args().collect();let root=PathBuf::from(&args[2]);assert!(root.to_string_lossy().contains("/.cache/"),"Fixture root only");
+        let rt=Runtime{root:root.clone(),resources:root.clone(),job:Arc::default(),auth:Arc::default(),social:Arc::default()};
+        let view:Value=serde_json::from_slice(&fs::read(&args[3]).unwrap()).unwrap();
+        match sharing::invite_profile(&rt,&view,&args[4],&args[5]){Ok(p)=>println!("{}",p),Err(e)=>{eprintln!("{}",e);std::process::exit(1)}}return;
+    }
+
     #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--apply-sync-fixture") {
         let args:Vec<String>=std::env::args().collect();let root=PathBuf::from(&args[2]);assert!(root.to_string_lossy().contains("/.cache/"),"Fixture root only");
         let rt=Runtime{root:root.clone(),resources:root.clone(),job:Arc::default(),auth:Arc::default(),social:Arc::default()};
@@ -137,5 +154,5 @@ fn main() {
             tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
         social::start(rt.clone());app.manage(rt);Ok(())
-    }).invoke_handler(tauri::generate_handler![updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
+    }).invoke_handler(tauri::generate_handler![updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
 }

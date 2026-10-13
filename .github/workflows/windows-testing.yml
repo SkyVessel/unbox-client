@@ -5,12 +5,18 @@ on:
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.6
+        default: v0.2.7
       neoforge_module_sha256:
         description: Expected SHA-256 of unbox-client-neoforge.jar
         required: true
       module_sha256:
         description: Expected SHA-256 of unbox-client.jar
+        required: true
+      module_2612_sha256:
+        description: Expected SHA-256 of unbox-client-26.1.2.jar
+        required: true
+      neoforge_2612_sha256:
+        description: Expected SHA-256 of unbox-client-neoforge-26.1.2.jar
         required: true
 permissions:
   # GitHub restricts draft release downloads to tokens with push access.
@@ -30,6 +36,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.release_tag }}
+          MODULE_2612_SHA256: ${{ inputs.module_2612_sha256 }}
+          NEOFORGE_2612_SHA256: ${{ inputs.neoforge_2612_sha256 }}
           MODULE_SHA256: ${{ inputs.module_sha256 }}
           NEOFORGE_MODULE_SHA256: ${{ inputs.neoforge_module_sha256 }}
         run: |
@@ -42,6 +50,13 @@ jobs:
           gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern unbox-client-neoforge.jar --dir src-tauri/resources
           if ($LASTEXITCODE -ne 0) { throw 'NeoForge module download failed' }
           if ((Get-FileHash src-tauri/resources/unbox-client-neoforge.jar -Algorithm SHA256).Hash.ToLower() -ne $env:NEOFORGE_MODULE_SHA256) { throw 'NeoForge module checksum mismatch' }
+          foreach ($entry in @(@('unbox-client-26.1.2.jar', $env:MODULE_2612_SHA256), @('unbox-client-neoforge-26.1.2.jar', $env:NEOFORGE_2612_SHA256))) {
+            $filename = $entry[0]; $digest = $entry[1]
+            if ($digest -notmatch '^[a-f0-9]{64}$') { throw 'Invalid 26.1.2 module digest' }
+            gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern $filename --dir src-tauri/resources
+            if ($LASTEXITCODE -ne 0) { throw '26.1.2 module download failed' }
+            if ((Get-FileHash "src-tauri/resources/$filename" -Algorithm SHA256).Hash.ToLower() -ne $digest) { throw '26.1.2 module checksum mismatch' }
+          }
       - run: npm ci
       - name: Prepare Windows icon
         run: npm run tauri -- icon src-tauri/icons/icon.png --output src-tauri/icons

@@ -44,3 +44,6 @@ src-tauri/resources/unbox-client-neoforge.jar
 # Python caches and sanitized verification reports
 __pycache__/
 !research/verification/
+
+src-tauri/resources/unbox-client-26.1.2.jar
+src-tauri/resources/unbox-client-neoforge-26.1.2.jar

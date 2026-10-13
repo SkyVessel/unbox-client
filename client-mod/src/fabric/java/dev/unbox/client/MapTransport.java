@@ -6,12 +6,16 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.level.ServerPlayer;
 final class MapTransport {
  static void init(){
+  PayloadTypeRegistry.clientboundPlay().register(NameBadges.Packet.TYPE,NameBadges.Packet.CODEC);
+  ClientPlayNetworking.registerGlobalReceiver(NameBadges.Packet.TYPE,(p,c)->c.client().execute(()->NameBadges.receive(p)));
   ServerLifecycleEvents.SERVER_STARTED.register(MapSharing::started);ServerLifecycleEvents.SERVER_STOPPED.register(MapSharing::stopped);
   ServerPlayConnectionEvents.JOIN.register((h,sender,s)->MapSharing.joined(h.getPlayer(),s));
   PayloadTypeRegistry.clientboundPlay().register(MapSharing.DeathPacket.TYPE,MapSharing.DeathPacket.CODEC);
   ClientPlayNetworking.registerGlobalReceiver(MapSharing.DeathPacket.TYPE,(p,c)->c.client().execute(()->WorldMap.death(p.death())));
   ServerLivingEntityEvents.AFTER_DEATH.register((entity,source)->{if(entity instanceof ServerPlayer p)MapSharing.died(p);});
  }
+ static boolean badgeCapable(ServerPlayer p){return ServerPlayNetworking.canSend(p,NameBadges.Packet.TYPE);}
+ static void sendBadge(ServerPlayer p,NameBadges.Packet d){ServerPlayNetworking.send(p,d);}
  static boolean canSend(ServerPlayer p){return ServerPlayNetworking.canSend(p,MapSharing.DeathPacket.TYPE);}
  static void send(ServerPlayer p,MapSharing.DeathPacket d){ServerPlayNetworking.send(p,d);}
 }

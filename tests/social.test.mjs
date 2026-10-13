@@ -46,3 +46,10 @@ test('invalid player proof never falls back to session checks or creates an iden
  const db=database(),p=player('ProofTest','microsoft'),original=globalThis.fetch;
  try{const c=await send(db,p,'challenge',{id:p.id});assert.equal(c.verification,'player-certificate-v2');globalThis.fetch=async()=>{throw Error('Unexpected cloud authentication request')};assert.equal((await send(db,p,'register',{...p,proof:{version:1}})).status,401);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM people').get().n,0);}finally{globalThis.fetch=original;db.sql.close()}
 });
+
+test('world invitations preserve the native loader and reject unknown versions',()=>{
+ for(const loader of ['fabric','neoforge'])for(const minecraft of ['26.1','26.1.2'])assert.deepEqual(room({...sampleRoom(),loader,minecraft}).loader,loader);
+ assert.throws(()=>room({...sampleRoom(),loader:'converted-fabric',minecraft:'26.1'}));
+ assert.throws(()=>room({...sampleRoom(),loader:'fabric',minecraft:'1.21'}));
+ assert.equal(room(sampleRoom()).loader,undefined); // Legacy invitations still work with a running game.
+});

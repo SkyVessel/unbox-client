@@ -39,6 +39,7 @@ public final class UnboxHomeScreen extends Screen {
             add(centerX+88,logoY+132,40,38,"Game settings","settings",()->minecraft.setScreen(new OptionsScreen(this,minecraft.options,false)));
             add(logicalWidth-45,15,30,28,"Return to game","close",this::onClose);
         }else{
+            add(15,15,70,28,"Friends","",()->minecraft.setScreen(new FriendsScreen(this)));
             add(centerX-112,logoY+130,224,28,"SINGLEPLAYER","",()->minecraft.setScreen(new SelectWorldScreen(this)));
             GlassButton multiplayer=add(centerX-112,logoY+165,224,28,"MULTIPLAYER","",()->minecraft.setScreen(minecraft.options.skipMultiplayerWarning?new JoinMultiplayerScreen(this):new SafetyScreen(this)));
             multiplayer.active=minecraft.allowsMultiplayer();if(!multiplayer.active)multiplayer.setTooltip(Tooltip.create(Component.literal("Multiplayer is unavailable for this account.")));

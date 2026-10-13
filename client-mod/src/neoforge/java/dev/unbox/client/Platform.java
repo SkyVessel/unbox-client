@@ -13,7 +13,7 @@ public final class Platform {
  static IEventBus bus;
  public record Mod(String name,String version){}
  public static Path gameDir(){return FMLPaths.GAMEDIR.get();}public static Path configDir(){return FMLPaths.CONFIGDIR.get();}
- public static String loader(){return "neoforge";}public static String loaderVersion(){return "26.1.0.19-beta";}
+ public static String loader(){return "neoforge";}public static String loaderVersion(){return net.neoforged.fml.ModList.get().getModContainerById("neoforge").orElseThrow().getModInfo().getVersion().toString();}
  public static boolean loaded(String id){return ModList.get().isLoaded(id);}
  public static Mod mod(String id){return ModList.get().getModContainerById(id).map(c->new Mod(c.getModInfo().getDisplayName(),c.getModInfo().getVersion().toString())).orElse(null);}
  public static KeyMapping key(KeyMapping k){bus.addListener((RegisterKeyMappingsEvent e)->e.register(k));return k;}

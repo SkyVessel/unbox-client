@@ -38,7 +38,7 @@ public class UnboxClient {
         mapKey=Platform.key(new KeyMapping("key.unbox.map",GLFW.GLFW_KEY_M,KeyMapping.Category.MISC));
         Platform.onTick(client->{
             if(++ticks%40==0){reload();ModuleBindings.apply();}
-            UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);
+            UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialNotifications.tick();NameBadges.tick();SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);VanillaInteropSmokeTest.tick(client);
             while(menuKey.consumeClick())if(client.screen==null)client.setScreen(new UnboxHomeScreen(true));
             long cutoff=System.nanoTime()-1_000_000_000L;while(!LEFT.isEmpty()&&LEFT.peekFirst()<cutoff)LEFT.removeFirst();while(!RIGHT.isEmpty()&&RIGHT.peekFirst()<cutoff)RIGHT.removeFirst();
             Freelook.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
@@ -55,7 +55,7 @@ public class UnboxClient {
         Platform.hud(Identifier.fromNamespaceAndPath("unbox","hud"),(g,t)->drawHud(g));
         System.out.println("[Unbox] 26.1 client modules initialized");
     }
-    public static void drawHud(GuiGraphicsExtractor g){ClientHud.render(g);}
+    public static void drawHud(GuiGraphicsExtractor g){ClientHud.render(g);if(Minecraft.getInstance().screen==null)SocialNotifications.draw(g);}
     public static boolean zooming(){var m=Minecraft.getInstance();return enabled("zoom")&&zoomKey!=null&&(ClientHud.value("zoom.mode","Hold").equals("Toggle")?zoomToggled:zoomKey.isDown())&&m.screen==null&&m.player!=null;}
     public static boolean adjustZoom(double scroll){if(!zooming()||!ClientHud.flag("zoom.scroll",true)||scroll==0)return false;set("zoom.factor",Math.clamp(number("zoom.factor",3,2,12)+(scroll>0?1:-1),2,12));return true;}
     public static float zoomFactor(){

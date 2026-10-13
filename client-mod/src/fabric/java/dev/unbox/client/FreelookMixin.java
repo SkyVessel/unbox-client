@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FreelookMixin {
  @Shadow private void stopFreeLooking(Minecraft client){throw new AssertionError();}
  @Inject(method="startFreeLooking",at=@At("HEAD"),cancellable=true)
- private void unboxStart(Minecraft client,CallbackInfo ci){if(!UnboxClient.enabled("freelook"))ci.cancel();}
+ private void unboxStart(CallbackInfo ci){if(!UnboxClient.enabled("freelook"))ci.cancel();}
  @Inject(method="onTickEnd",at=@At("HEAD"))
  private void unboxStop(Minecraft client,CallbackInfo ci){if(!UnboxClient.enabled("freelook")&&FreeLookMod.isFreeLooking)stopFreeLooking(client);}
 }

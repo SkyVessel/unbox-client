@@ -2,13 +2,11 @@ import {BrandMark} from './BrandMark';
 import React,{useEffect,useRef,useState} from 'react';
 import {Plus,Check,X,Copy,UserPlus,Box,Send,LogIn,LoaderCircle} from 'lucide-react';
 import {call,native} from './bridge';
-type Friend={id:string;name:string;code:string;face?:string;online:boolean;state:string;accepted:number;direction:string;kind:string};
-type Invite={id:string;receiver:string;senderName:string;expires:number;room:{name:string}};
-type View={connected:boolean;self?:{id:string;code:string};friends:Friend[];invites:Invite[];error?:string;canInvite?:boolean;gameError?:string};
+import {useSocial} from './Social';
 export function Friends(){
- const [view,setView]=useState<View>({connected:false,friends:[],invites:[]}),[add,setAdd]=useState(false),[code,setCode]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');const live=useRef(true);
- useEffect(()=>{live.current=true;const refresh=()=>{if(native)call<View>('social_status').then(v=>{if(live.current&&v)setView(v)}).catch(e=>{if(live.current)setError(String(e))})};refresh();const t=setInterval(refresh,2000);return()=>{live.current=false;clearInterval(t)}},[]);
- const action=async(op:string,id:string)=>{if(busy)return;setBusy(true);setError('');setNotice('');try{const v=await call<View>('social_action',{op,id});if(live.current){setView(v);if(op==='request'){setCode('');setAdd(false);setNotice('Friend request sent')}if(op==='invite')setNotice('Preparing invitation…');if(op==='join')setNotice('Syncing your friend’s mods; the game may restart…');}}catch(e){if(live.current)setError(String(e))}finally{if(live.current)setBusy(false)}};
+ const {view,action:sendAction}=useSocial();const [add,setAdd]=useState(false),[code,setCode]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');const live=useRef(true);
+ useEffect(()=>{live.current=true;return()=>{live.current=false}},[]);
+ const action=async(op:string,id:string)=>{if(busy)return;setBusy(true);setError('');setNotice('');try{await sendAction(op,id);if(live.current){if(op==='request'){setCode('');setAdd(false);setNotice('Friend request sent')}if(op==='invite')setNotice('Preparing invitation…');if(op==='join')setNotice('Syncing your friend’s mods; the game may restart…');}}catch(e){if(live.current)setError(String(e))}finally{if(live.current)setBusy(false)}};
  const friends=view.friends||[],invites=(view.invites||[]).filter(i=>i.receiver===view.self?.id&&i.expires>Date.now());
  return <aside className="friends"><header><h3>FRIENDS</h3><button className="icon-btn" aria-label="Add friend" title="Add friend" onClick={()=>setAdd(!add)}><Plus size={20}/></button></header>
  {view.self&&<button className="friend-code" title="Copy your friend code" onClick={()=>navigator.clipboard.writeText(view.self!.code).then(()=>setNotice('Friend code copied')).catch(()=>setError('Could not copy code'))}>{view.self.code}<Copy size={12}/></button>}

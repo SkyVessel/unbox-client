@@ -1,0 +1,119 @@
+[
+  {
+    "slug": "lithium",
+    "version": "mc26.1.2-0.24.7-neoforge",
+    "id": "eZ0KJiEA",
+    "filename": "lithium-neoforge-0.24.7+mc26.1.2.jar",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/eZ0KJiEA/lithium-neoforge-0.24.7%2Bmc26.1.2.jar",
+    "sha1": "4771c7950131f4be684ca286656632f554f36fa5",
+    "sha512": "26020f4d9555eaf8733526dc24ba97c7d1f55c0a4a8b16b9d12fe6b1bf168d5e171e9dba10deb73cbefc71a6adb94a772c785e1b19f90666e52f0f72da6a2ff6",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "ferrite-core",
+    "version": "9.0.0-neoforge",
+    "id": "LtVvw4uS",
+    "filename": "ferritecore-9.0.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/LtVvw4uS/ferritecore-9.0.0-neoforge.jar",
+    "sha512": "e96a99ac5539f56a1f4cd109d62b668ebd5283f0068491ede956f52e67023beba7abe2e40021499352ffc41ead950bebcabce7792352249a1b45c5dccb3cf99c",
+    "sha1": "b8bfb14ba6ce7068aae08c3a132ca40bda6bd143",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2",
+      "26.2",
+      "26.3"
+    ]
+  },
+  {
+    "slug": "immediatelyfast",
+    "version": "1.15.3+26.1-neoforge",
+    "id": "adbrNJLm",
+    "filename": "ImmediatelyFast-NeoForge-1.15.3+26.1.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/adbrNJLm/ImmediatelyFast-NeoForge-1.15.3%2B26.1.jar",
+    "sha1": "bb10bdde4199da3cb7a2a64f9e3274a46218c9f1",
+    "sha512": "da8f54b463ef62e6b2181064d734c534ec44b2703496e531842b12af4defe9abc42f4589e0ec2ffc6aa08e794158d1d875f0a8e2f8b01f000c47850d101ad9b6",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "dynamic-fps",
+    "version": "3.11.7",
+    "id": "V6JHyPSD",
+    "filename": "dynamic-fps-3.11.7+minecraft-26.1.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/V6JHyPSD/dynamic-fps-3.11.7%2Bminecraft-26.1.0-neoforge.jar",
+    "sha1": "2ebba7ae4153f168b056db885898fdda3d8af1eb",
+    "sha512": "306c8cb28fbad153fb74b2a4a975733014d2fbec9d13fc7be1d2e5db5071494b0234222a8e696c682c2bae2b8834ab35a4dc628b75c2dc6624385750b5ad70b1",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "e4mc",
+    "version": "6.2.3-neoforge",
+    "id": "HXD8kS5O",
+    "filename": "e4mc-neoforge-6.2.3.jar",
+    "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/HXD8kS5O/e4mc-neoforge-6.2.3.jar",
+    "sha1": "7127478b19531091257b3f58cd734a638200e481",
+    "sha512": "6d029c61c71503dbf03710a0a944b462fc0351a862db773d4ffe39ffe8d8a205d12a4f031361d82867d365a2335abbdc91859a2777108ca4c9c14fe243b92197",
+    "gameVersions": [
+      "1.20.2",
+      "1.20.3",
+      "1.20.4",
+      "1.20.5",
+      "1.20.6",
+      "1.21",
+      "1.21.1",
+      "1.21.2",
+      "1.21.3",
+      "1.21.4",
+      "1.21.5",
+      "1.21.6",
+      "1.21.7",
+      "1.21.8",
+      "1.21.9",
+      "1.21.10",
+      "1.21.11",
+      "26.1",
+      "26.1.1",
+      "26.1.2",
+      "26.2",
+      "26.3"
+    ]
+  },
+  {
+    "slug": "iris",
+    "version": "1.11.4+26.1-neoforge",
+    "id": "qE5Y7GrZ",
+    "filename": "iris-neoforge-1.11.4+mc26.1.2.jar",
+    "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/qE5Y7GrZ/iris-neoforge-1.11.4%2Bmc26.1.2.jar",
+    "sha512": "751cc32fbc319e2549759aa8ed2c798fa8e3a7a32924a27f6f80f81aa2634a5d9d726828348b271d70449c6d25d1fee352cec932185aa066da109414f0a7678f",
+    "sha1": "15ac52fe7b35c66bb799f0f13021f549bf302c3c",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "sodium",
+    "version": "mc26.1.2-0.9.2-neoforge",
+    "id": "zg4YQ9EL",
+    "filename": "sodium-neoforge-0.9.2+mc26.1.2.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/zg4YQ9EL/sodium-neoforge-0.9.2%2Bmc26.1.2.jar",
+    "sha512": "899c2d888831c4044877955ab06b5333c6e17bd89b543d4f5bd0e188caca8791727bd18e5e9c5fe52cc14aa6e4173b8ba4905416914126c48d70135318ef1012",
+    "sha1": "e03e21bf6553fc517241d59c2c116b8e5cc882f8",
+    "gameVersions": [
+      "26.1.2"
+    ]
+  }
+]

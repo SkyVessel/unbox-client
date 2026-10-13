@@ -26,6 +26,6 @@ public class MouseMixin {
   dev.unbox.client.Freelook.turn(player,x,y);
  }
 
- @Inject(method="onButton",at=@At("HEAD"))
- private void unboxClick(long window,MouseButtonInfo button,int action,CallbackInfo ci){UnboxClient.mouse(button.button(),action);}
+ @Inject(method="onButton",at=@At("HEAD"),cancellable=true)
+ private void unboxClick(long window,MouseButtonInfo button,int action,CallbackInfo ci){var mc=net.minecraft.client.Minecraft.getInstance();if(window==mc.getWindow().handle()&&dev.unbox.client.SocialNotifications.click(mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth(),mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight(),button.button(),action)){ci.cancel();return;}UnboxClient.mouse(button.button(),action);}
 }

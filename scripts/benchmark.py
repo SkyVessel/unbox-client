@@ -7,6 +7,9 @@ import hashlib,json,pathlib,shutil,subprocess,sys,urllib.request,uuid,os
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 DATA=pathlib.Path.home()/'Library/Application Support/dev.unbox.client'
 RUNTIME=DATA/'runtime'
+game_version=os.environ.get('UNBOX_MINECRAFT_VERSION','26.1')
+neo_version='26.1.2.116' if game_version=='26.1.2' else '26.1.0.19-beta'
+neo_default=ROOT/('.cache/neoforge-26.1.2/runtime' if game_version=='26.1.2' else '.cache/neoforge/runtime')
 loader=os.environ.get('UNBOX_TEST_LOADER','fabric')
 if loader not in ('fabric','neoforge'):raise SystemExit('Unsupported test loader')
 mode=sys.argv[1]
@@ -26,9 +29,9 @@ if not resume:
 if os.environ.get('UNBOX_SYNC_FIXTURE')=='1' and mode=='private-host':
     import zipfile
     fixture_classes=game/'fixture-classes';fixture_classes.mkdir()
-    fixture_cp=[str(ROOT/'.cache/client-26.1.jar'),str(ROOT/'.cache/fabric-loader.jar'),str(ROOT/'.cache/libs/*')]
+    fixture_cp=[str(ROOT/f'.cache/client-{game_version}.jar'),str(ROOT/'.cache/fabric-loader.jar'),str(ROOT/'.cache/libs/*')]
     if loader=='neoforge':
-        neo_libs=pathlib.Path(os.environ.get('UNBOX_NEO_RUNTIME',str(ROOT/'.cache/neoforge/runtime')))/'libraries'
+        neo_libs=pathlib.Path(os.environ.get('UNBOX_NEO_RUNTIME',str(neo_default)))/'libraries'
         fixture_cp=[str(p) for p in neo_libs.rglob('*.jar')]+[str(ROOT/'.cache/libs/*')]
     fixture_sources=list((ROOT/'tests/fixtures/common').rglob('*.java'))+list((ROOT/'tests/fixtures'/loader).rglob('*.java'))
     subprocess.run(['javac','--release','25','-proc:none','-cp',os.pathsep.join(fixture_cp),'-d',str(fixture_classes),*map(str,fixture_sources)],check=True)
@@ -40,8 +43,19 @@ if os.environ.get('UNBOX_SYNC_FIXTURE')=='1' and mode=='private-host':
         z.writestr('assets/unbox_sync_fixture/items/shared_item.json',json.dumps({'model':{'type':'minecraft:model','model':'minecraft:item/stick'}}))
         z.writestr('fixture.bin',bytes(range(256))*8192)
         for cls in fixture_classes.rglob('*.class'):z.write(cls,str(cls.relative_to(fixture_classes)))
+    # Host-only, original test packs: a visible item name and a minimal passthrough shader.
+    for folder in ('resourcepacks','shaderpacks'):(game/folder).mkdir(exist_ok=True)
+    with zipfile.ZipFile(game/'resourcepacks/Unbox Fixture.zip','w') as z:
+        z.writestr('pack.mcmeta',json.dumps({'pack':{'description':'Unbox shared resource test','min_format':84,'max_format':84}}))
+        z.writestr('assets/unbox_sync_fixture/lang/en_us.json',json.dumps({'item.unbox_sync_fixture.shared_item':'Shared Pack Item'}))
+        z.writestr('assets/unbox_sync_fixture/fixture.txt','Shared pack loaded')
+    with zipfile.ZipFile(game/'shaderpacks/Unbox Light.zip','w') as z:
+        z.writestr('shaders/final.vsh','#version 120\nvarying vec2 texcoord;\nvoid main(){gl_Position=ftransform();texcoord=gl_MultiTexCoord0.xy;}')
+        z.writestr('shaders/final.fsh','#version 120\nuniform sampler2D colortex0;\nvarying vec2 texcoord;\nvoid main(){gl_FragData[0]=texture2D(colortex0,texcoord);}')
+    (game/'config/iris.properties').write_text('enableShaders=true\nshaderPack=Unbox Light.zip\n')
 op=urllib.request.build_opener(urllib.request.ProxyHandler({}))
-lock=json.loads((ROOT/('src-tauri/resources/neoforge-performance-lock.json' if loader=='neoforge' else 'src-tauri/resources/performance-lock.json')).read_text())
+suffix='-26.1.2' if game_version=='26.1.2' else ''
+lock=json.loads((ROOT/f'src-tauri/resources/{"neoforge-" if loader=="neoforge" else ""}performance-lock{suffix}.json').read_text())
 for mod in lock:
     # DynamicFPS is a background limiter, not a foreground FPS optimization.
     if mod['slug']=='dynamic-fps' and mode not in ('ui','home','social','relay','private-host','private-guest') or mode=='baseline' and mod['slug'] not in ('fabric-api','freelook'):continue
@@ -52,13 +66,14 @@ for mod in lock:
         target.write_bytes(content)
     shutil.copy2(target,game/'mods'/target.name)
 if mode=='ui' and (ROOT/'.cache/friend-face-fixture.json').exists():shutil.copy2(ROOT/'.cache/friend-face-fixture.json',game/'ui-friends-fixture.json')
-jar_source=pathlib.Path(sys.argv[4]).resolve() if len(sys.argv)>4 else ROOT/('src-tauri/resources/unbox-client-neoforge.jar' if loader=='neoforge' else 'src-tauri/resources/unbox-client.jar')
+jar_source=pathlib.Path(sys.argv[4]).resolve() if len(sys.argv)>4 else ROOT/f'src-tauri/resources/unbox-client{"-neoforge" if loader=="neoforge" else ""}{suffix}.jar'
 shutil.copy2(jar_source,game/'mods/unbox-client.jar')
 (game/'client-build.json').write_text(json.dumps({'sha256':hashlib.sha256(jar_source.read_bytes()).hexdigest(),'mode':mode,'source':str(jar_source)}))
 options={'fullscreen':'false','enableVsync':'false','pauseOnLostFocus':'false','renderDistance':'12','simulationDistance':'8','maxFps':'260','inactivityFpsLimit':'"minimized"','guiScale':'2','graphicsMode':'1','fov':'0.0','tutorialStep':'none','onboardAccessibility':'false','soundCategory_master':'0.0'}
-(game/'options.txt').write_text('\n'.join(k+':'+v for k,v in options.items())+'\n')
+if os.environ.get('UNBOX_SYNC_FIXTURE')=='1' and mode=='private-host':options['resourcePacks']=json.dumps(['vanilla','file/Unbox Fixture.zip'])
+if not resume:(game/'options.txt').write_text('\n'.join(k+':'+v for k,v in options.items())+'\n')
 (game/'config/unbox.properties').write_text(('minimap=true\nping=true\n' if os.environ.get('UNBOX_MAP_BENCH')=='1' else '')+'fps=true\ncps=true\ncoordinates=true\narmor=true\ncape=false\nfreelook=false\n')
-meta=json.loads((RUNTIME/'26.1.json').read_text());fabric=json.loads((RUNTIME/'fabric-0.19.5.json').read_text());cp=[]
+meta=json.loads((ROOT/f'.cache/{game_version}.json').read_text()) if game_version=='26.1.2' else json.loads((RUNTIME/'26.1.json').read_text());fabric=json.loads((RUNTIME/'fabric-0.19.5.json').read_text());cp=[]
 for lib in meta['libraries']:
     allow=True
     if 'rules' in lib:
@@ -69,11 +84,11 @@ for lib in meta['libraries']:
     if allow and 'artifact' in lib.get('downloads',{}):cp.append(str(RUNTIME/'libraries'/lib['downloads']['artifact']['path']))
 for lib in fabric['libraries']:
     group,artifact,version=lib['name'].split(':');cp.append(str(RUNTIME/'libraries'/group.replace('.','/')/artifact/version/f'{artifact}-{version}.jar'))
-cp.append(str(RUNTIME/'26.1.jar'))
+cp.append(str(ROOT/f'.cache/client-{game_version}.jar'))
 neo=None
 if loader=='neoforge':
-    neo_root=pathlib.Path(os.environ.get('UNBOX_NEO_RUNTIME',str(ROOT/'.cache/neoforge/runtime')))
-    neo=json.loads((neo_root/'versions/neoforge-26.1.0.19-beta/neoforge-26.1.0.19-beta.json').read_text())
+    neo_root=pathlib.Path(os.environ.get('UNBOX_NEO_RUNTIME',str(neo_default)))
+    neo=json.loads((neo_root/f'versions/neoforge-{neo_version}/neoforge-{neo_version}.json').read_text())
     replaced={':'.join(v['name'].split(':')[:2]) for v in neo['libraries']}
     replaced_paths={str(RUNTIME/'libraries'/v['downloads']['artifact']['path']) for v in meta['libraries'] if ':'.join(v['name'].split(':')[:2]) in replaced}
     vanilla_paths={str(RUNTIME/'libraries'/v['downloads']['artifact']['path']) for v in meta['libraries'] if 'artifact' in v.get('downloads',{})}
@@ -81,12 +96,19 @@ if loader=='neoforge':
     cp.extend(str(neo_root/'libraries'/v['downloads']['artifact']['path']) for v in neo['libraries'])
     fabric=neo
 
+for lib in meta['libraries']:
+    artifact=lib.get('downloads',{}).get('artifact')
+    if not artifact:continue
+    target=RUNTIME/'libraries'/artifact['path']
+    if str(target) in cp and not target.exists():
+        data=op.open(artifact['url'],timeout=60).read();assert hashlib.sha1(data).hexdigest()==artifact['sha1'];target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
 java=pathlib.Path(subprocess.check_output(['/usr/libexec/java_home','-v','25'],text=True).strip())/'bin/java'
 raw=bytearray(hashlib.md5(b'OfflinePlayer:UnboxTest').digest());raw[6]=(raw[6]&15)|48;raw[8]=(raw[8]&63)|128
-args=[str(java),'-XstartOnFirstThread','-Xmx4096M','-Xms512M',('-Dunbox.socialSmoke=true' if mode in ('social','relay') else '-Dunbox.homeSmoke=true' if mode=='home' else '-Dunbox.uiSmoke=true' if mode=='ui' else f'-Dunbox.benchmark={name}'),'-cp',':'.join(cp),fabric['mainClass'],'--username','UnboxTest','--version','26.1','--gameDir',str(game),'--assetsDir',str(RUNTIME/'assets'),'--assetIndex',meta['assetIndex']['id'],'--uuid',uuid.UUID(bytes=bytes(raw)).hex,'--accessToken','0','--userType','legacy','--versionType','release','--width','1280','--height','720','--quickPlaySingleplayer','Benchmark']
+args=[str(java),'-XstartOnFirstThread','-Xmx4096M','-Xms512M',('-Dunbox.socialSmoke=true' if mode in ('social','relay') else '-Dunbox.homeSmoke=true' if mode=='home' else '-Dunbox.uiSmoke=true' if mode=='ui' else f'-Dunbox.benchmark={name}'),'-cp',':'.join(cp),fabric['mainClass'],'--username','UnboxTest','--version',game_version,'--gameDir',str(game),'--assetsDir',str(RUNTIME/'assets'),'--assetIndex',meta['assetIndex']['id'],'--uuid',uuid.UUID(bytes=bytes(raw)).hex,'--accessToken','0','--userType','legacy','--versionType','release','--width','1280','--height','720','--quickPlaySingleplayer','Benchmark']
+if os.environ.get('UNBOX_VANILLA_INTEROP')=='1':args.insert(1,'-Dunbox.vanillaInterop=true')
 if os.environ.get('UNBOX_SYNC_FIXTURE')=='1':args.insert(1,'-Dunbox.syncFixture=true')
 if 'UNBOX_SHARED_CACHE' in os.environ:args.insert(1,'-Dunbox.sharedCache='+os.environ['UNBOX_SHARED_CACHE'])
-if resume:args.insert(1,'-Dunbox.syncResume=true')
+if resume or os.environ.get('UNBOX_COLD_JOIN')=='1':args.insert(1,'-Dunbox.syncResume=true')
 if mode=='relay':args.insert(1,'-Dunbox.relaySmoke=true')
 if mode in ('home','private-guest'):args=args[:-2]
 if mode.startswith('private-'):
@@ -100,6 +122,7 @@ if neo:
     args[1:1]=[v.replace('${library_directory}',str(neo_root/'libraries')) for v in neo['arguments']['jvm']]
     args.extend(neo['arguments']['game'])
 (game/'logs').mkdir(exist_ok=True)
+(game/'test-launch-args.json').write_text(json.dumps(args))
 print('Starting',name,'in isolated copy',game,flush=True)
 with (game/'logs/launch.log').open('w') as log:
     p=subprocess.Popen(args,cwd=game,stdout=log,stderr=log)
@@ -107,7 +130,7 @@ with (game/'logs/launch.log').open('w') as log:
     try:code=p.wait(timeout=240)
     except subprocess.TimeoutExpired:
         p.terminate();code=p.wait(timeout=30)
-result=game/('logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
+result=game/('logs/vanilla-interop.json' if os.environ.get('UNBOX_VANILLA_INTEROP')=='1' else 'logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
 if result.exists():print(result.read_text(),flush=True)
 else:print('No benchmark result; inspect',game/'logs/launch.log',flush=True)
 raise SystemExit(code if code else (0 if result.exists() else 1))

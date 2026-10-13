@@ -12,20 +12,6 @@
     ]
   },
   {
-    "slug": "sodium",
-    "version": "mc26.1.1-0.8.9-fabric",
-    "id": "uGvVQBnw",
-    "filename": "sodium-fabric-0.8.9+mc26.1.1.jar",
-    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/uGvVQBnw/sodium-fabric-0.8.9%2Bmc26.1.1.jar",
-    "sha512": "74f9dc8963b5258226837cc361ba6b525da734ab4fa5f05d1862bc6e9175f4fa81ca3d49443e2fb85be144d06042f0d65cbcceefc391043af857b38aa2614ae8",
-    "sha1": "48b949ec71365788dfd4e89d489f7abd504aa709",
-    "gameVersions": [
-      "26.1",
-      "26.1.1",
-      "26.1.2"
-    ]
-  },
-  {
     "slug": "lithium",
     "version": "mc26.1-0.22.1-fabric",
     "id": "W0ZXKJy9",
@@ -123,5 +109,33 @@
     "role": "on-demand-world-sharing",
     "source": "https://github.com/vgskye/e4mc-minecraft-architectury",
     "license": "MIT"
+  },
+  {
+    "slug": "iris",
+    "version": "1.10.9+26.1-fabric",
+    "id": "MwcLS51S",
+    "filename": "iris-fabric-1.10.9+mc26.1.1.jar",
+    "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/MwcLS51S/iris-fabric-1.10.9%2Bmc26.1.1.jar",
+    "sha1": "c30e04509a1b284372cb9037b07714d4223ae91a",
+    "sha512": "01714943b36e7b78618bf133a20da489197322e20ebc2d9858f15bb57ac198fdab23dac6c917d6239ad3fe2e7c47f53fb387d475805eb7269fbfc16e30664155",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
+  },
+  {
+    "slug": "sodium",
+    "version": "mc26.1.1-0.8.9-fabric",
+    "id": "uGvVQBnw",
+    "filename": "sodium-fabric-0.8.9+mc26.1.1.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/uGvVQBnw/sodium-fabric-0.8.9%2Bmc26.1.1.jar",
+    "sha1": "48b949ec71365788dfd4e89d489f7abd504aa709",
+    "sha512": "74f9dc8963b5258226837cc361ba6b525da734ab4fa5f05d1862bc6e9175f4fa81ca3d49443e2fb85be144d06042f0d65cbcceefc391043af857b38aa2614ae8",
+    "gameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ]
   }
 ]
