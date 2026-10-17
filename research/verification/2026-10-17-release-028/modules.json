@@ -1,0 +1,32 @@
+[
+  {
+    "file": "unbox-client-26.1.2.jar",
+    "sha256": "3e8dfd2eb7b91eb895431de55f6d35e69dc7827a9c8ae59fc6986e030049a309",
+    "version": "0.2.8"
+  },
+  {
+    "file": "unbox-client-26.3.jar",
+    "sha256": "f0929f219ec46423f041e2b91eb62763dc4305b01ab226204df77958e1e7973b",
+    "version": "0.2.8"
+  },
+  {
+    "file": "unbox-client-neoforge-26.1.2.jar",
+    "sha256": "d285afad4b1d6b1ad1c3b2394c7cf017f3ad306a65665921a5b9028ab97a18cf",
+    "version": "0.2.8"
+  },
+  {
+    "file": "unbox-client-neoforge-26.3.jar",
+    "sha256": "6de014782f2a2b2df232e4c2902158d5426fe26357a32d42268754eb036721dd",
+    "version": "0.2.8"
+  },
+  {
+    "file": "unbox-client-neoforge.jar",
+    "sha256": "00569df433d16acbd7b66804791328a3b504fe6f162f9780c1ec3ed684edad3d",
+    "version": "0.2.8"
+  },
+  {
+    "file": "unbox-client.jar",
+    "sha256": "527198f5a5867284dfc1eaa41359fa7cd42a75b1f5233221cecf38f9088bafbd",
+    "version": "0.2.8"
+  }
+]

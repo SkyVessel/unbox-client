@@ -1,0 +1,15 @@
+{
+  "fabric": {
+    "comparedWith": "version263-ui-02",
+    "changedJarEntries": [
+      "fabric.mod.json"
+    ]
+  },
+  "neoforge": {
+    "comparedWith": "version263-neosurvival-02",
+    "changedJarEntries": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/UiSmokeTest.class"
+    ]
+  }
+}

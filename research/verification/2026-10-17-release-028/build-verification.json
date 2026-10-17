@@ -1,0 +1,18 @@
+{
+  "version": "0.2.8",
+  "sourceCommit": "d8ef38027cb50660676fd1d270f95b3e550518f1",
+  "windowsWorkflow": "https://github.com/SkyVessel/unbox-client/actions/runs/39019867991",
+  "checks": {
+    "node": 43,
+    "macRust": 65,
+    "windowsRust": 65,
+    "fabric263Title": 25,
+    "neoforge263Title": 25
+  },
+  "sixModulesMatchBothPackages": true,
+  "macCodeSignatureVerifiedAfterArchiveExtraction": true,
+  "updaterPublicKeyUnchanged": true,
+  "windowsGameplayTested": false,
+  "macArchitecture": "arm64",
+  "windowsArchitecture": "x86_64"
+}
