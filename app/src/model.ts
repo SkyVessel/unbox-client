@@ -1,6 +1,6 @@
 import catalogue from './mod-options.json';
 export type Account={accountId?:string;provider?:string;needsSignIn?:boolean;skinStatus?:"ready"|"cached"|"unavailable";name:string;type:"local"|"microsoft"|"unbox";uuid?:string;skin?:string;skinModel?:"classic"|"slim"};
-export type Profile = { id:string; name:string; version:'26.1'|'26.1.2'; loader:'fabric'|'vanilla'|'neoforge'; icon:string };
+export type Profile = { id:string; name:string; version:'26.1'|'26.1.2'|'26.3'; loader:'fabric'|'vanilla'|'neoforge'; icon:string };
 export type Config = Record<string,boolean|number|string>;
 export type State = {profiles:Profile[];selected:string|null;settings:{memory:number;reducedMotion:boolean;reducedTransparency:boolean;minimize:boolean};account:Account|null;modules?:Record<string,Config>};
 export const defaults:Config = {fps:true,cps:false,coordinates:true,armor:true,crosshair:false,particles:false,chat:false,sprint:false,zoom:true,minimap:false,ping:false};

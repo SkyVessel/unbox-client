@@ -22,7 +22,8 @@ public class UnboxClient {
     private static boolean zoomHeld,zoomToggled;
     private static float zoomAmount;
     private static long zoomFrame;
-    public static boolean enabled(String key){return Boolean.parseBoolean(CONFIG.getProperty(key,switch(key){case "fps","coordinates","armor","zoom"->"true";default->"false";}));}
+    public static boolean configured(String key){return Boolean.parseBoolean(CONFIG.getProperty(key,switch(key){case "fps","coordinates","armor","zoom"->"true";default->"false";}));}
+    public static boolean enabled(String key){return configured(key)&&ClientFeaturePolicy.allowed(key);}
     public static int number(String key,int fallback,int min,int max){try{return Math.clamp(Integer.parseInt(CONFIG.getProperty(key,""+fallback)),min,max);}catch(NumberFormatException e){return fallback;}}
     public static void set(String key,Object value){CONFIG.setProperty(key,String.valueOf(value));}
     public static void save(){try{Files.createDirectories(FILE.getParent());Path temp=FILE.resolveSibling("unbox.properties.tmp");try(var out=Files.newOutputStream(temp)){CONFIG.store(out,"Unbox Client");}Files.move(temp,FILE,StandardCopyOption.REPLACE_EXISTING);modified=Files.getLastModifiedTime(FILE).toMillis();}catch(IOException e){System.err.println("Unbox settings could not be saved: "+e.getMessage());}}
@@ -32,16 +33,17 @@ public class UnboxClient {
     public static float clickLight(int button){if(buttonDown[button]&&Minecraft.getInstance().screen==null)return 1;return Math.max(0,1-(System.nanoTime()-clickTime[button])/(UnboxClient.number("cps.fade",180,50,500)*1_000_000f));}
     public static void click(int button){if(Minecraft.getInstance().screen!=null||Minecraft.getInstance().player==null)return;long now=System.nanoTime();if(button>=0&&button<2)clickTime[button]=now;if(button==0)LEFT.addLast(now);if(button==1)RIGHT.addLast(now);}
     public static void initialize(){
-        reload();SocialBridge.init();MapSharing.init();Freelook.init();
+        reload();SocialBridge.init();MapSharing.init();Freelook.init();FreecamController.init();
         menuKey=Platform.key(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
         zoomKey=Platform.key(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
         mapKey=Platform.key(new KeyMapping("key.unbox.map",GLFW.GLFW_KEY_M,KeyMapping.Category.MISC));
         Platform.onTick(client->{
+            TestStartupDiagnostics.tick(client);
             if(++ticks%40==0){reload();ModuleBindings.apply();}
-            UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialNotifications.tick();NameBadges.tick();SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);VanillaInteropSmokeTest.tick(client);
+            SurvivalSmokeTest.tick(client);GravePersistenceSmokeTest.tick(client);VisualV4SmokeTest.tick(client);UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialNotifications.tick();NameBadges.tick();SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);VanillaInteropSmokeTest.tick(client);SurvivalLanSmokeTest.tick(client);
             while(menuKey.consumeClick())if(client.screen==null)client.setScreen(new UnboxHomeScreen(true));
             long cutoff=System.nanoTime()-1_000_000_000L;while(!LEFT.isEmpty()&&LEFT.peekFirst()<cutoff)LEFT.removeFirst();while(!RIGHT.isEmpty()&&RIGHT.peekFirst()<cutoff)RIGHT.removeFirst();
-            Freelook.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
+            SurvivalClientMods.sync();SurvivalHostMods.tick(client);GraveKeeper.tick(client);DynamicLightsBridge.sync();Freelook.tick(client);FreecamController.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
             ClientHud.update(LEFT.size(),RIGHT.size());
             boolean held=zoomKey.isDown();if(ClientHud.value("zoom.mode","Hold").equals("Toggle")){if(held&&!zoomHeld&&client.screen==null)zoomToggled=!zoomToggled;}else zoomToggled=false;zoomHeld=held;
             if(!enabled("zoom")||client.player==null)zoomToggled=false;

@@ -1,5 +1,5 @@
 {
-  "sourceSha256": "569667ba54ac2f7c76956db55d1cf62838700f839ec682dce0c8f1b5024cbfbf",
+  "sourceSha256": "55aa7c16823f8eb7076e3ab354e0fb13bf77e87ef8198d1f88dc022477a3b6a9",
   "modules": {
     "minimap": {
       "General": [
@@ -20,12 +20,20 @@
           "max": 0
         },
         {
+          "key": "minimap.relief",
+          "label": "Terrain shading",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
           "key": "minimap.budget",
           "label": "Maximum samples per tick",
           "kind": "slider",
-          "fallback": "512",
-          "min": 128,
-          "max": 1024
+          "fallback": "2048",
+          "min": 512,
+          "max": 8192
         }
       ],
       "Appearance": [
@@ -2656,6 +2664,263 @@
           "max": 0
         }
       ]
+    },
+    "veinminer": {
+      "General": [
+        {
+          "key": "veinminer.maxChain",
+          "label": "Maximum blocks per vein",
+          "kind": "slider",
+          "fallback": "64",
+          "min": 1,
+          "max": 256
+        },
+        {
+          "key": "veinminer.cooldown",
+          "label": "Cooldown (ticks)",
+          "kind": "slider",
+          "fallback": "20",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "veinminer.mustSneak",
+          "label": "Also require sneaking",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "veinminer.correctTool",
+          "label": "Require the correct tool",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "fallingtree": {
+      "General": [
+        {
+          "key": "fallingtree.maxSize",
+          "label": "Maximum tree size",
+          "kind": "slider",
+          "fallback": "128",
+          "min": 16,
+          "max": 512
+        },
+        {
+          "key": "fallingtree.leaves",
+          "label": "Break leaves",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "fallingtree.requireSneak",
+          "label": "Require sneaking",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "gravestones": {
+      "General": [
+        {
+          "key": "gravestones.nameDistance",
+          "label": "Nameplate distance (blocks)",
+          "kind": "slider",
+          "fallback": "32",
+          "min": 16,
+          "max": 64
+        }
+      ]
+    },
+    "inventory": {
+      "General": [
+        {
+          "key": "inventory.buttons",
+          "label": "Inventory buttons",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.tooltips",
+          "label": "Button tooltips",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.includeHotbar",
+          "label": "Include hotbar when sorting",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.refill",
+          "label": "Auto refill",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.lockSlots",
+          "label": "Slot locking",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.scrolling",
+          "label": "Move items with scrolling",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.highlight",
+          "label": "Highlight matching items",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "inventory.profiles",
+          "label": "Inventory profiles",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "items": {
+      "General": [
+        {
+          "key": "items.rotationSpeed",
+          "label": "Rotation speed %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 0,
+          "max": 300
+        },
+        {
+          "key": "items.oldRotation",
+          "label": "Classic rotation",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "dynamiclight": {
+      "General": []
+    },
+    "nickname": {
+      "General": []
+    },
+    "scoreboard": {
+      "General": [
+        {
+          "key": "scoreboard.backgroundColor",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#000000",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "35",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "scoreboard.titleBackground",
+          "label": "Title background",
+          "kind": "color",
+          "fallback": "#000000",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.titleOpacity",
+          "label": "Title opacity %",
+          "kind": "slider",
+          "fallback": "50",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "scoreboard.textColor",
+          "label": "Text color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.titleColor",
+          "label": "Title color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.scoreColor",
+          "label": "Score color",
+          "kind": "color",
+          "fallback": "#FFFFFF",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.shadow",
+          "label": "Text shadow",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.showTitle",
+          "label": "Show title",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "scoreboard.showScores",
+          "label": "Show scores",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "freecam": {
+      "General": []
     },
     "cape": {
       "General": [

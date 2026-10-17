@@ -1,10 +1,42 @@
 use crate::{Runtime,atomic};
 use serde_json::{Value,json};
 use std::{fs,path::{Path,PathBuf},time::Duration};
+// FML 12's SDL early window can block macOS before Minecraft starts rendering.
+pub fn prepare_profile_config(game:&Path,version:&str)->Result<(),String>{
+ if !cfg!(target_os="macos")||version!="26.3"{return Ok(())}
+ let path=game.join("config/fml.toml");
+ let current=match fs::read_to_string(&path){Ok(v)=>v,Err(e) if e.kind()==std::io::ErrorKind::NotFound=>String::new(),Err(e)=>return Err(e.to_string())};
+ let updated=disable_early_window(&current)?;
+ if updated!=current{atomic(&path,updated.as_bytes())?}Ok(())
+}
+fn disable_early_window(config:&str)->Result<String,String>{
+ let mut offset=0;
+ for line in config.split_inclusive('\n'){
+  if line.trim_start().starts_with('['){break}
+  if let Some((key,value))=line.split_once('='){
+   if matches!(key.trim(),"earlyWindowControl"|"\"earlyWindowControl\""|"'earlyWindowControl'"){
+    let trimmed=value.trim_start();
+    let length=if trimmed.starts_with("true"){4}else if trimmed.starts_with("false"){5}else{return Err("Invalid earlyWindowControl value in NeoForge configuration".into())};
+    if !trimmed[length..].trim_start().is_empty()&&!trimmed[length..].trim_start().starts_with('#'){return Err("Invalid earlyWindowControl value in NeoForge configuration".into())}
+    let start=offset+key.len()+1+value.len()-trimmed.len();
+    let mut updated=config.to_owned();updated.replace_range(start..start+length,"false");return Ok(updated)
+   }
+  }
+  offset+=line.len();
+ }
+ Ok(format!("earlyWindowControl = false\n{config}"))
+}
+#[cfg(test)]mod early_window_tests{
+ use super::*;
+ #[test]fn empty_config_disables_early_window(){assert_eq!(disable_early_window("").unwrap(),"earlyWindowControl = false\n");}
+ #[test]fn existing_value_preserves_comments_and_other_keys(){let source="# Early display\r\nearlyWindowControl = true  # user comment\r\nversionCheck = false\r\n[dependencyOverrides]\r\nexample = [\"+other\"]\r\n";assert_eq!(disable_early_window(source).unwrap(),source.replacen("= true","= false",1));}
+ #[test]fn absent_root_key_is_inserted_before_tables(){let source="# Keep this\nversionCheck = true\n[other]\nearlyWindowControl = true\n";let updated=disable_early_window(source).unwrap();assert_eq!(updated,format!("earlyWindowControl = false\n{source}"));assert_eq!(disable_early_window(&updated).unwrap(),updated);}
+ #[test]fn other_game_versions_do_not_write_configuration(){let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());prepare_profile_config(&root,"26.1").unwrap();prepare_profile_config(&root,"26.1.2").unwrap();assert!(!root.exists());}
+}
 // Use the upstream installer so its patching and library verification stay authoritative.
 pub async fn prepare(rt:&Runtime,java:&Path,client:&reqwest::Client,meta:&Value)->Result<Value,String>{
  let minecraft=meta["id"].as_str().ok_or("Missing Minecraft version")?;
- let (version,installer_sha1)=crate::versions::neoforge(minecraft);
+ let (version,installer_sha1)=crate::versions::neoforge(minecraft).ok_or("Unsupported Minecraft version for NeoForge")?;
  let root=rt.root.join("runtime/neoforge").join(version);
  let output=root.join("versions").join(format!("neoforge-{version}/neoforge-{version}.json"));
  let ready=fs::read(&output).ok().and_then(|b|serde_json::from_slice::<Value>(&b).ok()).is_some_and(|v|

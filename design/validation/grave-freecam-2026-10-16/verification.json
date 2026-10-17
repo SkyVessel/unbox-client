@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-16",
+  "platform": "macOS ARM64",
+  "published": false,
+  "node_tests": 42,
+  "visual": {
+    "grave-flight-fabric261-v2": {
+      "passed": 74,
+      "jar": "unbox-client.jar"
+    },
+    "grave-flight-fabric262-v2": {
+      "passed": 74,
+      "jar": "unbox-client-26.1.2.jar"
+    },
+    "grave-flight-neo261-v2": {
+      "passed": 74,
+      "jar": "unbox-client-neoforge.jar"
+    },
+    "grave-flight-neo262-v2": {
+      "passed": 74,
+      "jar": "unbox-client-neoforge-26.1.2.jar"
+    }
+  },
+  "grave": {
+    "grave-model-fabric261-v2": "write/read passed in separate JVMs",
+    "grave-model-neo262-v2": "write/read passed in separate JVMs"
+  },
+  "modules": {
+    "unbox-client.jar": "9d084112376f3d5ddaaa47596520979b94b3ea3fcea01e56d6d1dae5747f484e",
+    "unbox-client-26.1.2.jar": "e72dfbd37fb5b6cb371bf1e5697ee0034cfb4bd17683bcda1ed1648b9242f6e8",
+    "unbox-client-neoforge.jar": "bde08e90aa1c6a7b66842c3c60d2d4e8c89d25ff02452fb05b55a7bb90192a20",
+    "unbox-client-neoforge-26.1.2.jar": "a0ad3a3e3bed5c8b912879909dc4e8ab2f90f75beeb82a4578c947b90dbb0996"
+  }
+}

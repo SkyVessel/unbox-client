@@ -9,6 +9,9 @@ with tempfile.TemporaryDirectory() as temp:
  (d/'ModOptions.java').write_text(source.read_text())
  (d/'UnboxClient.java').write_text('package dev.unbox.client; public class UnboxClient {public static final java.util.Properties CONFIG=new java.util.Properties(); public static void save(){}}')
  (d/'ClientHud.java').write_text('package dev.unbox.client; public class ClientHud {public static final java.util.List<String> IDS=java.util.List.of("fps","cps","armor","coordinates","keystrokes","ping","minimap");public static String value(String k,String v){return UnboxClient.CONFIG.getProperty(k,v);}public static boolean flag(String k,boolean v){return Boolean.parseBoolean(value(k,""+v));}}')
+ (d/'ClientFeaturePolicy.java').write_text('package dev.unbox.client; public class ClientFeaturePolicy {public enum Scope {LOCAL_VISUAL,HOST_MANAGED} public static Scope scope(String k){return Scope.LOCAL_VISUAL;} public static boolean allowed(String k){return true;}}')
+ (d/'SurvivalClientMods.java').write_text('package dev.unbox.client; public class SurvivalClientMods {public static boolean available(String k){return true;}}')
+ (d/'SurvivalHostMods.java').write_text('package dev.unbox.client; public class SurvivalHostMods {public static boolean available(String k){return true;}}')
  (d/'Export.java').write_text('''package dev.unbox.client;
  import java.util.*;import com.google.gson.Gson;
  public class Export {public static void main(String[] args){var result=new LinkedHashMap<String,Object>();

@@ -6,14 +6,18 @@ import java.util.*;
 /** Same persisted settings whether changed in the launcher or inside the game. */
 final class ModuleBindings {
  private static final Map<String,String> applied=new HashMap<>();
- static void apply(){var mc=Minecraft.getInstance();for(String id:List.of("zoom","freelook","minimap")){
+ static void apply(){var mc=Minecraft.getInstance();
+  for(KeyMapping key:mc.options.keyMappings)if(key.getName().equals("key.unbox.menu")&&!key.saveString().equals("key.keyboard.right.shift")){key.setKey(InputConstants.Type.KEYSYM.getOrCreate(org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT));KeyMapping.resetMapping();mc.options.save();}
+  for(String id:List.of("zoom","freelook","minimap","freecam","veinminer")){
   String value=UnboxClient.CONFIG.getProperty(id+".key");
-  KeyMapping binding=id.equals("zoom")?UnboxClient.zoomKey:id.equals("minimap")?UnboxClient.mapKey:Arrays.stream(mc.options.keyMappings).filter(k->k.getName().equals("freelook.key.activate")).findFirst().orElse(null);if(binding==null)continue;
-  if(value==null||value.equals(applied.get(id))){String actual=""+InputConstants.getKey(binding.saveString()).getValue();if(!actual.equals(value)){UnboxClient.set(id+".key",actual);UnboxClient.save();}applied.put(id,actual);continue;}
-  try{int code=Integer.parseInt(value);if(code < -1 || code>348)continue;var key=code==-1?InputConstants.UNKNOWN:InputConstants.Type.KEYSYM.getOrCreate(code);
+  KeyMapping binding=id.equals("zoom")?UnboxClient.zoomKey:id.equals("minimap")?UnboxClient.mapKey:id.equals("freecam")?FreecamController.key():id.equals("veinminer")?SurvivalHostMods.key():Arrays.stream(mc.options.keyMappings).filter(k->k.getName().equals("freelook.key.activate")).findFirst().orElse(null);if(binding==null)continue;
+  if(value!=null&&value.matches("-?\\d+")){String migrated=KeyBindingNames.migrate(value,binding.saveString(),binding.getDefaultKey().getName());if(migrated==null)continue;value=migrated;UnboxClient.set(id+".key",value);UnboxClient.save();}
+  if("key.keyboard.right.shift".equals(value)||binding.saveString().equals("key.keyboard.right.shift")){binding.setKey(InputConstants.UNKNOWN);KeyMapping.resetMapping();mc.options.save();value=InputConstants.UNKNOWN.getName();UnboxClient.set(id+".key",value);UnboxClient.save();}
+  if(value==null||value.equals(applied.get(id))){String actual=binding.saveString();if(!actual.equals(value)){UnboxClient.set(id+".key",actual);UnboxClient.save();}applied.put(id,actual);continue;}
+  try{var key=InputConstants.getKey(value);
    for(KeyMapping other:mc.options.keyMappings)if(other!=binding&&!key.equals(InputConstants.UNKNOWN)&&other.saveString().equals(key.getName()))other.setKey(InputConstants.UNKNOWN);
    binding.setKey(key);KeyMapping.resetMapping();mc.options.save();applied.put(id,value);
-  }catch(NumberFormatException ignored){}
+  }catch(IllegalArgumentException ignored){}
  }
  var cfg=Freelook.config;
  String mode=UnboxClient.CONFIG.getProperty("freelook.mode"),camera=UnboxClient.CONFIG.getProperty("freelook.camera");

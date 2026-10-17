@@ -47,3 +47,7 @@ __pycache__/
 
 src-tauri/resources/unbox-client-26.1.2.jar
 src-tauri/resources/unbox-client-neoforge-26.1.2.jar
+
+src-tauri/resources/unbox-client-26.3.jar
+src-tauri/resources/unbox-client-neoforge-26.3.jar
+logs/

@@ -186,7 +186,7 @@ async fn download_skin(c:&reqwest::Client,url:&str)->Result<Vec<u8>,String>{
     let mut bytes=Vec::new();while let Some(chunk)=r.chunk().await.map_err(|_|"Skin download interrupted")?{if bytes.len()+chunk.len()>MAX_SKIN{return Err("Skin file is too large".into())}bytes.extend_from_slice(&chunk);}
     validate_png(&bytes,"classic")?;Ok(bytes)
 }
-fn validate_png(bytes:&[u8],model:&str)->Result<(),String>{
+pub(crate) fn validate_png(bytes:&[u8],model:&str)->Result<(),String>{
     if !["classic","slim"].contains(&model){return Err("Choose Classic or Slim arms".into())}
     if bytes.len()>MAX_SKIN||!bytes.starts_with(b"\x89PNG\r\n\x1a\n"){return Err("Choose a PNG skin under 1 MB".into())}
     let mut decoder=png::Decoder::new(Cursor::new(bytes));decoder.set_limits(png::Limits{bytes:MAX_SKIN});
@@ -194,6 +194,35 @@ fn validate_png(bytes:&[u8],model:&str)->Result<(),String>{
     if info.width!=64||![32,64].contains(&info.height)||info.animation_control.is_some(){return Err("Skins must be a static 64 × 64 or 64 × 32 PNG".into())}
     if model=="slim"&&info.height==32{return Err("Slim skins must be 64 × 64".into())}
     let mut output=vec![0;reader.output_buffer_size()];reader.next_frame(&mut output).map_err(|_|"PNG skin is damaged")?;Ok(())
+}
+pub(crate) async fn apply_skin_bytes(
+    rt: &Runtime,
+    account_id: &str,
+    bytes: Vec<u8>,
+    model: &str,
+) -> Result<Value, String> {
+    validate_png(&bytes, model)?;
+    let _guard = rt.auth.lock().await;
+    let mut v = load_vault()?;
+    let api = Api::new()?;
+    let mut s = usable(rt, &mut v, account_id, &api).await?;
+    s.account = upload_skin(&api, &s, bytes, model).await?;
+    v.upsert(s, false);
+    save_vault(&v).map_err(|_|"Skin changed on Minecraft, but Keychain could not cache it. Refresh your skin after unlocking Keychain.")?;
+    Ok(v.snapshot(client_id(rt).ok().as_deref()))
+}
+pub(crate) fn account_snapshot(rt: &Runtime) -> Result<Value, String> {
+    Ok(load_vault()?.snapshot(client_id(rt).ok().as_deref()))
+}
+pub(crate) fn validate_local_skin(bytes: &[u8]) -> Result<(), String> {
+    validate_png(bytes, "classic")?;
+    let reader = png::Decoder::new(Cursor::new(bytes))
+        .read_info()
+        .map_err(|_| "Invalid PNG skin")?;
+    if reader.info().height != 64 {
+        return Err("Legacy 64 × 32 skins can only be uploaded to a Microsoft account; use a 64 × 64 skin for Unbox local rendering".into());
+    }
+    Ok(())
 }
 async fn refresh(api:&Api,s:&Stored)->Result<Stored,String>{
     let r=api.c.post(&api.microsoft).form(&[("client_id",s.client_id.as_str()),("grant_type","refresh_token"),("refresh_token",s.refresh.as_str()),("scope",SCOPE)]).send().await.map_err(|_|"Could not refresh your account. Check your connection.")?;
@@ -244,9 +273,7 @@ async fn upload_skin(api:&Api,s:&Stored,bytes:Vec<u8>,model:&str)->Result<Value,
 pub async fn auth_upload_skin(rt:tauri::State<'_,Runtime>,account_id:String,png_base64:String,model:String)->Result<Value,String>{
     if png_base64.len()>MAX_SKIN*4/3+4{return Err("Choose a PNG skin under 1 MB".into())}
     let bytes=STANDARD.decode(png_base64).map_err(|_|"Invalid PNG data")?;validate_png(&bytes,&model)?;
-    let _guard=rt.auth.lock().await;let mut v=load_vault()?;let api=Api::new()?;let mut s=usable(&rt,&mut v,&account_id,&api).await?;
-    s.account=upload_skin(&api,&s,bytes,&model).await?;v.upsert(s,false);save_vault(&v).map_err(|_|"Skin changed on Minecraft, but Keychain could not cache it. Refresh your skin after unlocking Keychain.")?;
-    Ok(v.snapshot(client_id(&rt).ok().as_deref()))
+    apply_skin_bytes(&rt,&account_id,bytes,&model).await
 }
 #[tauri::command]
 pub async fn auth_sign_out(rt:tauri::State<'_,Runtime>,account_id:String)->Result<Value,String>{

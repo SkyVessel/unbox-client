@@ -1,0 +1,56 @@
+{
+  "ok": true,
+  "gameDirectory": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-model-neo262-v2",
+  "sourceWorld": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/revision-namecam-04/saves/Benchmark",
+  "template": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-flight-neo262-v2",
+  "phases": [
+    {
+      "mode": "write",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 17.29,
+      "report": {
+        "ok": true,
+        "mode": "write",
+        "loader": "neoforge",
+        "pid": 29075,
+        "phase": 8,
+        "manifest": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-model-neo262-v2/logs/grave-persistence-manifest.json",
+        "checks": [
+          "Client received marker metadata; stone hardness 1.5 and upper-tablet selection/collision match the model, ordinary slabs stay unchanged",
+          "Old grave schema migrated STONE to slab plus six vanilla model displays; repeated updates kept stable UUIDs and exact contents",
+          "Actual lethal damage captured full component-bearing inventory, equipment, cursor and Vanishing item exactly once",
+          "Full vanilla save completed with slab, six model displays and nameplate unclaimed; pre-death component expectations written to manifest"
+        ],
+        "grave": "9, 122, 3"
+      },
+      "launchLog": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-model-neo262-v2/logs/grave-persistence-write-launch.log"
+    },
+    {
+      "mode": "read",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 16.68,
+      "report": {
+        "ok": true,
+        "mode": "read",
+        "loader": "neoforge",
+        "pid": 29115,
+        "phase": 21,
+        "manifest": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-model-neo262-v2/logs/grave-persistence-manifest.json",
+        "checks": [
+          "Second JVM loaded persisted slab, the same six model display UUIDs, text-display entity and complete stored stacks from the same world",
+          "Manifest originated in a different JVM and identifies the same fixture world, dimension and owner UUID",
+          "Fresh SavedDataStorage instance reloaded actual dimension file with exact UUIDs and ItemStack components (not a full world restart)",
+          "Non-owner UUID, replacement, generic destruction and piston are denied; existing nameplate responds to settings",
+          "Native server mining timer completed in 28 ticks; all stored stacks dropped with gravity, owner retrieved them, slab, model and label were removed",
+          "After restart the owner mined and recovered every expected stack; cleared grave state was saved normally"
+        ],
+        "grave": "9, 122, 3"
+      },
+      "launchLog": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-model-neo262-v2/logs/grave-persistence-read-launch.log"
+    }
+  ]
+}

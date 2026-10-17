@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "fabric-api",
+    "id": "bq3SsNGk",
+    "version": "0.163.0+26.3",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "fabric-api-0.163.0+26.3.jar",
+    "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/bq3SsNGk/fabric-api-0.163.0%2B26.3.jar",
+    "sha512": "44fd8de10fa71ea39cf984d44d2ec4c8e9314f8af88ad95788d9a09ac7b02b5c2f796ae88f40e314bd27df677e66fed59d1a1b6784350b0cc1fd62efac9e08a3",
+    "sha1": "65ada8c72b61ffb256e956baf53df28155daa479"
+  },
+  {
+    "slug": "lithium",
+    "id": "xS0Q8LSi",
+    "version": "mc26.3-0.26.2-fabric",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "lithium-fabric-0.26.2+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/xS0Q8LSi/lithium-fabric-0.26.2%2Bmc26.3.jar",
+    "sha1": "dd5a4ec2c68d7601d8bce9076f789c55a5f8bef3",
+    "sha512": "4d7fee66132eedc71feab9390b92c95d7058edbdad0fecfac1d836a2950b97a7ca463afbede61c7ef361ce65e1f927ab9e89dde5bf2e0e0ce486afb5c5dbee40"
+  },
+  {
+    "slug": "immediatelyfast",
+    "id": "3MP9UR23",
+    "version": "1.17.1+26.3-fabric",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "ImmediatelyFast-Fabric-1.17.1+26.3.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/3MP9UR23/ImmediatelyFast-Fabric-1.17.1%2B26.3.jar",
+    "sha512": "8e139589fd995bce3d485a34d92a07243964212f7ed2e4fc2f6de5b9a74d0f59b03252e7ce40c64e006cf3e21bed5de27b830d33ef048b286e041f6178ad8428",
+    "sha1": "f565bbeb201f2305e81761429d3f1f47e1c3a321"
+  },
+  {
+    "slug": "entityculling",
+    "id": "X1g3VhTx",
+    "version": "1.11.3",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "entityculling-fabric-1.11.3-mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/NNAgCjsB/versions/X1g3VhTx/entityculling-fabric-1.11.3-mc26.3.jar",
+    "sha1": "45f47f7a067f5efd733a32767dc3d1d770678b2a",
+    "sha512": "b6209bb62d72376d3fd284da137ec93a6dd38ebe5fd38ab9190deeade68b5b7f4bf915f4abcb4a807afe18cb9f0b59e11be789d46df6f0e6f64388ed2edc284d"
+  },
+  {
+    "slug": "ferrite-core",
+    "id": "d5ddUdiB",
+    "version": "9.0.0-fabric",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "ferritecore-9.0.0-fabric.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/d5ddUdiB/ferritecore-9.0.0-fabric.jar",
+    "sha1": "eac76ff0f3753422c61b2c44487d0d195d88d4bc",
+    "sha512": "d81fa97e11784c19d42f89c2f433831d007603dd7193cee45fa177e4a6a9c52b384b198586e04a0f7f63cd996fed713322578bde9a8db57e1188854ae5cbe584"
+  },
+  {
+    "slug": "dynamic-fps",
+    "id": "Jwq069rR",
+    "version": "3.11.10",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "dynamic-fps-3.11.10+minecraft-26.3.0-fabric.jar",
+    "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/Jwq069rR/dynamic-fps-3.11.10%2Bminecraft-26.3.0-fabric.jar",
+    "sha1": "a4860c9480f0ce1a468e1e4c254214b1f97e19b3",
+    "sha512": "7976d11411babfa3ac0c38898f26ee6192f22a4f595b637eeae3cc5185f326c0e4b9fd7d00b3d7e8d020dd861295f0df52f9a9d7c67e88946d0ba9fff4a9f894"
+  },
+  {
+    "slug": "freelook",
+    "id": "YT42PXTm",
+    "version": "1.4.4",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "freelook-1.4.4.jar",
+    "url": "https://cdn.modrinth.com/data/g4pR0Fmy/versions/YT42PXTm/freelook-1.4.4.jar",
+    "sha512": "686c982072441f15f1bf2a0d2029901f140c8f1cfd28e22d21f44e471243314addc5d526738255a0db3521c0c7d3c7d78f67334f8d193005ce51b8864b907f8c",
+    "sha1": "8ae77404a0a4dbcdf8708029deb5077b21ea7ff6"
+  },
+  {
+    "slug": "e4mc",
+    "id": "RNDvrMAd",
+    "version": "6.2.3-fabric-modern",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "e4mc-fabric-6.2.3-modern.jar",
+    "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/RNDvrMAd/e4mc-fabric-6.2.3-modern.jar",
+    "sha1": "78a4feb50b8cb67a80ca172a56e85c9cd79d9fbb",
+    "sha512": "4e5dac0458cd533346d7a9572582a19f2f775371027ff0bfe445e025c2fa16ce22d9da924e73f64806373f82257e32b0e264cb0c29feaaa40fb03b6ff2cae8c9"
+  },
+  {
+    "slug": "iris",
+    "id": "vTN4NRGW",
+    "version": "1.11.7+26.3-fabric",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "iris-fabric-1.11.7+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/vTN4NRGW/iris-fabric-1.11.7%2Bmc26.3.jar",
+    "sha1": "fa03640ba1e4ef2f7ae3619c6373a06e46d0ba2c",
+    "sha512": "d8d3312f77fc52a48e4a6cd836fda33669bdebcb4de0b8c0d30adc808b287330a533e0baef355cc1ce6336a26851d9775369a802a4666b7b7a6266af20088f42"
+  },
+  {
+    "slug": "sodium",
+    "id": "bAZQdGpg",
+    "version": "mc26.3-0.9.2-fabric",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "sodium-fabric-0.9.2+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/bAZQdGpg/sodium-fabric-0.9.2%2Bmc26.3.jar",
+    "sha1": "9acfe851e36f4fb27d7c5baa224e8bd4e0334283",
+    "sha512": "f3f260f204b8ce5e8777c2c73f537956755ec61f3817b0b78b5e5568e8aa40f14891f146475075109747665c7c88a45ca0ca9a8df3c68d79c58ecdaa8d8c4b93"
+  }
+]

@@ -12,5 +12,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardInput.class)
 public class SprintMixin {
  @Inject(method="tick",at=@At("RETURN"))
- private void unboxSprint(CallbackInfo ci){if(!UnboxClient.enabled("sprint")||Minecraft.getInstance().screen!=null)return;var self=(ClientInput)(Object)this;var i=self.keyPresses;self.keyPresses=new Input(i.forward(),i.backward(),i.left(),i.right(),i.jump(),i.shift(),true);}
+ private void unboxSprint(CallbackInfo ci){if(dev.unbox.client.FreecamController.active()||!UnboxClient.enabled("sprint")||Minecraft.getInstance().screen!=null)return;var self=(ClientInput)(Object)this;var i=self.keyPresses;self.keyPresses=new Input(i.forward(),i.backward(),i.left(),i.right(),i.jump(),i.shift(),true);}
 }

@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-15",
+  "platform": "macOS ARM64",
+  "runs": {
+    "survival-final-fabric261": {
+      "report": ".cache/benchmarks/survival-final-fabric261/logs/survival-smoke.json",
+      "ok": true,
+      "sha256": "3ba8fc21417518b676f3d6d7e917b9ecca99396d79cf11eb3e701884ceaa7398"
+    },
+    "survival-final-fabric262": {
+      "report": ".cache/benchmarks/survival-final-fabric262/logs/survival-smoke.json",
+      "ok": true,
+      "sha256": "7be82bf67b3e724f9161d981d07bc9740d1cde1372764aaff89eaaf9b90d4d4c"
+    },
+    "survival-final-neo261": {
+      "report": ".cache/benchmarks/survival-final-neo261/logs/survival-smoke.json",
+      "ok": true,
+      "sha256": "53ac7997285aef6823cd26b4e061f1124a6377e85ac95872024d24b273c8ba6e"
+    },
+    "survival-final-neo262": {
+      "report": ".cache/benchmarks/survival-final-neo262/logs/survival-smoke.json",
+      "ok": true,
+      "sha256": "1aee9f0190d2fd5ed829ea2016e6af60051dde8743ef3561a2640f797be7a89f"
+    },
+    "survival-ui-fabric-03": {
+      "report": ".cache/benchmarks/survival-ui-fabric-03/logs/ui-smoke.json",
+      "ok": true,
+      "sha256": "919b79ac682f0ebafc987fb407e71f4fe4731eaea612a4802c23de08cbd27cac"
+    },
+    "survival-lan-fabric-01": {
+      "report": ".cache/benchmarks/survival-lan-fabric-01/logs/survival-lan.json",
+      "ok": true,
+      "sha256": "67e85b9ca928b57d315a8358c8dcafc2fef39fbe3cfaf1f4451005759495136d"
+    },
+    "survival-lan-neo262-01": {
+      "report": ".cache/benchmarks/survival-lan-neo262-01/logs/survival-lan.json",
+      "ok": true,
+      "sha256": "d38711afbd9a4b2aed0774bd0d2d7683b18dec99f6627545ae12cc595744742c"
+    },
+    "grave-restart-fabric-01": {
+      "report": ".cache/benchmarks/grave-restart-fabric-01/logs/grave-persistence-summary.json",
+      "ok": true,
+      "sha256": "4f0586e5c9347419b02e9c828fd73a02c9fdbdcc2fef51653778148b9aa03ebf"
+    },
+    "grave-restart-neo262-01": {
+      "report": ".cache/benchmarks/grave-restart-neo262-01/logs/grave-persistence-summary.json",
+      "ok": true,
+      "sha256": "b6436c9eba9ed51876cc8b0b7d09b785a55cf4f4202aec9032b06edb846b6098"
+    }
+  },
+  "bundledArtifacts": {
+    "unbox-client.jar": "3127b67ea2e5e39f98fa871e0b8e5837e2a666e661ac2cf46ed568486ea87c4a",
+    "unbox-client-neoforge-26.1.2.jar": "b9d95ad1e8e7a4febf56b8a42dee734c1c3353954aaee2f0e8feed5ba0e82e1a",
+    "unbox-client-neoforge.jar": "321ebf360cbd5d363f0654c66d18d6e8a9e0134e5c0ace95b5e7edfdbb1e8dc3",
+    "unbox-client-26.1.2.jar": "666c3c636a52d3c7ee40b04ca12b0ef27390068ea31f560554a0013c44d9065f",
+    "survival-mods-lock.json": "cdc5119562c14d5c31783af826f8cf1874ccdc414b115376089dcc46f4345837"
+  },
+  "frontendTests": 42,
+  "rustTests": 59,
+  "bundle": "src-tauri/target/debug/bundle/macos/Unbox Client.app"
+}

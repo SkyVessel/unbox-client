@@ -6,6 +6,7 @@ public final class Freelook {
  public static void init(){}public static void tick(Minecraft mc){}
  public static boolean active(){return freelook.freelook.FreeLookMod.isFreeLooking;}
  public static void activate(boolean on){freelook.freelook.FreeLookMod.isFreeLooking=on;}
+ public static void suspend(){activate(false);}
  private static freelook.freelook.CameraOverriddenEntity camera(){return (freelook.freelook.CameraOverriddenEntity)Minecraft.getInstance().player;}
  public static void rotation(float y,float p){camera().freelook$setCameraYaw(y);camera().freelook$setCameraPitch(p);}
  public static float yaw(){return camera().freelook$getCameraYaw();}public static float pitch(){return camera().freelook$getCameraPitch();}

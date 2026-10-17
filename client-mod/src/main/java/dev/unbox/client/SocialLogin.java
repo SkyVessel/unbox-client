@@ -28,8 +28,11 @@ public final class SocialLogin {
  public static void claim(ServerLoginPacketListenerImpl h,UUID id){CLAIMS.put(h,id);}
  private static final Map<ClientHandshakePacketListenerImpl,String> KEYS=Collections.synchronizedMap(new WeakHashMap<>());
  private static volatile Grant joining;
+ private static volatile boolean trustedClientSession;
  private static final Set<ClientHandshakePacketListenerImpl> TRUSTED=Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
  public static boolean trustedHost(ClientHandshakePacketListenerImpl h){return TRUSTED.contains(h);}
+ /** True only after the current remote server completed the Unbox v2 room proof. */
+ public static boolean trustedClientSession(){return trustedClientSession;}
  public static String keyHash(PublicKey key)throws Exception{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(key.getEncoded()));}
  public static byte[] proof(String secret,String side,String room,String person,String nonce,String key)throws Exception{Mac m=Mac.getInstance("HmacSHA256");m.init(new SecretKeySpec(HexFormat.of().parseHex(secret),"HmacSHA256"));return m.doFinal(("unbox-v2|"+side+"|"+room+"|"+person+"|"+nonce+"|"+key).getBytes(StandardCharsets.UTF_8));}
  public static void captureKey(ClientHandshakePacketListenerImpl handler,PublicKey key)throws Exception{KEYS.put(handler,keyHash(key));}
@@ -63,9 +66,10 @@ public final class SocialLogin {
   LoginTransport.client(CHANNEL,(mc,h,buf,listener)->{
    try{Grant g=joining;String room=buf.readUtf(40),person=buf.readUtf(40),nonce=buf.readUtf(40),key=KEYS.get(h);byte[] signed=buf.readByteArray(32);
     if(g==null||key==null||g.expires<=System.currentTimeMillis()||!g.room.equals(room)||!g.person.equals(person)||!g.uuid.equals(mc.getUser().getProfileId())||!g.name.equals(mc.getUser().getName())||buf.isReadable()||!MessageDigest.isEqual(signed,proof(g.secret,"host",room,person,nonce,key)))return CompletableFuture.completedFuture(null);
-    FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeByteArray(proof(g.secret,"guest",room,person,nonce,key));joining=null;KEYS.remove(h);TRUSTED.add(h);return CompletableFuture.completedFuture(out);
+    FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeByteArray(proof(g.secret,"guest",room,person,nonce,key));joining=null;KEYS.remove(h);TRUSTED.add(h);trustedClientSession=true;return CompletableFuture.completedFuture(out);
    }catch(Exception e){return CompletableFuture.completedFuture(null);}
   });
   LoginTransport.onServerDisconnect((h,server)->{QUERIES.remove(h);VERIFIED.remove(h);CLAIMS.remove(h);});
+  LoginTransport.onClientDisconnect((h,mc)->{TRUSTED.remove(h);KEYS.remove(h);trustedClientSession=false;GraveKeeper.clearClientHost();});
  }
 }

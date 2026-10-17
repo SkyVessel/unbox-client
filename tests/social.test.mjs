@@ -48,8 +48,25 @@ test('invalid player proof never falls back to session checks or creates an iden
 });
 
 test('world invitations preserve the native loader and reject unknown versions',()=>{
- for(const loader of ['fabric','neoforge'])for(const minecraft of ['26.1','26.1.2'])assert.deepEqual(room({...sampleRoom(),loader,minecraft}).loader,loader);
+ for(const loader of ['fabric','neoforge'])for(const minecraft of ['26.1','26.1.2','26.3']){const result=room({...sampleRoom(),loader,minecraft});assert.equal(result.loader,loader);assert.equal(result.minecraft,minecraft);}
  assert.throws(()=>room({...sampleRoom(),loader:'converted-fabric',minecraft:'26.1'}));
  assert.throws(()=>room({...sampleRoom(),loader:'fabric',minecraft:'1.21'}));
  assert.equal(room(sampleRoom()).loader,undefined); // Legacy invitations still work with a running game.
+});
+
+test('badge lookup returns only requested, active, verified player UUIDs',async()=>{
+ const db=database(),original=globalThis.fetch;
+ try{
+  const viewer=player('Viewer','microsoft'),active=player('Active','microsoft'),unrequested=player('Hidden','microsoft'),local=player('Local','local'),stale=player('Stale','microsoft');
+  for(const p of [viewer,active,unrequested,stale]){await send(db,p,'challenge',{id:p.id});globalThis.fetch=async()=>Response.json({id:p.uuid});await register(db,p)}
+  await register(db,local);globalThis.fetch=original;
+  for(const p of [active,unrequested,local,stale])await send(db,p,'sync',{...p,state:'Playing'});
+  db.sql.prepare('UPDATE people SET seen=? WHERE id=?').run(Date.now()-100000,stale.id);
+  const result=await send(db,viewer,'sync',{...viewer,state:'Playing',players:[active.uuid,local.uuid,stale.uuid,crypto.randomUUID().replaceAll('-','')]});
+  assert.deepEqual(result.badges,[active.uuid]);
+  assert.equal(result.badges.includes(unrequested.uuid),false);
+  assert.equal((await send(db,viewer,'sync',{...viewer,state:'Playing'})).badges.length,0);
+  assert.equal((await send(db,viewer,'sync',{...viewer,state:'Playing',players:null})).badges.length,0);
+  assert.equal((await send(db,viewer,'sync',{...viewer,state:'Playing',players:Array(2049).fill(active.uuid)})).status,400);
+ }finally{globalThis.fetch=original;db.sql.close()}
 });

@@ -30,15 +30,19 @@ final class PanelStyle {
         g.fill(x+r,y,x+w-r,y+h,color);g.fill(x,y+r,x+r,y+h-r,color);g.fill(x+w-r,y+r,x+w,y+h-r,color);
         for(int a=0;a<2;a++)for(int b=0;b<2;b++)g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,ROUND,x+a*(w-r),y+b*(h-r),a*128f,b*128f,r,r,128,128,256,256,color);
     }
-    // HUD submits one cached atlas layout per label, with fractional geometry and filtered glyphs.
-    static void hudLabel(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){AtlasText.draw(g,s,x,y,color,shadow);}
-    static void hudCenter(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){hudLabel(g,s,x-width(s)/2,y,color,shadow);}
-    static int hudWidth(String s){return width(s);}
+    static void bottomRound(GuiGraphicsExtractor g,int x,int y,int w,int h,int r,int color){
+        color=tint(color);g.fill(x,y,x+w,y+h-r,color);g.fill(x+r,y+h-r,x+w-r,y+h,color);
+        for(int a=0;a<2;a++)g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,ROUND,x+a*(w-r),y+h-r,a*128f,128f,r,r,128,128,256,256,color);
+    }
+    // HUD uses the game pixel font, including resource-pack font overrides.
+    static void hudLabel(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){g.text(Minecraft.getInstance().font,s,x,y,color,shadow);}
+    static void hudCenter(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){hudLabel(g,s,x-hudWidth(s)/2,y,color,shadow);}
+    static int hudWidth(String s){return Minecraft.getInstance().font.width(s);}
     static int mix(int a,int b,float t){int c=0;for(int s=0;s<32;s+=8)c|=(Math.round(((a>>>s)&255)*(1-t)+((b>>>s)&255)*t)&255)<<s;return c;}
     static final class Motion{private float value;private long time;float to(float target){long now=System.nanoTime();float dt=time==0?1:Math.min(.1f,(now-time)/1e9f);time=now;value+=(target-value)*(1-(float)Math.exp(-dt*18));return value;}}
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int color){icon(g,id,x,y,32,color);}
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int size,int color){
-        int resolution=id.equals("logo")?768:96;
+        int resolution=id.equals("logo")?768:id.equals("badge")?96:384;
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,Identifier.fromNamespaceAndPath("unbox","textures/ui/"+id+".png"),x,y,0f,0f,size,size,resolution,resolution,resolution,resolution,tint(color));
     }
 }

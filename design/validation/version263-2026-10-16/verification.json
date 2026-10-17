@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-16",
+  "platform": "macOS ARM64",
+  "publishedRelease": false,
+  "app": "src-tauri/target/debug/bundle/macos/Unbox Client.app",
+  "modules": {
+    "unbox-client.jar": {
+      "sha256": "77c2060e46a7eec6691e9ced695d7592d0ab920daf530cd25d0ef882314f2ea4",
+      "bundledMatch": true
+    },
+    "unbox-client-neoforge.jar": {
+      "sha256": "fe6e12962dda795278b36161317abab9f1cbcc08a35c372d5181e5f47d14a513",
+      "bundledMatch": true
+    },
+    "unbox-client-26.1.2.jar": {
+      "sha256": "a1334439a13752353bd663cb75df2a3801579ca3a7c9afd41576eab56e07c63a",
+      "bundledMatch": true
+    },
+    "unbox-client-neoforge-26.1.2.jar": {
+      "sha256": "3d650880d4358dc969c52daa1dd0f65dc4d62ac7f196c859e5d1c2769dafa457",
+      "bundledMatch": true
+    },
+    "unbox-client-26.3.jar": {
+      "sha256": "8348a671d3df999d66faff2158daaa51b1ceaac6a67ec720dd79f743615867a3",
+      "bundledMatch": true
+    },
+    "unbox-client-neoforge-26.3.jar": {
+      "sha256": "2ecc91ac260d3b8f45872cb2e9428d6dd258c3613d2f8f05a99b25eb0b6c47ed",
+      "bundledMatch": true
+    }
+  },
+  "tests": {
+    "fabric-ui": {
+      "passed": 139
+    },
+    "fabric-survival": {
+      "passed": 23
+    },
+    "neoforge-survival": {
+      "passed": 23
+    },
+    "fabric-visual": {
+      "passed": 74
+    },
+    "neoforge-visual": {
+      "passed": 74
+    },
+    "fabric-home": {
+      "passed": 25
+    },
+    "neoforge-home": {
+      "passed": 25
+    },
+    "fabric261-regression": {
+      "passed": 23
+    },
+    "rust": 65,
+    "node": 43,
+    "keyMigration": 13
+  },
+  "cloudDeployment": "437a683eaffd450ebf9f6f847853a8ad",
+  "scope": "Two real clients on the same Mac over Direct LAN; local account service. Live Worker version allowlist separately deployed and read back.",
+  "survivalToFinalJarChanges": {
+    "fabric": [
+      "dev/unbox/client/UiSmokeTest.class"
+    ],
+    "neoforge": [
+      "dev/unbox/client/UiSmokeTest.class"
+    ]
+  }
+}

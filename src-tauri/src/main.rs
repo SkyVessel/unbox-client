@@ -1,4 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+mod skin_library;
+mod world_library;
 #[cfg(any(target_os="macos",test))]
 mod credential_cache;
 #[cfg(target_os="windows")]
@@ -90,6 +92,7 @@ pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:St
     if username.is_empty()||username.len()>16||!username.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_'){return Err("Local name must be 1–16 letters, numbers or underscores".into())}
     let dir=profile_dir(&rt,&id)?;
     let profile:Value=serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+    world_library::ensure(rt,&id)?;
     {let mut job=rt.job.lock().unwrap();if job["busy"]==true{return Err("A game or preparation is already running".into())}*job=json!({"busy":true,"stage":"Checking files","progress":0,"profileId":id});}
     run_profile(runtime,app,profile,username,memory,prepare_only);Ok(())
 }
@@ -107,7 +110,7 @@ async fn list_content(rt: tauri::State<'_,Runtime>, id: String, kind: String) ->
 }
 fn managed_mod_names(game:&std::path::Path)->std::collections::HashSet<String>{
     let mut names=std::collections::HashSet::from(["unbox-client.jar".to_owned()]);
-    if let Ok(bytes)=fs::read(game.join("unbox-performance-lock.json")){if let Ok(Value::Array(entries))=serde_json::from_slice::<Value>(&bytes){for m in entries{if let Some(name)=m["filename"].as_str(){names.insert(name.to_owned());}}}}
+    for manifest in ["unbox-performance-lock.json","unbox-survival-mods-lock.json"]{if let Ok(bytes)=fs::read(game.join(manifest)){if let Ok(Value::Array(entries))=serde_json::from_slice::<Value>(&bytes){for m in entries{if let Some(name)=m["filename"].as_str(){names.insert(name.to_owned());}}}}}
     names
 }
 #[cfg(test)]mod content_tests{
@@ -153,6 +156,6 @@ fn main() {
             let copy=rt.clone();let handle=app.handle().clone();
             tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
-        social::start(rt.clone());app.manage(rt);Ok(())
-    }).invoke_handler(tauri::generate_handler![updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
+        social::start(rt.clone());skin_library::start(rt.clone());app.manage(rt);Ok(())
+    }).invoke_handler(tauri::generate_handler![skin_library::skin_library_list,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
 }

@@ -1,6 +1,11 @@
 use crate::{managed_mod_names, profile_dir, Runtime};
 use serde_json::{json, Value};
 use std::{fs, io::Read, path::Path};
+fn sha256(path: &Path) -> Option<String> {
+    use sha2::{Digest, Sha256};
+    let bytes = fs::read(path).ok()?;
+    Some(format!("{:x}", Sha256::digest(bytes)))
+}
 pub fn folder(kind: &str) -> Result<&'static str, String> {
     match kind {
         "Mods" => Ok("mods"),
@@ -78,6 +83,11 @@ pub fn list(rt: &Runtime, id: &str, kind: &str) -> Result<Value, String> {
         return Ok(json!([]));
     }
     let hidden = managed_mod_names(&game);
+    let shared: Value = fs::read(game.join("unbox-shared-manifest.json"))
+        .ok()
+        .and_then(|b| serde_json::from_slice(&b).ok())
+        .unwrap_or_else(|| json!({}));
+    let shared_files = shared["files"].as_array().cloned().unwrap_or_default();
     let mut files = Vec::new();
     for e in fs::read_dir(dir).map_err(|e| e.to_string())?.flatten() {
         let name = e.file_name().to_string_lossy().into_owned();
@@ -90,6 +100,25 @@ pub fn list(rt: &Runtime, id: &str, kind: &str) -> Result<Value, String> {
         let mut v = metadata(&e.path(), kind).unwrap_or(json!({}));
         v["name"] = json!(name);
         v["size"] = json!(e.metadata().map(|m| m.len()).unwrap_or(0));
+        let expected_kind = match kind {
+            "Mods" => "mods",
+            "Packs" => "resourcepacks",
+            "Shaders" => "shaderpacks",
+            _ => "",
+        };
+        let digest = sha256(&e.path());
+        let host = shared_files.iter().any(|item| {
+            item["kind"].as_str().unwrap_or("mods") == expected_kind
+                && item["hash"]
+                    .as_str()
+                    .is_some_and(|h| digest.as_deref() == Some(h))
+        });
+        v["origin"] = json!(if host { "host" } else { "yours" });
+        v["source"] = json!(if host {
+            "Required by host"
+        } else {
+            "Your library"
+        });
         files.push(v)
     }
     files.sort_by(|a, b| a["name"].as_str().cmp(&b["name"].as_str()));
@@ -139,21 +168,16 @@ pub fn import(rt: &Runtime, id: &str, kind: &str, paths: Vec<String>) -> Result<
                 }
                 .into());
             }
-            let info = metadata(path, kind)?;
+            metadata(path, kind)?;
             if kind == "Mods"
                 && (managed_mod_names(&game).contains(&name)
-                    || [
-                        "unbox",
-                        "fabric-api",
-                        "sodium",
-                        "lithium",
-                        "ferritecore",
-                        "entityculling",
-                        "immediatelyfast",
-                        "dynamic_fps",
-                        "e4mc",
-                    ]
-                    .contains(&info["modId"].as_str().unwrap_or("")))
+                    || crate::launcher::jar_mod_ids(path)?.iter().any(|id| [
+                        "unbox", "fabric-api", "sodium", "iris", "lithium",
+                        "ferritecore", "entityculling", "immediatelyfast", "dynamic_fps",
+                        "e4mc", "freelook", "wick", "itemphysiclite", "creativecore",
+                        "inventoryprofilesnext", "libipn", "fabric-language-kotlin", "klf",
+                        "veinminer", "veinminer_client", "fallingtree",
+                    ].contains(&id.as_str())))
             {
                 return Err("This client mod is managed by Unbox".into());
             }
@@ -314,5 +338,40 @@ mod tests {
         }
         *f.rt.job.lock().unwrap() = json!({"busy":true,"profileId":f.id});
         assert!(import(&f.rt, &f.id, "Mods", vec![b]).is_err());
+    }
+    #[test]
+    fn renamed_survival_mods_are_rejected_by_native_id_including_secondary_entries() {
+        let f = Fixture::new();
+        let fabric = f.archive("personal-name.jar", &[("fabric.mod.json", br#"{"id":"alias","provides":["inventoryprofilesnext"]}"#)]);
+        let neo = f.archive("another-name.jar", &[("META-INF/neoforge.mods.toml", b"[[mods]]\nmodId='unrelated'\n[[mods]]\nmodId='veinminer'\n")]);
+        for path in [fabric, neo] {
+            let original = fs::read(&path).unwrap();
+            let result = import(&f.rt, &f.id, "Mods", vec![path.clone()]).unwrap();
+            assert_eq!(result["imported"], json!([]));
+            assert!(result["rejected"][0]["reason"].as_str().unwrap_or("").contains("managed"));
+            assert_eq!(fs::read(path).unwrap(), original);
+        }
+        assert!(list(&f.rt, &f.id, "Mods").unwrap().as_array().unwrap().is_empty());
+    }
+    #[test]
+    fn shared_origin_requires_the_verified_hash() {
+        let f = Fixture::new();
+        let source = f.archive("host-name.zip", &[("pack.mcmeta", b"personal bytes")]);
+        import(&f.rt, &f.id, "Packs", vec![source]).unwrap();
+        let game = profile_dir(&f.rt, &f.id).unwrap();
+        fs::write(game.join("unbox-shared-manifest.json"),serde_json::to_vec(&json!({"files":[{"kind":"resourcepacks","name":"host-name.zip","hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]})).unwrap()).unwrap();
+        assert_eq!(list(&f.rt, &f.id, "Packs").unwrap()[0]["origin"], "yours");
+        let digest = sha256(&game.join("resourcepacks/host-name.zip")).unwrap();
+        fs::write(
+            game.join("unbox-shared-manifest.json"),
+            serde_json::to_vec(
+                &json!({"files":[{"kind":"resourcepacks","name":"different.zip","hash":digest}]}),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let listed = list(&f.rt, &f.id, "Packs").unwrap();
+        assert_eq!(listed[0]["origin"], "host");
+        assert_eq!(listed[0]["source"], "Required by host");
     }
 }

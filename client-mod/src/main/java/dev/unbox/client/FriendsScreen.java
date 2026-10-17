@@ -26,9 +26,9 @@ public final class FriendsScreen extends Screen {
  }
  @Override public void tick(){String next=SocialBridge.rows("friends").toString()+SocialBridge.view.get("self")+(minecraft.getSingleplayerServer()!=null);if(!next.equals(signature)){signature=next;init();}}
  private Action add(int x,int y,int w,int h,String label,Runnable run){return addRenderableWidget(new Action(x,y,w,h,label,run));}
- @Override public void extractBackground(GuiGraphicsExtractor g,int mx,int my,float delta){extractBlurredBackground(g);g.fill(0,0,width,height,0x40141418);}
+ @Override public void extractBackground(GuiGraphicsExtractor g,int mx,int my,float delta){if(minecraft.level==null)extractPanorama(g,delta);extractBlurredBackground(g);}
  @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){float opacity=entrance.frame();g.pose().pushMatrix();g.pose().scale(scale);g.pose().translate(0,entrance.offset());PanelStyle.opacity(opacity);
-  try{PanelStyle.round(g,x,y,520,380,12,0xef24262d);PanelStyle.icon(g,"logo",x+18,y+15,25,PanelStyle.TEXT);PanelStyle.label(g,"FRIENDS",x+57,y+22,PanelStyle.TEXT);
+  try{PanelStyle.icon(g,"logo",x+18,y+15,25,PanelStyle.TEXT);PanelStyle.label(g,"FRIENDS",x+57,y+22,PanelStyle.TEXT);
    String self=SocialBridge.view.has("self")?SocialBridge.text(SocialBridge.view.getAsJsonObject("self"),"code"):"Offline";PanelStyle.label(g,"Your code  ·  "+self,x+18,y+53,PanelStyle.MUTED);
    for(int i=page*6;i<Math.min(rows.size(),page*6+6);i++){var f=rows.get(i);int yy=y+117+(i-page*6)*33;FriendsOverlay.drawFace(g,f,x+18,yy);PanelStyle.label(g,SocialBridge.text(f,"name"),x+53,yy,PanelStyle.TEXT);PanelStyle.label(g,f.get("accepted").getAsInt()==1?(SocialBridge.flag(f,"online")?SocialBridge.text(f,"state"):"Offline"):SocialBridge.text(f,"direction").equals("incoming")?"Friend request":"Request sent",x+53,yy+14,PanelStyle.MUTED);}
    if(rows.isEmpty())PanelStyle.label(g,"Add a friend using their code",x+18,y+136,PanelStyle.MUTED);
@@ -44,7 +44,7 @@ public final class FriendsScreen extends Screen {
  @Override public void onClose(){minecraft.setScreen(parent);}
  private static final class Action extends AbstractWidget{
   private final Runnable run;Action(int x,int y,int w,int h,String text,Runnable run){super(x,y,w,h,Component.literal(text));this.run=run;}
-  @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){PanelStyle.round(g,getX(),getY(),width,height,4,isHoveredOrFocused()?0xff4b6088:0xff343b4b);PanelStyle.center(g,getMessage().getString(),getX()+width/2,getY()+8,active?PanelStyle.TEXT:PanelStyle.MUTED);}
+  @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){PanelStyle.round(g,getX(),getY(),width,height,4,isHoveredOrFocused()?0x665e5e64:0x00333337);PanelStyle.center(g,getMessage().getString(),getX()+width/2,getY()+8,active?PanelStyle.TEXT:PanelStyle.MUTED);}
   @Override public void onClick(MouseButtonEvent e,boolean doubled){run.run();}
   @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()&&active){run.run();return true;}return super.keyPressed(e);}
   @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}

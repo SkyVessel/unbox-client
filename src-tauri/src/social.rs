@@ -187,6 +187,12 @@ fn game_status(rt: &Runtime, a: &Value) -> Value {
         })
         .unwrap_or(Value::Null)
 }
+fn player_uuids(world: &Value) -> Value {
+    world["players"]
+        .as_array()
+        .map(|players| json!(players))
+        .unwrap_or_else(|| json!([]))
+}
 // Persist only display data, isolated by account. Cached presence is always offline.
 fn cached_view(v: &Value) -> Value {
     let mut friends=v["friends"].as_array().cloned().unwrap_or_default();
@@ -220,6 +226,7 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
     } else {
         "Launcher"
     });
+    b["players"] = player_uuids(&world);
     let result = request(&url, &i, "sync", b.clone()).await;
     let mut result = match result {
         Ok(v) => v,
@@ -439,5 +446,12 @@ pub fn start(rt: Runtime) {
   let v=cached_view(&json!({"self":{"id":"a","code":"123"},"friends":[{"id":"b","online":true,"accepted":1}],"invites":[{"join_secret":"secret"}],"canInvite":true,"connected":true}));
   assert_eq!(v["friends"][0]["id"],"b");assert_eq!(v["friends"][0]["online"],false);
   assert_eq!(v["connected"],false);assert_eq!(v["canInvite"],false);assert_eq!(v["invites"],json!([]));assert!(!v.to_string().contains("secret"));
+ }
+ #[test] fn old_game_bridge_without_player_list_syncs_an_empty_batch(){
+  assert_eq!(player_uuids(&Value::Null),json!([]));
+  assert_eq!(player_uuids(&json!({})),json!([]));
+  assert_eq!(player_uuids(&json!({"players":null})),json!([]));
+  assert_eq!(player_uuids(&json!({"players":"old-client"})),json!([]));
+  assert_eq!(player_uuids(&json!({"players":["abc"]})),json!(["abc"]));
  }
 }

@@ -14,28 +14,26 @@ test('profile wizard validates input, retains draft on Back, and persists only o
  assert.equal(await p.getByRole('button',{name:'Confirm',exact:true}).isDisabled(),true);
  await p.getByRole('textbox',{name:'Profile name'}).fill('  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();
- assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.1.2 · Java Edition','26.1 · Java Edition']);
+ assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.3 · Java Edition','26.1.2 · Java Edition','26.1 · Java Edition']);
  await p.getByRole('button',{name:'Back',exact:true}).click();
  assert.equal(await p.getByRole('textbox',{name:'Profile name'}).inputValue(),'  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Confirm',exact:true}).click();
  assert.equal(await p.getByRole('button',{name:'Forge Integration pending',exact:true}).isDisabled(),true);assert.equal(await p.getByRole('button',{name:'NeoForge Native client modules',exact:true}).isDisabled(),false);
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Stone',exact:true}).click();
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')||'{}').profiles?.length||0),0);
- await p.getByRole('button',{name:'Create profile',exact:true}).last().click();await p.getByRole('button',{name:'LAUNCH 26.1.2',exact:true}).waitFor();await p.reload();
- await p.getByRole('button',{name:'Spruce Valley · fabric 26.1.2'}).waitFor();
+ await p.getByRole('button',{name:'Create profile',exact:true}).last().click();await p.getByRole('button',{name:'LAUNCH 26.3',exact:true}).waitFor();await p.reload();
+ await p.getByRole('button',{name:'Spruce Valley · fabric 26.3'}).waitFor();
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')).profiles[0].icon),'stone');
- await p.getByRole('button',{name:'Client Mods',exact:true}).click();await p.getByRole('switch',{name:'Enable CPS',exact:true}).click();
- await p.getByLabel('Search client mods').fill('CPS');assert.equal(await p.locator('.mod-card').count(),1);
- await p.getByRole('button',{name:'CPS settings',exact:true}).click();await p.keyboard.press('Escape');assert.equal(await p.locator('dialog[open]').count(),0);
- await p.reload();await p.getByRole('button',{name:'Client Mods',exact:true}).click();assert.equal(await p.getByRole('switch',{name:'Enable CPS',exact:true}).getAttribute('aria-checked'),'true');await p.close();
+ assert.equal(await p.getByRole('button',{name:'Client Mods',exact:true}).count(),0);
+ assert.equal(await p.getByRole('tab',{name:'News',exact:true}).getAttribute('aria-selected'),'true');await p.close();
 });
 test('home panel adapts to compact, windowed and fullscreen dimensions without blank lower half',async()=>{
- const p=await browser.newPage();await p.goto('http://127.0.0.1:1420');await p.locator('.hero').waitFor();
+ const p=await browser.newPage();await p.addInitScript(()=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[{id:'layout',name:'Layout',version:'26.1.2',loader:'fabric',icon:'stone'}],selected:'layout',settings:{memory:4096,minimize:false},modules:{},account:null})));await p.goto('http://127.0.0.1:1420');await p.locator('.hero').waitFor();
  // Resize the same live page to catch stale sizing when entering and leaving fullscreen.
  for(const [width,height]of [[1000,720],[1280,800],[1920,1080],[3840,2160],[1280,800]]){
   await p.setViewportSize({width,height});
-  const layout=await p.evaluate(()=>{const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return{width:r.width,height:r.height,right:r.right,bottom:r.bottom}};return{panel:rect('.panel'),hero:rect('.hero'),card:rect('.news-card'),bottom:rect('.home-bottom'),overflow:document.documentElement.scrollWidth>innerWidth,broken:[...document.images].filter(i=>i.complete&&!i.naturalWidth).map(i=>i.src)}});
-  assert.equal(layout.overflow,false);assert.equal(layout.broken.length,0);assert.ok(layout.hero.height/layout.panel.height>.39&&layout.hero.height/layout.panel.height<.49);assert.ok(height-layout.panel.bottom>=10&&height-layout.panel.bottom<=32);assert.ok(layout.panel.bottom-layout.card.bottom<60);assert.ok(layout.card.height>=230);
+  const layout=await p.evaluate(()=>{const rect=s=>{const el=document.querySelector(s);if(!el)throw Error(`Missing ${s}`);const r=el.getBoundingClientRect();return{width:r.width,height:r.height,right:r.right,bottom:r.bottom}};return{panel:rect('.panel'),hero:rect('.hero'),card:rect('.news-card'),bottom:rect('.home-bottom'),version:!!document.querySelector('select[aria-label="Minecraft version"]'),loader:!!document.querySelector('select[aria-label="Mod loader"]'),overflow:document.documentElement.scrollWidth>innerWidth,broken:[...document.images].filter(i=>i.complete&&!i.naturalWidth).map(i=>i.src)}});
+  assert.equal(layout.overflow,false);assert.equal(layout.broken.length,0);assert.ok(layout.hero.height/layout.panel.height>.39&&layout.hero.height/layout.panel.height<.49);assert.ok(height-layout.panel.bottom>=10&&height-layout.panel.bottom<=32);assert.ok(layout.panel.bottom-layout.card.bottom<60);assert.ok(layout.card.height>=230);assert.equal(layout.version,false);assert.equal(layout.loader,false);
  }
  await p.close();
 });
@@ -64,9 +62,11 @@ test('Microsoft sign-in completes through IPC without storing tokens in frontend
   window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{window.__authCalls.push(cmd);
    if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096,minimize:false},account:null},dataDirectory:'/test'};
    if(cmd==='status')return {busy:false,stage:'Idle'};
+   if(cmd==='list_worlds')return [];
    if(cmd==='auth_info')return {configured:true,provider:'Unbox'};if(cmd==='auth_accounts')return {accounts:[],account:null};
    if(cmd==='auth_begin')return {id:'test',code:'TEST-CODE',interval:1,expiresIn:900,url:'https://www.microsoft.com/link'};
    if(cmd==='auth_poll')return ++window.__polls<2?{status:'pending'}:{status:'complete',accounts:[],account:{accountId:'fixture',provider:'Unbox',name:'SkinFixture',type:'microsoft',uuid:'00000000000040008000000000000001',skin:c.toDataURL(),skinModel:'slim'}};
+   if(cmd==='skin_library_list')return [];
    if(cmd==='save_state'){window.__saved=args.state;return;}
   }};
  });
@@ -75,15 +75,15 @@ test('Microsoft sign-in completes through IPC without storing tokens in frontend
  await p.locator('.account').getByText('SkinFixture',{exact:true}).waitFor();await p.getByLabel("SkinFixture's Minecraft skin. Drag to rotate.").waitFor();
  assert.equal(await p.locator('.avatar .skin-face').count(),1);
  const result=await p.evaluate(()=>({saved:window.__saved,calls:window.__authCalls}));assert.equal(result.saved.account.type,'microsoft');assert.equal('access_token' in result.saved.account,false);assert.equal('refresh_token' in result.saved.account,false);assert.ok(result.calls.includes('auth_open'));
- await p.getByRole('button',{name:'Skins',exact:true}).click();assert.equal(await p.getByRole('button',{name:'Slim Narrow arms'}).getAttribute('aria-pressed'),'true');await p.close();
+ await p.getByRole('button',{name:'Skins',exact:true}).click();await p.getByText('Account skin',{exact:true}).waitFor();assert.ok((await p.evaluate(()=>window.__authCalls)).includes('skin_library_list'));await p.close();
 });
 test('canceling Microsoft authorization leaves the selected account unchanged',async()=>{
  const p=await browser.newPage();await p.addInitScript(()=>{window.__cancelled=0;window.__TAURI_INTERNALS__={invoke:async cmd=>{
   if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096},account:{name:'LocalUser',type:'local'}},dataDirectory:'/test'};
-  if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='auth_info')return {configured:true,provider:'Unbox'};if(cmd==='auth_accounts')return {accounts:[],account:{name:'LocalUser',type:'local'}};if(cmd==='auth_begin')return {id:'test',code:'CANCEL',interval:5,expiresIn:900};if(cmd==='auth_poll')return {status:'pending'};if(cmd==='auth_cancel')window.__cancelled++;
+  if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='list_worlds'||cmd==='skin_library_list')return [];if(cmd==='auth_info')return {configured:true,provider:'Unbox'};if(cmd==='auth_accounts')return {accounts:[],account:{name:'LocalUser',type:'local'}};if(cmd==='auth_begin')return {id:'test',code:'CANCEL',interval:5,expiresIn:900};if(cmd==='auth_poll')return {status:'pending'};if(cmd==='auth_cancel')window.__cancelled++;
  }}});
  await p.goto('http://127.0.0.1:1420');await p.locator('.account').click();await p.getByRole('button',{name:'Sign in with Microsoft',exact:true}).click();await p.getByRole('button',{name:'Cancel sign-in'}).click();
- assert.equal(await p.locator('.account strong').textContent(),'LocalUser');assert.equal(await p.evaluate(()=>window.__cancelled),1);await p.close();
+ assert.equal(await p.locator('.account strong').textContent(),'LocalUser');assert.equal(await p.evaluate(()=>window.__cancelled),1);await p.getByRole('dialog',{name:'Your account'}).getByRole('button',{name:'Close'}).click();await p.getByRole('button',{name:'Skins',exact:true}).click();await p.getByLabel('Choose PNG skin').waitFor();await p.close();
 });
 
 async function accountFixture(p){
@@ -91,7 +91,7 @@ async function accountFixture(p){
   const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#467bac';g.fillRect(0,0,64,64);g.fillStyle='#d9a174';g.fillRect(8,8,8,8);g.clearRect(32,0,32,16);
   const a={accountId:'a',name:'AlexFixture',type:'microsoft',uuid:'00000000000040008000000000000001',skin:c.toDataURL(),skinModel:'slim',skinStatus:'ready',provider:'Unbox',needsSignIn:false};
   const b={...a,accountId:'b',name:'SteveFixture',uuid:'00000000000040008000000000000002',skinModel:'classic'};
-  window.__accounts=[a,b];window.__selected='a';window.__calls=[];window.__uploadFail=false;window.__info={configured:true,provider:'Unbox'};
+  window.__accounts=[a,b];window.__selected='a';window.__calls=[];window.__uploadFail=false;window.__savedSkins=[];window.__info={configured:true,provider:'Unbox'};
   const snapshot=()=>({accounts:window.__accounts,account:window.__accounts.find(a=>a.accountId===window.__selected)||null});
   window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{window.__calls.push({cmd,args});
    if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096,minimize:false},account:snapshot().account},dataDirectory:'/test'};
@@ -102,7 +102,9 @@ async function accountFixture(p){
    if(cmd==='auth_sign_out'){window.__accounts=window.__accounts.filter(a=>a.accountId!==args.accountId);return snapshot();}
    if(cmd==='auth_begin')return {id:'fresh',code:'NEW-UNBOX',interval:5,expiresIn:900,provider:'Unbox'};
    if(cmd==='auth_poll')return {status:'pending'};
-   if(cmd==='auth_upload_skin'){if(window.__uploadFail)throw Error('Skin upload: connection failed');Object.assign(window.__accounts.find(a=>a.accountId===args.accountId),{skin:'data:image/png;base64,'+args.pngBase64,skinModel:args.model});return snapshot();}
+   if(cmd==='skin_library_list')return window.__savedSkins;
+   if(cmd==='skin_library_import'){const skin={id:'saved-'+(window.__savedSkins.length+1),name:args.name,model:args.model,created:Date.now(),skin:'data:image/png;base64,'+args.pngBase64};window.__savedSkins.push(skin);return window.__savedSkins;}
+   if(cmd==='skin_library_apply'){if(window.__uploadFail)throw Error('Skin upload: connection failed');const skin=window.__savedSkins.find(s=>s.id===args.id);Object.assign(window.__accounts.find(a=>a.accountId===args.accountId),{skin:skin.skin,skinModel:skin.model});return snapshot();}
    if(cmd==='auth_refresh_profile')return snapshot();
    if(cmd==='save_state'){window.__saved=args.state;return;}
    if(cmd==='auth_cancel')return;
@@ -135,15 +137,15 @@ test('skin preview stays local until Apply; failures preserve saved skin; upload
  const p=await browser.newPage({viewport:{width:1280,height:820}});await accountFixture(p);await p.getByRole('button',{name:'Skins',exact:true}).click();
  const original=await p.evaluate(()=>window.__accounts[0].skin);
  const png=await p.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#b56e55';g.fillRect(0,0,64,64);g.clearRect(32,0,32,16);return c.toDataURL().split(',')[1]});
- await p.getByLabel('Choose PNG skin').setInputFiles({name:'new-skin.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});await p.getByText('Preview · not applied').waitFor();
- assert.equal(await p.evaluate(()=>window.__calls.filter(c=>c.cmd==='auth_upload_skin').length),0);assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);
- await p.getByRole('button',{name:'Classic Wide arms'}).click();await p.evaluate(()=>window.__uploadFail=true);await p.getByRole('button',{name:'Apply skin'}).click();await p.getByRole('alert').waitFor();
- assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);await p.evaluate(()=>window.__uploadFail=false);await p.getByRole('button',{name:'Apply skin'}).click();await p.getByText('Skin updated. Rejoin your world to see the change.').waitFor();
+ await p.getByLabel('Choose PNG skin').setInputFiles({name:'new-skin.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});await p.getByText('Import preview',{exact:true}).waitFor();
+ assert.equal(await p.evaluate(()=>window.__calls.filter(c=>c.cmd==='skin_library_apply').length),0);assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);
+ await p.getByRole('button',{name:'Classic Wide arms'}).click();await p.getByRole('button',{name:'Save to library',exact:true}).click();await p.getByText('Saved to your local skin library.',{exact:true}).waitFor();await p.evaluate(()=>window.__uploadFail=true);await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByRole('alert').waitFor();
+ assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);await p.evaluate(()=>window.__uploadFail=false);await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByText('Skin updated. Your Unbox preview refreshes automatically.').waitFor();
  assert.equal(await p.evaluate(()=>window.__saved.account.skinModel),'classic');assert.equal(await p.evaluate(()=>window.__saved.account.skin),'data:image/png;base64,'+png);
  await p.getByRole('button',{name:'Refresh',exact:true}).click();await p.getByText('Profile refreshed.').waitFor();assert.equal(await p.evaluate(()=>window.__calls.find(c=>c.cmd==='auth_refresh_profile').args.accountId),'a');
- assert.equal(await p.getByRole('button',{name:'Apply skin'}).isDisabled(),true);
+ assert.equal(await p.getByRole('button',{name:'Apply selected',exact:true}).isDisabled(),false);
  await p.screenshot({path:'test-results/account-skins.png'});
- await p.getByLabel('Choose PNG skin').setInputFiles({name:'invalid.png',mimeType:'image/png',buffer:Buffer.from('not a skin')});await p.getByRole('alert').waitFor();assert.equal(await p.getByRole('button',{name:'Apply skin'}).isDisabled(),true);await p.close();
+ await p.getByLabel('Choose PNG skin').setInputFiles({name:'invalid.png',mimeType:'image/png',buffer:Buffer.from('not a skin')});await p.getByRole('alert').waitFor();await p.close();
 });
 test('startup storage failure is visible and retry restores the app instead of leaving a spinner',async()=>{
  const p=await browser.newPage();await p.addInitScript(()=>{window.__attempts=0;window.__TAURI_INTERNALS__={invoke:async cmd=>{
@@ -176,7 +178,7 @@ test('friend list sends codes, accepts requests, disables offline invites and pa
 test('Unbox password registration uses two inputs, signs in, handles wrong passwords, and never persists credentials',async()=>{
  const p=await browser.newPage({deviceScaleFactor:2});await p.addInitScript(()=>{window.__accountCalls=[];window.__saved=null;window.__registered=false;window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{
   if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096},account:null},dataDirectory:'/test'};
-  if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='auth_info')return {configured:true,provider:'Unbox'};if(cmd==='auth_accounts')return {accounts:[],account:null};
+  if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='list_worlds'||cmd==='skin_library_list')return [];if(cmd==='auth_info')return {configured:true,provider:'Unbox'};if(cmd==='auth_accounts')return {accounts:[],account:null};
   if(cmd==='auth_unbox_password'){window.__accountCalls.push({email:args.email,mode:args.mode});if(args.password!=='my-test-password')throw Error('Incorrect email or password');if(args.mode==='register')window.__registered=true;return {accounts:[],account:{accountId:'unbox:test',name:'Unbox_aabbccdd',type:'unbox',uuid:'00000000000040008000000000000001',provider:'Unbox',emailVerified:false}}}
   if(cmd==='save_state')window.__saved=args.state;
  }}});
@@ -191,7 +193,7 @@ test('Unbox password registration uses two inputs, signs in, handles wrong passw
 });
 test('Unbox rename updates the account card while retaining UUID and handles a running-game rejection',async()=>{
  const p=await browser.newPage();await p.addInitScript(()=>{let account={accountId:'unbox:rename',name:'BeforeName',type:'unbox',uuid:'00000000000040008000000000000001',provider:'Unbox'};window.__running=true;window.__renameCalls=[];window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{
-  if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096},account},dataDirectory:'/test'};if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='auth_info')return {configured:true};if(cmd==='auth_accounts')return {accounts:[account],account};if(cmd==='auth_unbox_rename'){window.__renameCalls.push(args);if(window.__running)throw Error('Close the game before changing your player name');account={...account,name:args.name};return {accounts:[account],account}};if(cmd==='save_state')window.__saved=args.state;
+  if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096},account},dataDirectory:'/test'};if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='list_worlds'||cmd==='skin_library_list')return [];if(cmd==='auth_info')return {configured:true};if(cmd==='auth_accounts')return {accounts:[account],account};if(cmd==='auth_unbox_rename'){window.__renameCalls.push(args);if(window.__running)throw Error('Close the game before changing your player name');account={...account,name:args.name};return {accounts:[account],account}};if(cmd==='save_state')window.__saved=args.state;
  }}});
  await p.goto('http://127.0.0.1:1420');await p.locator('.account').click();await p.getByRole('button',{name:'Rename BeforeName',exact:true}).click();const form=p.getByRole('form',{name:'Change player name'});await form.getByLabel('Player name',{exact:true}).fill('SameName');await form.getByRole('button',{name:'Save name'}).click();await p.getByRole('alert').getByText('Close the game before changing your player name').waitFor();assert.equal(await form.getByLabel('Player name',{exact:true}).inputValue(),'SameName');
  await p.evaluate(()=>{window.__running=false});await form.getByRole('button',{name:'Save name'}).click();await p.locator('.account-name').getByText('SameName',{exact:true}).waitFor();assert.equal((await p.evaluate(()=>window.__saved)).account.uuid,'00000000000040008000000000000001');assert.equal(await form.count(),0);await p.close();
@@ -223,14 +225,19 @@ test('cached offline friends render while reconnecting silently',async()=>{
  const p=await browser.newPage();await p.addInitScript(()=>{window.__TAURI_INTERNALS__={invoke:async cmd=>cmd==='bootstrap'?{state:{profiles:[],selected:null,settings:{memory:4096,minimize:false},account:null},dataDirectory:'/test'}:cmd==='status'?{busy:false,stage:'Idle'}:cmd==='social_status'?{connected:false,self:{id:'me',code:'ABCD12345678'},friends:[{id:'friend',name:'OfflineFriend',code:'12345678ABCD',accepted:1,online:false,state:'Offline',kind:'microsoft'}],invites:[],error:'Connecting…'}:[]}});
  await p.goto('http://127.0.0.1:1420');await p.getByText('OfflineFriend',{exact:true}).waitFor();assert.equal(await p.getByText('Offline',{exact:true}).count(),1);assert.equal(await p.getByText('Connecting…',{exact:true}).count(),0);assert.equal(await p.getByRole('button',{name:'Invite',exact:true}).isDisabled(),true);await p.close();
 });
-test('launcher exposes game settings across all particle families and HUD tabs',async()=>{
- const p=await browser.newPage();await p.addInitScript(()=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[{id:'test',name:'Test',version:'26.1',loader:'fabric',icon:'stone'}],selected:'test',settings:{memory:4096,minimize:false},modules:{},account:null})));
- await p.goto('http://127.0.0.1:1420');await p.getByRole('button',{name:'Client Mods',exact:true}).click();await p.getByRole('button',{name:'Particles settings',exact:true}).click();await p.getByRole('tab',{name:'Types',exact:true}).click();await p.getByLabel('Particle type',{exact:true}).selectOption('Totem');await p.locator('[data-setting="particles.totem.lifetime"] input').fill('75');await p.waitForFunction(()=>JSON.parse(localStorage.getItem('unbox-preview')).modules.test['particles.totem.lifetime']===75);assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')).modules.test['particles.totem.lifetime']),75);await p.keyboard.press('Escape');await p.getByRole('button',{name:'Armor settings',exact:true}).click();await p.getByRole('tab',{name:'Equipment',exact:true}).click();assert.equal(await p.getByRole('switch',{name:'Offhand',exact:true}).count(),1);await p.close();
+test('launcher removes personal mod settings and selects an existing isolated profile',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>{window.__saved=null;const profiles=[{id:'fabric-261',name:'Fabric 26.1',version:'26.1',loader:'fabric',icon:'stone'},{id:'fabric-2612',name:'Fabric 26.1.2',version:'26.1.2',loader:'fabric',icon:'grass'}];window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{if(cmd==='bootstrap')return {state:{profiles,selected:'fabric-261',settings:{memory:4096,minimize:false},modules:{},account:null},dataDirectory:'/fixture'};if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='read_modules')return {};if(cmd==='list_worlds')return [];if(cmd==='save_state'){window.__saved=args.state;return}if(cmd==='social_status')return {connected:false,friends:[],invites:[]};return []}}});
+ await p.goto('http://127.0.0.1:1420');assert.equal(await p.getByRole('button',{name:'Client Mods',exact:true}).count(),0);assert.equal(await p.getByLabel('Minecraft version').count(),0);await p.getByRole('button',{name:'Fabric 26.1.2 · fabric 26.1.2'}).click();assert.equal(await p.evaluate(()=>window.__saved.selected),'fabric-2612');await p.close();
 });
 
-test('NeoForge profile exposes the shared module settings and toggles',async()=>{
- const p=await browser.newPage();await p.addInitScript(()=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[{id:'neo',name:'Neo',version:'26.1',loader:'neoforge',icon:'stone'}],selected:'neo',settings:{memory:4096,minimize:false},modules:{},account:null})));
- await p.goto('http://127.0.0.1:1420');await p.getByRole('button',{name:'Client Mods',exact:true}).click();const toggle=p.getByRole('switch',{name:'Enable Minimap',exact:true});assert.equal(await toggle.isDisabled(),false);await toggle.click();await p.getByRole('button',{name:'Minimap settings',exact:true}).click();await p.getByRole('tab',{name:'General',exact:true}).waitFor();assert.equal(await p.getByText('Select a Fabric or NeoForge profile to configure in-game modules.',{exact:true}).count(),0);await p.close();
+test('home keeps the original tabs while content origins remain interactive',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>{window.__calls=[];window.__TAURI_INTERNALS__={transformCallback:()=>0,invoke:async(cmd,args)=>{window.__calls.push({cmd,args});if(cmd==='bootstrap')return {state:{profiles:[{id:'fixture',name:'Fabric',version:'26.1.2',loader:'fabric',icon:'stone'}],selected:'fixture',settings:{memory:4096},account:null},dataDirectory:'/fixture'};if(cmd==='status')return {busy:false,stage:'Idle'};if(cmd==='read_modules')return {};if(cmd==='social_status')return {connected:false,friends:[],invites:[]};if(cmd==='list_content')return [{name:'host.jar',title:'Host Mod',size:1048576,origin:'host',source:'Room manifest'},{name:'mine.jar',title:'My Mod',size:2097152,origin:'yours',source:'Your library'}];if(cmd==='plugin:event|listen')return 1;return []}}});
+ await p.goto('http://127.0.0.1:1420');assert.deepEqual(await p.getByRole('tab').allTextContents(),['News','Mods','Packs','Shaders']);assert.equal(await p.evaluate(()=>window.__calls.some(c=>c.cmd==='list_worlds'||c.cmd==='preflight_world')),false);await p.getByRole('tab',{name:'Mods',exact:true}).click();await p.getByText('From host',{exact:true}).waitFor();await p.getByText('Yours',{exact:true}).waitFor();assert.equal(await p.getByText('Required',{exact:true}).count(),1);assert.equal(await p.getByRole('button',{name:'Remove host.jar'}).count(),0);assert.equal(await p.getByRole('button',{name:'Remove mine.jar'}).count(),1);await p.close();
+});
+
+test('home skin strip applies a saved skin and reports completion',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#4f86d9';g.fillRect(0,0,64,64);g.fillStyle='#e4ad82';g.fillRect(8,8,8,8);g.fillStyle='#5f3b28';g.fillRect(8,8,8,3);g.fillStyle='#26313f';g.fillRect(10,12,1,1);g.fillRect(13,12,1,1);g.fillStyle='#a95f55';g.fillRect(11,14,3,1);g.clearRect(40,8,8,8);g.fillStyle='#55a868';g.fillRect(20,20,16,12);g.fillStyle='#f2d45c';g.fillRect(40,20,8,12);const skin=c.toDataURL();window.__skinApply=[];window.__skinLists=0;window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{const account={accountId:'skin-account',name:'Skin User',type:'unbox',uuid:'00000000000040008000000000000001',skin,skinModel:'classic'};if(cmd==='bootstrap')return {state:{profiles:[{id:'fixture',name:'Fabric',version:'26.1.2',loader:'fabric',icon:'stone'}],selected:'fixture',settings:{memory:4096},account},dataDirectory:'/fixture'};if(cmd==='status')return {busy:false};if(cmd==='read_modules')return {};if(cmd==='social_status')return {connected:false,friends:[],invites:[]};if(cmd==='list_worlds')return [];if(cmd==='skin_library_list'){window.__skinLists++;return Array.from({length:6},(_,i)=>({id:'saved-'+i,name:'Fixture skin '+i,model:'slim',created:i,skin}))}if(cmd==='skin_library_apply'){window.__skinApply.push(args);return {accounts:[account],account:{...account,skinModel:'slim'}}}return []}}});
+ await p.goto('http://127.0.0.1:1420');await p.getByLabel("Skin User's Minecraft skin. Drag to rotate.").waitFor();for(const [width,height,name]of [[1000,720,'small'],[1280,800,'regular'],[1920,1080,'large']]){await p.setViewportSize({width,height});await p.screenshot({path:`test-results/home-skins-${name}.png`,fullPage:true});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false)}assert.equal(await p.getByRole('button',{name:/^Apply Fixture skin /}).count(),6);await p.getByRole('button',{name:'Open skin library',exact:true}).click();await p.getByRole('button',{name:'Home',exact:true}).click();await p.getByRole('button',{name:'Apply Fixture skin 5',exact:true}).waitFor();assert.ok(await p.evaluate(()=>window.__skinLists>=3));await p.getByRole('button',{name:'Apply Fixture skin 5',exact:true}).click();await p.getByText('Fixture skin 5 applied. Rejoin your world to see the change.',{exact:true}).waitFor();assert.deepEqual(await p.evaluate(()=>window.__skinApply),[{accountId:'skin-account',id:'saved-5'}]);await p.close();
 });
 
 test('file removal and profile deletion expose undo and folder actions',async()=>{
@@ -243,5 +250,5 @@ test('file removal and profile deletion expose undo and folder actions',async()=
 });
 test('invitation popups persist across pages, keep pending invites in Friends and join without a running profile',async()=>{
  const p=await browser.newPage({viewport:{width:1280,height:800}});await p.addInitScript(()=>{window.__actions=[];window.__view={connected:true,self:{id:'me',code:'123456ABCDEF'},friends:[{id:'a',name:'Alex',accepted:0,direction:'incoming',online:true,kind:'unbox'}],invites:[{id:'world',receiver:'me',senderName:'Sam',expires:Date.now()+300000,room:{name:'Survival'}}]};window.__TAURI_INTERNALS__={invoke:async(cmd,args)=>{if(cmd==='bootstrap')return {state:{profiles:[],selected:null,settings:{memory:4096},account:null},dataDirectory:'/fixture'};if(cmd==='status')return {busy:false};if(cmd==='social_status')return window.__view;if(cmd==='social_action'){window.__actions.push(args);if(args.op==='accept')window.__view.friends[0].accepted=1;return window.__view}return []}}});
- await p.goto('http://127.0.0.1:1420');const friend=p.getByRole('article',{name:'Friend request',exact:true}),world=p.getByRole('article',{name:'World invitation',exact:true});await friend.waitFor();await world.waitFor();await p.waitForTimeout(650);assert.ok(await friend.evaluate(e=>e.getBoundingClientRect().width*e.getBoundingClientRect().height)<=9800);await p.screenshot({path:'.cache/invitation-popups.png'});await p.getByRole('button',{name:'Client Mods',exact:true}).click();await friend.getByRole('button',{name:'Accept',exact:true}).click();await friend.waitFor({state:'detached'});await p.getByRole('button',{name:'Home',exact:true}).click();await p.getByRole('button',{name:"Join Sam's world"}).waitFor();await world.getByRole('button',{name:'Join',exact:true}).click();assert.deepEqual(await p.evaluate(()=>window.__actions),[{op:'accept',id:'a'},{op:'join',id:'world'}]);await p.waitForTimeout(2200);assert.equal(await p.locator('.invitation-popup').count(),0);await p.close();
+ await p.goto('http://127.0.0.1:1420');const friend=p.getByRole('article',{name:'Friend request',exact:true}),world=p.getByRole('article',{name:'World invitation',exact:true});await friend.waitFor();await world.waitFor();await p.waitForTimeout(650);assert.ok(await friend.evaluate(e=>e.getBoundingClientRect().width*e.getBoundingClientRect().height)<=9800);await p.screenshot({path:'.cache/invitation-popups.png'});await p.getByRole('button',{name:'Settings',exact:true}).click();await friend.getByRole('button',{name:'Accept',exact:true}).click();await friend.waitFor({state:'detached'});await p.getByRole('button',{name:'Home',exact:true}).click();await p.getByRole('button',{name:"Join Sam's world"}).waitFor();await world.getByRole('button',{name:'Join',exact:true}).click();assert.deepEqual(await p.evaluate(()=>window.__actions),[{op:'accept',id:'a'},{op:'join',id:'world'}]);await p.waitForTimeout(2200);assert.equal(await p.locator('.invitation-popup').count(),0);await p.close();
 });

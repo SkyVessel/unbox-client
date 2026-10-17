@@ -1,0 +1,60 @@
+[
+  {
+    "loader": "fabric",
+    "version": "1.0.1+mc26.1-26.1.2",
+    "fileId": 9092774,
+    "filename": "wick-1.0.1+mc26.1-26.1.2.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9092/774/wick-1.0.1%2Bmc26.1-26.1.2.jar",
+    "sha1": "d628f51b28ae0efffe6d2279590e25c8a4209d65",
+    "sha512": "8335588e28cf0ddd76897322b4018f5ee36e2ac8abacf3eb801cf2d21b76effde1ae392fb69ac1777991cae18149128ac66705c13f65146dd3ab142728f6017a",
+    "gameVersions": [
+      "26.1",
+      "26.1.2"
+    ],
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT"
+  },
+  {
+    "loader": "neoforge",
+    "version": "1.0.0+mc26.1-26.1.2",
+    "fileId": 9070069,
+    "filename": "wick-neoforge-1.0.0+mc26.1-26.1.2.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9070/69/wick-neoforge-1.0.0%2Bmc26.1-26.1.2.jar",
+    "sha1": "0621cee67f5eee7125589c28ad1e09dfb56599dc",
+    "sha512": "d6201036f3684d0601d57e36c5310e9f2cafa1143ab178a2d1a2382f0f4e565153e38656dd72903f37ba5a1dfa463adafb5733cd1a8f5be60cb69ff9f943acc7",
+    "gameVersions": [
+      "26.1",
+      "26.1.2"
+    ],
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT"
+  },
+  {
+    "loader": "fabric",
+    "version": "1.0.0+mc26.3",
+    "fileId": 9069972,
+    "filename": "wick-1.0.0+mc26.3.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9069/972/wick-1.0.0%2Bmc26.3.jar",
+    "sha1": "3e2280b918a199ea683407fc0a0a81dae0936499",
+    "sha512": "af1ccc954fd0cac8129ac2f99baed7eba68645b6e220726a68e3a98cdb8e87e52c0beb2c1ac7dfede65f1f2afe6ba082b6c8de38dc00c41891289f77e433580f",
+    "gameVersions": [
+      "26.3"
+    ],
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT"
+  },
+  {
+    "loader": "neoforge",
+    "version": "1.0.0+mc26.3",
+    "fileId": 9070071,
+    "filename": "wick-neoforge-1.0.0+mc26.3.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9070/71/wick-neoforge-1.0.0%2Bmc26.3.jar",
+    "sha1": "227fc41138cdd7782a25a1eb9e784307962d36dc",
+    "sha512": "450ce100278f078026c1bf5c720c252dd5a689f8d2327c77adc9f5cfa9ba6f9dd059170baa2bca99950112848d7c7b774908c3c9e7609298355c4d60442f17f9",
+    "gameVersions": [
+      "26.3"
+    ],
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT"
+  }
+]

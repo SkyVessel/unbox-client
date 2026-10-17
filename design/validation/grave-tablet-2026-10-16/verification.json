@@ -1,0 +1,20 @@
+{
+  "dimensions": {
+    "width": 1,
+    "height": 1,
+    "depth": 0.25
+  },
+  "inscription": "R.I.P",
+  "grass_placement_fixed": true,
+  "published": false,
+  "modules": {
+    "unbox-client.jar": "5fda2b90e0438c21e4d4f8017dd79481938a5b2de9e46556acee02166ce22e53",
+    "unbox-client-neoforge-26.1.2.jar": "a0416dd75621efa652623a94918d6d1d6e2ffab6b2d9ee0710cd18a1b18390b2",
+    "unbox-client-neoforge.jar": "5df7a5f82b82937a87afab457091faa2fcdf437a9bd762cdd8cf6e5a29dd22cf",
+    "unbox-client-26.1.2.jar": "acbe7e103e0f54fbac3791ce9bb34b7b02bf43018cb9554e931d8895acee7eb7"
+  },
+  "tests": {
+    "grave-grass-fabric261": "grass/fern + solid/fluid protection + two JVM persistence passed",
+    "grave-grass-neo262": "grass/fern + solid/fluid protection + two JVM persistence passed"
+  }
+}

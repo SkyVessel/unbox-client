@@ -6,13 +6,14 @@ import { Map, Wifi, Puzzle, Move, Keyboard, Monitor, Mouse, Compass, Shirt, Cros
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 const out='client-mod/src/main/resources/assets/unbox/textures/ui';
 await mkdir(out,{recursive:true});
-const browser=await chromium.launch();const page=await browser.newPage({viewport:{width:96,height:96},deviceScaleFactor:1});
+const browser=await chromium.launch();const page=await browser.newPage({viewport:{width:384,height:384},deviceScaleFactor:1});
 const Cape=()=>React.createElement("svg",{width:96,height:96,viewBox:"0 0 24 24",fill:"none",stroke:"white",strokeWidth:1.7,strokeLinecap:"round",strokeLinejoin:"round"},React.createElement("path",{d:"M8 3c0 3 8 3 8 0l4 17c-5-2-11 3-16 0L8 3Z M9 8 7 17 M15 8l2 8"}));
 const icons={minimap:Map,ping:Wifi,mods:Puzzle,move:Move,keystrokes:Keyboard,fps:Monitor,cps:Mouse,coordinates:Compass,armor:Shirt,crosshair:Crosshair,particles:Sparkles,sprint:Footprints,zoom:ZoomIn,chat:MessageSquare,freelook:Eye,cape:Cape,performance:Cpu,favorite:Star,settings:Settings,close:X};
 for(const [name,icon] of Object.entries(icons)){
- const svg=renderToStaticMarkup(React.createElement(icon,{size:96,color:'#ffffff',strokeWidth:1.7}));
- await page.setContent(`<style>html,body{margin:0;background:transparent}</style>${svg}`);
+ const svg=renderToStaticMarkup(React.createElement(icon,{size:384,color:'#ffffff',strokeWidth:1.7}));
+ await page.setContent(`<style>html,body{margin:0;background:transparent}svg{width:100%;height:100%}</style>${svg}`);
  await page.screenshot({path:`${out}/${name}.png`,omitBackground:true});
+ await writeFile(`${out}/${name}.png.mcmeta`,JSON.stringify({texture:{blur:true,clamp:true}}));
 }
 let svg=await readFile('app/public/assets/logo.svg','utf8');
 await page.setViewportSize({width:768,height:768});

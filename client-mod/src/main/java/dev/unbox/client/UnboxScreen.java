@@ -35,6 +35,9 @@ public class UnboxScreen extends Screen {
     private EditBox search;private KeyMapping recording;
     private record Row(int y,String label,boolean active) {Row(int y,String label){this(y,label,true);}}
     private Choice expandedChoice;private int dropdownIndex;
+    private final Deque<String> canvasUndo=new ArrayDeque<>();
+    private void rememberCanvas(){canvasUndo.push(CrosshairPattern.pixels());while(canvasUndo.size()>30)canvasUndo.removeLast();}
+    private void toggleModule(String id){if(!ClientFeaturePolicy.allowed(id)){notice=ClientFeaturePolicy.reason(id);return;}UnboxClient.set(id,!UnboxClient.configured(id));UnboxClient.save();}
     private final Screen parent;
     public UnboxScreen(){this(null);}
     public UnboxScreen(Screen parent){super(Component.literal("Unbox Client"));this.parent=parent;}
@@ -56,7 +59,7 @@ public class UnboxScreen extends Screen {
         search=addRenderableWidget(new EditBox(font,left+pw-207,sy+7,179,20,PanelStyle.text("Search mods")));
         search.addFormatter((v,i)->PanelStyle.text(v).getVisualOrderText());search.setBordered(false);search.setTextShadow(false);search.setHint(PanelStyle.text("Search mods..."));search.setValue(query);
         search.setResponder(s->{query=s;scroll=0;refreshGrid();});
-        String[] cats={"All","HUD","Visuals","Controls","Favorites"};
+        String[] cats={"All","HUD","Visuals","Controls","Survival","Favorites"};
         int x=left+18;for(String cat:cats){int w=cat.equals("Favorites")?68:cat.equals("Controls")?65:50;Action b=button(x,sy,w,29,cat,()->{category=cat;scroll=0;init();});b.selected=cat.equals(category);x+=w+4;}
         bodyTop=top+108;bodyBottom=top+ph-31;refreshGrid();
     }
@@ -66,14 +69,15 @@ public class UnboxScreen extends Screen {
         clearContent();List<ModOptions.Mod> matches=ModOptions.MODS.stream().filter(m->(m.title()+" "+m.hint()).toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT)))
             .filter(m->category.equals("All")||category.equals(m.group())||category.equals("Favorites")&&ClientHud.flag("favorite."+m.id(),false))
             .sorted(Comparator.comparing(m->!ClientHud.flag("favorite."+m.id(),false))).toList();
-        int cols=pw>=660?4:3,cw=(pw-36-(cols-1)*10)/cols,ch=Math.max(100,Math.min(110,(bodyBottom-bodyTop-20)/3));
-        maxScroll=Math.max(0,((matches.size()+cols-1)/cols)*(ch+10)-10-(bodyBottom-bodyTop));scroll=Math.clamp(scroll,0,maxScroll);
+        int cols=pw>=660?5:4,cw=(pw-36-(cols-1)*12)/cols,ch=cw;
+        maxScroll=Math.max(0,((matches.size()+cols-1)/cols)*(ch+12)-12-(bodyBottom-bodyTop));scroll=Math.clamp(scroll,0,maxScroll);
         for(int i=0;i<matches.size();i++){
-            var mod=matches.get(i);int x=left+18+(i%cols)*(cw+10),y=bodyTop+(i/cols)*(ch+10)-scroll;
-            Card card=body(new Card(x,y,cw,ch,mod));
+            var mod=matches.get(i);int x=left+18+(i%cols)*(cw+12),y=bodyTop+(i/cols)*(ch+12)-scroll;
+            Card card=body(new Card(x,y,cw,ch-30,mod));
             Action favorite=body(new Action(x+cw-26,y+7,20,20,"Favorite "+mod.title(),()->{UnboxClient.set("favorite."+mod.id(),!ClientHud.flag("favorite."+mod.id(),false));UnboxClient.save();refreshGrid();}));favorite.icon="favorite";favorite.selected=ClientHud.flag("favorite."+mod.id(),false);
-            Action gear=body(new Action(x+9,y+ch-29,25,22,mod.title()+" settings",()->openDetail(mod.id())));gear.icon="settings";
-            Action toggle=body(new Action(x+40,y+ch-29,cw-49,22,mod.id().equals("performance")?"Manage engines":"Toggle "+mod.title(),()->{if(mod.id().equals("performance"))openDetail(mod.id());else {UnboxClient.set(mod.id(),!UnboxClient.enabled(mod.id()));UnboxClient.save();}}));toggle.module=mod.id();
+            Action toggle=body(new Action(x,y+ch-30,cw,30,mod.id().equals("performance")?"Manage engines":"Toggle "+mod.title(),()->{if(mod.id().equals("performance"))openDetail(mod.id());else toggleModule(mod.id());}));toggle.module=mod.id();toggle.moduleStrip=true;
+            toggle.setTooltip(Tooltip.create(Component.literal(ClientFeaturePolicy.allowed(mod.id())?"Toggle "+mod.title():ClientFeaturePolicy.reason(mod.id()))));
+
         }
         updateVisibility();
     }
@@ -81,15 +85,15 @@ public class UnboxScreen extends Screen {
     private void initDetail(){
         button(left+17,top+15,54,27,"Back",()->{detail="";scroll=0;recording=null;notice="";init();});
         if(!detail.equals("performance")){
-            Action enabled=button(left+pw-155,top+15,103,27,"Toggle "+ModOptions.mod(detail).title(),()->{UnboxClient.set(detail,!UnboxClient.enabled(detail));UnboxClient.save();});enabled.module=detail;
+            Action enabled=button(left+pw-155,top+15,103,27,"Toggle "+ModOptions.mod(detail).title(),()->toggleModule(detail));enabled.module=detail;
             int x=left+18;for(String s:ModOptions.tabs(detail)){Action b=button(x,top+60,84,26,s,()->{tab=s;scroll=0;init();});b.selected=tab.equals(s);x+=90;}
             settingSearch=addRenderableWidget(new EditBox(font,left+pw-192,top+68,172,18,PanelStyle.text("Search settings")));settingSearch.addFormatter((v,i)->PanelStyle.text(v).getVisualOrderText());settingSearch.setBordered(false);settingSearch.setTextShadow(false);settingSearch.setHint(PanelStyle.text("Search settings..."));settingSearch.setValue(settingQuery);settingSearch.setResponder(v->{settingQuery=v;scroll=0;refreshSettings();});
-            button(left+pw-117,top+ph-27,99,22,resetUndo.isEmpty()?"Reset settings":"Undo reset",this::resetDetail);
+            button(left+pw-117,top+ph-27,99,22,resetUndo.isEmpty()?"Reset settings":"Undo reset",this::resetDetail).active=ClientFeaturePolicy.scope(detail)!=ClientFeaturePolicy.Scope.HOST_MANAGED||minecraft.getSingleplayerServer()!=null;
         }
         bodyTop=top+101;bodyBottom=top+ph-32;refreshSettings();
     }
     private void resetDetail(){
-        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():detail.equals("minimap")?UnboxClient.mapKey:null;
+        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():null;
         var cfg=Freelook.config;
         if(resetUndo.isEmpty()){
             for(String section:ModOptions.tabs(detail))for(var o:ModOptions.options(detail,section))resetUndo.put(o.key(),UnboxClient.CONFIG.getProperty(o.key(),"\u0000"));
@@ -110,7 +114,14 @@ public class UnboxScreen extends Screen {
         clearContent();if(detail.equals("performance")){initPerformance();return;}
         int rightWidth=Math.max(192,pw/3),x=left+18,w=pw-rightWidth-47,y=bodyTop-scroll;
         List<ModOptions.Option> settings=settingQuery.isBlank()?ModOptions.options(detail,tab):ModOptions.tabs(detail).stream().flatMap(t->ModOptions.options(detail,t).stream()).filter(o->(o.label()+" "+o.key()).toLowerCase(Locale.ROOT).contains(settingQuery.toLowerCase(Locale.ROOT))).distinct().toList();
+        if(ClientFeaturePolicy.scope(detail)==ClientFeaturePolicy.Scope.HOST_MANAGED&&minecraft.getSingleplayerServer()==null){settings=List.of();rows.add(new Row(y,"Host controls these settings"));y+=46;}
         if(detail.equals("particles")&&tab.equals("General")&&settingQuery.isBlank()){initParticleOverview(x,y,w);return;}
+        if(detail.equals("nickname")){
+            rows.add(new Row(y,"Local display name"));
+            EditBox name=body(new EditBox(font,x+w/2,y+13,w/2-95,22,PanelStyle.text("Local nickname")));name.setMaxLength(16);name.setValue(LocalNickname.get());
+            body(new Action(x+w-83,y+9,72,27,"Apply",()->{try{LocalNickname.set(name.getValue());notice="Nickname saved. Press F5 to view your nameplate.";}catch(IllegalArgumentException e){notice=e.getMessage();}}));y+=52;
+            rows.add(new Row(y,"Visible to you only. Leave blank to use your account name."));y+=46;
+        }
         for(var o:settings){
             rows.add(new Row(y,o.label(),ModOptions.available(o)));int cx=x+w/2,cw=w/2-12;
             switch(o.kind()){
@@ -126,18 +137,23 @@ public class UnboxScreen extends Screen {
         }
         if(settingQuery.isBlank()&&detail.equals("crosshair")&&tab.equals("Canvas")){
             body(new Canvas(left+30,y+10));y+=217;
-            body(new Action(left+30,y,82,26,"Clear canvas",()->{UnboxClient.set("crosshair.pixels","0".repeat(225));UnboxClient.save();}));
+            body(new Action(left+30,y,82,26,"Clear canvas",()->{rememberCanvas();UnboxClient.set("crosshair.pixels","0".repeat(225));UnboxClient.save();}));
             body(new Action(left+120,y,82,26,"Copy design",()->{minecraft.keyboardHandler.setClipboard(CrosshairPattern.share());notice="Crosshair copied";}));
-            body(new Action(left+210,y,82,26,"Paste design",()->{notice=CrosshairPattern.importCode(minecraft.keyboardHandler.getClipboard())?"Crosshair imported":"Invalid Unbox crosshair code";}));y+=40;
+            body(new Action(left+210,y,82,26,"Paste design",()->{rememberCanvas();notice=CrosshairPattern.importCode(minecraft.keyboardHandler.getClipboard())?"Crosshair imported":"Invalid Unbox crosshair code";}));
+            body(new Action(left+300,y,65,26,"Undo",()->{if(!canvasUndo.isEmpty()){UnboxClient.set("crosshair.pixels",canvasUndo.pop());UnboxClient.set("crosshair.shape","Custom");UnboxClient.save();notice="Stroke undone";}}));y+=40;
         }
-        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook")||detail.equals("minimap"))){
-            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("minimap")?UnboxClient.mapKey:freelookKey();
+        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook")||detail.equals("minimap")||detail.equals("freecam")||detail.equals("veinminer"))){
+            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():freelookKey();
             if(key!=null){rows.add(new Row(y,"Keybind"));Action b=body(new Action(x+w/2,y+9,w/2-12,27,"Change keybind",()->{recording=key;notice="Press a key. Esc cancels. Delete clears.";}));b.key=key;y+=46;}
         }
         if(settingQuery.isBlank()&&detail.equals("freelook")){
             var cfg=Freelook.config;
             rows.add(new Row(y,"Activation"));Action mode=body(new Action(x+w/2,y+9,w/2-12,27,cfg.isToggle()?"Toggle":"Hold",()->{cfg.setToggle(!cfg.isToggle());cfg.save();UnboxClient.set("freelook.mode",cfg.isToggle()?"Toggle":"Hold");UnboxClient.save();refreshSettings();}));y+=46;
             rows.add(new Row(y,"Camera"));body(new Action(x+w/2,y+9,w/2-12,27,cfg.getPerspective().name().replace('_',' '),()->{cfg.nextPerspective();cfg.save();UnboxClient.set("freelook.camera",cfg.getPerspective().name());UnboxClient.save();refreshSettings();}));y+=46;
+        }
+        if(settingQuery.isBlank()&&detail.equals("inventory")){
+            rows.add(new Row(y,"Keybinds and sorting rules"));
+            body(new Action(x+w/2,y+9,w/2-12,27,"Advanced settings",()->notice=SurvivalClientMods.openInventorySettings(this))).active=SurvivalClientMods.available("inventory");y+=46;
         }
         maxScroll=Math.max(0,y+scroll-bodyBottom);scroll=Math.clamp(scroll,0,maxScroll);updateVisibility();
     }
@@ -194,17 +210,17 @@ public class UnboxScreen extends Screen {
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){
         int sw=minecraft.getWindow().getGuiScaledWidth(),sh=minecraft.getWindow().getGuiScaledHeight();
         // Place HUD behind the floating settings window; controls always win overlapping input.
-        for(String id:ClientHud.IDS){if(minecraft.player==null)continue;if(!editing&&(!detail.isEmpty()||!UnboxClient.enabled(id)))continue;var b=ClientHud.bounds(id,sw,sh,true);ClientHud.draw(g,id,b.x(),b.y(),true);if(!editing&&colorKey==null&&b.contains(mx,my)&&!overPanel(mx,my)){PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,PanelStyle.ACCENT);PanelStyle.label(g,ClientHud.flag(id+".locked",false)?"Locked":"Drag to move",b.x(),b.y()+b.h()+3,PanelStyle.ACCENT);}}
+        for(String id:ClientHud.IDS){if(minecraft.player==null)continue;if(!editing&&(!detail.isEmpty()||!UnboxClient.enabled(id)))continue;var b=ClientHud.bounds(id,sw,sh,true);ClientHud.draw(g,id,b.x(),b.y(),true);if(!editing&&colorKey==null&&b.contains(mx,my)&&!overPanel(mx,my)){PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,0xffffffff);}}
         float opacity=editing?1:entrance.frame();
         g.pose().pushMatrix();g.pose().scale(menuScale);g.pose().translate(0,menuOffsetY());PanelStyle.opacity(opacity);
         try{for(var child:children())if(child instanceof EditBox box)box.setAlpha(opacity);renderPanel(g,(int)(mx/menuScale),(int)(my/menuScale-menuOffsetY()),delta);}
         finally{PanelStyle.opacity(1);g.pose().popMatrix();}
-        if(dragging&&!editing){var b=ClientHud.bounds(selected,sw,sh,true);ClientHud.draw(g,selected,b.x(),b.y(),true);PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,PanelStyle.ACCENT);}
+        if(dragging&&!editing){var b=ClientHud.bounds(selected,sw,sh,true);ClientHud.draw(g,selected,b.x(),b.y(),true);PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,0xffffffff);}
     }
     private boolean overPanel(double x,double y){return !editing&&x>=left*menuScale&&x<=(left+pw)*menuScale&&y>=(top+menuOffsetY())*menuScale&&y<=(top+ph+menuOffsetY())*menuScale;}
     private void renderPanel(GuiGraphicsExtractor g,int mx,int my,float delta){
         if(editing){renderEditor(g);super.extractRenderState(g,mx,my,delta);return;}
-        PanelStyle.fill(g,0,0,width,height,0x30141416);PanelStyle.round(g,left-1,top-1,pw+2,ph+2,13,0x20515156);PanelStyle.round(g,left,top,pw,ph,12,0xd91c1d20);
+        // Cards and controls float directly over the world; there is no backing panel.
         if(numberKey!=null){int x=left+pw/2-150,y=top+ph/2-50;PanelStyle.label(g,numberKey.label(),x,y-32,PanelStyle.TEXT);PanelStyle.label(g,numberError.isEmpty()?numberKey.min()+" - "+numberKey.max():numberError,x,y+42,numberError.isEmpty()?PanelStyle.MUTED:0xffffad85);super.extractRenderState(g,mx,my,delta);return;}
         if(colorKey!=null){
             int x=left+pw/2-215,y=top+78;PanelStyle.label(g,colorKey.label().toUpperCase(Locale.ROOT),x,y,PanelStyle.TEXT);PanelStyle.label(g,"Saturation / Brightness",x,y+29,PanelStyle.MUTED);PanelStyle.label(g,"HEX",x+320,y+29,PanelStyle.MUTED);PanelStyle.label(g,"Hue",x,y+237,PanelStyle.MUTED);
@@ -226,7 +242,7 @@ public class UnboxScreen extends Screen {
             if(!detail.equals("performance"))renderPreview(g,left+pw-rightWidth-18,bodyTop,rightWidth,bodyBottom-bodyTop);
         }
         if(maxScroll>0){int h=bodyBottom-bodyTop,thumb=Math.max(24,h*h/(h+maxScroll));PanelStyle.round(g,detail.isEmpty()?left+pw-8:left+pw-Math.max(192,pw/3)-30,bodyTop+(h-thumb)*scroll/maxScroll,3,thumb,1,0xff65727c);}
-        String footer=!notice.isEmpty()?notice:recording!=null?"Press a key. Esc cancels. Delete clears.":detail.isEmpty()?"Drag HUD to move     ·     Right Shift to close":"Saved automatically   ·   Click a number to type";
+        String footer=!notice.isEmpty()?notice:recording!=null?"Press a key. Esc cancels. Delete clears.":detail.isEmpty()?"Right Shift to close":"Saved automatically   ·   Click a number to type";
         PanelStyle.label(g,footer,left+19,top+ph-19,PanelStyle.MUTED);
         for(var child:children()){
             if(!(child instanceof AbstractWidget renderable))continue;
@@ -239,9 +255,16 @@ public class UnboxScreen extends Screen {
     }
     private int dropdownY(){return Math.min(expandedChoice.getY()+expandedChoice.getHeight()+3,top+ph-expandedChoice.option.choices().length*24-12);}
     private void renderPreview(GuiGraphicsExtractor g,int x,int y,int w,int h){
-        PanelStyle.round(g,x,y,w,h,8,0x60101216);PanelStyle.label(g,detail.equals("crosshair")||detail.equals("chat")||detail.equals("particles")||ClientHud.IDS.contains(detail)?"LIVE PREVIEW":"ABOUT",x+15,y+15,PanelStyle.MUTED);
+        PanelStyle.round(g,x,y,w,h,8,0x60101216);PanelStyle.label(g,detail.equals("crosshair")||detail.equals("chat")||detail.equals("particles")||detail.equals("scoreboard")||ClientHud.IDS.contains(detail)?"LIVE PREVIEW":"ABOUT",x+15,y+15,PanelStyle.MUTED);
         if(detail.equals("armor")&&minecraft.level==null){PanelStyle.center(g,"Join a world to preview equipment",x+w/2,y+85,PanelStyle.MUTED);return;}
         if(detail.equals("crosshair")){int cy=y+108;int[] scene={0xff56664c,0xffd7d0be,0xff172231};g.fillGradient(x+12,y+43,x+w-12,y+177,scene[previewScene],PanelStyle.mix(scene[previewScene],0xff000000,.25f));UnboxClient.drawCrosshair(g,x+w/2,cy);PanelStyle.center(g,"Click preview to change contrast",x+w/2,y+191,PanelStyle.MUTED);PanelStyle.center(g,ClientHud.value("crosshair.shape","Cross"),x+w/2,y+216,PanelStyle.TEXT);}
+        else if(detail.equals("scoreboard")){
+            int sx=x+22,sy=y+55,sw=w-44;
+            if(ScoreboardAppearance.showTitle()){PanelStyle.fill(g,sx,sy,sx+sw,sy+20,ScoreboardAppearance.background(true));PanelStyle.hudCenter(g,"SURVIVAL",sx+sw/2,sy+6,ScoreboardAppearance.text(true,false),ScoreboardAppearance.shadow());}
+            String[] sample={"Day", "Players", "Builds"};String[] scores={"28", "4", "12"};
+            for(int i=0;i<3;i++){int yy=sy+20+i*18;PanelStyle.fill(g,sx,yy,sx+sw,yy+18,ScoreboardAppearance.background(false));PanelStyle.hudLabel(g,sample[i],sx+6,yy+5,ScoreboardAppearance.text(false,false),ScoreboardAppearance.shadow());if(ScoreboardAppearance.showScores())PanelStyle.hudLabel(g,scores[i],sx+sw-22,yy+5,ScoreboardAppearance.text(false,true),ScoreboardAppearance.shadow());}
+            PanelStyle.label(g,"Example server scoreboard",sx,sy+93,PanelStyle.MUTED);
+        }
         else if(detail.equals("particles")){
             String family="particles."+ModOptions.particleFamily();int density=UnboxClient.number("particles.density",100,0,100)*UnboxClient.number(family+".density",100,0,100)/100;int count=ClientHud.flag(family,true)?density*28/100:0;
             float time=(System.nanoTime()%20_000_000_000L)/1e9f;int size=Math.max(1,UnboxClient.number(family+".size",100,25,200)/40);int color=ClientHud.flag(family+".tint",false)?ClientHud.color(family+".color","#FFFFFF"):PanelStyle.ACCENT;
@@ -254,6 +277,14 @@ public class UnboxScreen extends Screen {
             if(!detail.equals("chat"))PanelStyle.icon(g,detail,x+w/2-16,y+70,PanelStyle.ACCENT);
             List<String> notes=switch(detail){
                 case "particles"->List.of("Changes affect new particles.","Existing particles fade normally.");
+                case "inventory"->List.of("Powered by Inventory Profiles Next.","Use inventory buttons to sort.","Advanced: keybinds and sort rules.","These toggles are managed by Unbox.");
+                case "gravestones"->List.of("The host controls this feature.","Mine your named stone to reclaim.","Contents survive world reloads.","Inventory, armor and offhand.");
+                case "dynamiclight"->List.of("Powered by Wick · MIT license.","Held and dropped lights glow.","Visual effect only.");
+                case "veinminer"->List.of("Powered by VeinMiner.","Press your key to toggle mining.","The host controls mining rules.","Guests can change their own key.");
+                case "fallingtree"->List.of("Powered by FallingTree.","Use an axe on a tree trunk.","The host controls felling rules.","Tool durability still applies.");
+                case "items"->List.of("Powered by ItemPhysic Lite.","Items rotate and rest on the ground.","Pickup stays controlled by the game.");
+                case "freecam"->List.of("Use the configured key to toggle.","WASD moves; Space / Shift lifts.","Sprint accelerates; scroll adjusts speed.","Body remains in the world.");
+                case "nickname"->List.of("Your nameplate and player list.","Your account identity stays fixed.","Other players see your real name.");
                 case "zoom"->List.of("Zoom changes your field of view.","Your movement stays unchanged.");
                 case "freelook"->List.of("Uses the installed Freelook mod.","Server restrictions are respected.");
                 case "cape"->List.of("Displays existing OptiFine capes.","Official capes keep priority.","Player names are sent to OptiFine.");
@@ -266,32 +297,41 @@ public class UnboxScreen extends Screen {
     }
     private class Action extends AbstractWidget {
         final PanelStyle.Motion hover=new PanelStyle.Motion();
-        final Runnable action;boolean accent,selected;String display="",icon="",module="";ModOptions.Option option;KeyMapping key;int swatch;
+        final Runnable action;boolean accent,selected,moduleStrip;String display="",icon="",module="";ModOptions.Option option;KeyMapping key;int swatch;
         Action(int x,int y,int w,int h,String label,Runnable run){super(x,y,w,h,PanelStyle.text(label));action=run;setTooltip(Tooltip.create(Component.literal(label)));}
         @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){
-            boolean on=!module.isEmpty()&&!module.equals("performance")&&UnboxClient.enabled(module);
+            boolean host=ClientFeaturePolicy.scope(module)==ClientFeaturePolicy.Scope.HOST_MANAGED&&minecraft.getSingleplayerServer()==null;
+            boolean hostKnown=module.equals("gravestones")?GraveKeeper.hostKnown():SurvivalHostMods.hostKnown();
+            boolean on=host?(module.equals("gravestones")?GraveKeeper.hostEnabled():SurvivalHostMods.hostEnabled(module)):!module.isEmpty()&&!module.equals("performance")&&UnboxClient.enabled(module);
             boolean flag=option!=null&&option.kind().equals("toggle")&&Boolean.parseBoolean(ModOptions.value(option));
-            int bg=PanelStyle.mix(accent||selected?0xff3b4e75:on?0xb33a4c70:0x78303a43,0xc34a565f,hover.to(isHoveredOrFocused()?1:0)*.55f);
+            boolean blocked=!module.isEmpty()&&!ClientFeaturePolicy.allowed(module);
+            int base=!module.isEmpty()?(blocked&&!(host&&hostKnown)?0xb749494c:module.equals("performance")?0xa536363a:on?0xd5357653:0xd588484d):selected?0xa53b4e75:0x00333337;
+            int bg=PanelStyle.mix(base,0x995c5c62,hover.to(isHoveredOrFocused()?1:0)*.4f);
             if(option!=null&&option.kind().equals("color")){PanelStyle.round(g,getX(),getY(),width,height,4,active?ClientHud.color(option.key(),option.fallback()):PanelStyle.mix(ClientHud.color(option.key(),option.fallback()),0xff20272d,.75f));return;}
             if(swatch!=0){PanelStyle.round(g,getX(),getY(),width,height,5,swatch);return;}
-            PanelStyle.round(g,getX(),getY(),width,height,5,bg);
+            if(moduleStrip)PanelStyle.bottomRound(g,getX(),getY(),width,height,5,bg);else PanelStyle.round(g,getX(),getY(),width,height,5,bg);
             if(isFocused())PanelStyle.outline(g,getX(),getY(),width,height,PanelStyle.ACCENT);
             if(option!=null&&option.kind().equals("toggle")){PanelStyle.round(g,getX()+3,getY()+6,width-6,12,6,flag?0xff86aaff:0xff5b626a);PanelStyle.round(g,getX()+5+Math.round((width-20)*toggleMotions.computeIfAbsent(option.key(),k->new PanelStyle.Motion()).to(flag?1:0)),getY()+8,8,8,4,0xfff5faf7);return;}
             if(!icon.isEmpty()){
                 PanelStyle.icon(g,icon,getX()+width/2-7,getY()+height/2-7,14,icon.equals("close")&&isHoveredOrFocused()?0xffff9098:selected?PanelStyle.ACCENT:PanelStyle.MUTED);return;
             }
-            String label=option!=null?ModOptions.value(option):key!=null?(recording==key?"Press a key...":key.getTranslatedKeyMessage().getString()):!module.isEmpty()?(module.equals("performance")?"Configure":on?"Enabled":"Disabled"):display.isEmpty()?getMessage().getString():display;
-            PanelStyle.center(g,label,getX()+width/2,getY()+(height-10)/2,active?(on?0xffc5d5ff:PanelStyle.TEXT):PanelStyle.MUTED);
+            String label=option!=null?ModOptions.value(option):key!=null?(recording==key?"Press a key...":key.getTranslatedKeyMessage().getString()):!module.isEmpty()?(module.equals("performance")?"Configure":host?(!hostKnown?"Host required":on?"Host: Enabled":"Host: Disabled"):blocked?"Unavailable":on?"Enabled":"Disabled"):display.isEmpty()?getMessage().getString():display;
+            PanelStyle.center(g,label,getX()+width/2,getY()+(height-10)/2,active?PanelStyle.TEXT:PanelStyle.MUTED);
         }
-        @Override public void onClick(MouseButtonEvent e,boolean doubled){action.run();}
-        @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()){action.run();return true;}return super.keyPressed(e);}
+        @Override public void onClick(MouseButtonEvent e,boolean doubled){if(active)action.run();}
+        @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()&&active){action.run();return true;}return super.keyPressed(e);}
         @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
     }
     private class Card extends AbstractWidget {
         final PanelStyle.Motion hover=new PanelStyle.Motion();final ModOptions.Mod mod;
         Card(int x,int y,int w,int h,ModOptions.Mod mod){super(x,y,w,h,PanelStyle.text(mod.title()));this.mod=mod;}
-        @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float d){PanelStyle.round(g,getX(),getY(),width,height,7,PanelStyle.mix(0x7a29333b,0xb83a454d,hover.to(isHoveredOrFocused()?1:0)));PanelStyle.label(g,mod.title(),getX()+12,getY()+12,PanelStyle.TEXT);PanelStyle.icon(g,mod.id(),getX()+width/2-16,getY()+37,UnboxClient.enabled(mod.id())||mod.id().equals("performance")?0xffd2e4dd:0xff7e8c92);if(isFocused())PanelStyle.outline(g,getX(),getY(),width,height,PanelStyle.ACCENT);}
-        @Override public boolean isMouseOver(double x,double y){if(y>getY()+height-33||x>getX()+width-29&&y<getY()+30)return false;return super.isMouseOver(x,y);}
+        @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float d){
+            PanelStyle.round(g,getX(),getY(),width,height+30,7,PanelStyle.mix(0x9926262a,0xc33a3a40,hover.to(isHoveredOrFocused()?1:0)));
+            PanelStyle.icon(g,mod.id(),getX()+width/2-23,getY()+Math.max(20,(height-65)/2),46,0xffeef0f2);
+            PanelStyle.center(g,mod.title(),getX()+width/2,getY()+height-25,PanelStyle.TEXT);
+            if(isFocused())PanelStyle.outline(g,getX(),getY(),width,height,PanelStyle.ACCENT);
+        }
+        @Override public boolean isMouseOver(double x,double y){if(x>getX()+width-29&&y<getY()+30)return false;return super.isMouseOver(x,y);}
         @Override public void onClick(MouseButtonEvent e,boolean doubled){openDetail(mod.id());}
         @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()){openDetail(mod.id());return true;}return super.keyPressed(e);}
         @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
@@ -299,8 +339,8 @@ public class UnboxScreen extends Screen {
     private class Preset extends AbstractWidget {
         final int index;Preset(int x,int y,int w,int h,int index){super(x,y,w,h,PanelStyle.text(CrosshairPattern.PRESETS[index]));this.index=index;}
         @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float d){String pixels=CrosshairPattern.preset(index);boolean selected=ClientHud.value("crosshair.shape","").equals("Custom")&&CrosshairPattern.pixels().equals(pixels);PanelStyle.round(g,getX(),getY(),width,height,7,selected?0x99506387:isHoveredOrFocused()?0x993b4955:0x66303a43);int cx=getX()+width/2,cy=getY()+32;for(int py=0;py<15;py++)for(int px=0;px<15;px++)if(pixels.charAt(py*15+px)=='1')PanelStyle.fill(g,cx+(px-7)*2,cy+(py-7)*2,cx+(px-7)*2+2,cy+(py-7)*2+2,PanelStyle.TEXT);PanelStyle.center(g,getMessage().getString(),cx,getY()+height-19,selected?PanelStyle.ACCENT:PanelStyle.TEXT);}
-        @Override public void onClick(MouseButtonEvent e,boolean d){CrosshairPattern.applyPreset(index);notice="Preset applied. Open Canvas to edit.";}
-        @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()){CrosshairPattern.applyPreset(index);return true;}return super.keyPressed(e);}
+        @Override public void onClick(MouseButtonEvent e,boolean d){rememberCanvas();CrosshairPattern.applyPreset(index);notice="Preset applied. Open Canvas to edit.";}
+        @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()){rememberCanvas();CrosshairPattern.applyPreset(index);return true;}return super.keyPressed(e);}
         @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
     }
     private class ColorPlane extends AbstractWidget {
@@ -318,7 +358,7 @@ public class UnboxScreen extends Screen {
         @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float d){String p=CrosshairPattern.pixels();for(int y=0;y<15;y++)for(int x=0;x<15;x++){int c=p.charAt(y*15+x)=='1'?ClientHud.color("crosshair.color","#FFFFFF"):x==7||y==7?0xff374a4b:0xff26343b;PanelStyle.fill(g,getX()+x*13,getY()+y*13,getX()+x*13+12,getY()+y*13+12,c);}}
         @Override protected boolean isValidClickButton(net.minecraft.client.input.MouseButtonInfo button){return button.button()==0||button.button()==1;}
         void paint(MouseButtonEvent e){CrosshairPattern.paint((int)(e.x()-getX())/13,(int)(e.y()-getY())/13,paint);}
-        @Override public void onClick(MouseButtonEvent e,boolean d){int x=(int)(e.x()-getX())/13,y=(int)(e.y()-getY())/13;paint=e.button()==0&&CrosshairPattern.pixels().charAt(y*15+x)!='1';paint(e);}
+        @Override public void onClick(MouseButtonEvent e,boolean d){rememberCanvas();int x=(int)(e.x()-getX())/13,y=(int)(e.y()-getY())/13;paint=e.button()==0&&CrosshairPattern.pixels().charAt(y*15+x)!='1';paint(e);}
         @Override protected void onDrag(MouseButtonEvent e,double dx,double dy){if(e.x()>=getX()&&e.y()>=getY())paint(e);}
         @Override public void onRelease(MouseButtonEvent e){UnboxClient.save();}
         @Override protected void updateWidgetNarration(NarrationElementOutput out){defaultButtonNarrationText(out);}
@@ -351,10 +391,10 @@ public class UnboxScreen extends Screen {
     private void initEditor(){int x=width/2-191,y=height-43;button(x,y,69,27,"Cancel",()->finishEditor(false));button(x+77,y,82,27,snap?"Snap: ON":"Snap: OFF",()->{snap=!snap;init();});button(x+167,y,98,27,"Reset position",()->{UnboxClient.CONFIG.remove(selected+".x");UnboxClient.CONFIG.remove(selected+".y");UnboxClient.CONFIG.remove(selected+".scale");});button(x+273,y,108,27,"Done",()->finishEditor(true)).accent=true;}
     private void finishEditor(boolean save){if(!save)hudBefore.forEach((k,v)->{if(v.equals("\u0000"))UnboxClient.CONFIG.remove(k);else UnboxClient.CONFIG.put(k,v);});UnboxClient.save();editing=false;init();}
     private void renderEditor(GuiGraphicsExtractor g){
-        PanelStyle.round(g,width/2-193,12,386,33,7,0xd6202024);PanelStyle.center(g,"Edit HUD   /   Drag to move · Corner to resize · Arrows to nudge",width/2,23,PanelStyle.TEXT);
-        for(String id:ClientHud.IDS){var b=ClientHud.bounds(id,width,height,true);int c=id.equals(selected)?PanelStyle.ACCENT:0x887e909a;PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,c);PanelStyle.fill(g,b.x()+b.w()-3,b.y()+b.h()-3,b.x()+b.w()+4,b.y()+b.h()+4,c);PanelStyle.label(g,ModOptions.mod(id).title(),b.x(),b.y()+b.h()+5,c);}
+        PanelStyle.center(g,"Edit HUD   /   Corner to resize · Arrows to nudge",width/2,23,PanelStyle.TEXT);
+        for(String id:ClientHud.IDS){var b=ClientHud.bounds(id,width,height,true);int c=id.equals(selected)?0xffffffff:0x88ffffff;PanelStyle.outline(g,b.x()-2,b.y()-2,b.w()+4,b.h()+4,c);PanelStyle.fill(g,b.x()+b.w()-3,b.y()+b.h()-3,b.x()+b.w()+4,b.y()+b.h()+4,c);PanelStyle.label(g,ModOptions.mod(id).title(),b.x(),b.y()+b.h()+5,c);}
         if(dragging&&snap){PanelStyle.fill(g,width/2,45,width/2,height-48,0x3086aaff);PanelStyle.fill(g,0,height/2,width,height/2+1,0x3086aaff);}
-        PanelStyle.round(g,width/2-200,height-50,400,40,8,0xe1202024);
+
     }
     @Override public boolean mouseClicked(MouseButtonEvent e,boolean doubled){
         if(expandedChoice!=null){var input=scaledMouse(e);int x=expandedChoice.getX(),y=dropdownY(),index=(int)(input.y()-y)/24;Choice choice=expandedChoice;expandedChoice=null;if(input.x()>=x&&input.x()<x+choice.getWidth()&&input.y()>=y&&index<choice.option.choices().length)choice.choose(index);return true;}
@@ -381,8 +421,9 @@ public class UnboxScreen extends Screen {
         if(numberKey!=null&&e.isConfirmation()){applyNumber();return true;}
         if(expandedChoice!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){expandedChoice=null;return true;}if(e.key()==GLFW.GLFW_KEY_DOWN||e.key()==GLFW.GLFW_KEY_UP){dropdownIndex=Math.floorMod(dropdownIndex+(e.key()==GLFW.GLFW_KEY_DOWN?1:-1),expandedChoice.option.choices().length);return true;}if(e.isConfirmation()){Choice choice=expandedChoice;expandedChoice=null;choice.choose(dropdownIndex);return true;}}
         if(recording!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){recording=null;notice="Keybind unchanged.";return true;}var candidate=e.key()==GLFW.GLFW_KEY_DELETE?InputConstants.UNKNOWN:InputConstants.Type.KEYSYM.getOrCreate(e.key());
+            if(e.key()==GLFW.GLFW_KEY_RIGHT_SHIFT){notice="Right Shift is reserved for the Unbox menu. Choose another key.";return true;}
             if(e.key()!=GLFW.GLFW_KEY_DELETE){for(KeyMapping other:minecraft.options.keyMappings)if(other!=recording&&other.matches(e)){other.setKey(InputConstants.UNKNOWN);}}
-            recording.setKey(candidate);KeyMapping.resetMapping();minecraft.options.save();UnboxClient.set(detail+".key",candidate.getValue());UnboxClient.save();recording=null;notice="Keybind saved.";return true;}
+            recording.setKey(candidate);KeyMapping.resetMapping();minecraft.options.save();UnboxClient.set(detail+".key",recording.saveString());UnboxClient.save();recording=null;notice="Keybind saved.";return true;}
         if(e.key()==GLFW.GLFW_KEY_RIGHT_SHIFT){if(numberKey!=null||colorKey!=null||editing){onClose();return true;}UnboxClient.save();minecraft.setScreen(minecraft.level==null?parent:null);return true;}
         if(editing&&!ClientHud.flag(selected+".locked",false)){var b=ClientHud.bounds(selected,width,height,true);int dx=e.key()==GLFW.GLFW_KEY_LEFT?-1:e.key()==GLFW.GLFW_KEY_RIGHT?1:0,dy=e.key()==GLFW.GLFW_KEY_UP?-1:e.key()==GLFW.GLFW_KEY_DOWN?1:0;if(dx!=0||dy!=0){boolean previous=snap;snap=false;moveHud(b.x()+dx,b.y()+dy);snap=previous;return true;}}
         return super.keyPressed(e);

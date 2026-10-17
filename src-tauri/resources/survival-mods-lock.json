@@ -1,0 +1,2704 @@
+{
+  "schema": 1,
+  "resolvedAt": "2026-10-16",
+  "targets": [
+    {
+      "loader": "fabric",
+      "minecraft": "26.1",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "HhLauUHC",
+          "version": "1.6.11",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ItemPhysicLite_FABRIC_v1.6.11_mc26.1.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/HhLauUHC/ItemPhysicLite_FABRIC_v1.6.11_mc26.1.jar",
+          "sha1": "7f994c1946e9a802182f5bd9cc5b024c3093b64b",
+          "sha512": "36c21053620093bfbfbdff8edf4153e43eedeb59e04216925d5fcd6db1af322d2bd2f761656ddaa062663e9c59c4e05721d54e58879101aa56c0c7e1a5a3716c",
+          "size": 27005,
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "Zx1s0cYT",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "fabric-api": "*",
+            "minecraft": ">=26.1",
+            "creativecore": ">=2.14.0"
+          }
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "lOBWkkzv",
+          "version": "fabric-26.1-2.3.8",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "InventoryProfilesNext-fabric-26.1.2-2.3.8.jar",
+          "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/lOBWkkzv/InventoryProfilesNext-fabric-26.1.2-2.3.8.jar",
+          "sha1": "6d9e5ac9627ecfc61ef1e0ad418697d068444cea",
+          "sha512": "fd78b8ee461db667aa83bc4aa1caf175ad6864f1fc2c0f8d2b7e3f31f769c6a3bfce847db3ca341c69936cd874ffb6f060a2664116e699441dbce88b53befc22",
+          "size": 1485761,
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "onSQdWhM",
+              "id": "94nbGWNs",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1 <26.2",
+            "libipn": ">=6.9.0 <6.10",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          }
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "h4Z7xAL0",
+          "version": "2.10.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-fabric-2.10.3.jar",
+          "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/h4Z7xAL0/veinminer-fabric-2.10.3.jar",
+          "sha512": "c464ca89a8cec32892d57e701c9d1d16b5bb2b7c0a989ba9671d72b8d8f0d1279ead59542b7334cf1c7024a711784080c08c16bfa25b9dd7a16c5dddde27e1c5",
+          "sha1": "35b4f7ca72e9c105c028633b53c36fb8dc075eca",
+          "size": 487595,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0-only",
+            "name": "GNU Affero General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*"
+          }
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "sfgXyNVG",
+          "version": "2.10.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-client-fabric-2.10.3.jar",
+          "url": "https://cdn.modrinth.com/data/dxa0Bm8m/versions/sfgXyNVG/veinminer-client-fabric-2.10.3.jar",
+          "sha1": "c017be4bbaa7ba281cd5fd1c26ec3b6bb62f3749",
+          "sha512": "ceb36a23e2476aaf00503f4a6170af902709851d65a076aa8351635af44080d51327e2fccc04623c12cd782977c455d8491514ad406ae3dcbd14154247d022df",
+          "size": 195863,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OhduvhIc",
+              "id": "h4Z7xAL0",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*",
+            "veinminer": ">=2.8.0"
+          }
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "taabqQmG",
+          "version": "26.1-26.1.0.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.1-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/taabqQmG/FallingTree-26.1-25.jar",
+          "sha512": "ba7a805543bfb3523e7f962be45120cb448b2da739d188ce390e0244ffda075fc5135748ab3af6aebc5e82de0af406319206c5753e829651cd49383ded09d360",
+          "sha1": "48d6a0c8849e8116a438fc1f9a1b60e423d67685",
+          "size": 487135,
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-api": ">=0.144",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "fabric-api",
+          "projectId": "P7dR8mSH",
+          "id": "ddqzOW93",
+          "version": "0.145.1+26.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-api-0.145.1+26.1.jar",
+          "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/ddqzOW93/fabric-api-0.145.1%2B26.1.jar",
+          "sha1": "088edb9dfcda202a8bdf4ea77b6a8ced41481734",
+          "sha512": "2972453fa89cd7975eaf044fcc6cb5b8bdce5fa7864f4a8c2f66f7326b15b5a133f390a7d3d84c480632f066131e972a33c891f7d8897f0315ada288d4d03abd",
+          "size": 2404855,
+          "source": "https://github.com/FabricMC/fabric-api",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-api",
+          "role": "dependency",
+          "providedBy": "performance-lock",
+          "dependencies": [],
+          "modIds": [
+            "fabric-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "java": ">=25",
+            "minecraft": "~26.1-"
+          }
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "Zx1s0cYT",
+          "version": "2.14.13",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "CreativeCore_FABRIC_v2.14.13_mc26.1.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/Zx1s0cYT/CreativeCore_FABRIC_v2.14.13_mc26.1.jar",
+          "sha512": "4da534d05b33b7e188ad851cb2cafbd275aae22e8633adf1fd56127a65a082afe38a1f4575063fbc67044372e17a5e25059486428951ed7a31f7de46ff8659cd",
+          "sha1": "7b463ca10cdb0e1bc4435c04253107bf8a106547",
+          "size": 1402024,
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.5",
+            "fabric-api": "*",
+            "minecraft": ">=26.1"
+          }
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "94nbGWNs",
+          "version": "fabric-26.1-6.9.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "libIPN-fabric-26.1.2-6.9.0.jar",
+          "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/94nbGWNs/libIPN-fabric-26.1.2-6.9.0.jar",
+          "sha512": "d99d9aa2ea756ae299107519828ca01e3a7442a582ab8482a315dda528d0e268731889cf7fb3fce7a668bb8601e3b3ddc43b7d29981fd806372876a1bbd57b32",
+          "sha1": "a08801c8ff8f7de6b05e5227688f5b8604b81e18",
+          "size": 641319,
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "ddqzOW93",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "libipn"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1 <26.2",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          }
+        },
+        {
+          "slug": "fabric-language-kotlin",
+          "projectId": "Ha28R6CL",
+          "id": "SKW1BTL3",
+          "version": "1.14.2+kotlin.2.4.21",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "1.14",
+            "1.14.1",
+            "1.14.2",
+            "1.14.3",
+            "1.14.4",
+            "1.15",
+            "1.15.1",
+            "1.15.2",
+            "1.16",
+            "1.16.1",
+            "1.16.2",
+            "1.16.3",
+            "1.16.4",
+            "1.16.5",
+            "1.17",
+            "1.17.1",
+            "1.18",
+            "1.18.1",
+            "1.18.2",
+            "1.19",
+            "1.19.1",
+            "1.19.2",
+            "1.19.3",
+            "1.19.4",
+            "1.20",
+            "1.20.1",
+            "1.20.2",
+            "1.20.3",
+            "1.20.4",
+            "1.20.5",
+            "1.20.6",
+            "1.21",
+            "1.21.1",
+            "1.21.2",
+            "1.21.3",
+            "1.21.4",
+            "1.21.5",
+            "1.21.6",
+            "1.21.7",
+            "1.21.8",
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+          "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/SKW1BTL3/fabric-language-kotlin-1.14.2%2Bkotlin.2.4.21.jar",
+          "sha512": "7fb475c4a7e7bdf8d0aca4b5798a58a354c51443d5b1fbde3e8cf34dfbf7191ef4238b5f07d08ec9490ec180b371624523326c3ad45d4ed2b2be541de9407e5d",
+          "sha1": "f1d4ab6ecd54d9782521333a87eb50724ecb03e0",
+          "size": 8142878,
+          "source": "https://github.com/FabricMC/fabric-language-kotlin/",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-language-kotlin",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fabric-language-kotlin"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5"
+          }
+        }
+      ]
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1.2",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "6y7IMwm6",
+          "version": "1.6.11",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ItemPhysicLite_FABRIC_v1.6.11_mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/6y7IMwm6/ItemPhysicLite_FABRIC_v1.6.11_mc26.1.2.jar",
+          "sha512": "cea9e29c373be002687fe0c912fd4de343295d02d3446e59ac11227c401e91d28e6d43360743b4ae3297b9ef72beafff3412f88a5ae525e355431590b06f4948",
+          "sha1": "035009dcbc62c3bcffb87969cca90f7645ecc2ec",
+          "size": 27006,
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "atlpYjof",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.1",
+            "fabric-api": "*",
+            "minecraft": ">=26.1.2",
+            "creativecore": ">=2.14.0"
+          }
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "lOBWkkzv",
+          "version": "fabric-26.1-2.3.8",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "InventoryProfilesNext-fabric-26.1.2-2.3.8.jar",
+          "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/lOBWkkzv/InventoryProfilesNext-fabric-26.1.2-2.3.8.jar",
+          "sha1": "6d9e5ac9627ecfc61ef1e0ad418697d068444cea",
+          "sha512": "fd78b8ee461db667aa83bc4aa1caf175ad6864f1fc2c0f8d2b7e3f31f769c6a3bfce847db3ca341c69936cd874ffb6f060a2664116e699441dbce88b53befc22",
+          "size": 1485761,
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "onSQdWhM",
+              "id": "94nbGWNs",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1 <26.2",
+            "libipn": ">=6.9.0 <6.10",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          }
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "h4Z7xAL0",
+          "version": "2.10.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-fabric-2.10.3.jar",
+          "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/h4Z7xAL0/veinminer-fabric-2.10.3.jar",
+          "sha512": "c464ca89a8cec32892d57e701c9d1d16b5bb2b7c0a989ba9671d72b8d8f0d1279ead59542b7334cf1c7024a711784080c08c16bfa25b9dd7a16c5dddde27e1c5",
+          "sha1": "35b4f7ca72e9c105c028633b53c36fb8dc075eca",
+          "size": 487595,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0-only",
+            "name": "GNU Affero General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*"
+          }
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "sfgXyNVG",
+          "version": "2.10.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-client-fabric-2.10.3.jar",
+          "url": "https://cdn.modrinth.com/data/dxa0Bm8m/versions/sfgXyNVG/veinminer-client-fabric-2.10.3.jar",
+          "sha1": "c017be4bbaa7ba281cd5fd1c26ec3b6bb62f3749",
+          "sha512": "ceb36a23e2476aaf00503f4a6170af902709851d65a076aa8351635af44080d51327e2fccc04623c12cd782977c455d8491514ad406ae3dcbd14154247d022df",
+          "size": 195863,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OhduvhIc",
+              "id": "h4Z7xAL0",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*",
+            "veinminer": ">=2.8.0"
+          }
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "YpsBfAWL",
+          "version": "26.1.2-26.1.2.4",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.1.2-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/YpsBfAWL/FallingTree-26.1.2-25.jar",
+          "sha1": "d16ce52495ec2aec54f4f2472e5a657a416af422",
+          "sha512": "d7e31fccb2c6174fdf41599d33eb54c94ca2c42e0a6f76cb12327ac8b98f86b938fe41322875c2496f5ee27dd890cc96648d71c57ee8568083107fb54c71d2e6",
+          "size": 493215,
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-api": ">=0.144",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "fabric-api",
+          "projectId": "P7dR8mSH",
+          "id": "3dM0X6ou",
+          "version": "0.155.3+26.1.2",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-api-0.155.3+26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/3dM0X6ou/fabric-api-0.155.3%2B26.1.2.jar",
+          "sha512": "fa0308b42e9cd0dc3ff946f246d199d74547e0c946d7e3c9780a2537155307baf25129f69bd1349273babf879ffb4608b7e4af0740938f9c0f7b371b1c67d6ca",
+          "sha1": "16c30dfcceaed1ac3b6ac84cbd348a906dc5093e",
+          "size": 2521340,
+          "source": "https://github.com/FabricMC/fabric-api",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-api",
+          "role": "dependency",
+          "providedBy": "performance-lock",
+          "dependencies": [],
+          "modIds": [
+            "fabric-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "java": ">=25",
+            "minecraft": "~26.1-"
+          }
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "atlpYjof",
+          "version": "2.14.16",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "CreativeCore_FABRIC_v2.14.16_mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/atlpYjof/CreativeCore_FABRIC_v2.14.16_mc26.1.2.jar",
+          "sha1": "6857841185600b9e224e6b6351622ae322cd929f",
+          "sha512": "910c77883d351fb257e7808ae26ef3eb1cdb507ccce18b3495b6c08f5c2c12539552d7c222992ada190b7bed0ed8c167ed6b85d00dc9c3edfe04b1b051cbf759",
+          "size": 1415484,
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.1",
+            "fabric-api": "*",
+            "minecraft": ">=26.1.2"
+          }
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "94nbGWNs",
+          "version": "fabric-26.1-6.9.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "libIPN-fabric-26.1.2-6.9.0.jar",
+          "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/94nbGWNs/libIPN-fabric-26.1.2-6.9.0.jar",
+          "sha1": "a08801c8ff8f7de6b05e5227688f5b8604b81e18",
+          "sha512": "d99d9aa2ea756ae299107519828ca01e3a7442a582ab8482a315dda528d0e268731889cf7fb3fce7a668bb8601e3b3ddc43b7d29981fd806372876a1bbd57b32",
+          "size": 641319,
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "3dM0X6ou",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "libipn"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1 <26.2",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          }
+        },
+        {
+          "slug": "fabric-language-kotlin",
+          "projectId": "Ha28R6CL",
+          "id": "SKW1BTL3",
+          "version": "1.14.2+kotlin.2.4.21",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "1.14",
+            "1.14.1",
+            "1.14.2",
+            "1.14.3",
+            "1.14.4",
+            "1.15",
+            "1.15.1",
+            "1.15.2",
+            "1.16",
+            "1.16.1",
+            "1.16.2",
+            "1.16.3",
+            "1.16.4",
+            "1.16.5",
+            "1.17",
+            "1.17.1",
+            "1.18",
+            "1.18.1",
+            "1.18.2",
+            "1.19",
+            "1.19.1",
+            "1.19.2",
+            "1.19.3",
+            "1.19.4",
+            "1.20",
+            "1.20.1",
+            "1.20.2",
+            "1.20.3",
+            "1.20.4",
+            "1.20.5",
+            "1.20.6",
+            "1.21",
+            "1.21.1",
+            "1.21.2",
+            "1.21.3",
+            "1.21.4",
+            "1.21.5",
+            "1.21.6",
+            "1.21.7",
+            "1.21.8",
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+          "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/SKW1BTL3/fabric-language-kotlin-1.14.2%2Bkotlin.2.4.21.jar",
+          "sha512": "7fb475c4a7e7bdf8d0aca4b5798a58a354c51443d5b1fbde3e8cf34dfbf7191ef4238b5f07d08ec9490ec180b371624523326c3ad45d4ed2b2be541de9407e5d",
+          "sha1": "f1d4ab6ecd54d9782521333a87eb50724ecb03e0",
+          "size": 8142878,
+          "source": "https://github.com/FabricMC/fabric-language-kotlin/",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-language-kotlin",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fabric-language-kotlin"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5"
+          }
+        }
+      ]
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "nD7jkknC",
+          "version": "1.6.11",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "ItemPhysicLite_NEOFORGE_v1.6.11_mc26.1.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/nD7jkknC/ItemPhysicLite_NEOFORGE_v1.6.11_mc26.1.jar",
+          "sha512": "d325c240104e5bc0a8ad7f782209d26785de04761495f5653630e3eabc49859f5aa90fef77b3b9e6d584823447b0df8ec06ad5ad4d0ff7e72a2f184b521bd7f6",
+          "sha1": "3c93832365e8f9b5b146967be1292f81b593b3a7",
+          "size": 23464,
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "DSPqEs86",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "itemphysiclite": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1.0.1-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "creativecore",
+                  "type": "required",
+                  "ordering": "NONE",
+                  "side": "BOTH",
+                  "versionRange": "[2.14.0,)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "taabqQmG",
+          "version": "26.1-26.1.0.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.1-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/taabqQmG/FallingTree-26.1-25.jar",
+          "sha512": "ba7a805543bfb3523e7f962be45120cb448b2da739d188ce390e0244ffda075fc5135748ab3af6aebc5e82de0af406319206c5753e829651cd49383ded09d360",
+          "sha1": "48d6a0c8849e8116a438fc1f9a1b60e423d67685",
+          "size": 487135,
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "modLoader": null,
+            "loaderVersion": null,
+            "dependencies": {
+              "fallingtree": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1]",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "cloth-config",
+                  "type": "optional",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "DSPqEs86",
+          "version": "2.14.11",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "CreativeCore_NEOFORGE_v2.14.11_mc26.1.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/DSPqEs86/CreativeCore_NEOFORGE_v2.14.11_mc26.1.jar",
+          "sha512": "7a65defc09b997ca85976fd05a5dd482e3b7d11605eb8f54ea04934fee89163945c7463bb1d2dbc1ffb378771029aa18feeb929ed6e2578a74decc274aa2dedc",
+          "sha1": "0014111d2b5d1de5d00152a2328c83f6db40e64f",
+          "size": 1323001,
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "creativecore": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1.0.1-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unavailableFeatures": [
+        {
+          "feature": "inventory",
+          "reason": "No upstream Inventory Profiles Next / libIPN NeoForge artifact with matching internal Minecraft 26.1 dependency constraints was found. Modrinth compatibility tags differ from JAR metadata; unsupported files are not installed.",
+          "rejectedVersions": [
+            "vNg0KMkb",
+            "fXLfTD5D",
+            "bm1OYABy",
+            "Tcu3WrE6"
+          ]
+        },
+        {
+          "feature": "veinminer",
+          "reason": "No official NeoForge Minecraft 26.1 VeinMiner artifact supports the pinned NeoForge 26.1.0.19-beta event API. All listed releases directly reference net.neoforged.neoforge.event.level.block.BreakBlockEvent, absent from this runtime (which exposes BlockEvent$BreakEvent). VeinMiner, its dependent Hotkey, and unused KotlinLangForge are not installed.",
+          "rejectedVersions": [
+            "7GhgEsTA",
+            "KTGljSjU",
+            "gY6e4FFT",
+            "vSzrAhgs",
+            "ckKFKBpi",
+            "MJq1OXKI",
+            "qRSmIQfC"
+          ]
+        }
+      ]
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1.2",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "wezHOV2I",
+          "version": "1.6.11",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "ItemPhysicLite_NEOFORGE_v1.6.11_mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/wezHOV2I/ItemPhysicLite_NEOFORGE_v1.6.11_mc26.1.2.jar",
+          "sha1": "1c160d4421e1e4d309212e7c7d7efacebec019dd",
+          "sha512": "9981cbeb13dc15d2e736ec10050feca4133b470104c37f32668f6d2da8d4cc741ab9133091331165d0fd287c63bc29d2b7cb7d1c0fa36701b7e3746e524ff614",
+          "size": 23457,
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "OqoUKynf",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "itemphysiclite": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1.2.10-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1.2,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "creativecore",
+                  "type": "required",
+                  "ordering": "NONE",
+                  "side": "BOTH",
+                  "versionRange": "[2.14.0,)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "vNg0KMkb",
+          "version": "neoforge-26.1-2.3.8",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "InventoryProfilesNext-neoforge-26.1.2-2.3.8.jar",
+          "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/vNg0KMkb/InventoryProfilesNext-neoforge-26.1.2-2.3.8.jar",
+          "sha512": "db54f6c2e4fced6abdde401a99833fa986c09df8c535b93ad787d42c56a1cdeb2ce8ba9f05ba5e78ae7347ec319fda0fba04f654d6ce3e71a24d773a5a7c05d6",
+          "sha1": "c5bdbac4ae2dd4a603ee599fa2551664b2f97f2c",
+          "size": 1444714,
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "onSQdWhM",
+              "id": "bm1OYABy",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "${FML_VERSION}",
+            "dependencies": {
+              "inventoryprofilesnext": [
+                {
+                  "modId": "neoforge",
+                  "mandatory": true,
+                  "versionRange": "[26.1.2.94,)"
+                },
+                {
+                  "modId": "minecraft",
+                  "mandatory": true,
+                  "versionRange": "[26.1, 26.2)"
+                },
+                {
+                  "modId": "libipn",
+                  "mandatory": true,
+                  "versionRange": "[6.9.0, 6.10)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "7GhgEsTA",
+          "version": "2.10.4",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-neoforge-2.10.4.jar",
+          "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/7GhgEsTA/veinminer-neoforge-2.10.4.jar",
+          "sha512": "a560abb10876f6d494761162076a684184716ce42488672470a3add7a62607d29b9436acc05653701a8a2379bed2b12f52cb9906ef40e91526e110541254eb7f",
+          "sha1": "4a0a56b26aee21dce296c85b9b7ca87140b6303b",
+          "size": 589238,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0-only",
+            "name": "GNU Affero General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1vrSzlao",
+              "id": "cu66H8iw",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer"
+          ],
+          "artifactRequirements": {
+            "modLoader": "klf",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "veinminer": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[21,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[1.21,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "ld9KW91B",
+          "version": "2.10.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-client-neoforge-2.10.1.jar",
+          "url": "https://cdn.modrinth.com/data/dxa0Bm8m/versions/ld9KW91B/veinminer-client-neoforge-2.10.1.jar",
+          "sha1": "3a05b5409f7cbe5eba7373eadb54c6b733622a52",
+          "sha512": "7edaf88a9e97f185cdd8954b7d41b3d7c24d699fcd1f3411daa7dce73d731b1fde5e9e99eb8a1d6e1c3a0b0c7e295b61806a706c30976a92c56f00f2bebafc38",
+          "size": 182634,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "OhduvhIc",
+              "id": "7GhgEsTA",
+              "type": "required"
+            },
+            {
+              "projectId": "1vrSzlao",
+              "id": "cu66H8iw",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "artifactRequirements": {
+            "modLoader": "klf",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "veinminer_client": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[21,)",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[1.21,)",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                },
+                {
+                  "modId": "veinminer",
+                  "type": "required",
+                  "versionRange": "[2.8.0,)",
+                  "ordering": "AFTER",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "YpsBfAWL",
+          "version": "26.1.2-26.1.2.4",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.1.2-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/YpsBfAWL/FallingTree-26.1.2-25.jar",
+          "sha1": "d16ce52495ec2aec54f4f2472e5a657a416af422",
+          "sha512": "d7e31fccb2c6174fdf41599d33eb54c94ca2c42e0a6f76cb12327ac8b98f86b938fe41322875c2496f5ee27dd890cc96648d71c57ee8568083107fb54c71d2e6",
+          "size": 493215,
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "modLoader": null,
+            "loaderVersion": null,
+            "dependencies": {
+              "fallingtree": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1.2.21,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1.2]",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "cloth-config",
+                  "type": "optional",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "OqoUKynf",
+          "version": "2.14.16",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "CreativeCore_NEOFORGE_v2.14.16_mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/OqoUKynf/CreativeCore_NEOFORGE_v2.14.16_mc26.1.2.jar",
+          "sha512": "2be02041ac8539bfddeb6de17a29778fee99b373d52806da543f59ab5c60569413aefe29f0147b27150a7ce91df6a9a09cf606483798c52da0aa596b11592241",
+          "sha1": "92efc0a1cbc70477cc0b23f0a39cf982f64cc5c4",
+          "size": 1345477,
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "creativecore": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.1.2.10-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.1.2,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "bm1OYABy",
+          "version": "neoforge-26.1.2-6.9.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "libIPN-neoforge-26.1.2-6.9.0.jar",
+          "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/bm1OYABy/libIPN-neoforge-26.1.2-6.9.0.jar",
+          "sha512": "39d7dc90b5d72159f7ff1e51a14481aa591ad165be292640c02662899ee1bf039f8e3e1a64a7fcf34daceec0b321721a4e4edb05dfdb9c1ab0965f9d2f328d11",
+          "sha1": "38824f77f0d3dd1dbdd64ed6b9c8c9d11a7444e7",
+          "size": 7775013,
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "libipn"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "${FML_VERSION}",
+            "dependencies": {
+              "libipn": [
+                {
+                  "modId": "neoforge",
+                  "mandatory": true,
+                  "versionRange": "[26.1.2.94, 26.2)"
+                },
+                {
+                  "modId": "minecraft",
+                  "mandatory": true,
+                  "versionRange": "[26.1.2, 26.2)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "slug": "kotlin-lang-forge",
+          "projectId": "1vrSzlao",
+          "id": "cu66H8iw",
+          "version": "2.15.0-k2.4.21-3.1+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "KotlinLangForge-2.15.0-k2.4.21-3.1+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1vrSzlao/versions/cu66H8iw/KotlinLangForge-2.15.0-k2.4.21-3.1%2Bneoforge.jar",
+          "sha1": "b0051d7499914f7ab6bbf1ed6a4edf0476a23e1d",
+          "sha512": "327b770c675d1c58a83e06054220646709a82d8f7831bab7ceaa93e9dcf2bb370adc9dcbe1eb9378d5890b564f5c964d23d728afbbd0365a880bcec16957bcdb",
+          "size": 8222675,
+          "source": "https://github.com/btwonion/KotlinLangForge",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-lang-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "klf"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "klf": [
+                {
+                  "modId": "minecraft",
+                  "versionRange": "[1.21.9],[1.21.10],[1.21.11],[26.1],[26.1.1],[26.1.2],[26.2],[26.3]",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.3",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "1olTsx7b",
+          "version": "1.6.13",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ItemPhysicLite_FABRIC_v1.6.13_mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/1olTsx7b/ItemPhysicLite_FABRIC_v1.6.13_mc26.3.jar",
+          "sha512": "300d2793b585b6dadd16ab8dcc0a6967bf484d90b69a8e3aa15d303f5c0e7a39cc2ebb0c41a42873719c782ead7586a4a528d50e9c09bda0470b3f3d8f5b6c90",
+          "sha1": "79dc4f5cc949fd66fa99f21aa838d067a846f6a0",
+          "size": 28095,
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "GO707F1h",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-api": "*",
+            "minecraft": ">=26.3",
+            "creativecore": ">=2.14.0"
+          },
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "y8vT21Sb",
+          "version": "fabric-26.3-2.3.8",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "InventoryProfilesNext-fabric-26.3-2.3.8.jar",
+          "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/y8vT21Sb/InventoryProfilesNext-fabric-26.3-2.3.8.jar",
+          "sha1": "2e0c90e7a1e7aab6cd6d65349f55b69f79995a9e",
+          "sha512": "dbd7d0eeb71108f5d784dfe7aad6f0e774893491a8b571f9886df9fbed01803abbb63c1ea88765aa08a838044885cc1aef85c5d85a94c8945120f2f973c0ecad",
+          "size": 1485260,
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "onSQdWhM",
+              "id": "aKBFonyQ",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.3 <26.4",
+            "libipn": ">=6.9.0 <6.10",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          },
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "Hpw3qIxS",
+          "version": "2.12.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-fabric-2.12.3.jar",
+          "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/Hpw3qIxS/veinminer-fabric-2.12.3.jar",
+          "sha1": "6ba68b908317de338f4f65e852cbdd45212e8bd3",
+          "sha512": "ec7f92629a6010bf664337c9d4334370447dcbc6eb2b1802ef6127bb0e0c858b7d56eb19d372bc597e8783034f8fb90f0c66d044333af23cf6bc24f15dac038f",
+          "size": 524474,
+          "dependencies": [
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.3",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*"
+          },
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0-only",
+            "name": "GNU Affero General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "1Duwydra",
+          "version": "2.12.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "veinminer-client-fabric-2.12.3.jar",
+          "url": "https://cdn.modrinth.com/data/dxa0Bm8m/versions/1Duwydra/veinminer-client-fabric-2.12.3.jar",
+          "sha1": "e4c12c51c0f0343928e23750610b7a44f13239fe",
+          "sha512": "87eb2735b7f4252a31ea846ba22b8de187a570dd816842d8c19aea39df8d42d36fff35d1217a9d37596a0fb35b3d066c01ee7c929cb3b02f3c4d62a4e20ea7a6",
+          "size": 198381,
+          "dependencies": [
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "OhduvhIc",
+              "id": "Hpw3qIxS",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.0",
+            "minecraft": "~26.3",
+            "java": ">=25",
+            "fabric-api": "*",
+            "fabric-language-kotlin": "*",
+            "veinminer": ">=2.8.0"
+          },
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "MGpq6CjC",
+          "version": "26.3-26.3.0.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.3-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/MGpq6CjC/FallingTree-26.3-25.jar",
+          "sha512": "c0c40ce1f7e07db33d42f19aeef707ef143f567e59f96b87663afc3af77c1413e131a97b9c3b405f1e4e21735625429381f55023d9cfb09b87deaabf5deecf2e",
+          "sha1": "ed3407d378c10e2382af1a8a550bca80f94bf448",
+          "size": 493893,
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-api": ">=0.160",
+            "java": ">=25"
+          },
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "fabric-api",
+          "projectId": "P7dR8mSH",
+          "id": "bq3SsNGk",
+          "version": "0.163.0+26.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-api-0.163.0+26.3.jar",
+          "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/bq3SsNGk/fabric-api-0.163.0%2B26.3.jar",
+          "sha512": "44fd8de10fa71ea39cf984d44d2ec4c8e9314f8af88ad95788d9a09ac7b02b5c2f796ae88f40e314bd27df677e66fed59d1a1b6784350b0cc1fd62efac9e08a3",
+          "sha1": "65ada8c72b61ffb256e956baf53df28155daa479",
+          "size": 1774707,
+          "dependencies": [],
+          "modIds": [
+            "fabric-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.3",
+            "java": ">=25",
+            "minecraft": "~26.3-"
+          },
+          "source": "https://github.com/FabricMC/fabric-api",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-api",
+          "role": "dependency",
+          "providedBy": "performance-lock"
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "GO707F1h",
+          "version": "2.14.19",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "CreativeCore_FABRIC_v2.14.19_mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/GO707F1h/CreativeCore_FABRIC_v2.14.19_mc26.3.jar",
+          "sha512": "bcf7b1dae14801206b4a9d6c399741090ad5e278d18240fef1208564415f86b1564c92726ed83f6e2397ed3781cf57f8a61700c4ca0dd9af347b0a4de7e44662",
+          "sha1": "1b3681bc987c6ce360220d4173139fc392080fe0",
+          "size": 1387788,
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-api": "*",
+            "minecraft": ">=26.3"
+          },
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "aKBFonyQ",
+          "version": "fabric-26.3-6.9.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "libIPN-fabric-26.3-6.9.0.jar",
+          "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/aKBFonyQ/libIPN-fabric-26.3-6.9.0.jar",
+          "sha512": "a580af93344e21f985c34e5bfe74361767a4ba49ced96d50c917d5008d9eb32e797e0ff68c010319c6116b6859fa5fb39544f4f78dd9f7892554340d86420abd",
+          "sha1": "f989cd24ace83f73db6bfcf704cab99ad6d53d10",
+          "size": 640902,
+          "dependencies": [
+            {
+              "projectId": "Ha28R6CL",
+              "id": "SKW1BTL3",
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": "bq3SsNGk",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "libipn"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.3 <26.4",
+            "fabric-language-kotlin": ">=1.13.10+kotlin.2.3.20"
+          },
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "fabric-language-kotlin",
+          "projectId": "Ha28R6CL",
+          "id": "SKW1BTL3",
+          "version": "1.14.2+kotlin.2.4.21",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "1.14",
+            "1.14.1",
+            "1.14.2",
+            "1.14.3",
+            "1.14.4",
+            "1.15",
+            "1.15.1",
+            "1.15.2",
+            "1.16",
+            "1.16.1",
+            "1.16.2",
+            "1.16.3",
+            "1.16.4",
+            "1.16.5",
+            "1.17",
+            "1.17.1",
+            "1.18",
+            "1.18.1",
+            "1.18.2",
+            "1.19",
+            "1.19.1",
+            "1.19.2",
+            "1.19.3",
+            "1.19.4",
+            "1.20",
+            "1.20.1",
+            "1.20.2",
+            "1.20.3",
+            "1.20.4",
+            "1.20.5",
+            "1.20.6",
+            "1.21",
+            "1.21.1",
+            "1.21.2",
+            "1.21.3",
+            "1.21.4",
+            "1.21.5",
+            "1.21.6",
+            "1.21.7",
+            "1.21.8",
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+          "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/SKW1BTL3/fabric-language-kotlin-1.14.2%2Bkotlin.2.4.21.jar",
+          "sha1": "f1d4ab6ecd54d9782521333a87eb50724ecb03e0",
+          "sha512": "7fb475c4a7e7bdf8d0aca4b5798a58a354c51443d5b1fbde3e8cf34dfbf7191ef4238b5f07d08ec9490ec180b371624523326c3ad45d4ed2b2be541de9407e5d",
+          "size": 8142878,
+          "dependencies": [],
+          "modIds": [
+            "fabric-language-kotlin"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5"
+          },
+          "source": "https://github.com/FabricMC/fabric-language-kotlin/",
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fabric-language-kotlin",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        }
+      ]
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.3",
+      "mods": [
+        {
+          "slug": "itemphysic-lite",
+          "projectId": "OuyCgP8t",
+          "id": "LQs3Ting",
+          "version": "1.6.13",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "ItemPhysicLite_NEOFORGE_v1.6.13_mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/LQs3Ting/ItemPhysicLite_NEOFORGE_v1.6.13_mc26.3.jar",
+          "sha512": "0d2928303b978fcf07faf07b87a45eaf19d9c626bfc4d3d4146cd403ef38e0219a8cb7cf491a53a4cb5a9acfaeef469e3cdd5713f5bdb1bee31504b9b52977e0",
+          "sha1": "a798ade4c409da60c5e9cce8cd5a406603aaf6db",
+          "size": 25011,
+          "dependencies": [
+            {
+              "projectId": "OsZiaDHq",
+              "id": "zdCqLdHs",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "itemphysiclite"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "itemphysiclite": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.3.0.1-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.3,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "creativecore",
+                  "type": "required",
+                  "ordering": "NONE",
+                  "side": "BOTH",
+                  "versionRange": "[2.14.0,)"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/CreativeMD/ItemPhysicLite",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/itemphysic-lite",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "5gXp3J2W",
+          "version": "neoforge-26.3-2.3.8",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "InventoryProfilesNext-neoforge-26.3-2.3.8.jar",
+          "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/5gXp3J2W/InventoryProfilesNext-neoforge-26.3-2.3.8.jar",
+          "sha512": "e60ad4f04a02b85af20cd39d92b2e2be8c7525dde5952bd2d3a79920b0de570ff55acbe9f1603d984841c2ae8737af1a7313a15252af3aba5d94736f1a07b657",
+          "sha1": "0f7ef2fe5395148a8695fdaba6215a4058e20a9a",
+          "size": 1444212,
+          "dependencies": [
+            {
+              "projectId": "onSQdWhM",
+              "id": "gMDIlFM0",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "${FML_VERSION}",
+            "dependencies": {
+              "inventoryprofilesnext": [
+                {
+                  "modId": "neoforge",
+                  "mandatory": true,
+                  "versionRange": "[26.3,)"
+                },
+                {
+                  "modId": "minecraft",
+                  "mandatory": true,
+                  "versionRange": "[26.3, 26.4)"
+                },
+                {
+                  "modId": "libipn",
+                  "mandatory": true,
+                  "versionRange": "[6.9.0, 6.10)"
+                }
+              ]
+            }
+          },
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "fYKoPw5F",
+          "version": "2.12.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-neoforge-2.12.3.jar",
+          "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/fYKoPw5F/veinminer-neoforge-2.12.3.jar",
+          "sha1": "f5919eed38a1c8d95866677a760d3f611413c109",
+          "sha512": "4d7e14e08db753821aa52ea4ee2fc161e53ed07ad93431cfb3b2400af3d0d61893e61fabbfbf71554ce4e526772e8ec9601669a4be31beb9be9cc30d48011df6",
+          "size": 644989,
+          "dependencies": [
+            {
+              "projectId": "1vrSzlao",
+              "id": "cu66H8iw",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer"
+          ],
+          "artifactRequirements": {
+            "modLoader": "klf",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "veinminer": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[21,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[1.21,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0-only",
+            "name": "GNU Affero General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "rxa0vmOU",
+          "version": "2.12.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-client-neoforge-2.12.3.jar",
+          "url": "https://cdn.modrinth.com/data/dxa0Bm8m/versions/rxa0vmOU/veinminer-client-neoforge-2.12.3.jar",
+          "sha512": "341f942b5a854ffd707112b49db2e077b84bc7b2072b42bf314a3ef17300074a6bec6487cd110bf9a41a250517db881fb7fc48c725274142bef29219ea3e451f",
+          "sha1": "e2837854d3f0cec11a3a2fbaadcaaf60c3c010e1",
+          "size": 184972,
+          "dependencies": [
+            {
+              "projectId": "1vrSzlao",
+              "id": "cu66H8iw",
+              "type": "required"
+            },
+            {
+              "projectId": "OhduvhIc",
+              "id": "fYKoPw5F",
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "artifactRequirements": {
+            "modLoader": "klf",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "veinminer_client": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[21,)",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[1.21,)",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                },
+                {
+                  "modId": "veinminer",
+                  "type": "required",
+                  "versionRange": "[2.8.0,)",
+                  "ordering": "AFTER",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "fallingtree",
+          "projectId": "Fb4jn8m6",
+          "id": "MGpq6CjC",
+          "version": "26.3-26.3.0.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "forge",
+            "neoforge"
+          ],
+          "filename": "FallingTree-26.3-25.jar",
+          "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/MGpq6CjC/FallingTree-26.3-25.jar",
+          "sha512": "c0c40ce1f7e07db33d42f19aeef707ef143f567e59f96b87663afc3af77c1413e131a97b9c3b405f1e4e21735625429381f55023d9cfb09b87deaabf5deecf2e",
+          "sha1": "ed3407d378c10e2382af1a8a550bca80f94bf448",
+          "size": 493893,
+          "dependencies": [],
+          "modIds": [
+            "fallingtree"
+          ],
+          "artifactRequirements": {
+            "modLoader": null,
+            "loaderVersion": null,
+            "dependencies": {
+              "fallingtree": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.3.0.0,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.3]",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "cloth-config",
+                  "type": "optional",
+                  "ordering": "NONE",
+                  "side": "CLIENT"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/RakambdaOrg/FallingTree",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/fallingtree",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "creativecore",
+          "projectId": "OsZiaDHq",
+          "id": "zdCqLdHs",
+          "version": "2.14.21",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "CreativeCore_NEOFORGE_v2.14.21_mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/zdCqLdHs/CreativeCore_NEOFORGE_v2.14.21_mc26.3.jar",
+          "sha512": "e900ee1d3f072143bd8077c1a82719ec501b3fc6d62e0d588fe9c4662109980c7c6a10f973e0635322bd04c98b33d8cd3ceb297287ccae212db5fe6e14c73221",
+          "sha1": "0f5f437bf094ded7d1e78c91c479906e0e94e64e",
+          "size": 1352638,
+          "dependencies": [],
+          "modIds": [
+            "creativecore"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "creativecore": [
+                {
+                  "modId": "neoforge",
+                  "type": "required",
+                  "versionRange": "[26.3.0.1-beta,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                },
+                {
+                  "modId": "minecraft",
+                  "type": "required",
+                  "versionRange": "[26.3,)",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/CreativeMD/CreativeCore",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/creativecore",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "gMDIlFM0",
+          "version": "neoforge-26.3-6.9.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "libIPN-neoforge-26.3-6.9.0.jar",
+          "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/gMDIlFM0/libIPN-neoforge-26.3-6.9.0.jar",
+          "sha512": "7f959439f404fb076878cd85d7ac1184449b6d1fcd6939c60db5f884b43ebe77469cb85393d47d1a033cbaf05db61df674e7f4cf35f14ecc1f5423bb6bb621f2",
+          "sha1": "da687142fb62c0154de52b1487b8c0371c6e9b4b",
+          "size": 7774399,
+          "dependencies": [],
+          "modIds": [
+            "libipn"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "${FML_VERSION}",
+            "dependencies": {
+              "libipn": [
+                {
+                  "modId": "neoforge",
+                  "mandatory": true,
+                  "versionRange": "[26.3,)"
+                },
+                {
+                  "modId": "minecraft",
+                  "mandatory": true,
+                  "versionRange": "[26.3, 26.4)"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "kotlin-lang-forge",
+          "projectId": "1vrSzlao",
+          "id": "cu66H8iw",
+          "version": "2.15.0-k2.4.21-3.1+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "KotlinLangForge-2.15.0-k2.4.21-3.1+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1vrSzlao/versions/cu66H8iw/KotlinLangForge-2.15.0-k2.4.21-3.1%2Bneoforge.jar",
+          "sha1": "b0051d7499914f7ab6bbf1ed6a4edf0476a23e1d",
+          "sha512": "327b770c675d1c58a83e06054220646709a82d8f7831bab7ceaa93e9dcf2bb370adc9dcbe1eb9378d5890b564f5c964d23d728afbbd0365a880bcec16957bcdb",
+          "size": 8222675,
+          "dependencies": [],
+          "modIds": [
+            "klf"
+          ],
+          "artifactRequirements": {
+            "modLoader": "javafml",
+            "loaderVersion": "[1,)",
+            "dependencies": {
+              "klf": [
+                {
+                  "modId": "minecraft",
+                  "versionRange": "[1.21.9],[1.21.10],[1.21.11],[26.1],[26.1.1],[26.1.2],[26.2],[26.3]",
+                  "ordering": "NONE",
+                  "side": "BOTH"
+                }
+              ]
+            }
+          },
+          "source": "https://github.com/btwonion/KotlinLangForge",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-lang-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock"
+        }
+      ]
+    }
+  ]
+}

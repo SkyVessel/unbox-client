@@ -1,0 +1,57 @@
+{
+  "ok": true,
+  "gameDirectory": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-fabric261-final",
+  "sourceWorld": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/directions-fabric261/saves/Benchmark",
+  "template": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-template-fabric261",
+  "phases": [
+    {
+      "mode": "write",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 18.29,
+      "report": {
+        "ok": true,
+        "mode": "write",
+        "loader": "fabric",
+        "pid": 32975,
+        "phase": 8,
+        "manifest": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-fabric261-final/logs/grave-persistence-manifest.json",
+        "checks": [
+          "Client received marker metadata; stone hardness 1.5 and upper-tablet selection/collision match the model, ordinary slabs stay unchanged",
+          "Old grave schema migrated STONE to a thin R.I.P tablet; repeated updates kept stable UUIDs and exact contents",
+          "Previous slab-and-six-parts grave converted to the thin tablet without losing contents or leaving its base/model behind",
+          "Actual lethal damage captured full component-bearing inventory, equipment, cursor and Vanishing item exactly once",
+          "Full vanilla save completed with invisible anchor, three model displays and nameplate unclaimed; pre-death component expectations written to manifest"
+        ],
+        "grave": "9, 122, 3"
+      },
+      "launchLog": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-fabric261-final/logs/grave-persistence-write-launch.log"
+    },
+    {
+      "mode": "read",
+      "ok": true,
+      "exitCode": 0,
+      "timedOut": false,
+      "seconds": 17.36,
+      "report": {
+        "ok": true,
+        "mode": "read",
+        "loader": "fabric",
+        "pid": 33023,
+        "phase": 21,
+        "manifest": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-fabric261-final/logs/grave-persistence-manifest.json",
+        "checks": [
+          "Second JVM loaded persisted anchor, the same three model display UUIDs, text-display entity and complete stored stacks from the same world",
+          "Manifest originated in a different JVM and identifies the same fixture world, dimension and owner UUID",
+          "Fresh SavedDataStorage instance reloaded actual dimension file with exact UUIDs and ItemStack components (not a full world restart)",
+          "Non-owner UUID, replacement, generic destruction and piston are denied; existing nameplate responds to settings",
+          "Native server mining timer completed in 29 ticks; all stored stacks dropped with gravity, owner retrieved them, anchor, model and label were removed",
+          "After restart the owner mined and recovered every expected stack; cleared grave state was saved normally"
+        ],
+        "grave": "9, 122, 3"
+      },
+      "launchLog": "/Users/ty/Documents/ChatGPT/\u542f\u52a8\u5668/.cache/benchmarks/grave-tablet-fabric261-final/logs/grave-persistence-read-launch.log"
+    }
+  ]
+}

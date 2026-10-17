@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "lithium",
+    "id": "1rb9wI5K",
+    "version": "mc26.3-0.26.2-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "lithium-neoforge-0.26.2+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/1rb9wI5K/lithium-neoforge-0.26.2%2Bmc26.3.jar",
+    "sha512": "af579327afba03fac855b0a55c1cd25236483d2d2a22f7686eb7b046a1a814511caa1c767dc5967f69ce92dcd5980e85340047b5b732ab7ba190f093788c20db",
+    "sha1": "1d11e085f74dda6fb797dfc4296cf4086fddfdcb"
+  },
+  {
+    "slug": "ferrite-core",
+    "id": "LtVvw4uS",
+    "version": "9.0.0-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "ferritecore-9.0.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/LtVvw4uS/ferritecore-9.0.0-neoforge.jar",
+    "sha512": "e96a99ac5539f56a1f4cd109d62b668ebd5283f0068491ede956f52e67023beba7abe2e40021499352ffc41ead950bebcabce7792352249a1b45c5dccb3cf99c",
+    "sha1": "b8bfb14ba6ce7068aae08c3a132ca40bda6bd143"
+  },
+  {
+    "slug": "immediatelyfast",
+    "id": "4SovUFpn",
+    "version": "1.17.1+26.3-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "ImmediatelyFast-NeoForge-1.17.1+26.3.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/4SovUFpn/ImmediatelyFast-NeoForge-1.17.1%2B26.3.jar",
+    "sha512": "6fddcf7e9de2bf179bdd18cc317fa1cc50ea9c3a40b06a0e0673ecb1dba29fb2ac2743ada361e32f52c2c1f333043795a5149b8b89ee467665c2b734e7d5d951",
+    "sha1": "a072863c3b4e7cfed81899d8d3115839a161a708"
+  },
+  {
+    "slug": "dynamic-fps",
+    "id": "KGWebRrW",
+    "version": "3.11.10",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "dynamic-fps-3.11.10+minecraft-26.3.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/KGWebRrW/dynamic-fps-3.11.10%2Bminecraft-26.3.0-neoforge.jar",
+    "sha512": "8add2316e6b41405535a1411daf40e9e700c70091963baac530a2769f122ee3a70608ef51e95a821d5aae80e17b384d9822d2a8b4e3dff38dfd7e72d727bd282",
+    "sha1": "3b6d398a201195ae96201154743bee4c4361f634"
+  },
+  {
+    "slug": "e4mc",
+    "id": "HXD8kS5O",
+    "version": "6.2.3-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "e4mc-neoforge-6.2.3.jar",
+    "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/HXD8kS5O/e4mc-neoforge-6.2.3.jar",
+    "sha512": "6d029c61c71503dbf03710a0a944b462fc0351a862db773d4ffe39ffe8d8a205d12a4f031361d82867d365a2335abbdc91859a2777108ca4c9c14fe243b92197",
+    "sha1": "7127478b19531091257b3f58cd734a638200e481"
+  },
+  {
+    "slug": "iris",
+    "id": "Ag5S66CF",
+    "version": "1.11.7+26.3-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "iris-neoforge-1.11.7+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/Ag5S66CF/iris-neoforge-1.11.7%2Bmc26.3.jar",
+    "sha512": "302659f09e50d02a6cd96075be93aade2a2f9d709afe21d56465228fb7d7f4717566e3702a7872479df2fff9b7a5ff5b1b6047cc95e09ee6120fad5ea5857eec",
+    "sha1": "57cbbd1f58b6226c633520541c1a3ae57c019373",
+    "dependencies": [
+      {
+        "projectId": "AANobbMI",
+        "id": "SS023RVV",
+        "type": "required"
+      }
+    ]
+  },
+  {
+    "slug": "sodium",
+    "id": "SS023RVV",
+    "version": "mc26.3-0.9.3-beta.1-neoforge",
+    "gameVersions": [
+      "26.3"
+    ],
+    "filename": "sodium-neoforge-0.9.3-beta.1+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/SS023RVV/sodium-neoforge-0.9.3-beta.1%2Bmc26.3.jar",
+    "sha512": "92cdb344cb8049993685e3d81498411d4e6965a8f054c912a297bfe550937ed4792b7c1cb4efea5b5ac9c0e6c32aea777389207e481f008ce6f176b5ae6aab93",
+    "sha1": "c9412897122afb33007f6c0d6ee1b2248a9ebcf7"
+  }
+]
