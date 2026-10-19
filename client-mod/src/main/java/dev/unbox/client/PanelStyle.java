@@ -43,6 +43,14 @@ final class PanelStyle {
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int color){icon(g,id,x,y,32,color);}
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int size,int color){
         int resolution=id.startsWith("unbox-")?512:id.equals("logo")?768:id.equals("badge")?96:384;
+        // Match the approved variants' box width and bottom to the base logo; ornaments extend above it.
+        if(id.equals("unbox-creator-crown")||id.equals("unbox-fluttering-cash")){
+            boolean crown=id.equals("unbox-creator-crown");
+            int scaled=Math.round(size*(crown?1.45f:1.586f));
+            x+=Math.round((size-scaled)/2f);
+            y+=Math.round(size*.9398f-scaled*(crown?.8979f:.9266f));
+            size=scaled;
+        }
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,Identifier.fromNamespaceAndPath("unbox","textures/ui/"+id+".png"),x,y,0f,0f,size,size,resolution,resolution,resolution,resolution,tint(color));
     }
 }

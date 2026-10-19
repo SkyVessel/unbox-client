@@ -12,8 +12,8 @@
     {
       "type": "bitmap",
       "file": "unbox:font/unbox-creator-crown.png",
-      "ascent": 10,
-      "height": 12,
+      "ascent": 11,
+      "height": 13,
       "chars": [
         "\ue001"
       ]
@@ -21,8 +21,8 @@
     {
       "type": "bitmap",
       "file": "unbox:font/unbox-fluttering-cash.png",
-      "ascent": 10,
-      "height": 12,
+      "ascent": 13,
+      "height": 14,
       "chars": [
         "\ue002"
       ]
