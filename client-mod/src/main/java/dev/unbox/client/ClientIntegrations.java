@@ -9,6 +9,7 @@ import java.util.*;
 public final class ClientIntegrations {
     private static final Map<String,String> errors=new HashMap<>();
     private static int ticks;
+    private static boolean buildingWasActive;
     public static final List<String> IDS=List.of("mousetweaks","shulker","effectbars","bookshelf","resources","spatial","building","variants");
     private ClientIntegrations(){}
     public static String engine(String id){return switch(id){
@@ -88,10 +89,11 @@ public final class ClientIntegrations {
             }
             case "spatial"->SpatialSettings.sync();
             case "building"->{
-                if(!on){
+                if(!on&&buildingWasActive){
                     Class.forName("nl.requios.effortlessbuilding.buildpipeline.BuildPipelineClient").getMethod("cancelCurrentSequence").invoke(null);
                     var mc=Minecraft.getInstance();if(mc.screen!=null&&mc.screen.getClass().getName().startsWith("nl.requios.effortlessbuilding.screen."))mc.setScreen(null);
                 }
+                buildingWasActive=on;
                 Object c=singleton("nl.requios.effortlessbuilding.config.ClientConfig","INSTANCE");
                 c.getClass().getMethod("setPreviewBlockTransparency",float.class).invoke(c,number("building.opacity",50,10,100)/100f);
                 c.getClass().getMethod("setMaxBlockPreviews",int.class).invoke(c,number("building.previews",1000,50,5000));

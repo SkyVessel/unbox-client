@@ -23,6 +23,14 @@ final class NameplateSmokeTest {
         checks.add(label);
     }
     static void verify(Minecraft mc, List<String> checks) {
+        try {
+            for(String path:LogoResources.FILES){
+                var resource=mc.getResourceManager().getResource(net.minecraft.resources.Identifier.fromNamespaceAndPath("unbox",path)).orElseThrow();
+                try(var actual=resource.open();var bundled=LogoResources.class.getResourceAsStream("/assets/unbox/"+path)){
+                    check(Arrays.equals(actual.readAllBytes(),bundled.readAllBytes()),"Identity resource retains bundled priority: "+path,checks);
+                }
+            }
+        }catch(java.io.IOException e){throw new RuntimeException(e);}
         previous = mc.options.getCameraType();
         mc.options.setCameraType(CameraType.FIRST_PERSON);
         check(state(mc, mc.player).nameTag == null, "First person does not put the own nameplate in the camera", checks);

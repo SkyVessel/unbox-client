@@ -36,7 +36,7 @@ final class ModToggleChecks {
     update.invoke(null,screen);
     for(String f:List.of("rmbTweak","lmbTweakWithItem","lmbTweakWithoutItem","wheelTweak"))check(!(boolean)field(config,f),"Upstream screen reload preserves disabled "+f,checks);
     Class<?> button=Class.forName("yalter.mousetweaks.MouseButton");
-    for(String entry:List.of("onMouseClicked","onMouseDrag","onMouseReleased"))check(!(boolean)mouse.getMethod(entry,Screen.class,double.class,double.class,button).invoke(null,screen,x,y,button.getField("RIGHT").get(null)),"Disabled Mouse Tweaks leaves "+entry+" to vanilla",checks);
+    for(String side:List.of("LEFT","RIGHT"))for(String entry:List.of("onMouseClicked","onMouseDrag","onMouseReleased"))check(!(boolean)mouse.getMethod(entry,Screen.class,double.class,double.class,button).invoke(null,screen,x,y,button.getField(side).get(null)),"Disabled Mouse Tweaks leaves "+side+" "+entry+" to vanilla",checks);
     UnboxClient.set("mousetweaks",true);UnboxClient.set("mousetweaks.scroll",true);mc.player.getInventory().setItem(9,new ItemStack(Items.STONE,8));
     check((boolean)scroll.invoke(null,screen,x,y,-1d),"Re-enabled Mouse Tweaks handles real item scrolling in the same inventory",checks);
     UnboxClient.set("mousetweaks.scroll",false);UnboxClient.set("mousetweaks.rightDrag",false);UnboxClient.set("mousetweaks.leftDrag",false);UnboxClient.set("mousetweaks.collect",false);
@@ -45,6 +45,8 @@ final class ModToggleChecks {
     for(String f:List.of("rmbTweak","lmbTweakWithItem","lmbTweakWithoutItem","wheelTweak"))check(!(boolean)field(config,f),"Screen reload preserves disabled sub-option "+f,checks);
     UnboxClient.set("mousetweaks",false);
    }
+   MouseGestureSmokeTest.verify(mc,checks);
+   BuildingInputSmokeTest.verify(mc,checks);
    sync();
    check(!SurvivalClientMods.sortInventory(),"Disabled IPN refuses sorting dispatch",checks);
    Object features=instance("org.anti_ad.mc.ipnext.config.Features","INSTANCE");
@@ -64,7 +66,7 @@ final class ModToggleChecks {
    for(String kind:List.of("ResourcePacks","DataPacks","ShaderPacks","Worlds","OpenLinkInResourcify"))check(!(boolean)resources.getClass().getMethod("get"+kind+(kind.equals("OpenLinkInResourcify")?"":"Enabled")).invoke(resources),"Disabled Resourcify suppresses "+kind,checks);
    check(!(boolean)Class.forName("org.tastytrash.spatialGUI.client.SpatialGUIClient").getMethod("isEnabled").invoke(null),"Disabled Spatial GUI suppresses its render activation",checks);
    UnboxClient.set("inventory",true);UnboxClient.set("inventory.scrolling",true);SurvivalClientMods.sync();Object scrolling=features.getClass().getMethod("getITEM_SCROLLING").invoke(features);
-   check((boolean)scrolling.getClass().getMethod("getValue").invoke(scrolling),"IPN retains its separately enabled wheel feature when Mouse Tweaks is off",checks);
+   check(!(boolean)scrolling.getClass().getMethod("getValue").invoke(scrolling),"Inventory Sort cannot re-enable scrolling when Mouse Tweaks is off",checks);
    UnboxClient.set("mousetweaks",true);UnboxClient.set("mousetweaks.scroll",true);SurvivalClientMods.sync();check(!(boolean)scrolling.getClass().getMethod("getValue").invoke(scrolling),"Mouse Tweaks wheel owns scrolling while enabled to avoid double handling",checks);
    return checks;
   }finally{mc.player.getInventory().setItem(9,stack);mc.setScreen(previous);UnboxClient.CONFIG.clear();UnboxClient.CONFIG.putAll(saved);sync();}

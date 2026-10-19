@@ -42,7 +42,9 @@ public final class SurvivalClientMods {
             apply("Features","ENABLE_AUTO_REFILL",on&&ClientHud.flag("inventory.refill",false));
             apply("Features","ENABLE_LOCK_SLOTS",on&&ClientHud.flag("inventory.lockSlots",false));
             apply("Features","ENABLE_PROFILES",on&&ClientHud.flag("inventory.profiles",false));
-            apply("Features","ITEM_SCROLLING",on&&ClientHud.flag("inventory.scrolling",true)&&!(ClientIntegrations.active("mousetweaks")&&ClientHud.flag("mousetweaks.scroll",true)));
+            // Mouse Tweaks exclusively owns enhanced mouse gestures.
+            apply("Features","ITEM_SCROLLING",false);
+            apply("Tweaks","CONTAINER_SWIPE_MOVING_ITEMS",false);
             apply("Features","HIGHLIGHT_FOUSED_ITEMS",on&&ClientHud.flag("inventory.highlight",true));
             apply("Features","VILLAGER_TRADING_ENABLE",false);
             apply("GuiSettings","ENABLE_INVENTORY_BUTTONS",on&&ClientHud.flag("inventory.buttons",true));

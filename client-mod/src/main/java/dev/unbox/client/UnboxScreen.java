@@ -288,7 +288,7 @@ public class UnboxScreen extends Screen {
             List<String> notes=switch(detail){
                 case "particles"->List.of("Changes affect new particles.","Existing particles fade normally.");
                 case "inventory"->List.of("Powered by Inventory Profiles Next.","Use inventory buttons to sort.","Advanced: keybinds and sort rules.","These toggles are managed by Unbox.");
-                case "mousetweaks"->List.of("Drag across slots to move stacks.","Scroll over items to transfer them.","IPN scrolling pauses to avoid conflicts.");
+                case "mousetweaks"->List.of("Drag across slots to move stacks.","Scroll over items to transfer them.","This switch controls enhanced mouse gestures.");
                 case "shulker"->List.of("The host controls this feature.","Hold Shift over a shulker to preview.","Use right-click and scroll to move items.","Both players need this mod installed.");
                 case "effectbars"->List.of("Bars show remaining effect duration.","HUD and inventory have separate toggles.");
                 case "bookshelf"->List.of("Aim at a chiseled bookshelf slot.","Inspect the book and enchantments.","Server support is needed for remote data.");

@@ -116,6 +116,12 @@ if os.environ.get('UNBOX_TEST_FONT_PACK')=='1':
         pv=json.loads(client_zip.read('version.json'))['pack_version'];fmt=[pv['resource_major'],pv['resource_minor']]
         pack.writestr('pack.mcmeta',json.dumps({'pack':{'description':'Unbox text shader compatibility fixture','min_format':fmt,'max_format':fmt}}))
         shader='assets/minecraft/shaders/core/text.vsh';pack.writestr(shader,client_zip.read(shader))
+        if os.environ.get('UNBOX_TEST_LOGO_OVERRIDE')=='1':
+            # Valid but deliberately wrong identity art/font at the selected pack's top priority.
+            pack.writestr('assets/unbox/font/name_badge.json',json.dumps({'providers':[{'type':'space','advances':{'\ue000':1,'\ue001':1,'\ue002':1}}]}))
+            for path in ['ui/badge.png','ui/unbox-creator-crown.png','ui/unbox-fluttering-cash.png','font/unbox-creator-crown.png','font/unbox-fluttering-cash.png']:
+                pack.writestr('assets/unbox/textures/'+path,(ROOT/'client-mod/src/main/resources/assets/unbox/textures/ui/close.png').read_bytes())
+            pack.writestr('assets/unbox/textures/ui/badge.png.mcmeta',json.dumps({'texture':{'blur':False}}))
     options['resourcePacks']=json.dumps(['vanilla','file/Font Compatibility Fixture.zip'])
 if not resume:(game/'options.txt').write_text('\n'.join(k+':'+v for k,v in options.items())+'\n')
 (game/'config/unbox.properties').write_text(('minimap=true\nping=true\n' if os.environ.get('UNBOX_MAP_BENCH')=='1' else '')+'fps=true\ncps=true\ncoordinates=true\narmor=true\ncape=false\nfreelook=false\n')
