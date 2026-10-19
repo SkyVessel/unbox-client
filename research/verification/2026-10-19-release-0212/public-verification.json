@@ -1,0 +1,63 @@
+{
+  "version": "0.2.12",
+  "releaseUrl": "https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.12",
+  "checkedAt": "2026-10-19T14:29:59.382471+00:00",
+  "anonymousLatest": true,
+  "anonymousManifest": true,
+  "anonymousAssets": {
+    "Unbox.Client_0.2.12_aarch64.app.tar.gz": {
+      "sha256": "fc083e84706ad678c24e4e2a81b88babef06be5818ae513d993dabf0f02a76c7",
+      "bytes": 52968430
+    },
+    "Unbox.Client_0.2.12_windows-x64-setup.exe": {
+      "sha256": "11a1b2ca8936781cf40ec9cb11c7c558f7623c189cf33ee7c781eb9fcb74d880",
+      "bytes": 31391683
+    },
+    "Unbox.Client_0.2.12_aarch64.app.tar.gz.sig": {
+      "sha256": "8742c4e2b4668f73c42475829c7ae18d972c7086eb8409a5923fdbc49dd47eea",
+      "bytes": 452
+    },
+    "Unbox.Client_0.2.12_windows-x64-setup.exe.sig": {
+      "sha256": "f3f5276a3ab024eaf7d0364368a997b92a80b9e723b400898f2c50c399645393",
+      "bytes": 456
+    },
+    "latest.json": {
+      "sha256": "e2124859c70c1a5d60c8b4a27c2063d606736422347357d1f87a250743ef246a",
+      "bytes": 2328
+    },
+    "unbox-client.jar": {
+      "sha256": "cb01c673fac93a4b84b9578dac5da74c841d6a8220699e8eb2615e01fbfb5dbd",
+      "bytes": 1089367
+    },
+    "unbox-client-neoforge.jar": {
+      "sha256": "d839fc8509fb3bc4cf6558c3458da3e55441e65ff36bbcd991ba5f4ed65f54d9",
+      "bytes": 1101521
+    },
+    "unbox-client-26.1.2.jar": {
+      "sha256": "88a9695e4365b65bf15b7bd7aebecdd051cd69f6760b4df1fdf5c0dc9dd431b0",
+      "bytes": 1089369
+    },
+    "unbox-client-neoforge-26.1.2.jar": {
+      "sha256": "8e11ab94de4ea99faa747708ebdb6c649995d10f802b1d95f95315650312be50",
+      "bytes": 1101522
+    },
+    "unbox-client-26.3.jar": {
+      "sha256": "a32387a5850e48beaff1cb9680918c0ae7ed6d9186dc9406fb799e7b974f120d",
+      "bytes": 1091434
+    },
+    "unbox-client-neoforge-26.3.jar": {
+      "sha256": "4be334aacc4a05183ad65b895749da00925976ab89e92210fc23fba8dd04c4ce",
+      "bytes": 1103628
+    },
+    "SHA256SUMS.txt": {
+      "sha256": "5fcc8a4c591a0891aefd54d8ba667296c0a96cca2a1c66eabe2a18072355d496",
+      "bytes": 1061
+    }
+  },
+  "platformSignaturesVerified": [
+    "darwin-aarch64",
+    "windows-x86_64"
+  ],
+  "tamperedPayloadRejected": true,
+  "windowsWorkflow": "https://github.com/SkyVessel/unbox-client/actions/runs/39268448155"
+}

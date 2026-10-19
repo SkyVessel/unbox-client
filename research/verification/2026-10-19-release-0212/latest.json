@@ -1,0 +1,15 @@
+{
+  "version": "0.2.12",
+  "notes": "Unbox Client 0.2.12 \u2014 redemption codes and Logo library\n\n- Added Redeem to the top right of the launcher and in-game skin libraries. Codes can unlock assets and role permissions for verified Microsoft Minecraft accounts. Local accounts cannot redeem.\n- Added the Logo library beside the character preview, with the basic Unbox logo available by default. Owned logos can be equipped and are stored on the account.\n- Included the approved crown and cash artwork. No creator privileges or crown ownership are granted automatically.\n- Retained the 0.2.11 Mouse Tweaks fix, revised skin layout and Windows console-window fix.\n\nSupports Minecraft 26.1, 26.1.2 and 26.3 with native Fabric / NeoForge modules. macOS Apple Silicon and Windows x64 testing builds; existing updater signature retained.\n\nClose Minecraft, then open Settings \u2192 Updates \u2192 Check for updates \u2192 Install and restart. Keep the launcher open for in-game redemption.\n",
+  "pub_date": "2026-10-19T14:29:23.101551Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN25RTEpCbUpSc2xPWkhoQitlRDIvSUp2OEFOOERwaUhGaXdQb2t3ZExYYlZUQldlWWs0N3hoenIwVEJpdnNZWEQzbVJZMlZLQ2F6Q0xkSitWM21QcGdzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDE5NjkzCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMl9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTIKSDJNaWpmdUdVZ0VPSjIxU1BSVXVYYmZUeW9INDJiOVRrSDJxbnpzeUJwK1Y2eFVFUlloVWZnQ05vb1A3MEd3dkswZEVRalhXK2RoeHI2RlR0MmNiQXc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.12/Unbox.Client_0.2.12_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN204dXR4L0k0OHVGcHM0WDVNYjA2YlJCTGYwb04yUDFXbGZRd001VmIxREoyYjBDalhTY0ZMOGZtVDhzUlhCbE5BSkdDQXdoN1owT2MvS2dkSlo1TGdZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDIwMTU4CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMl93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTIKQmN6WTZOeDI0eWJKdVBvaU16TEhBUTBtSVU2b2ExVyt4Ky9CNW1KS3hXdGVOWFhJQVZORkFjRFA4NHVpVmJIUlFNM0lKR0VYanIzR3FCQWUrNEZNRGc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.12/Unbox.Client_0.2.12_windows-x64-setup.exe"
+    }
+  }
+}

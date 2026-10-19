@@ -1,6 +1,6 @@
 # 兑换码与 Logo 资产库
 
-2026-10-19。用户将邮箱关联改为兑换码，并明确非正版账号不能兑换。版本目标为 0.2.12，继承 0.2.11 的 Mouse Tweaks 开关修复和皮肤库布局。
+2026-10-19。用户将邮箱关联改为兑换码，并明确非正版账号不能兑换。[0.2.12](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.12) 已公开发布为 GitHub latest，继承 0.2.11 的 Mouse Tweaks 开关修复和皮肤库布局。
 
 ## 使用
 
@@ -25,4 +25,10 @@
 - macOS 26.3 Fabric 隔离世界视觉回归 79 项通过，包含游戏内兑换表单、非正版按钮禁用、基础 Logo、返回皮肤页；启动器检查 1000×720、1280×820、1920×1080。
 - 与 0.2.11 发布 JAR 逐条目比较，六套模块的 Mouse Tweaks 修复及其他游戏逻辑保持字节一致；变更只涉及皮肤／兑换界面、资源、视觉回归和版本元数据。
 - 生产数据库已导出并恢复验证后添加兑换码表；Worker 已更新，真实 HTTP 非正版伪造请求被拒绝。保留 4 个原用户，现有 grants 和 codes 均为 0；临时测试身份已清理。
-- 公开更新和 Windows 构建状态将在发布后补记。没有进行真实正版用户的完整兑换、Windows 游戏实玩或同事机器自更新实测。
+- [Windows Actions 39268448155](https://github.com/SkyVessel/unbox-client/actions/runs/39268448155) 构建成功，原生测试 70 项通过；1 个子进程探针由两个父测试调用。EXE 为 GUI subsystem 2，保留无小黑窗行为。
+- macOS 包 52,968,430 字节，Windows 包 31,391,683 字节；分别核对 45 份内嵌资源，Windows JSON 仅 Git 换行差异。macOS 应用及解压后的更新包通过 ad-hoc codesign 校验。
+- 已使用匿名连接下载 latest.json 及全部 12 个附件，逐个验证 SHA-256；两平台 updater 签名有效，篡改包被拒绝。沿用原 updater 公钥。发布标签与源码／CI 提交一致：`203b342b2371b153eefbdddc255617a93770eca4`。
+- Worker 版本 `d19c1bbf-dbfe-4ab7-a5da-8228f87146e7` 已 100% 部署；原 D1、管理凭证和每小时清理保留。没有开通付费服务。
+- 证据：`research/verification/2026-10-19-release-0212/`。没有进行真实正版用户的完整兑换、Windows 游戏实玩或同事机器自更新实测。
+
+关闭 Minecraft，在 Settings → Updates → Check for updates → Install and restart 更新。继续使用测试构建，不包含 Apple 公证或 Windows 发布者签名；不影响现有 updater 签名验证。

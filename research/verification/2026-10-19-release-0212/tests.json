@@ -9,7 +9,13 @@
   },
   "frontendBuild": true,
   "gameNativeModules": 6,
-  "windows": "pending",
+  "windows": {
+    "passed": 70,
+    "failed": 0,
+    "ignoredHelperProbe": 1,
+    "helperCoveredByTwoParentTests": true,
+    "workflow": "https://github.com/SkyVessel/unbox-client/actions/runs/39268448155"
+  },
   "visualGame": {
     "minecraft": "26.3",
     "loader": "Fabric",
