@@ -1,0 +1,22 @@
+{
+  "previousPublishedVersion": "0.2.9",
+  "previousSubsystem": 3,
+  "version": "0.2.10",
+  "packagedSubsystem": 2,
+  "windowsNativeTests": {
+    "passed": 69,
+    "failed": 0,
+    "ignoredStandaloneProbe": 1,
+    "probeInvokedByPassingParentTests": 2
+  },
+  "macOSNativeTests": {
+    "passed": 67,
+    "failed": 0
+  },
+  "childChecks": [
+    "GetConsoleWindow returns null",
+    "stdout preserved",
+    "stderr preserved"
+  ],
+  "windowsWorkflow": "https://github.com/SkyVessel/unbox-client/actions/runs/39204387081"
+}

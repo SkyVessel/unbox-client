@@ -1,0 +1,15 @@
+{
+  "version": "0.2.10",
+  "notes": "## Windows console-window fix\n\n- Fixed the black console window appearing alongside the Windows launcher, including testing builds.\n- Prevented console windows from Java detection, Minecraft startup, NeoForge installation and shared-directory setup. Browser/folder opening uses the same process-launch policy.\n- Kept Java detection output, game logs and installer logs available. Minecraft and other normal graphical windows still open normally.\n- Added Windows regression checks for console-free synchronous/asynchronous child processes and preserved stdout/stderr, plus a release check for the launcher EXE's GUI subsystem.\n\nAll 0.2.9 features remain included. Supports Minecraft 26.1, 26.1.2 and 26.3 on Fabric and NeoForge. There are no gameplay changes in this hotfix.\n\nClose Minecraft, then use Settings → Updates → Check for updates → Install and restart. Profiles and worlds remain in the separate data directory.\n\nPackages: Windows x64 and macOS Apple Silicon (ARM64). These remain testing builds without a Windows publisher certificate or Apple notarization. Cape display with a cape-owning account remains unverified; this hotfix does not add a cape gameplay test.\n\nValidation: 67 macOS native checks and 69 Windows native checks passed. The Windows checks include real child processes with no console and preserved output; the test probe is invoked explicitly by those checks. The packaged Windows launcher has GUI subsystem 2. This is CI/API and executable validation, not a manual desktop/gameplay test on a colleague's PC.\n",
+  "pub_date": "2026-10-19T05:30:26.797357Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN3NuN2xIT09nMzZGQU44QlJmck1xVVEvTEhSRG02aGZPNDU2TGh1ZDRCbXB2WExCbFY1TGYzM1pDZDZ2MnVudms4NjZWLzIxVUlMRUxMblIxbWtVS0FvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyMzg3NDgyCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMF9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTAKc2NFSTZ2YVhSV2JtSmR0ZFVRN2habXpLSHNiZ3dKSEFKZldVYkpWaEZ5aVZxZEc4a0tjbnkyMEwrQUwwNjFLZmFhRTFLa29DeUcxYjZnZjFiOXYvQnc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.10/Unbox.Client_0.2.10_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2lQNEQyUXpQeHdnbmxWVEpnWjlOZmxHZFRyc0xKcTNLcmJCdHB6K1RFY2dNbFFyNURlbkFUdmtaeG9aY1NNTXBBL0tNQWNJWnh0dm41WTZJWUl6a1FBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyMzg3ODAxCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMF93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTAKSTFTUDFsK1A0WjMyY3NhK1BzbVNBUWh3eVFpTWYxTVpyRm9lVDVlR3VzeDhYSUdvU3dQYzI2VXEwT1ZoT0ExbG1tcTl3emFkRkVZM0toYjVQMkdyQ1E9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.10/Unbox.Client_0.2.10_windows-x64-setup.exe"
+    }
+  }
+}

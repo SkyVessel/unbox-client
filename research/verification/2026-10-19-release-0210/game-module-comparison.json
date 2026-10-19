@@ -1,0 +1,20 @@
+{
+  "unbox-client.jar": [
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge-26.1.2.jar": [
+    "META-INF/neoforge.mods.toml"
+  ],
+  "unbox-client-26.3.jar": [
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge.jar": [
+    "META-INF/neoforge.mods.toml"
+  ],
+  "unbox-client-26.1.2.jar": [
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge-26.3.jar": [
+    "META-INF/neoforge.mods.toml"
+  ]
+}
