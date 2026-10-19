@@ -1,0 +1,36 @@
+{
+    "minecraft": "26.1.2",
+    "mod": {
+        "id": "iteminteractions",
+        "group": "fuzs.iteminteractions",
+        "name": "Item Interactions",
+        "version": "26.1.9",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "A library for providing advanced inventory interactions for container items similar to bundles.",
+        "license": "MPL-2.0"
+    },
+    "dependencies": [
+        {
+            "name": "puzzleslib",
+            "type": "required",
+            "platforms": [
+                "neoforge"
+            ]
+        }
+    ],
+    "links": [
+        {
+            "name": "github",
+            "slug": "item-interactions"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "neoforge"
+    ]
+}

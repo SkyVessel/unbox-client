@@ -1,0 +1,59 @@
+package fuzs.puzzleslib.fabric.api.event.v1;
+
+import fuzs.puzzleslib.common.api.event.v1.entity.*;
+import fuzs.puzzleslib.fabric.api.event.v1.core.FabricEventFactory;
+import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+
+/**
+ * Events originally found on Forge in the <code>net.minecraftforge.event.entity</code> package.
+ */
+public final class FabricEntityEvents {
+    /**
+     * Fires when a projectile entity impacts on something, either a block or another entity.
+     */
+    public static final Event<ProjectileImpactCallback> PROJECTILE_IMPACT = FabricEventFactory.createResult(
+            ProjectileImpactCallback.class);
+    /**
+     * Runs when an entity starts riding another entity in {@link Entity#startRiding(Entity)}, allows for preventing
+     * that.
+     */
+    public static final Event<EntityRidingEvents.Start> ENTITY_START_RIDING = FabricEventFactory.createResult(
+            EntityRidingEvents.Start.class);
+    /**
+     * Runs when an entity stops riding another entity in {@link Entity#removeVehicle()}, allows for preventing that.
+     */
+    public static final Event<EntityRidingEvents.Stop> ENTITY_STOP_RIDING = FabricEventFactory.createResult(
+            EntityRidingEvents.Stop.class);
+    /**
+     * Called before {@link Entity#tick()}, allows cancelling ticking the entity.
+     */
+    public static final Event<EntityTickEvents.Start> ENTITY_TICK_START = FabricEventFactory.createResult(
+            EntityTickEvents.Start.class);
+    /**
+     * Called after {@link Entity#tick()}.
+     */
+    public static final Event<EntityTickEvents.End> ENTITY_TICK_END = FabricEventFactory.create(EntityTickEvents.End.class);
+    /**
+     * Called when the size of an entity changes, usually from switching to a different {@link Pose}.
+     */
+    public static final Event<RefreshEntityDimensionsCallback> REFRESH_ENTITY_DIMENSIONS = FabricEventFactory.createResultHolder(
+            RefreshEntityDimensionsCallback.class);
+    /**
+     * Fires when an ender pearl lands and is about to teleport the player that threw it.
+     */
+    public static final Event<EnderPearlTeleportCallback> ENDER_PEARL_TELEPORT = FabricEventFactory.createResult(
+            EnderPearlTeleportCallback.class);
+    /**
+     * Runs in {@link Entity#isInvulnerableToBase(DamageSource)} when an entity is attacked to determine if said entity
+     * is invulnerable to the specific damage source.
+     */
+    public static final Event<EntityDamageImmunityCallback> ENTITY_DAMAGE_IMMUNITY = FabricEventFactory.create(
+            EntityDamageImmunityCallback.class);
+
+    private FabricEntityEvents() {
+        // NO-OP
+    }
+}

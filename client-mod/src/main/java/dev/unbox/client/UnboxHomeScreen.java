@@ -63,7 +63,7 @@ public final class UnboxHomeScreen extends Screen {
         try {PanelStyle.icon(g,"logo",centerX-40,logoY,80,0xfff5f8fa);
         PanelStyle.center(g,"U N B O X   C L I E N T",centerX,logoY+93,PanelStyle.TEXT);
         if(inWorld){skinPreview.draw(g,skinX,skinY,skinX+180,skinY+236,(int)(mx/scale),(int)(my/scale-menuOffsetY()),rotatingSkin);friends.draw(g);}
-        if(!inWorld)PanelStyle.label(g,"Unbox Client  /  Minecraft 26.1",16,logicalHeight-24,0xffa5b2b9);
+        if(!inWorld)PanelStyle.label(g,"Unbox Client  /  Minecraft "+net.minecraft.SharedConstants.getCurrentVersion().id(),16,logicalHeight-24,0xffa5b2b9);
         for(var child:children())if(child instanceof AbstractWidget widget)widget.extractRenderState(g,(int)(mx/scale),(int)(my/scale-menuOffsetY()),delta);
         }finally{PanelStyle.opacity(1);g.pose().popMatrix();}
     }
@@ -78,7 +78,7 @@ public final class UnboxHomeScreen extends Screen {
     @Override public boolean isPauseScreen(){return false;}
     private static final class GlassButton extends AbstractWidget {
         private final String icon;private final Runnable action;private final boolean framed;private final PanelStyle.Motion hover=new PanelStyle.Motion();
-        GlassButton(int x,int y,int w,int h,String text,String icon,Runnable action,boolean framed){super(x,y,w,h,PanelStyle.text(text));this.icon=icon;this.action=action;this.framed=framed;setTooltip(Tooltip.create(Component.literal(text)));}
+        GlassButton(int x,int y,int w,int h,String text,String icon,Runnable action,boolean framed){super(x,y,w,h,PanelStyle.text(text));this.icon=icon;this.action=action;this.framed=framed;if(!icon.isEmpty())setTooltip(Tooltip.create(Component.literal(text)));}
         @Override protected void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float delta){float amount=hover.to(isHoveredOrFocused()?1:0);if(framed){PanelStyle.round(g,getX()-1,getY()-1,width+2,height+2,5,PanelStyle.mix(0x407e7e82,icon.equals("close")?0xffff9098:0xff9abaff,amount));PanelStyle.round(g,getX(),getY(),width,height,4,PanelStyle.mix(0x702a2a2e,icon.equals("close")?0xc5743942:0xc5465270,amount));}else PanelStyle.round(g,getX(),getY(),width,height,4,PanelStyle.mix(0x00333337,0x665e5e64,amount));int color=active?PanelStyle.TEXT:0xff6d777e;if(icon.isEmpty())PanelStyle.center(g,getMessage().getString(),getX()+width/2,getY()+(height-10)/2,color);else PanelStyle.icon(g,icon,getX()+width/2-9,getY()+height/2-9,18,color);}
         @Override public void onClick(MouseButtonEvent e,boolean doubled){action.run();}
         @Override public boolean keyPressed(KeyEvent e){if(e.isConfirmation()&&active){action.run();return true;}return super.keyPressed(e);}

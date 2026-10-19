@@ -1,1 +1,7 @@
-{"key.unbox.menu":"Unbox Client","key.unbox.zoom":"Zoom","key.unbox.freecam":"Freecam"}
+{
+  "key.unbox.menu": "Unbox Client",
+  "key.unbox.zoom": "Zoom",
+  "key.unbox.freecam": "Freecam",
+  "key.unbox.variants": "Cycle block shape (hold + scroll)",
+  "key.unbox.ghast_call": "Call Happy Ghast"
+}

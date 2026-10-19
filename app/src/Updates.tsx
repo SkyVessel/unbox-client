@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import {useEffect,useState} from 'react';
 import {Download,RefreshCw,LoaderCircle} from 'lucide-react';
 import {call,native} from './bridge';
 type Status={status:string;testingBuild?:boolean;currentVersion?:string;version?:string;notes?:string;error?:string;downloaded?:number;total?:number};

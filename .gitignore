@@ -51,3 +51,10 @@ src-tauri/resources/unbox-client-neoforge-26.1.2.jar
 src-tauri/resources/unbox-client-26.3.jar
 src-tauri/resources/unbox-client-neoforge-26.3.jar
 logs/
+
+# Upstream port build outputs; retain sources and Gradle wrappers
+ports/**/.gradle/
+ports/**/build/
+ports/**/.kotlin/
+ports/**/jars/
+ports/**/logs/

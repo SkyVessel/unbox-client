@@ -1,0 +1,53 @@
+{
+    "minecraft": "26.1",
+    "mod": {
+        "id": "easyshulkerboxes",
+        "group": "fuzs.easyshulkerboxes",
+        "name": "Easy Shulker Boxes",
+        "version": "26.1.7",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "Supercharge shulkes boxes, bundles and backpacks! Fully useable in your inventory with many intuitive interactions.",
+        "license": "MPL-2.0"
+    },
+    "dependencies": [
+        {
+            "name": "iteminteractions",
+            "type": "required",
+            "platforms": [
+                "neoforge"
+            ]
+        },
+        {
+            "name": "puzzleslib",
+            "type": "required",
+            "platforms": [
+                "neoforge"
+            ]
+        }
+    ],
+    "links": [
+        {
+            "name": "curseforge",
+            "slug": "easy-shulker-boxes",
+            "id": "594006"
+        },
+        {
+            "name": "github",
+            "slug": "easy-shulker-boxes"
+        },
+        {
+            "name": "modrinth",
+            "slug": "easy-shulker-boxes",
+            "id": "gA5euN8S"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "neoforge"
+    ]
+}

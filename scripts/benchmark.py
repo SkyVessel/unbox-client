@@ -16,7 +16,7 @@ game_libs=[str(p) for p in (RUNTIME/'libraries').rglob('*.jar')] if game_version
 loader=os.environ.get('UNBOX_TEST_LOADER','fabric')
 if loader not in ('fabric','neoforge'):raise SystemExit('Unsupported test loader')
 mode=sys.argv[1]
-if mode not in ('baseline','optimized','ui','home','social','relay','private-host','private-guest','survival','visual'): raise SystemExit('Choose baseline, optimized, ui, home, social or relay')
+if mode not in ('baseline','optimized','ui','home','social','relay','private-host','private-guest','survival','visual','features'): raise SystemExit('Choose baseline, optimized, ui, home, social or relay')
 source=pathlib.Path(sys.argv[2]).resolve()
 if not (source/'level.dat').is_file(): raise SystemExit('A saved world with level.dat is required')
 name=sys.argv[3] if len(sys.argv)>3 else mode
@@ -91,14 +91,14 @@ for mod in lock:
     # Visual captures need settled frames even when the test window loses focus.
     if mode=='visual' and mod['slug']=='dynamic-fps':continue
     # DynamicFPS is a background limiter, not a foreground FPS optimization.
-    if mod['slug']=='dynamic-fps' and mode not in ('ui','home','social','relay','private-host','private-guest','survival','visual') or mode=='baseline' and mod['slug'] not in ('fabric-api','freelook'):continue
+    if mod['slug']=='dynamic-fps' and mode not in ('ui','home','social','relay','private-host','private-guest','survival','visual','features') or mode=='baseline' and mod['slug'] not in ('fabric-api','freelook'):continue
     target=ROOT/'.cache/benchmark-mods'/mod['filename'];target.parent.mkdir(parents=True,exist_ok=True)
     if not target.exists() or hashlib.sha1(target.read_bytes()).hexdigest()!=mod['sha1']:
         content=op.open(urllib.request.Request(mod['url'],headers={'User-Agent':'Unbox-development-benchmark'}),timeout=60).read()
         if hashlib.sha1(content).hexdigest()!=mod['sha1']:raise SystemExit('Checksum mismatch')
         target.write_bytes(content)
     shutil.copy2(target,game/'mods'/target.name)
-if mode=='survival' or os.environ.get('UNBOX_SURVIVAL_MODS')=='1':
+if mode in ('survival','features') or os.environ.get('UNBOX_SURVIVAL_MODS')=='1':
     subprocess.run([sys.executable,str(ROOT/'scripts/prepare-survival-mods.py'),loader,game_version,'--output-dir',str(game/'mods')],check=True)
 if mode=='ui' and (ROOT/'.cache/friend-face-fixture.json').exists():shutil.copy2(ROOT/'.cache/friend-face-fixture.json',game/'ui-friends-fixture.json')
 jar_source=pathlib.Path(sys.argv[4]).resolve() if len(sys.argv)>4 else ROOT/f'src-tauri/resources/unbox-client{"-neoforge" if loader=="neoforge" else ""}{suffix}.jar'
@@ -139,7 +139,7 @@ for lib in meta['libraries']:
         data=op.open(artifact['url'],timeout=60).read();assert hashlib.sha1(data).hexdigest()==artifact['sha1'];target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
 java=pathlib.Path(subprocess.check_output(['/usr/libexec/java_home','-v','25'],text=True).strip())/'bin/java'
 raw=bytearray(hashlib.md5(b'OfflinePlayer:UnboxTest').digest());raw[6]=(raw[6]&15)|48;raw[8]=(raw[8]&63)|128
-args=[str(java),'-XstartOnFirstThread','-Xmx4096M','-Xms512M',('-Dunbox.visualSmoke=true' if mode=='visual' else '-Dunbox.survivalSmoke=true' if mode=='survival' else '-Dunbox.socialSmoke=true' if mode in ('social','relay') else '-Dunbox.homeSmoke=true' if mode=='home' else '-Dunbox.uiSmoke=true' if mode=='ui' else f'-Dunbox.benchmark={name}'),'-cp',':'.join(cp),fabric['mainClass'],'--username','UnboxTest','--version',game_version,'--gameDir',str(game),'--assetsDir',str(RUNTIME/'assets'),'--assetIndex',meta['assetIndex']['id'],'--uuid',uuid.UUID(bytes=bytes(raw)).hex,'--accessToken','0','--userType','legacy','--versionType','release','--width','1280','--height','720','--quickPlaySingleplayer','Benchmark']
+args=[str(java),'-XstartOnFirstThread','-Xmx4096M','-Xms512M',('-Dunbox.featureSmoke=true' if mode=='features' else '-Dunbox.visualSmoke=true' if mode=='visual' else '-Dunbox.survivalSmoke=true' if mode=='survival' else '-Dunbox.socialSmoke=true' if mode in ('social','relay') else '-Dunbox.homeSmoke=true' if mode=='home' else '-Dunbox.uiSmoke=true' if mode=='ui' else f'-Dunbox.benchmark={name}'),'-cp',':'.join(cp),fabric['mainClass'],'--username','UnboxTest','--version',game_version,'--gameDir',str(game),'--assetsDir',str(RUNTIME/'assets'),'--assetIndex',meta['assetIndex']['id'],'--uuid',uuid.UUID(bytes=bytes(raw)).hex,'--accessToken','0','--userType','legacy','--versionType','release','--width','1280','--height','720','--quickPlaySingleplayer','Benchmark']
 if game_version=='26.3':
     # SDL and the Java foreign-function API require the current vanilla JVM options.
     vanilla_jvm=[]
@@ -178,7 +178,7 @@ with (game/'logs/launch.log').open('w') as log:
     try:code=p.wait(timeout=240)
     except subprocess.TimeoutExpired:
         p.terminate();code=p.wait(timeout=30)
-result=game/('logs/survival-lan-host.json' if os.environ.get('UNBOX_SURVIVAL_LAN')=='host' else 'logs/visual-smoke.json' if mode=='visual' else 'logs/survival-smoke.json' if mode=='survival' else 'logs/vanilla-interop.json' if os.environ.get('UNBOX_VANILLA_INTEROP')=='1' else 'logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
+result=game/('logs/survival-lan-host.json' if os.environ.get('UNBOX_SURVIVAL_LAN')=='host' else 'logs/feature-smoke.json' if mode=='features' else 'logs/visual-smoke.json' if mode=='visual' else 'logs/survival-smoke.json' if mode=='survival' else 'logs/vanilla-interop.json' if os.environ.get('UNBOX_VANILLA_INTEROP')=='1' else 'logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
 report_ok=False
 if result.exists():
     report_text=result.read_text();print(report_text,flush=True)

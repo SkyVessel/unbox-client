@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {Upload,RefreshCw,LoaderCircle,Check,Trash2} from 'lucide-react';
 import {call,native} from './bridge';
 import type {Account} from './model';

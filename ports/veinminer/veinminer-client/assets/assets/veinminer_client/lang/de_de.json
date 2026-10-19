@@ -1,0 +1,17 @@
+{
+  "veinminer.disabled.title": "Veinminer Deaktiviert",
+  "veinminer.disabled.subtitle": "Dieser Server hat Veinminer nicht installiert oder das Client-Addon deaktiviert",
+  "veinminer.notavailable.title": "Veinminer Nicht Verfügbar",
+  "veinminer.notavailable.subtitle": "Installiere die base Veinminer Mod um im Einzelspieler es zu nutzen! https://modrinth.com/mod/veinminer",
+
+  "key.category.veinminer_client.keybinds": "Veinminer",
+  "key.veinminer_client.hold": "Veinmining (Halten)",
+  "key.veinminer_client.toggle": "Veinmining (Umschalten)",
+  "key.veinminer_client.config": "Client-Einstellungen öffnen",
+
+  "veinminer.shape.normal": "Normal",
+  "veinminer.shape.tunnel_1x1": "Tunnel 1x1",
+  "veinminer.shape.tunnel_2x2": "Tunnel 2x2",
+  "veinminer.shape.tunnel_3x3": "Tunnel 3x3",
+  "veinminer.shape.flat": "Flach"
+}

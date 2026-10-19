@@ -1,0 +1,38 @@
+{
+    "minecraft": "26.1",
+    "mod": {
+        "id": "puzzleslib",
+        "group": "fuzs.puzzleslib",
+        "name": "Puzzles Lib",
+        "version": "26.1.16",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "Why it's called Puzzles, you ask? That's the puzzle!",
+        "license": "MPL-2.0"
+    },
+    "dependencies": [],
+    "links": [
+        {
+            "name": "curseforge",
+            "slug": "puzzles-lib",
+            "id": "495476"
+        },
+        {
+            "name": "github",
+            "slug": "puzzles-lib"
+        },
+        {
+            "name": "modrinth",
+            "slug": "puzzles-lib",
+            "id": "QAGBst4M"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "neoforge"
+    ]
+}

@@ -53,9 +53,14 @@ def main():
         if not verified(cached, item):
             if cached.is_symlink():
                 raise SystemExit(f"Refusing symlink: {cached}")
-            request = urllib.request.Request(item["url"], headers={"User-Agent": "UnboxClient dependency preparation"})
-            with opener.open(request, timeout=180) as response:
-                data = response.read()
+            if 'resource' in item:
+                if Path(item['resource']).name != item['resource']:
+                    raise SystemExit('Unsafe bundled resource')
+                data = (ROOT / 'src-tauri/resources' / item['resource']).read_bytes()
+            else:
+                request = urllib.request.Request(item["url"], headers={"User-Agent": "UnboxClient dependency preparation"})
+                with opener.open(request, timeout=180) as response:
+                    data = response.read()
             if not all(hashlib.new(algorithm, data).hexdigest() == item[algorithm]
                        for algorithm in ("sha1", "sha512")):
                 raise SystemExit(f"Dependency checksum mismatch: {item['slug']}")

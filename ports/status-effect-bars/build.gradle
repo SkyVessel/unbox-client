@@ -1,0 +1,27 @@
+plugins { id 'java'; id 'net.neoforged.moddev' version '2.0.147' }
+def mc=providers.gradleProperty('minecraft').getOrElse('26.3')
+def targets=['26.1':'26.1.0.19-beta','26.1.2':'26.1.2.116','26.3':'26.3.0.86']
+if(!targets.containsKey(mc)) throw new GradleException('Unsupported Minecraft version')
+version='1.0.12-unbox.1'
+group='io.github.a5b84'
+java { toolchain.languageVersion=JavaLanguageVersion.of(25) }
+repositories { mavenCentral(); maven { url='https://api.modrinth.com/maven' } }
+neoForge { version=targets[mc] }
+dependencies { compileOnly("maven.modrinth:cloth-config:${mc=='26.3'?'GchRXPnb':'TimoYzse'}") { transitive=false } }
+def generated=layout.buildDirectory.dir('compatible-source')
+tasks.register('compatibleSources',Sync) {
+ from('src/main/java') { exclude '**/ModMenuIntegration.java'; filter { String line ->
+  def value=line.replace('import org.jetbrains.annotations.Nullable;', '').replace('@Nullable ', '')
+  return mc=='26.3'?value:value.replace('net.minecraft.client.gui.Hud','net.minecraft.client.gui.Gui').replace('@Mixin(Hud.class)','@Mixin(Gui.class)').replace('client/gui/Hud;','client/gui/Gui;')
+ } }
+ into(generated)
+ inputs.property('minecraft',mc)
+}
+sourceSets.main.java.setSrcDirs([generated])
+tasks.compileJava { dependsOn('compatibleSources'); options.compilerArgs.add('-proc:none') }
+tasks.processResources {
+ exclude 'fabric.mod.json'
+ from('metadata') { expand(minecraft:mc) }
+ from('.') { include 'COPYING','COPYING.LESSER','UPSTREAM','PORT.md' }
+}
+tasks.jar { archiveClassifier=mc+'-neoforge' }

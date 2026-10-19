@@ -1,15 +1,44 @@
 [
   {
     "slug": "fabric-api",
-    "version": "0.145.1+26.1",
-    "id": "ddqzOW93",
-    "filename": "fabric-api-0.145.1+26.1.jar",
-    "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/ddqzOW93/fabric-api-0.145.1%2B26.1.jar",
-    "sha512": "2972453fa89cd7975eaf044fcc6cb5b8bdce5fa7864f4a8c2f66f7326b15b5a133f390a7d3d84c480632f066131e972a33c891f7d8897f0315ada288d4d03abd",
-    "sha1": "088edb9dfcda202a8bdf4ea77b6a8ced41481734",
+    "version": "0.155.3+26.1.2",
+    "id": "3dM0X6ou",
+    "filename": "fabric-api-0.155.3+26.1.2.jar",
+    "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/3dM0X6ou/fabric-api-0.155.3%2B26.1.2.jar",
+    "sha512": "fa0308b42e9cd0dc3ff946f246d199d74547e0c946d7e3c9780a2537155307baf25129f69bd1349273babf879ffb4608b7e4af0740938f9c0f7b371b1c67d6ca",
+    "sha1": "16c30dfcceaed1ac3b6ac84cbd348a906dc5093e",
     "gameVersions": [
       "26.1"
-    ]
+    ],
+    "projectId": "P7dR8mSH",
+    "loader": "fabric",
+    "upstreamGameVersions": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ],
+    "upstreamLoaders": [
+      "fabric"
+    ],
+    "size": 2521340,
+    "source": "https://github.com/FabricMC/fabric-api",
+    "license": {
+      "id": "Apache-2.0",
+      "name": "Apache License 2.0",
+      "url": null
+    },
+    "projectUrl": "https://modrinth.com/mod/fabric-api",
+    "role": "dependency",
+    "providedBy": "survival-mods-lock",
+    "dependencies": [],
+    "modIds": [
+      "fabric-api"
+    ],
+    "artifactRequirements": {
+      "fabricloader": ">=0.18.4",
+      "java": ">=25",
+      "minecraft": "~26.1-"
+    }
   },
   {
     "slug": "lithium",

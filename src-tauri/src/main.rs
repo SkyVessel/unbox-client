@@ -132,6 +132,21 @@ fn open_folder(rt: tauri::State<Runtime>, id: Option<String>) -> Result<(),Strin
     #[cfg(target_os="linux")] let program="xdg-open";
     std::process::Command::new(program).arg(p).spawn().map_err(|e|e.to_string())?;Ok(())
 }
+#[tauri::command]
+fn open_licenses(rt: tauri::State<Runtime>) -> Result<(),String> {
+    let target=rt.root.join("third-party");fs::create_dir_all(&target).map_err(|e|e.to_string())?;
+    for entry in fs::read_dir(rt.resources.join("resources")).map_err(|e|e.to_string())? {
+        let entry=entry.map_err(|e|e.to_string())?;let name=entry.file_name();let name=name.to_string_lossy();
+        if name=="third-party-notices.html"||name.ends_with("-sources.zip") {
+            atomic(&target.join(name.as_ref()),&fs::read(entry.path()).map_err(|e|e.to_string())?)?;
+        }
+    }
+    let index=target.join("third-party-notices.html");if !index.is_file(){return Err("Third-party notices are missing from this build".into())}
+    #[cfg(target_os="macos")] let program="open";
+    #[cfg(target_os="windows")] let program="explorer";
+    #[cfg(target_os="linux")] let program="xdg-open";
+    std::process::Command::new(program).arg(index).spawn().map_err(|e|e.to_string())?;Ok(())
+}
 fn main() {
     #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--prepare-invite-fixture") {
         let args:Vec<String>=std::env::args().collect();let root=PathBuf::from(&args[2]);assert!(root.to_string_lossy().contains("/.cache/"),"Fixture root only");
@@ -157,5 +172,5 @@ fn main() {
             tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
         social::start(rt.clone());skin_library::start(rt.clone());app.manage(rt);Ok(())
-    }).invoke_handler(tauri::generate_handler![skin_library::skin_library_list,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
+    }).invoke_handler(tauri::generate_handler![skin_library::skin_library_list,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,open_licenses,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
 }

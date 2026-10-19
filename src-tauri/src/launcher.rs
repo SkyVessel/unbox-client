@@ -167,26 +167,35 @@ pub(crate) fn jar_mod_ids(path:&Path)->Result<Vec<String>,String>{
         let m:toml::Value=toml::from_str(&text).map_err(|e|e.to_string())?;
         if let Some(mods)=m.get("mods").and_then(|v|v.as_array()){ids.extend(mods.iter().filter_map(|v|v.get("modId").and_then(|v|v.as_str()).map(str::to_owned)));}
     }
+    // Language containers such as Kotlin For Forge declare their descriptor in Jar-in-Jar.
+    if ids.is_empty(){
+        let index=if let Ok(f)=zip.by_name("META-INF/jarjar/metadata.json"){
+            if f.size()>262144{return Err("Jar-in-Jar metadata is too large".into())}
+            Some(serde_json::from_reader::<_,Value>(f).map_err(|e|e.to_string())?)
+        }else{None};
+        if let Some(index)=index{
+            let jars=index["jars"].as_array().filter(|v|v.len()<=64).ok_or("Invalid Jar-in-Jar metadata")?;
+            let mut total=0u64;
+            for item in jars{
+                let path=item["path"].as_str().ok_or("Missing embedded mod path")?;
+                if !path.starts_with("META-INF/jarjar/")||path.contains("..")||!path.ends_with(".jar"){return Err("Invalid embedded mod path".into())}
+                let f=zip.by_name(path).map_err(|_|"Missing embedded mod")?;total=total.saturating_add(f.size());
+                if total>64*1024*1024{return Err("Embedded mod scan exceeds limit".into())}
+                let mut data=Vec::new();f.take(64*1024*1024+1).read_to_end(&mut data).map_err(|e|e.to_string())?;
+                if data.len()>64*1024*1024{return Err("Embedded mod is too large".into())}
+                let mut nested=zip::ZipArchive::new(std::io::Cursor::new(data)).map_err(|e|e.to_string())?;
+                if let Ok(mut f)=nested.by_name("META-INF/neoforge.mods.toml"){
+                    if f.size()>262144{return Err("Embedded mod metadata is too large".into())}
+                    let mut text=String::new();f.read_to_string(&mut text).map_err(|e|e.to_string())?;
+                    let m:toml::Value=toml::from_str(&text).map_err(|e|e.to_string())?;
+                    if let Some(mods)=m.get("mods").and_then(|v|v.as_array()){ids.extend(mods.iter().filter_map(|v|v.get("modId").and_then(|v|v.as_str()).map(str::to_owned)));}
+                };
+            }
+        }
+    }
     Ok(ids)
 }
-fn check_unsupported_survival_mods(game:&Path,loader:&str,version:&str)->Result<(),String>{
-    if loader!="neoforge"||version!="26.1"{return Ok(())}
-    let old:Value=if game.join(SURVIVAL_MANIFEST).exists(){serde_json::from_slice(&fs::read(game.join(SURVIVAL_MANIFEST)).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{json!([])};
-    let old=old.as_array().ok_or("Invalid installed survival manifest")?;
-    if let Ok(files)=fs::read_dir(game.join("mods")){for file in files{
-        let file=file.map_err(|e|e.to_string())?;let path=file.path();
-        if path.extension().and_then(|v|v.to_str())!=Some("jar"){continue}
-        let name=file.file_name();let name=name.to_string_lossy();
-        // Verified formerly managed files will be backed up and removed by preparation.
-        if old.iter().any(|o|o["filename"]==name.as_ref()&&survival_digest(&path,o)){continue}
-        if let Some(id)=jar_mod_ids(&path)?.iter().find(|id|["veinminer","veinminer_client","inventoryprofilesnext","libipn"].contains(&id.as_str())){
-            return Err(format!("{name} provides {id}, which is unsupported on the pinned NeoForge 26.1 runtime. Your custom file was preserved; move it out of mods before retrying."))
-        }
-    }}
-    Ok(())
-}
 async fn prepare_survival_mods(rt:&Runtime,client:&reqwest::Client,game:&Path,loader:&str,version:&str)->Result<(),String>{
-    check_unsupported_survival_mods(game,loader,version)?;
     let lock:Value=serde_json::from_str(include_str!("../resources/survival-mods-lock.json")).map_err(|e|e.to_string())?;
     let selected=lock["targets"].as_array().and_then(|a|a.iter().find(|v|v["loader"]==loader&&v["minecraft"]==version)).ok_or("Missing native survival dependency set")?;
     let entries=selected["mods"].as_array().ok_or("Invalid survival dependency set")?;
@@ -232,7 +241,14 @@ async fn prepare_survival_entries(rt:&Runtime,client:&reqwest::Client,game:&Path
         if hash.len()!=128||!hash.bytes().all(|b|b.is_ascii_hexdigit()){return Err("Invalid survival checksum".into())}
         let cached=cache.join(format!("{hash}.jar"));
         phase(rt,&format!("Preparing {}",entry["slug"].as_str().unwrap_or("client feature")),88);
-        download(client,entry["url"].as_str().ok_or("Missing survival download URL")?,&cached,entry["sha1"].as_str()).await?;
+        if let Some(resource)=entry["resource"].as_str(){
+            if Path::new(resource).components().count()!=1||!resource.ends_with(".jar"){return Err("Invalid bundled mod resource".into())}
+            let source=rt.resources.join("resources").join(resource);
+            if !survival_digest(&source,entry){return Err(format!("Bundled dependency checksum failed: {resource}"))}
+            if !survival_digest(&cached,entry){atomic(&cached,&fs::read(source).map_err(|e|e.to_string())?)?;}
+        }else{
+            download(client,entry["url"].as_str().ok_or("Missing survival download URL")?,&cached,entry["sha1"].as_str()).await?;
+        }
         if !survival_digest(&cached,entry){return Err(format!("Survival dependency checksum failed: {}",entry["slug"]))}
     }
     for entry in old{
@@ -365,25 +381,39 @@ fn md5_offline(name:&str)->String{
             assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry]).await.unwrap_err().contains("preserved"));assert_eq!(fs::read(&path).unwrap(),original);assert!(!f.game.join(SURVIVAL_MANIFEST).exists());
         }
     }
+    #[tokio::test]async fn renamed_jar_in_jar_dependency_is_detected_without_changing_user_files(){
+        let f=Fixture::new();let embedded=f.root.join("embedded.jar");jar(&embedded,"META-INF/neoforge.mods.toml",b"[[mods]]\nmodId='kotlinforforge'\n");
+        let path=f.game.join("mods/renamed-language.jar");
+        let mut z=zip::ZipWriter::new(fs::File::create(&path).unwrap());
+        z.start_file("META-INF/jarjar/metadata.json",zip::write::SimpleFileOptions::default()).unwrap();
+        z.write_all(br#"{"jars":[{"path":"META-INF/jarjar/language.jar"}]}"#).unwrap();
+        z.start_file("META-INF/jarjar/language.jar",zip::write::SimpleFileOptions::default()).unwrap();z.write_all(&fs::read(embedded).unwrap()).unwrap();z.finish().unwrap();
+        let original=fs::read(&path).unwrap();assert_eq!(jar_mod_ids(&path).unwrap(),vec!["kotlinforforge"]);
+        let entry=f.cached("kff.jar","kotlinforforge",b"pinned language");
+        assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry]).await.unwrap_err().contains("preserved"));assert_eq!(fs::read(path).unwrap(),original);
+    }
     #[tokio::test]async fn upgrade_backs_up_old_mod_and_refuses_changed_managed_file(){
         let f=Fixture::new();let old=f.cached("old.jar","feature",b"old version");f.old(&old,b"old version");let next=f.cached("new.jar","feature",b"new version");
         prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[next.clone()]).await.unwrap();assert!(!f.game.join("mods/old.jar").exists());
         let backup=f.game.join("unbox-backups/survival-mods").join(format!("old.{}.jar",old["sha1"].as_str().unwrap()));assert_eq!(fs::read(backup).unwrap(),b"old version");
         fs::write(f.game.join("mods/new.jar"),b"user edit").unwrap();assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[next]).await.is_err());assert_eq!(fs::read(f.game.join("mods/new.jar")).unwrap(),b"user edit");
     }
-    #[tokio::test]async fn removed_unsupported_managed_mods_are_backed_up_but_custom_copies_are_preserved(){
-        let f=Fixture::new();let mut previous=Vec::new();
-        for id in ["veinminer","veinminer_client","klf"]{
-            let name=format!("{id}.jar");let entry=f.cached(&name,id,id.as_bytes());atomic(&f.game.join("mods").join(&name),id.as_bytes()).unwrap();previous.push(entry);
-        }
-        atomic(&f.game.join(SURVIVAL_MANIFEST),&serde_json::to_vec(&previous).unwrap()).unwrap();
-        check_unsupported_survival_mods(&f.game,"neoforge","26.1").unwrap();
+    #[tokio::test]async fn removed_managed_mods_are_backed_up_and_custom_conflicts_preserved(){
+        let f=Fixture::new();let old=f.cached("veinminer.jar","veinminer",b"old version");f.old(&old,b"old version");
         prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[]).await.unwrap();
-        for entry in previous{let name=entry["filename"].as_str().unwrap();assert!(!f.game.join("mods").join(name).exists());let backup=f.game.join("unbox-backups/survival-mods").join(name).with_extension(format!("{}.jar",entry["sha1"].as_str().unwrap()));assert!(survival_digest(&backup,&entry));}
+        assert!(!f.game.join("mods/veinminer.jar").exists());
+        let backup=f.game.join("unbox-backups/survival-mods").join(format!("veinminer.{}.jar",old["sha1"].as_str().unwrap()));assert!(survival_digest(&backup,&old));
         let path=f.game.join("mods/user-renamed.jar");jar(&path,"META-INF/neoforge.mods.toml",b"[[mods]]\nmodId='veinminer'\n");let original=fs::read(&path).unwrap();
-        let error=check_unsupported_survival_mods(&f.game,"neoforge","26.1").unwrap_err();assert!(error.contains("unsupported")&&error.contains("preserved"));assert_eq!(fs::read(&path).unwrap(),original);
-        check_unsupported_survival_mods(&f.game,"neoforge","26.1.2").unwrap();check_unsupported_survival_mods(&f.game,"fabric","26.1").unwrap();
-        fs::remove_file(f.game.join(SURVIVAL_MANIFEST)).unwrap();assert!(check_unsupported_survival_mods(&f.game,"neoforge","26.1").is_err());assert_eq!(fs::read(path).unwrap(),original);
+        let next=f.cached("veinminer.jar","veinminer",b"new native port");
+        assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[next]).await.unwrap_err().contains("preserved"));assert_eq!(fs::read(path).unwrap(),original);
+    }
+    #[tokio::test]async fn bundled_ports_are_verified_before_installation(){
+        let f=Fixture::new();let mut entry=f.cached("native.jar","native",b"native port");entry["resource"]=json!("native.jar");
+        atomic(&f.root.join("resources/native.jar"),b"native port").unwrap();
+        prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry.clone()]).await.unwrap();assert_eq!(fs::read(f.game.join("mods/native.jar")).unwrap(),b"native port");
+        fs::write(f.root.join("resources/native.jar"),b"corrupt").unwrap();
+        assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry.clone()]).await.unwrap_err().contains("checksum"));
+        entry["resource"]=json!("../native.jar");assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry]).await.unwrap_err().contains("Invalid bundled"));
     }
     #[tokio::test]async fn sha512_mismatch_stops_install_before_existing_mods_change(){
         let f=Fixture::new();let old=f.cached("old.jar","feature",b"old version");f.old(&old,b"old version");let mut next=f.cached("new.jar","feature",b"new version");
@@ -401,10 +431,13 @@ fn md5_offline(name:&str)->String{
         for target in targets{
             let entries=target["mods"].as_array().unwrap();let mut names=std::collections::HashSet::new();let mut ids=std::collections::HashSet::new();
             for e in entries{assert!(names.insert(e["filename"].as_str().unwrap()));assert_eq!(e["loader"],target["loader"]);assert!(e["gameVersions"].as_array().unwrap().contains(&target["minecraft"]));for id in e["modIds"].as_array().unwrap(){assert!(ids.insert(id.as_str().unwrap()));}
-                for dependency in e["dependencies"].as_array().unwrap(){assert!(entries.iter().any(|d|d["id"]==dependency["id"]&&d["projectId"]==dependency["projectId"]));}
+                for dependency in e["dependencies"].as_array().unwrap().iter().filter(|d|d["type"]=="required"){assert!(entries.iter().any(|d|d["projectId"]==dependency["projectId"]),"missing dependency for {}: {}",e["slug"],dependency);}
             }
             if target["loader"]=="fabric"{let performance:Value=performance_lock("fabric",target["minecraft"].as_str().unwrap()).unwrap();let api=entries.iter().find(|e|e["slug"]=="fabric-api").unwrap();let existing=performance.as_array().unwrap().iter().find(|e|e["slug"]=="fabric-api").unwrap();assert_eq!(api["sha512"],existing["sha512"]);}
-            if target["loader"]=="neoforge"&&target["minecraft"]=="26.1"{assert!(!ids.contains("inventoryprofilesnext"));assert!(!ids.contains("libipn"));assert_eq!(target["unavailableFeatures"][0]["feature"],"inventory");assert!(!ids.contains("veinminer"));assert!(!ids.contains("veinminer_client"));assert!(!ids.contains("klf"));assert_eq!(target["unavailableFeatures"][1]["feature"],"veinminer");}else{assert!(ids.contains("inventoryprofilesnext"));assert!(ids.contains("libipn"));}
+            for id in ["inventoryprofilesnext","libipn","veinminer","veinminer_client","mousetweaks","easyshulkerboxes","chiseledbookshelfvisualizer","resourcify","effortlessbuilding","colourscroller"]{assert!(ids.contains(id),"missing {id}: {} {}",target["loader"],target["minecraft"]);}
+            assert!(ids.contains(if target["loader"]=="fabric"{"status-effect-bars"}else{"status_effect_bars"}));
+            assert!(ids.contains(if target["loader"]=="fabric"{"spatial-gui"}else{"spatial_gui"}));
+            assert!(target["unavailableFeatures"].as_array().is_none_or(|a|a.is_empty()));
         }
     }
     #[test]fn shared_fabric_api_preflight_preserves_custom_but_accepts_known_upgrade(){

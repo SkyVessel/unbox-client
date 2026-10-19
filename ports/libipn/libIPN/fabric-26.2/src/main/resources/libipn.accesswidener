@@ -1,0 +1,15 @@
+accessWidener v1 official
+
+
+#26.1
+accessible field net/minecraft/client/gui/screens/recipebook/RecipeBookComponent searchBox Lnet/minecraft/client/gui/components/EditBox;
+accessible field net/minecraft/world/inventory/ItemCombinerMenu resultSlotIndex I
+
+accessible field net/minecraft/client/gui/screens/inventory/MerchantScreen scrollOff I
+accessible field net/minecraft/client/gui/screens/inventory/MerchantScreen shopItem I
+accessible field net/minecraft/client/gui/screens/inventory/MerchantScreen tradeOfferButtons [Lnet/minecraft/client/gui/screens/inventory/MerchantScreen$TradeOfferButton;
+accessible method net/minecraft/client/gui/screens/inventory/MerchantScreen postButtonClick ()V
+accessible class net/minecraft/client/gui/screens/inventory/MerchantScreen$TradeOfferButton
+
+
+accessible field net/minecraft/client/gui/screens/inventory/AnvilScreen name Lnet/minecraft/client/gui/components/EditBox;

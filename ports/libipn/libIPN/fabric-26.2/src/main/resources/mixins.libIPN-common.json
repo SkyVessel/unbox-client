@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "package": "org.anti_ad.mc.common.mixin",
+    "compatibilityLevel": "JAVA_25",
+    "mixins": [
+    ],
+    "client": [
+        "MixinKeyboard",
+        "MixinMinecraftClient",
+        "MixinMouse"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}

@@ -24,11 +24,11 @@ public final class SurvivalHostMods {
     private static KeyMapping veinKey;
     private SurvivalHostMods(){}
 
-    public record HostState(boolean veinminer,boolean fallingtree) implements CustomPacketPayload {
-        static final Type<HostState> TYPE=new Type<>(Identifier.fromNamespaceAndPath("unbox","survival_host_features"));
+    public record HostState(boolean veinminer,boolean fallingtree,boolean building,boolean shulker,boolean ghast) implements CustomPacketPayload {
+        static final Type<HostState> TYPE=new Type<>(Identifier.fromNamespaceAndPath("unbox","survival_host_features_v2"));
         static final StreamCodec<RegistryFriendlyByteBuf,HostState> CODEC=CustomPacketPayload.codec(
-            (packet,buffer)->{buffer.writeBoolean(packet.veinminer);buffer.writeBoolean(packet.fallingtree);},
-            buffer->new HostState(buffer.readBoolean(),buffer.readBoolean()));
+            (packet,buffer)->{buffer.writeBoolean(packet.veinminer);buffer.writeBoolean(packet.fallingtree);buffer.writeBoolean(packet.building);buffer.writeBoolean(packet.shulker);buffer.writeBoolean(packet.ghast);},
+            buffer->new HostState(buffer.readBoolean(),buffer.readBoolean(),buffer.readBoolean(),buffer.readBoolean(),buffer.readBoolean()));
         public Type<HostState> type(){return TYPE;}
     }
     private static boolean managed(String module){return module.equals("veinminer")||module.equals("fallingtree");}
@@ -41,6 +41,7 @@ public final class SurvivalHostMods {
     }
     public static boolean hostKnown(){return Minecraft.getInstance().getSingleplayerServer()!=null||remoteKnown&&trustedRemote();}
     public static boolean hostEnabled(String module){
+        if(WorldFeatures.manages(module))return Minecraft.getInstance().getSingleplayerServer()!=null?WorldFeatures.serverEnabled(module):remoteKnown&&trustedRemote()&&WorldFeatures.remote(module);
         if(Minecraft.getInstance().getSingleplayerServer()!=null)return serverEnabled(module);
         return remoteKnown&&trustedRemote()&&(module.equals("veinminer")?remoteVein:module.equals("fallingtree")&&remoteTree);
     }
@@ -50,12 +51,12 @@ public final class SurvivalHostMods {
     }
     static void receive(HostState state){
         if(!trustedRemote()||Minecraft.getInstance().getSingleplayerServer()!=null)return;
-        remoteVein=state.veinminer;remoteTree=state.fallingtree;remoteKnown=true;
+        WorldFeatures.receive(state.building,state.shulker,state.ghast);remoteVein=state.veinminer;remoteTree=state.fallingtree;remoteKnown=true;
     }
-    static void clearClientHost(){remoteKnown=false;remoteVein=false;remoteTree=false;}
+    static void clearClientHost(){WorldFeatures.receive(false,false,false);remoteKnown=false;remoteVein=false;remoteTree=false;}
     static void joined(ServerPlayer player){
         if(player.level().getServer().isSingleplayer()&&MapTransport.canSendSurvivalHostState(player))
-            MapTransport.sendSurvivalHostState(player,new HostState(serverEnabled("veinminer"),serverEnabled("fallingtree")));
+            MapTransport.sendSurvivalHostState(player,new HostState(serverEnabled("veinminer"),serverEnabled("fallingtree"),WorldFeatures.serverEnabled("building"),WorldFeatures.serverEnabled("shulker"),WorldFeatures.serverEnabled("ghast")));
     }
     public static boolean serverEnabled(String module){
         MinecraftServer current=Minecraft.getInstance().getSingleplayerServer();
@@ -96,7 +97,7 @@ public final class SurvivalHostMods {
             if(configuredServer!=server)return;
             // Reapply owned options so an upstream command cannot bypass the host controls.
             syncVein(changed);syncTree();
-            HostState state=new HostState(serverEnabled("veinminer"),serverEnabled("fallingtree"));
+            HostState state=new HostState(serverEnabled("veinminer"),serverEnabled("fallingtree"),WorldFeatures.serverEnabled("building"),WorldFeatures.serverEnabled("shulker"),WorldFeatures.serverEnabled("ghast"));
             if(!state.equals(lastState)){lastState=state;for(ServerPlayer player:server.getPlayerList().getPlayers())joined(player);}
         });
     }

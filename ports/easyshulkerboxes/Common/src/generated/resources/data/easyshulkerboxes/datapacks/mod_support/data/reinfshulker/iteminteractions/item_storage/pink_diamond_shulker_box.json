@@ -1,0 +1,9 @@
+{
+  "type": "iteminteractions:container",
+  "background_color": "pink",
+  "equipment_slots": "any",
+  "interaction_permissions": "always",
+  "inventory_height": 9,
+  "inventory_width": 12,
+  "supported_items": "reinfshulker:pink_diamond_shulker_box"
+}

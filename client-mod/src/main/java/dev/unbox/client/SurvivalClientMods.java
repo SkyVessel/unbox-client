@@ -42,7 +42,7 @@ public final class SurvivalClientMods {
             apply("Features","ENABLE_AUTO_REFILL",on&&ClientHud.flag("inventory.refill",false));
             apply("Features","ENABLE_LOCK_SLOTS",on&&ClientHud.flag("inventory.lockSlots",false));
             apply("Features","ENABLE_PROFILES",on&&ClientHud.flag("inventory.profiles",false));
-            apply("Features","ITEM_SCROLLING",on&&ClientHud.flag("inventory.scrolling",true));
+            apply("Features","ITEM_SCROLLING",on&&ClientHud.flag("inventory.scrolling",true)&&!(ClientIntegrations.active("mousetweaks")&&ClientHud.flag("mousetweaks.scroll",true)));
             apply("Features","HIGHLIGHT_FOUSED_ITEMS",on&&ClientHud.flag("inventory.highlight",true));
             apply("Features","VILLAGER_TRADING_ENABLE",false);
             apply("GuiSettings","ENABLE_INVENTORY_BUTTONS",on&&ClientHud.flag("inventory.buttons",true));

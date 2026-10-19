@@ -1,0 +1,41 @@
+import groovy.json.JsonOutput
+plugins { id 'java'; id 'net.neoforged.moddev' version '2.0.147' }
+def mc=providers.gradleProperty('minecraft').getOrElse('26.3')
+def targets=['26.1':'26.1.0.19-beta','26.1.2':'26.1.2.116','26.3':'26.3.0.86']
+if(!targets.containsKey(mc)) throw new GradleException('Unsupported Minecraft version')
+version='1.0.0-unbox.1'
+java { toolchain.languageVersion=JavaLanguageVersion.of(25) }
+neoForge { version=targets[mc] }
+sourceSets.main.java.setSrcDirs(['src'])
+tasks.compileJava { options.compilerArgs.add('-proc:none') }
+['fabric','neoforge'].each { loader ->
+ def metadata=layout.buildDirectory.dir('metadata/'+loader)
+ def prepare=tasks.register(loader+'Metadata') {
+  outputs.dir(metadata);inputs.property('minecraft',mc)
+  doLast {
+   def root=metadata.get().asFile;root.mkdirs()
+   if(loader=='fabric')new File(root,'fabric.mod.json').text=JsonOutput.toJson([schemaVersion:1,id:'colourscroller',version:project.version,name:'ColourScroller (Unbox shape preset)',environment:'client',license:'MIT',depends:[minecraft:mc]])
+   else { def file=new File(root,'META-INF/neoforge.mods.toml');file.parentFile.mkdirs();file.text="""modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+[[mods]]
+modId="colourscroller"
+version="${project.version}"
+displayName="ColourScroller (Unbox shape preset)"
+[[dependencies.colourscroller]]
+modId="minecraft"
+type="required"
+versionRange="[${mc}]"
+side="CLIENT"
+""" }
+  }
+ }
+ def artifact=tasks.register(loader+'Jar',Jar) {
+  dependsOn tasks.classes,prepare
+  from sourceSets.main.output
+  from metadata
+  from('.') { include 'LICENSE','UPSTREAM','PORT.md' }
+  archiveClassifier=mc+'-'+loader
+ }
+ tasks.assemble { dependsOn artifact }
+}

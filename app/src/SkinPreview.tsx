@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import type {Account} from './model';
 export function SkinFace({skin}:{skin?:string}){
  const ref=useRef<HTMLCanvasElement>(null);

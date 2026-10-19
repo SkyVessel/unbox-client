@@ -1,0 +1,157 @@
+package fuzs.puzzleslib.fabric.impl.init;
+
+import com.mojang.brigadier.arguments.ArgumentType;
+import fuzs.puzzleslib.common.api.init.v3.registry.LookupHelper;
+import fuzs.puzzleslib.common.api.init.v3.registry.MenuSupplierWithData;
+import fuzs.puzzleslib.common.impl.init.LazyHolder;
+import fuzs.puzzleslib.common.impl.init.RegistryManagerImpl;
+import fuzs.puzzleslib.common.impl.init.StandAloneHolder;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.world.poi.PoiHelper;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
+public final class FabricRegistryManager extends RegistryManagerImpl {
+    private static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS_REGISTRY_KEY = ResourceKey.createRegistryKey(
+            Identifier.withDefaultNamespace("entity_data_serializers"));
+
+    private boolean isFrozen;
+
+    public FabricRegistryManager(String modId) {
+        super(modId);
+    }
+
+    @Override
+    public <T> Holder.Reference<T> registerLazily(ResourceKey<? extends Registry<? super T>> registryKey, String path) {
+        this.isWritableOrThrow();
+        Registry<T> registry = LookupHelper.getRegistry(registryKey).orElseThrow();
+        ResourceKey<T> resourceKey = this.makeResourceKey(registryKey, path);
+        return new LazyHolder<>(registryKey, resourceKey, () -> {
+            Holder.Reference<T> holder = registry.getOrThrow(resourceKey);
+            if (!holder.isBound()) {
+                T value = registry.getValue(resourceKey);
+                Objects.requireNonNull(value, "value is null");
+                holder.bindValue(value);
+            }
+
+            return holder;
+        });
+    }
+
+    @Override
+    protected <T> Holder.Reference<T> getHolderReference(ResourceKey<? extends Registry<? super T>> registryKey, String path, Supplier<T> supplier, boolean skipRegistration) {
+        T value = supplier.get();
+        Objects.requireNonNull(value, "value is null");
+        Registry<T> registry = LookupHelper.getRegistry(registryKey).orElseThrow();
+        Holder.Reference<T> holder;
+        if (skipRegistration) {
+            holder = registry.getOrThrow(this.makeResourceKey(registryKey, path));
+        } else {
+            holder = Registry.registerForHolder(registry, this.makeKey(path), value);
+        }
+
+        // bind the value immediately, so we can use it
+        // Fabric Api should already do this for us, but better safe than sorry ¯\_(ツ)_/¯
+        if (!holder.isBound()) {
+            holder.bindValue(value);
+        }
+
+        return holder;
+    }
+
+    @Override
+    protected CreativeModeTab.Builder getCreativeModeTabBuilder(boolean hasSearchBar) {
+        return FabricCreativeModeTab.builder();
+    }
+
+    @Override
+    public <T extends BlockEntity> Holder.Reference<BlockEntityType<T>> registerBlockEntityType(String path, BiFunction<BlockPos, BlockState, T> blockEntityFactory, Supplier<Set<Block>> validBlocks) {
+        return this.register((ResourceKey<Registry<BlockEntityType<T>>>) (ResourceKey<?>) Registries.BLOCK_ENTITY_TYPE,
+                path,
+                () -> {
+                    return FabricBlockEntityTypeBuilder.create(blockEntityFactory::apply,
+                            validBlocks.get().toArray(Block[]::new)).build();
+                });
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu, S> Holder.Reference<MenuType<T>> registerMenuType(String path, MenuSupplierWithData<T, S> menuSupplier, StreamCodec<? super RegistryFriendlyByteBuf, S> streamCodec) {
+        return this.register((ResourceKey<Registry<MenuType<T>>>) (ResourceKey<?>) Registries.MENU,
+                path,
+                () -> new ExtendedMenuType<>(menuSupplier::create, streamCodec));
+    }
+
+    @Override
+    public Holder.Reference<PoiType> registerPoiType(String path, int maxTickets, int validRange, Supplier<Set<BlockState>> matchingBlockStates) {
+        return this.register(Registries.POINT_OF_INTEREST_TYPE,
+                path,
+                () -> PoiHelper.register(this.makeKey(path), maxTickets, validRange, matchingBlockStates.get()),
+                true);
+    }
+
+    @Override
+    public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> Holder.Reference<ArgumentTypeInfo<?, ?>> registerArgumentType(String path, Class<? extends A> argumentClass, ArgumentTypeInfo<A, T> argumentTypeInfo) {
+        return this.register(Registries.COMMAND_ARGUMENT_TYPE, path, () -> {
+            ArgumentTypeRegistry.registerArgumentType(this.makeKey(path), argumentClass, argumentTypeInfo);
+            return argumentTypeInfo;
+        }, true);
+    }
+
+    @Override
+    public <T> Holder.Reference<EntityDataSerializer<T>> registerEntityDataSerializer(String path, Supplier<EntityDataSerializer<T>> entityDataSerializerSupplier) {
+        ResourceKey<EntityDataSerializer<T>> resourceKey = this.makeResourceKey(ENTITY_DATA_SERIALIZERS_REGISTRY_KEY,
+                path);
+        Holder.Reference<EntityDataSerializer<T>> holder = new StandAloneHolder<>(resourceKey,
+                entityDataSerializerSupplier.get());
+        FabricEntityDataRegistry.register(holder.key().identifier(), holder.value());
+        return holder;
+    }
+
+    @Override
+    public <T> void bootstrapTag(TagKey<T> key) {
+        this.isWritableOrThrow();
+        Objects.requireNonNull(key, "key is null");
+        Registry<T> registry = LookupHelper.getRegistry(key.registry()).orElse(null);
+        if (registry != null) {
+            BuiltInRegistries.acquireBootstrapRegistrationLookup(registry).getOrThrow(key);
+        }
+    }
+
+    @Override
+    public void freeze() {
+        this.isWritableOrThrow();
+        this.isFrozen = true;
+    }
+
+    @Override
+    public boolean isFrozen() {
+        return this.isFrozen;
+    }
+}

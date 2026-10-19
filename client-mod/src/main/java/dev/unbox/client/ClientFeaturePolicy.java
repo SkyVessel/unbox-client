@@ -10,7 +10,7 @@ public final class ClientFeaturePolicy {
     private static final Set<String> TRUSTED = Set.of(
         "freecam", "inventory", "radar", "cave", "entityRadar"
     );
-    private static final Set<String> HOST = Set.of("gravestones","veinminer","fallingtree");
+    private static final Set<String> HOST = Set.of("gravestones","veinminer","fallingtree","shulker","building","ghast");
 
     private ClientFeaturePolicy() {}
 
@@ -23,6 +23,8 @@ public final class ClientFeaturePolicy {
 
     /** This method never reads UnboxClient.enabled(), so callers can safely gate enabled(). */
     public static boolean allowed(String key) {
+        if(!ClientIntegrations.available(module(key)))return false;
+        if(module(key).equals("variants")&&(Minecraft.getInstance().player==null||!Minecraft.getInstance().player.isCreative()))return false;
         if(!SurvivalClientMods.available(module(key))) return false;
         if(!SurvivalHostMods.available(module(key))) return false;
         if(module(key).equals("dynamiclight")) return Platform.loaded("wick");
@@ -40,6 +42,8 @@ public final class ClientFeaturePolicy {
 
     public static String reason(String key) {
         if (allowed(key)) return "";
+        if(!ClientIntegrations.available(module(key)))return ClientIntegrations.reason(module(key));
+        if(module(key).equals("variants"))return "Available only in Creative mode";
         if(!SurvivalClientMods.available(module(key))) return SurvivalClientMods.reason(module(key));
         if(!SurvivalHostMods.available(module(key))) return SurvivalHostMods.reason(module(key));
         if(module(key).equals("dynamiclight")) return "Launch with Unbox to install Wick";

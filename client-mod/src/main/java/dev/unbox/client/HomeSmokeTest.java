@@ -12,18 +12,33 @@ import java.util.List;
 /** Runs only with an explicit development flag, without loading or modifying a world. */
 final class HomeSmokeTest {
     private static long last;
-    private static int step;private static boolean sawEntrance;
+    private static int step;private static boolean sawEntrance,focusedTitle;
     private static final List<String> checks=new ArrayList<>();
     private static void check(boolean value,String label){if(!value)throw new IllegalStateException(label);checks.add(label);}
     private static AbstractWidget widget(Minecraft m,String label){return m.screen.children().stream().filter(c->c instanceof AbstractWidget w&&w.getMessage().getString().equals(label)).map(c->(AbstractWidget)c).findFirst().orElseThrow();}
     private static void click(Minecraft m,String label){var w=widget(m,label);float scale=m.screen instanceof UnboxHomeScreen h?h.menuScale():1;float offset=m.screen instanceof UnboxHomeScreen h?h.menuOffsetY():0;var event=new MouseButtonEvent((w.getX()+w.getWidth()/2)*scale,(w.getY()+w.getHeight()/2+offset)*scale,new MouseButtonInfo(0,0));check(m.screen.mouseClicked(event,false),"Click "+label);}
     private static void escape(Minecraft m){m.screen.keyPressed(new net.minecraft.client.input.KeyEvent(org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE,0,0));}
     private static void shot(Minecraft m,String name){Screenshot.grab(m.gameDirectory,"unbox-"+name+".png",m.getMainRenderTarget(),1,c->{});}
+    private static boolean hasTooltip(AbstractWidget widget)throws ReflectiveOperationException{
+        var field=AbstractWidget.class.getDeclaredField("tooltip");field.setAccessible(true);
+        return ((net.minecraft.client.gui.components.WidgetTooltipHolder)field.get(widget)).get()!=null;
+    }
     static void tick(Minecraft m){
         if(!Boolean.getBoolean("unbox.homeSmoke")||m.getOverlay()!=null||m.screen==null)return;
         if(step==0&&m.screen instanceof UnboxHomeScreen h&&h.menuOffsetY()>0&&!sawEntrance){sawEntrance=true;shot(m,"title-entrance");}
         long now=System.currentTimeMillis();if(last==0){last=now;return;}if(now-last<1500)return;last=now;
-        try{switch(step++){
+        try{
+            if(step==0&&!focusedTitle&&m.screen instanceof UnboxHomeScreen h&&h.menuOffsetY()==0){
+                check(!hasTooltip(widget(m,"SINGLEPLAYER")),"Singleplayer has no duplicate text tooltip");
+                check(!hasTooltip(widget(m,"Friends")),"Friends text button has no duplicate tooltip");
+                check(hasTooltip(widget(m,"Game settings")),"Icon-only settings retains its explanation");
+                var multiplayer=widget(m,"MULTIPLAYER");
+                check(hasTooltip(multiplayer)==!multiplayer.active,"Multiplayer only shows a tooltip when access is restricted");
+                m.setLastInputType(net.minecraft.client.InputType.KEYBOARD_TAB);m.screen.setFocused(multiplayer);
+                check(multiplayer.isFocused(),"Keyboard focus still highlights the selected title button");
+                focusedTitle=true;return;
+            }
+            switch(step++){
             case 0->{if(((UnboxHomeScreen)m.screen).menuOffsetY()>0){step--;break;}check(sawEntrance,"Title visibly passes through an entrance phase");check(((UnboxHomeScreen)m.screen).menuOffsetY()==0,"Entrance settles at the final position");check(m.screen instanceof UnboxHomeScreen h&&!h.inWorld(),"Vanilla title is replaced at actual startup");check(m.player==null,"Title test has not loaded a world");shot(m,"title-home");var w=widget(m,"SINGLEPLAYER");float ratio=w.getWidth()*((UnboxHomeScreen)m.screen).menuScale()/m.screen.width;check(ratio>.18&&ratio<.21,"Title action occupies about one fifth of the screen");click(m,"SINGLEPLAYER");check(m.screen instanceof net.minecraft.client.gui.screens.worldselection.SelectWorldScreen,"Singleplayer opens actual world selection");}
             case 1->{escape(m);check(m.screen instanceof UnboxHomeScreen,"World list returns to Unbox home");if(m.allowsMultiplayer()){click(m,"MULTIPLAYER");check(m.screen instanceof net.minecraft.client.gui.screens.multiplayer.SafetyScreen||m.screen instanceof net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen,"Multiplayer preserves vanilla warning / server flow");}else check(!widget(m,"MULTIPLAYER").active,"Account multiplayer restriction is preserved");}
             case 2->{if(!(m.screen instanceof UnboxHomeScreen))escape(m);click(m,"Client Mods");check(m.screen instanceof UnboxScreen,"Title opens client settings without a world");}

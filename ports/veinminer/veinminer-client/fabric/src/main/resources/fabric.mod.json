@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "veinminer_client",
+  "version": "${version}",
+  "name": "Veinminer Client",
+  "description": "Client addon for Veinminer to add a hotkey and veinmining preview",
+  "authors": [
+    "${author}"
+  ],
+  "license": "${license}",
+  "icon": "assets/veinminer_client/icon.png",
+  "accessWidener": "veinminerClient.accesswidener",
+  "contact": {
+    "homepage": "https://modrinth.com/mod/${modrinth}",
+    "issues": "https://dc.mutils.net"
+  },
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "de.miraculixx.veinminerClient.VeinminerClient"
+    ],
+    "modmenu": [
+      "de.miraculixx.veinminerClient.compat.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "veinminer_client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "custom": {
+    "modmenu": {
+      "parent": {
+        "id": "veinminer"
+      }
+    }
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "${mcversion}",
+    "java": ">=25",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*",
+    "veinminer": ">=2.8.0"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

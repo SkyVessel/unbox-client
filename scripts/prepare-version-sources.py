@@ -23,6 +23,7 @@ def prepare(version,loader):
                 '.setScreen(':'.gui.setScreen(',
                 '.getMainRenderTarget()':'.gameRenderer.mainRenderTarget()',
                 '.getMainCamera()':'.mainCamera()',
+                '.gui.setOverlayMessage(':'.gui.hud.setOverlayMessage(',
                 '.gui.getChat()':'.gui.hud.getChat()',
                 '.gui.extractDeferredSubtitles()':'.gui.hud.extractDeferredSubtitles()',
                 'InputConstants.Type.KEYSYM':'InputConstants.Type.KEYBOARD',

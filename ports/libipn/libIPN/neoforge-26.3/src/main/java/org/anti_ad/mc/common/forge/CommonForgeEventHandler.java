@@ -1,0 +1,254 @@
+/*
+ * Inventory Profiles Next
+ *
+ *   Copyright (c) 2019-2020 jsnimda <7615255+jsnimda@users.noreply.github.com>
+ *   Copyright (c) 2021-2022 Plamen K. Kosseff <p.kosseff@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package org.anti_ad.mc.common.forge;
+
+//import net.minecraft.client.gui.screens.Screen //net.minecraft.client.gui.screen.Screen;
+
+import net.minecraft.client.gui.screens.Screen;
+
+
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import org.anti_ad.mc.common.gui.NativeInputContext;
+import org.anti_ad.mc.common.gui.NativeInputContextBase;
+import org.anti_ad.mc.common.input.GlobalInputHandler;
+import org.anti_ad.mc.common.input.GlobalScreenEventListener;
+import org.anti_ad.mc.common.input.KeyCodes;
+import org.anti_ad.mc.common.vanilla.Vanilla;
+import org.lwjgl.glfw.GLFW;
+
+public class CommonForgeEventHandler {
+
+    // Keyboard <-> KeyboardListener , onKey <-> onKeyEvent // ref: malilib forge 1.14.4 ForgeInputEventHandler
+    @SubscribeEvent
+    public void onKeyLast(InputEvent.Key event) {
+        if (Vanilla.INSTANCE.screen() == null) { // non-null is handled below
+            var context = new NativeInputContext<KeyEvent>(event.getKeyEvent(), false);
+            GlobalInputHandler.INSTANCE.onKey(context, event.getKey(), event.getKeycode(), event.getAction(), event.getModifiers(), true, 0L);
+        }
+    }
+
+    @SubscribeEvent
+    public void onKeyPressed(ScreenEvent.KeyPressed.Pre event) {
+        final var context = new NativeInputContext<KeyEvent>(event.getKeyEvent(), false);
+        onScreenKey(context, event.getKey(), event.getKeycode(), GLFW.GLFW_PRESS, event.getModifiers(), event);
+        if (event.isCanceled()) return;
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onKeyPressed(context, event.getKey(), event.getKeycode(), event.getModifiers(), true));
+    }
+
+    @SubscribeEvent
+    public void onKeyRelease(ScreenEvent.KeyReleased.Pre event) {
+        final var context = new NativeInputContext<>(event.getKeyEvent(), false);
+        onScreenKey(context, event.getKey(), event.getKeycode(), GLFW.GLFW_RELEASE, event.getModifiers(), event);
+        if (event.isCanceled()) return;
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onKeyReleased(context, event.getKey(), event.getKeycode(), event.getModifiers(), true));
+    }
+
+    @SubscribeEvent
+    public void onKeyPressedPost(ScreenEvent.KeyPressed.Post event) {
+        final var context = new NativeInputContext<KeyEvent>(event.getKeyEvent(), false);
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onKeyPressed(context, event.getKey(), event.getKeycode(), event.getModifiers(), false));
+    }
+
+    @SubscribeEvent
+    public void onKeyReleasePost(ScreenEvent.KeyReleased.Post event) {
+        final var context = new NativeInputContext<KeyEvent>(event.getKeyEvent(), false);
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onKeyReleased(context, event.getKey(), event.getKeycode(), event.getModifiers(), false));
+    }
+
+    // Keyboard.onKey()
+    // fix vanilla keybind swallow my listener
+    // by line 308 aboolean[0] early returned
+    // (e.g. pressing z + 1 while hovering slots)
+    private void onScreenKey(NativeInputContextBase<?> context, int key, int scanCode, int action, int modifiers, ScreenEvent event) {
+        // tmp solution fixing crafting recipe crash when opening other screen
+        // (as post will also be swallowed if vanilla screen handle it)
+        // fixme better approach
+        Screen lastScreen = Vanilla.INSTANCE.screen();
+        long handle = Vanilla.INSTANCE.window().handle();
+        boolean result = GlobalInputHandler.INSTANCE.onKey(context, key, scanCode, action, modifiers, true, handle);
+        if (event instanceof ICancellableEvent) {
+            ((ICancellableEvent)event).setCanceled(result || lastScreen != Vanilla.INSTANCE.screen()); // detect gui change, cancel vanilla
+        }
+    }
+
+    // ============
+    // mouse
+    // ============
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SubscribeEvent
+    public void onMouseButtonLast(InputEvent.MouseButton.Post event) {
+        if (Vanilla.INSTANCE.screen() == null) {
+            final var context = new NativeInputContext(event.getMouseButtonInfo(), false);
+            GlobalInputHandler.INSTANCE.onMouseButton(context, event.getButton(), event.getAction(), event.getModifiers());
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SubscribeEvent
+    public void onMouseClicked(ScreenEvent.MouseButtonPressed.Pre event) {
+        final var context = new NativeInputContext(event.getMouseButtonEvent(), event.isDoubleClick());
+        onScreenMouseButton(context, event.getButton(), GLFW.GLFW_PRESS, lastMods, event);
+        if (event.isCanceled()) return;
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onMouseClicked(context, event.getMouseX(), event.getMouseY(), event.getButton(), true));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SubscribeEvent
+    public void onMouseReleased(ScreenEvent.MouseButtonReleased.Pre event) {
+        final var context = new NativeInputContext(event.getMouseButtonEvent(), false);
+        onScreenMouseButton(context, event.getButton(), GLFW.GLFW_RELEASE, lastMods, event);
+        if (event.isCanceled()) return;
+        event.setCanceled(GlobalScreenEventListener.INSTANCE
+                .onMouseReleased(context, event.getMouseX(), event.getMouseY(), event.getButton(), true));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SubscribeEvent
+    public void onMouseClickedPost(ScreenEvent.MouseButtonPressed.Post event) {
+        final var context = new NativeInputContext(event.getMouseButtonEvent(), false);
+        GlobalScreenEventListener.INSTANCE.onMouseClicked(context, event.getMouseX(), event.getMouseY(), event.getButton(), false);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SubscribeEvent
+    public void onMouseReleasedPost(ScreenEvent.MouseButtonReleased.Post event) {
+        final var context = new NativeInputContext(event.getMouseButtonEvent(), false);
+        GlobalScreenEventListener.INSTANCE.onMouseReleased(context, event.getMouseX(), event.getMouseY(), event.getButton(), false);
+    }
+
+    private void onScreenMouseButton(NativeInputContextBase<?> context, int button, int action, int mods, ICancellableEvent event) {
+        Screen lastScreen = Vanilla.INSTANCE.screen();
+        boolean result = GlobalInputHandler.INSTANCE.onMouseButton(context, button, action, mods);
+        event.setCanceled(result || lastScreen != Vanilla.INSTANCE.screen()); // detect gui change, cancel vanilla
+    }
+
+    private int lastMods = 0;
+
+    @SubscribeEvent
+    public void onRawMouse(InputEvent.MouseButton.Pre event) {
+        lastMods = event.getModifiers();
+    }
+
+    @SubscribeEvent
+    public void onMouseScroll(InputEvent.MouseScrollingEvent event) {
+        double deltaX = event.getScrollDeltaX();
+        double deltaY = event.getScrollDeltaY();
+        if (deltaX != 0) {
+            event.setCanceled(processHorizontalScrollEvent(deltaX));
+        }
+        if (deltaY != 0) {
+            event.setCanceled(processVerticalScrollEvent(deltaY));
+        }
+    }
+
+    @SubscribeEvent
+    public void onGuiMouseScroll(ScreenEvent.MouseScrolled.Pre event) {
+        double deltaX = event.getScrollDeltaX();
+        double deltaY = event.getScrollDeltaY();
+        if (deltaX != 0) {
+            Screen lastScreen = Vanilla.INSTANCE.screen();
+            boolean result = processHorizontalScrollEvent(deltaX);
+            result = processHorizontalScrollGUIEvent(deltaX, event.getMouseX(), event.getMouseY()) || result;
+            event.setCanceled(result || lastScreen != Vanilla.INSTANCE.screen());
+        }
+        if (deltaY != 0) {
+            Screen lastScreen = Vanilla.INSTANCE.screen();
+            boolean result = processVerticalScrollEvent(deltaY);
+            result = processVerticalScrollGUIEvent(deltaY, event.getMouseX(), event.getMouseY()) || result;
+            event.setCanceled(result || lastScreen != Vanilla.INSTANCE.screen());
+        }
+    }
+
+    private static boolean processVerticalScrollGUIEvent(double delta, double mouseX, double mouseY) {
+        int button;
+        if (delta > 0) {
+            button = KeyCodes.MOUSE_SCROLL_UP;
+        } else {
+            button = KeyCodes.MOUSE_SCROLL_DOWN;
+        }
+        boolean result = GlobalScreenEventListener.INSTANCE.onMouseClicked(NativeInputContext.getEMPTY(), mouseX, mouseY, button, true);
+        result = GlobalScreenEventListener.INSTANCE.onMouseReleased(NativeInputContext.getEMPTY(), mouseX, mouseY, button, true) || result;
+        return result;
+    }
+
+    private static boolean processHorizontalScrollGUIEvent(double delta, double mouseX, double mouseY) {
+        int button;
+        if (delta > 0) {
+            button = KeyCodes.MOUSE_SCROLL_LEFT;
+        } else {
+            button = KeyCodes.MOUSE_SCROLL_RIGHT;
+        }
+        boolean result = GlobalScreenEventListener.INSTANCE.onMouseClicked(NativeInputContext.getEMPTY(), mouseX, mouseY, button, true);
+        result = GlobalScreenEventListener.INSTANCE.onMouseReleased(NativeInputContext.getEMPTY(), mouseX, mouseY, button, true) || result;
+        return result;
+    }
+
+    private static boolean processVerticalScrollEvent(double delta) {
+        int button;
+        if (delta > 0) {
+            button = KeyCodes.MOUSE_SCROLL_UP;
+        } else {
+            button = KeyCodes.MOUSE_SCROLL_DOWN;
+        }
+        boolean result = GlobalInputHandler.INSTANCE.onMouseButton(NativeInputContext.getEMPTY(), button, GLFW.GLFW_PRESS, 0);
+        result = GlobalInputHandler.INSTANCE.onMouseButton(NativeInputContext.getEMPTY(), button, GLFW.GLFW_RELEASE, 0) | result;
+        return result;
+    }
+
+    private static boolean processHorizontalScrollEvent(double delta) {
+        int button;
+        if (delta > 0) {
+            button = KeyCodes.MOUSE_SCROLL_LEFT;
+        } else {
+            button = KeyCodes.MOUSE_SCROLL_RIGHT;
+        }
+        boolean result = GlobalInputHandler.INSTANCE.onMouseButton(NativeInputContext.getEMPTY(), button, GLFW.GLFW_PRESS, 0);
+        result = GlobalInputHandler.INSTANCE.onMouseButton(NativeInputContext.getEMPTY(), button, GLFW.GLFW_RELEASE, 0) | result;
+        return result;
+    }
+
+
+//  @SubscribeEvent
+//  public void onWorldLoad(WorldEvent.Load event) {
+//    // clear keybind (pressing keys)
+//    GlobalInputHandler.INSTANCE.getPressedKeys().clear();
+//  }
+
+    // todo mouse move event
+  /*
+  @Inject(method = "onCursorPos", at = @At("RETURN"))
+  private void onCursorPos(long handle, double xpos, double ypos, CallbackInfo ci) {
+    VanillaUtil.INSTANCE.updateMouse();
+  }
+   */
+
+}

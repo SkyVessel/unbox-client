@@ -275,23 +275,25 @@
         {
           "slug": "fabric-api",
           "projectId": "P7dR8mSH",
-          "id": "ddqzOW93",
-          "version": "0.145.1+26.1",
+          "id": "3dM0X6ou",
+          "version": "0.155.3+26.1.2",
           "loader": "fabric",
           "gameVersions": [
             "26.1"
           ],
           "upstreamGameVersions": [
-            "26.1"
+            "26.1",
+            "26.1.1",
+            "26.1.2"
           ],
           "upstreamLoaders": [
             "fabric"
           ],
-          "filename": "fabric-api-0.145.1+26.1.jar",
-          "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/ddqzOW93/fabric-api-0.145.1%2B26.1.jar",
-          "sha1": "088edb9dfcda202a8bdf4ea77b6a8ced41481734",
-          "sha512": "2972453fa89cd7975eaf044fcc6cb5b8bdce5fa7864f4a8c2f66f7326b15b5a133f390a7d3d84c480632f066131e972a33c891f7d8897f0315ada288d4d03abd",
-          "size": 2404855,
+          "filename": "fabric-api-0.155.3+26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/3dM0X6ou/fabric-api-0.155.3%2B26.1.2.jar",
+          "sha1": "16c30dfcceaed1ac3b6ac84cbd348a906dc5093e",
+          "sha512": "fa0308b42e9cd0dc3ff946f246d199d74547e0c946d7e3c9780a2537155307baf25129f69bd1349273babf879ffb4608b7e4af0740938f9c0f7b371b1c67d6ca",
+          "size": 2521340,
           "source": "https://github.com/FabricMC/fabric-api",
           "license": {
             "id": "Apache-2.0",
@@ -300,7 +302,7 @@
           },
           "projectUrl": "https://modrinth.com/mod/fabric-api",
           "role": "dependency",
-          "providedBy": "performance-lock",
+          "providedBy": "survival-mods-lock",
           "dependencies": [],
           "modIds": [
             "fabric-api"
@@ -490,6 +492,734 @@
           "artifactRequirements": {
             "fabricloader": ">=0.19.5"
           }
+        },
+        {
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "EBIKCzuP",
+          "version": "26.1-2.31-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "MouseTweaks-fabric-mc26.1-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/EBIKCzuP/MouseTweaks-fabric-mc26.1-2.31.jar",
+          "sha1": "d81b34b76b8885f637e1a253810a78bee772a346",
+          "sha512": "4dd59950e1c249a9c5cae50beff86c5c59b19b0f2cdf72dea0315eeba93bced72a300eebfef435f3bf17532dc541d74e1e69cd577ab5b08067e34e7bcccddc97",
+          "size": 75833,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.5",
+            "fabric-api": "*",
+            "minecraft": "~26.1",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "i9tjoAyc",
+          "version": "26.1.7",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "easyshulkerboxes-v26.1.7-mc26.1.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/i9tjoAyc/easyshulkerboxes-v26.1.7-mc26.1.x%2Bfabric.jar",
+          "sha1": "9c7ad2c22e78acff9782fd7c743265c21a5cefc0",
+          "sha512": "05ed1d2071b3855fd7a56a33ed754103abb855bfb420784f47058e9f9ff71cfdc36f4d21ec4803f5549dddea1f8b6bc2b8d767389bd8aa6d9d10a792287d0415",
+          "size": 656434,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.4",
+            "fabric-api": ">=0.154.0",
+            "forgeconfigapiport": "*",
+            "iteminteractions": "*",
+            "puzzleslib": ">=26.1.15"
+          }
+        },
+        {
+          "slug": "forge-config-api-port",
+          "projectId": "ohNO6lps",
+          "id": "jUe0ucoE",
+          "version": "26.1.5",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ForgeConfigAPIPort-v26.1.5-mc26.1.x-Fabric.jar",
+          "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/jUe0ucoE/ForgeConfigAPIPort-v26.1.5-mc26.1.x-Fabric.jar",
+          "sha1": "82e4deaa210b75d3b51a268769ad24cc85796235",
+          "sha512": "44951fd147de9282c7a483eec0863e0838e98f68579b4d5852e4aaf038b82f03558c9dfd05fa3a4e5aa60ce5ede15cbbac59d4527d379494619804740f9a184f",
+          "size": 609711,
+          "source": "https://github.com/Fuzss/forgeconfigapiport",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/forge-config-api-port",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "forgeconfigapiport"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.0",
+            "fabric-api": ">=0.149.0"
+          }
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "cPeqCZKe",
+          "version": "26.1.16",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "puzzleslib-v26.1.16-mc26.1.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/cPeqCZKe/puzzleslib-v26.1.16-mc26.1.x%2Bfabric.jar",
+          "sha1": "f0c40b38e955c5b077092fe7617ee3c76b78c1cb",
+          "sha512": "ddd5b110eea5d3682c37997c8b2eb45502de4be6255882b44966a1af4ea5ede59ecbae1b9154659046e9c429994af6e7aa558ada1b79678217791301568517c4",
+          "size": 1157390,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.4",
+            "fabric-api": ">=0.154.0",
+            "forgeconfigapiport": "*"
+          }
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "x02cBj9Y",
+          "id": "HPrO2zBi",
+          "version": "1.0.11",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "status-effect-bars-1.0.11.jar",
+          "url": "https://cdn.modrinth.com/data/x02cBj9Y/versions/HPrO2zBi/status-effect-bars-1.0.11.jar",
+          "sha1": "5348cae0b1b8c377dfa92ef645709a3932baacb1",
+          "sha512": "a27e3059a140236136cfd0c146e14788714488dc3636b0d5aa1d0a3958eebf1c1ca8549a53640a1131552abf2732077a5d07e72c896cc03cfba976bc6746b6b2",
+          "size": 48545,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status-effect-bars"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.5",
+            "minecraft": ">=26.1",
+            "java": ">=25",
+            "cloth-config2": "*"
+          }
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "bm8zQZcG",
+          "version": "4.4.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "chiseledbookshelfvisualizer-fabric-26.1-4.4.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/bm8zQZcG/chiseledbookshelfvisualizer-fabric-26.1-4.4.0.jar",
+          "sha1": "d3c093926350fce8f8927a8c364359abd5c49350",
+          "sha512": "d2aa8b48bcfcceda9d354097f1db177c8b2a2ee9d7b7a7a60e675b57350e7f1a0242bb44bed7bd50b6b72862146a0e6eddd934faf86eb58ab65d1f2e459dd354",
+          "size": 53403,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "fabric-api": "*",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "cloth-config": ">=26.1.154",
+            "anvianslib": ">=1.5.0"
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "GFM8zh9J",
+          "version": "26.1.154+fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "cloth-config-26.1.154.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/GFM8zh9J/cloth-config-26.1.154.jar",
+          "sha1": "832f9047bc4af13587709c74f7c37e1c8579d1eb",
+          "sha512": "8bfb75f2cac0a9910316c6a368a228c0f8f1261ac6f03dec5fba594e1619ac04334a3df4fb29778d61d0b8290d55949371a523d722b35501bf9a2902956d3b17",
+          "size": 1135373,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth-config"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.14.0",
+            "minecraft": ">=26.1-"
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "yF1sty8C",
+          "version": "1.5.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "anvianslib-fabric-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/yF1sty8C/anvianslib-fabric-26.1-1.5.0.jar",
+          "sha1": "90703eae117e6189d198a098751d75e21fa70c1c",
+          "sha512": "715ac37c2097b4a5e464cd71a5ae45ce423bd4935d8c5d70639116dcfe1d960728dca2aa6c2457da16d7dced255508a99814f1b6f0fcaff060fee470081cd7af",
+          "size": 31358,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.6",
+            "fabric-api": "*",
+            "minecraft": ">=26.1",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "RLzHAoZe",
+          "id": "wKnOd7SV",
+          "version": "1.8.7",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "Resourcify (26.1-fabric)-1.8.7.jar",
+          "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/wKnOd7SV/Resourcify%20%2826.1-fabric%29-1.8.7.jar",
+          "sha1": "3d734df8e00ef8e4aca3b04ef77ca14966cb55e0",
+          "sha512": "405d2dc91d7d0b64e164c33da63e8ce34665abae63b5aa4af2699ba67a7be34e1b86bfd37f46787a103abf6e3c9b4a365a89f43aab3d14f39d7536bd4682e571",
+          "size": 2896938,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "resourcify"
+          ],
+          "artifactRequirements": {
+            "fabric-language-kotlin": ">=1.11.0+kotlin.2.0.0",
+            "fabricloader": ">=0.15.0",
+            "fabric-resource-loader-v0": "*",
+            "minecraft": "~26.1"
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "wZheOhu4",
+          "version": "1.8-fabric+26.1.x",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "spatial-gui-1.8+26.1.2-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/wZheOhu4/spatial-gui-1.8%2B26.1.2-fabric.jar",
+          "sha1": "c9049b3d1c3c91afa69880b7b5aa91397ab97728",
+          "sha512": "7f73a2ad34072a48742d6fab276c4f3e3610abe4e5fac8cc72bd8ad7e8ab082cd4865ce5dd92aa54ec7226006615920ba41db51cbcf4f6ea129f2d789b33f0a1",
+          "size": 274930,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial-gui"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.3",
+            "fabric-api": "*",
+            "minecraft": ">=26.1 <=26.1.2",
+            "yet_another_config_lib_v3": ">=3.9.3+26.1-fabric"
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "IODousKT",
+          "version": "3.9.7+26.1-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.1-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/IODousKT/yet_another_config_lib_v3-3.9.7%2B26.1-fabric.jar",
+          "sha1": "ccb1503a786d833901ace18322b7b6c89d24c7cb",
+          "sha512": "734a2735521940b23b49cc645c49f8ad760212adb315602daf9cfb3c2f401cdd8a07250dc3e0b7429120a641032f6c8be1e5955d7aec3b07547ca34e7bacd4fa",
+          "size": 1124837,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.0",
+            "minecraft": "~26.1",
+            "fabric-resource-loader-v1": "*"
+          }
+        },
+        {
+          "slug": "modmenu",
+          "projectId": "mOgUt4GM",
+          "id": "ZJ6YTrMY",
+          "version": "18.0.2",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "modmenu-18.0.2.jar",
+          "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/ZJ6YTrMY/modmenu-18.0.2.jar",
+          "sha1": "8fa5f0c6e844f44bfd836197b680ee6ea0006bcd",
+          "sha512": "37393e1d4a23a548463e92eb0687af69034ee7c308bd1d2d27d78df0292f124c4463f19d4b53128b59cda4e02d01d7ae09f06456d10abde19b6e450163e50e97",
+          "size": 859999,
+          "source": "https://github.com/TerraformersMC/ModMenu",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/modmenu",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "eXts2L7r",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "modmenu"
+          ],
+          "artifactRequirements": {
+            "fabric-resource-loader-v1": "*",
+            "fabric-screen-api-v1": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabricloader": ">=0.17.2",
+            "minecraft": ">1.26-"
+          }
+        },
+        {
+          "slug": "placeholder-api",
+          "projectId": "eXts2L7r",
+          "id": "b3IPAHgB",
+          "version": "3.0.0+26.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "placeholder-api-3.0.0+26.1.jar",
+          "url": "https://cdn.modrinth.com/data/eXts2L7r/versions/b3IPAHgB/placeholder-api-3.0.0%2B26.1.jar",
+          "sha1": "c1ce548549ec4517b9393985cefc65389e6f36d8",
+          "sha512": "b559da0f13fef17967f2aff1d06b00995c7db21d9d5b7b580ab6eafdf2365e4ac86a7d094c2b481160a942f291bc2595f2cb8c91ce5e169f1c2f461782ecd2a8",
+          "size": 254376,
+          "source": "https://github.com/Patbox/TextPlaceholderAPI",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/placeholder-api",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "placeholder-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "minecraft": ">=26.1-"
+          }
+        },
+        {
+          "slug": "effortless-building",
+          "projectId": "unbox-port-effortless-building",
+          "id": "unbox-port-fabric-26.1",
+          "version": "unbox-port.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "effortlessbuilding-fabric-26.1.jar",
+          "resource": "effortlessbuilding-fabric-26.1.jar",
+          "sha1": "a2bb69b0bc01ecfb786c9420a939e4a2cc446003",
+          "sha512": "65bf465b85d8ba88cebd0ee5d4a71dbc5e747b2959e4cc0da6762bcf639d1e6823c1a30da4635e16880e387e2e989b333cffa26c95c35593066c0f77caafbfab",
+          "size": 605045,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "LGPL-3.0-only",
+            "url": null
+          },
+          "projectUrl": "https://github.com/Requios/effortless-building-multi",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
+          ]
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-fabric-26.1",
+          "version": "unbox-port.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "colour-scroller-fabric-26.1.jar",
+          "resource": "colour-scroller-fabric-26.1.jar",
+          "sha1": "deb4846b931f8112719b8f3f74c5939f8a8ec5c4",
+          "sha512": "1f27824c9ba425f96a69a8fb225d4edd7e09e42794cdfbe652686582ca3b49d885747b29e229df36b0d0b10343a8291e8e3b504cea30919828e924b587b07200",
+          "size": 4823,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
         }
       ]
     },
@@ -983,6 +1713,746 @@
           "artifactRequirements": {
             "fabricloader": ">=0.19.5"
           }
+        },
+        {
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "EBIKCzuP",
+          "version": "26.1-2.31-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "MouseTweaks-fabric-mc26.1-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/EBIKCzuP/MouseTweaks-fabric-mc26.1-2.31.jar",
+          "sha1": "d81b34b76b8885f637e1a253810a78bee772a346",
+          "sha512": "4dd59950e1c249a9c5cae50beff86c5c59b19b0f2cdf72dea0315eeba93bced72a300eebfef435f3bf17532dc541d74e1e69cd577ab5b08067e34e7bcccddc97",
+          "size": 75833,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.5",
+            "fabric-api": "*",
+            "minecraft": "~26.1",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "i9tjoAyc",
+          "version": "26.1.7",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "easyshulkerboxes-v26.1.7-mc26.1.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/i9tjoAyc/easyshulkerboxes-v26.1.7-mc26.1.x%2Bfabric.jar",
+          "sha1": "9c7ad2c22e78acff9782fd7c743265c21a5cefc0",
+          "sha512": "05ed1d2071b3855fd7a56a33ed754103abb855bfb420784f47058e9f9ff71cfdc36f4d21ec4803f5549dddea1f8b6bc2b8d767389bd8aa6d9d10a792287d0415",
+          "size": 656434,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.4",
+            "fabric-api": ">=0.154.0",
+            "forgeconfigapiport": "*",
+            "iteminteractions": "*",
+            "puzzleslib": ">=26.1.15"
+          }
+        },
+        {
+          "slug": "forge-config-api-port",
+          "projectId": "ohNO6lps",
+          "id": "jUe0ucoE",
+          "version": "26.1.5",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ForgeConfigAPIPort-v26.1.5-mc26.1.x-Fabric.jar",
+          "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/jUe0ucoE/ForgeConfigAPIPort-v26.1.5-mc26.1.x-Fabric.jar",
+          "sha1": "82e4deaa210b75d3b51a268769ad24cc85796235",
+          "sha512": "44951fd147de9282c7a483eec0863e0838e98f68579b4d5852e4aaf038b82f03558c9dfd05fa3a4e5aa60ce5ede15cbbac59d4527d379494619804740f9a184f",
+          "size": 609711,
+          "source": "https://github.com/Fuzss/forgeconfigapiport",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/forge-config-api-port",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "forgeconfigapiport"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.0",
+            "fabric-api": ">=0.149.0"
+          }
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "cPeqCZKe",
+          "version": "26.1.16",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "puzzleslib-v26.1.16-mc26.1.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/cPeqCZKe/puzzleslib-v26.1.16-mc26.1.x%2Bfabric.jar",
+          "sha1": "f0c40b38e955c5b077092fe7617ee3c76b78c1cb",
+          "sha512": "ddd5b110eea5d3682c37997c8b2eb45502de4be6255882b44966a1af4ea5ede59ecbae1b9154659046e9c429994af6e7aa558ada1b79678217791301568517c4",
+          "size": 1157390,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.1-",
+            "fabricloader": ">=0.19.4",
+            "fabric-api": ">=0.154.0",
+            "forgeconfigapiport": "*"
+          }
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "x02cBj9Y",
+          "id": "HPrO2zBi",
+          "version": "1.0.11",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "status-effect-bars-1.0.11.jar",
+          "url": "https://cdn.modrinth.com/data/x02cBj9Y/versions/HPrO2zBi/status-effect-bars-1.0.11.jar",
+          "sha1": "5348cae0b1b8c377dfa92ef645709a3932baacb1",
+          "sha512": "a27e3059a140236136cfd0c146e14788714488dc3636b0d5aa1d0a3958eebf1c1ca8549a53640a1131552abf2732077a5d07e72c896cc03cfba976bc6746b6b2",
+          "size": 48545,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status-effect-bars"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.5",
+            "minecraft": ">=26.1",
+            "java": ">=25",
+            "cloth-config2": "*"
+          }
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "bm8zQZcG",
+          "version": "4.4.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "chiseledbookshelfvisualizer-fabric-26.1-4.4.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/bm8zQZcG/chiseledbookshelfvisualizer-fabric-26.1-4.4.0.jar",
+          "sha1": "d3c093926350fce8f8927a8c364359abd5c49350",
+          "sha512": "d2aa8b48bcfcceda9d354097f1db177c8b2a2ee9d7b7a7a60e675b57350e7f1a0242bb44bed7bd50b6b72862146a0e6eddd934faf86eb58ab65d1f2e459dd354",
+          "size": 53403,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "fabric-api": "*",
+            "minecraft": "~26.1",
+            "java": ">=25",
+            "cloth-config": ">=26.1.154",
+            "anvianslib": ">=1.5.0"
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "GFM8zh9J",
+          "version": "26.1.154+fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "cloth-config-26.1.154.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/GFM8zh9J/cloth-config-26.1.154.jar",
+          "sha1": "832f9047bc4af13587709c74f7c37e1c8579d1eb",
+          "sha512": "8bfb75f2cac0a9910316c6a368a228c0f8f1261ac6f03dec5fba594e1619ac04334a3df4fb29778d61d0b8290d55949371a523d722b35501bf9a2902956d3b17",
+          "size": 1135373,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth-config"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.14.0",
+            "minecraft": ">=26.1-"
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "yF1sty8C",
+          "version": "1.5.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "anvianslib-fabric-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/yF1sty8C/anvianslib-fabric-26.1-1.5.0.jar",
+          "sha1": "90703eae117e6189d198a098751d75e21fa70c1c",
+          "sha512": "715ac37c2097b4a5e464cd71a5ae45ce423bd4935d8c5d70639116dcfe1d960728dca2aa6c2457da16d7dced255508a99814f1b6f0fcaff060fee470081cd7af",
+          "size": 31358,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.6",
+            "fabric-api": "*",
+            "minecraft": ">=26.1",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "RLzHAoZe",
+          "id": "wKnOd7SV",
+          "version": "1.8.7",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "Resourcify (26.1-fabric)-1.8.7.jar",
+          "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/wKnOd7SV/Resourcify%20%2826.1-fabric%29-1.8.7.jar",
+          "sha1": "3d734df8e00ef8e4aca3b04ef77ca14966cb55e0",
+          "sha512": "405d2dc91d7d0b64e164c33da63e8ce34665abae63b5aa4af2699ba67a7be34e1b86bfd37f46787a103abf6e3c9b4a365a89f43aab3d14f39d7536bd4682e571",
+          "size": 2896938,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "resourcify"
+          ],
+          "artifactRequirements": {
+            "fabric-language-kotlin": ">=1.11.0+kotlin.2.0.0",
+            "fabricloader": ">=0.15.0",
+            "fabric-resource-loader-v0": "*",
+            "minecraft": "~26.1"
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "wZheOhu4",
+          "version": "1.8-fabric+26.1.x",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "spatial-gui-1.8+26.1.2-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/wZheOhu4/spatial-gui-1.8%2B26.1.2-fabric.jar",
+          "sha1": "c9049b3d1c3c91afa69880b7b5aa91397ab97728",
+          "sha512": "7f73a2ad34072a48742d6fab276c4f3e3610abe4e5fac8cc72bd8ad7e8ab082cd4865ce5dd92aa54ec7226006615920ba41db51cbcf4f6ea129f2d789b33f0a1",
+          "size": 274930,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial-gui"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.3",
+            "fabric-api": "*",
+            "minecraft": ">=26.1 <=26.1.2",
+            "yet_another_config_lib_v3": ">=3.9.3+26.1-fabric"
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "IODousKT",
+          "version": "3.9.7+26.1-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.1-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/IODousKT/yet_another_config_lib_v3-3.9.7%2B26.1-fabric.jar",
+          "sha1": "ccb1503a786d833901ace18322b7b6c89d24c7cb",
+          "sha512": "734a2735521940b23b49cc645c49f8ad760212adb315602daf9cfb3c2f401cdd8a07250dc3e0b7429120a641032f6c8be1e5955d7aec3b07547ca34e7bacd4fa",
+          "size": 1124837,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.0",
+            "minecraft": "~26.1",
+            "fabric-resource-loader-v1": "*"
+          }
+        },
+        {
+          "slug": "modmenu",
+          "projectId": "mOgUt4GM",
+          "id": "ZJ6YTrMY",
+          "version": "18.0.2",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "modmenu-18.0.2.jar",
+          "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/ZJ6YTrMY/modmenu-18.0.2.jar",
+          "sha1": "8fa5f0c6e844f44bfd836197b680ee6ea0006bcd",
+          "sha512": "37393e1d4a23a548463e92eb0687af69034ee7c308bd1d2d27d78df0292f124c4463f19d4b53128b59cda4e02d01d7ae09f06456d10abde19b6e450163e50e97",
+          "size": 859999,
+          "source": "https://github.com/TerraformersMC/ModMenu",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/modmenu",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "eXts2L7r",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "modmenu"
+          ],
+          "artifactRequirements": {
+            "fabric-resource-loader-v1": "*",
+            "fabric-screen-api-v1": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabricloader": ">=0.17.2",
+            "minecraft": ">1.26-"
+          }
+        },
+        {
+          "slug": "placeholder-api",
+          "projectId": "eXts2L7r",
+          "id": "b3IPAHgB",
+          "version": "3.0.0+26.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "placeholder-api-3.0.0+26.1.jar",
+          "url": "https://cdn.modrinth.com/data/eXts2L7r/versions/b3IPAHgB/placeholder-api-3.0.0%2B26.1.jar",
+          "sha1": "c1ce548549ec4517b9393985cefc65389e6f36d8",
+          "sha512": "b559da0f13fef17967f2aff1d06b00995c7db21d9d5b7b580ab6eafdf2365e4ac86a7d094c2b481160a942f291bc2595f2cb8c91ce5e169f1c2f461782ecd2a8",
+          "size": 254376,
+          "source": "https://github.com/Patbox/TextPlaceholderAPI",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/placeholder-api",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "placeholder-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "minecraft": ">=26.1-"
+          }
+        },
+        {
+          "slug": "effortless-building",
+          "projectId": "DYtfQEYj",
+          "id": "tUZmcsh6",
+          "version": "4.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "effortlessbuilding-fabric-26.1.2-4.3.jar",
+          "url": "https://cdn.modrinth.com/data/DYtfQEYj/versions/tUZmcsh6/effortlessbuilding-fabric-26.1.2-4.3.jar",
+          "sha1": "35f7599d9d50ee0e3bcb8b74d65866bcfc82b6ff",
+          "sha512": "94d6cb147a338e83c3a960ba127ad784cddbf485ce1a93c1b4f797fa9d45c221f0ff31aa7059b9bdc06cb0e49b89e547f034ab7651eb7b50228e27d86538c35e",
+          "size": 668244,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/effortless-building",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.6",
+            "fabric-api": "*",
+            "minecraft": "~26.1.2",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-fabric-26.1.2",
+          "version": "unbox-port.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "filename": "colour-scroller-fabric-26.1.2.jar",
+          "resource": "colour-scroller-fabric-26.1.2.jar",
+          "sha1": "e7b64ee490f082f2bfda2d55cdbd708507fe3611",
+          "sha512": "0a79d1b874e1d9da5a53a00a50521704a0c8c274293d3b4980f50088d648850f105423a5d66db34cbb2ce860bc5eddb56233b8537279da9e044a85543da86036",
+          "size": 4824,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
         }
       ]
     },
@@ -1178,33 +2648,829 @@
               ]
             }
           }
-        }
-      ],
-      "unavailableFeatures": [
+        },
         {
-          "feature": "inventory",
-          "reason": "No upstream Inventory Profiles Next / libIPN NeoForge artifact with matching internal Minecraft 26.1 dependency constraints was found. Modrinth compatibility tags differ from JAR metadata; unsupported files are not installed.",
-          "rejectedVersions": [
-            "vNg0KMkb",
-            "fXLfTD5D",
-            "bm1OYABy",
-            "Tcu3WrE6"
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "Vd1fgVcT",
+          "version": "26.1-2.31-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "MouseTweaks-neoforge-mc26.1-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/Vd1fgVcT/MouseTweaks-neoforge-mc26.1-2.31.jar",
+          "sha1": "e171c7b91ab9ab3b0f7b63aa5b0337f578588b5c",
+          "sha512": "020927251342a5f73363fbf8312c4e7219c24fd3021190b2387eeb1472ac16b3291b14d19ce3d4e4063c6d5f24a1b92a21b9ce290359af22e40dd4ff14597e9e",
+          "size": 74445,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "unbox-neo261-easyshulkerboxes",
+          "version": "26.1.7 (Unbox 26.1 port)",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "easyshulkerboxes-neoforge-26.1.jar",
+          "sha1": "af51ceb71ca87fc8d668a6b892ec045eb42669ff",
+          "sha512": "1cfcd81652356ee41a95be3531a9450f5138ac57d554be769982ea32aac20580f29adb646b5020515f5e600ea88096f215a4571cd3721f286accecb5ac9ef4f9",
+          "size": 78873,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "unbox-port-iteminteractions",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "resource": "easyshulkerboxes-neoforge-26.1.jar"
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "unbox-neo261-puzzleslib",
+          "version": "26.1.16 (Unbox 26.1 port)",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "puzzleslib-neoforge-26.1.jar",
+          "sha1": "a1d3087472704340aab18b22f2eef1aad2bebf6b",
+          "sha512": "b6dd99969675f1f2e2145821696445de320ea76496079d8b31317005efc1f6533afacca046fe0c12859448f3ac16ba9d5806a452476f2578a6e77294b8b6d001",
+          "size": 1074459,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "resource": "puzzleslib-neoforge-26.1.jar"
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "UzMXxbTL",
+          "version": "4.4.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "chiseledbookshelfvisualizer-neoforge-26.1-4.4.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/UzMXxbTL/chiseledbookshelfvisualizer-neoforge-26.1-4.4.0.jar",
+          "sha1": "1adb76b55e249d81d71bfa9fda5974976ca066fe",
+          "sha512": "7a5e5311a1588d39b798cb1a59efe031781f2ee8ee30ac58816d5ca26511b1e6e31a3e37bf77598869ba8d14b018f9c19e2122de40d376a44f6661984a71a144",
+          "size": 51410,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "chiseledbookshelfvisualizer": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 26.2)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "anvianslib",
+                "type": "required",
+                "versionRange": "[1.5.0,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "cloth_config",
+                "type": "required",
+                "versionRange": "[26.1.154,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "HLoFZCLI",
+          "version": "1.5.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "anvianslib-neoforge-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/HLoFZCLI/anvianslib-neoforge-26.1-1.5.0.jar",
+          "sha1": "46e4f6d7c023a0cda34365020675726e47de12a6",
+          "sha512": "1f6a2eb99b838a3540d36f048789346c0bf080b9b5be3f3e7aab55b4aa0ddb7084f96e474c958970682c96d4269152e8e3815ced119f2e371a352b833ff5a714",
+          "size": 31086,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "anvianslib": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 27)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "TimoYzse",
+          "version": "26.1.154+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "cloth-config-26.1.154.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/TimoYzse/cloth-config-26.1.154.jar",
+          "sha1": "1700599980477b0ea72608bfdadee7bdde8b9b75",
+          "sha512": "b3084e992459c211617bf5247a94b93c06823277932341e7cec98602a6c6e21ca599aae5e552868ae7a60aac6ec33f3a9cee11615667470483948b3e349d3caf",
+          "size": 1135993,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth_config"
+          ],
+          "artifactRequirements": {
+            "cloth_config": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "RLzHAoZe",
+          "id": "S0pZMui0",
+          "version": "1.8.7",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "Resourcify (26.1-neoforge)-1.8.7.jar",
+          "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/S0pZMui0/Resourcify%20%2826.1-neoforge%29-1.8.7.jar",
+          "sha1": "e77d06b5fcea540faf435c2b9dc6d01248b66780",
+          "sha512": "38481a678c0aad7fe70cdeab9d46273a36422a255c0be5a3f3a43703ad6c00320392a1c81183f9bb6d0290c606f7fda5a41473dd31bedea07a4dad2edee1be68",
+          "size": 2896427,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "ordsPcFz",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "resourcify"
+          ],
+          "artifactRequirements": {
+            "resourcify": [
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1,26.2)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[1,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "kotlin-for-forge",
+          "projectId": "ordsPcFz",
+          "id": "9fo5CJQk",
+          "version": "6.4.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "kotlinforforge-6.4.0-all.jar",
+          "url": "https://cdn.modrinth.com/data/ordsPcFz/versions/9fo5CJQk/kotlinforforge-6.4.0-all.jar",
+          "sha1": "4e5da9058aea1c882974b1c9b9d30e2db651c272",
+          "sha512": "f164697b47a5b23591a4555ce655eb0ba865ceb1972c29e2c53603bb70a38b948e23801e3dc0291a3f6f0bbb40b3fefc0fa79e9b4586ab9e40b821097b61f03c",
+          "size": 7279332,
+          "source": "https://github.com/thedarkcolour/KotlinForForge",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-for-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "kotlinforforge"
+          ],
+          "artifactRequirements": {
+            "kotlinforforge": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "required",
+                "versionRange": "[1.21.9,26.4)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "bssxEhFw",
+          "version": "1.8-neoforge+26.1.x",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "spatial-gui-1.8+26.1.2-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/bssxEhFw/spatial-gui-1.8%2B26.1.2-neoforge.jar",
+          "sha1": "f453bf9fbadedffcd52efeefba22f5bdbe06846b",
+          "sha512": "038592a25af41c93ea7d49554c6ebba64799fadf763a70c2c5f2ff6ec5377b364cf2c889d35f98ce9e226a535f9af0c8336ea28b6f79fca6c6324ace72e6492a",
+          "size": 272636,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial_gui"
+          ],
+          "artifactRequirements": {
+            "spatial_gui": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": ">=26.1 <=26.1.2",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "yet_another_config_lib_v3",
+                "type": "required",
+                "versionRange": "[3.0.0,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "B1mfgQmD",
+          "version": "3.9.7+26.1-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.1-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/B1mfgQmD/yet_another_config_lib_v3-3.9.7%2B26.1-neoforge.jar",
+          "sha1": "9e975787de1cde9e4af741d6973999a52cb68dc1",
+          "sha512": "df39cf9eeabf4c82733436c6561f625c7a4052736bfe2136e213f51e17a1fbd14b444957134097eff073d8ebeb2f7f93ca6505e0779c70cb61ba728202930658",
+          "size": 1116964,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "unbox-port-status-effect-bars",
+          "id": "unbox-port-neoforge-26.1",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "status-effect-bars-neoforge-26.1.jar",
+          "resource": "status-effect-bars-neoforge-26.1.jar",
+          "sha1": "65ea0875ab4a2d0c75d1350adccf0a06c24fbc16",
+          "sha512": "b922e0b3dff6a62decb5e5b12e37cc7ecd40329709bd8914b6c162a9138b4657f2c5e2acbe377bfa4d7999caca4e4cba73c2584954ce18291c8865f34d547bf0",
+          "size": 42369,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "LGPL-3.0-or-later",
+            "url": null
+          },
+          "projectUrl": "https://github.com/A5b84/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status_effect_bars"
           ]
         },
         {
-          "feature": "veinminer",
-          "reason": "No official NeoForge Minecraft 26.1 VeinMiner artifact supports the pinned NeoForge 26.1.0.19-beta event API. All listed releases directly reference net.neoforged.neoforge.event.level.block.BreakBlockEvent, absent from this runtime (which exposes BlockEvent$BreakEvent). VeinMiner, its dependent Hotkey, and unused KotlinLangForge are not installed.",
-          "rejectedVersions": [
-            "7GhgEsTA",
-            "KTGljSjU",
-            "gY6e4FFT",
-            "vSzrAhgs",
-            "ckKFKBpi",
-            "MJq1OXKI",
-            "qRSmIQfC"
+          "slug": "effortless-building",
+          "projectId": "unbox-port-effortless-building",
+          "id": "unbox-port-neoforge-26.1",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "effortlessbuilding-neoforge-26.1.jar",
+          "resource": "effortlessbuilding-neoforge-26.1.jar",
+          "sha1": "c98e3a2c9d2f522ef109d6124bf798b48be889b4",
+          "sha512": "df73053abf18804a10e4487a4a6f2504d422ab3fc0118ad170e1477d276e9e34c785a4f9d51c6f60bace6f8beee44d5df67c01068b6b902b29f83afcb3c6d251",
+          "size": 604360,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "LGPL-3.0-only",
+            "url": null
+          },
+          "projectUrl": "https://github.com/Requios/effortless-building-multi",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
           ]
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-neoforge-26.1",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "colour-scroller-neoforge-26.1.jar",
+          "resource": "colour-scroller-neoforge-26.1.jar",
+          "sha1": "d416f9b2de473f939838713d9e791351c7658da2",
+          "sha512": "f23f204de4d05bd19fc24db2cb049c15c3452042f77c9a1e3b8d3a10ccac10f816966880a5db9c86d3ce40c33c17025736206b1119a2683d7e5ea4790c15255e",
+          "size": 4894,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
+        },
+        {
+          "slug": "inventory-profiles-next",
+          "projectId": "O7RBXm3n",
+          "id": "unbox-port-inventory-profiles-next-261",
+          "version": "2.3.8-SNAPSHOT",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "InventoryProfilesNext-neoforge-26.1.jar",
+          "sha512": "460402d45166f1b0d02d984cb4bd7bfe9b1753be12636b47235e2fbd0cd48aa7ea4493142ced68f5d9a4e9bff3b19fc1a6296b428207c429f7c20dca7a4f1521",
+          "sha1": "290b1366954cb703588442994225501601a09045",
+          "size": 1992359,
+          "source": "https://codeberg.org/Inventory-Profiles-Next-Mod/IPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/inventory-profiles-next",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "inventoryprofilesnext"
+          ],
+          "resource": "InventoryProfilesNext-neoforge-26.1.jar",
+          "sourceArchive": "inventory-profiles-next-sources.zip"
+        },
+        {
+          "slug": "libipn",
+          "projectId": "onSQdWhM",
+          "id": "unbox-port-libipn-261",
+          "version": "6.9.0-SNAPSHOT",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "libipn-neoforge-26.1.jar",
+          "sha512": "625880f10f4d94e06cfcde590c7a83f05781c0b88846d36d734e81744d6a9f122588adf9eb864442bc1e245d881b724e75368e4858315cddd03baaf006dc440d",
+          "sha1": "14749352d38d3c32e5a8311befc15528b4cb853e",
+          "size": 7830129,
+          "source": "https://github.com/blackd/libIPN",
+          "license": {
+            "id": "AGPL-3.0-or-later",
+            "name": "GNU Affero General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/libipn",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "libipn"
+          ],
+          "resource": "libipn-neoforge-26.1.jar",
+          "sourceArchive": "libipn-sources.zip"
+        },
+        {
+          "slug": "veinminer",
+          "projectId": "OhduvhIc",
+          "id": "unbox-port-veinminer-261",
+          "version": "2.10.4",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-neoforge-26.1.jar",
+          "sha512": "7d8831fcd1cfd8d05c08c65bd3f2173ee36123ae7f5f5819a280c00edd5a83e115731e5f4dee66c7deb2f47e3be0f4233a9c34e8eb5eff224e2f4d84da406c3d",
+          "sha1": "9787d2b92ada595dbfe8fab25f7c8eb8d6def7b3",
+          "size": 600193,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0",
+            "name": "GNU Affero General Public License v3",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.html"
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer",
+          "role": "host-gameplay",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "veinminer"
+          ],
+          "resource": "veinminer-neoforge-26.1.jar",
+          "sourceArchive": "veinminer-sources.zip"
+        },
+        {
+          "slug": "veinminer-client",
+          "projectId": "dxa0Bm8m",
+          "id": "unbox-port-veinminer-client-261",
+          "version": "2.10.4",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "veinminer-client-neoforge-26.1.jar",
+          "sha1": "c29b5f9c2440daa5473b643a91c871f71663f6d9",
+          "sha512": "a4fef1db7601509e2a345ac2adedb0187dd5948c97852a54aa3d60e8bb05276d4e8a1e8869d898e83105768a596d450ae2cd7d993fd0ea561c535046ba329a0b",
+          "size": 191989,
+          "source": "https://github.com/MiraculixxT/Veinminer",
+          "license": {
+            "id": "AGPL-3.0",
+            "name": "GNU Affero General Public License v3",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.html"
+          },
+          "projectUrl": "https://modrinth.com/mod/veinminer-client",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "veinminer_client"
+          ],
+          "resource": "veinminer-client-neoforge-26.1.jar",
+          "sourceArchive": "veinminer-sources.zip"
+        },
+        {
+          "slug": "kotlin-lang-forge",
+          "projectId": "1vrSzlao",
+          "id": "cu66H8iw",
+          "version": "2.15.0-k2.4.21-3.1+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "KotlinLangForge-2.15.0-k2.4.21-3.1+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1vrSzlao/versions/cu66H8iw/KotlinLangForge-2.15.0-k2.4.21-3.1%2Bneoforge.jar",
+          "sha1": "b0051d7499914f7ab6bbf1ed6a4edf0476a23e1d",
+          "sha512": "327b770c675d1c58a83e06054220646709a82d8f7831bab7ceaa93e9dcf2bb370adc9dcbe1eb9378d5890b564f5c964d23d728afbbd0365a880bcec16957bcdb",
+          "size": 8222675,
+          "source": "https://github.com/btwonion/KotlinLangForge",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-lang-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "klf"
+          ],
+          "artifactRequirements": {
+            "klf": [
+              {
+                "modId": "minecraft",
+                "versionRange": "[1.21.9],[1.21.10],[1.21.11],[26.1],[26.1.1],[26.1.2],[26.2],[26.3]",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "item-interactions",
+          "projectId": "unbox-port-iteminteractions",
+          "dependencies": [],
+          "modIds": [
+            "iteminteractions"
+          ],
+          "projectUrl": "https://github.com/Fuzss/item-interactions",
+          "source": "https://github.com/Fuzss/item-interactions",
+          "license": {
+            "id": "MPL-2.0"
+          },
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "id": "unbox-neo261-iteminteractions",
+          "version": "26.1.9 (Unbox 26.1 port)",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "filename": "iteminteractions-neoforge-26.1.jar",
+          "resource": "iteminteractions-neoforge-26.1.jar",
+          "sha1": "85edec59b2628fb52343e88a3c112119a2bc6ef5",
+          "sha512": "0d93311cec2ed44cbb402ead3656028a3d793428b744a3c6ccb994b8b1784122a3dab0c88b47ad50f6a2f22463f4af2d3eee53e1238891e402a98f9774cd0620",
+          "size": 205136
         }
-      ]
+      ],
+      "unavailableFeatures": []
     },
     {
       "loader": "neoforge",
@@ -1713,6 +3979,676 @@
               ]
             }
           }
+        },
+        {
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "Vd1fgVcT",
+          "version": "26.1-2.31-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "MouseTweaks-neoforge-mc26.1-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/Vd1fgVcT/MouseTweaks-neoforge-mc26.1-2.31.jar",
+          "sha1": "e171c7b91ab9ab3b0f7b63aa5b0337f578588b5c",
+          "sha512": "020927251342a5f73363fbf8312c4e7219c24fd3021190b2387eeb1472ac16b3291b14d19ce3d4e4063c6d5f24a1b92a21b9ce290359af22e40dd4ff14597e9e",
+          "size": 74445,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "pa04dSo8",
+          "version": "26.1.7",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "easyshulkerboxes-v26.1.7-mc26.1.x+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/pa04dSo8/easyshulkerboxes-v26.1.7-mc26.1.x%2Bneoforge.jar",
+          "sha1": "5f883d0b83b4c3f3775dc70384e8a96e145438fd",
+          "sha512": "e93ca03499e673811b06c51e5066e852f2741d7403add0bf5adc17f47633422a2a01518c80077050170a754aefaa6a26ef627cf542dcebde8abf89df2fd66310",
+          "size": 655835,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "artifactRequirements": {
+            "easyshulkerboxes": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.1,26.2)",
+                "referralUrl": "https://www.minecraft.net/"
+              },
+              {
+                "modId": "neoforge",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.1.2.99,)",
+                "referralUrl": "https://neoforged.net/"
+              },
+              {
+                "modId": "iteminteractions",
+                "mandatory": true,
+                "type": "REQUIRED"
+              },
+              {
+                "modId": "puzzleslib",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.1.15,)",
+                "referralUrl": "https://www.curseforge.com/minecraft/mc-mods/puzzles-lib"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "ntQknrEC",
+          "version": "26.1.16",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "puzzleslib-v26.1.16-mc26.1.x+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/ntQknrEC/puzzleslib-v26.1.16-mc26.1.x%2Bneoforge.jar",
+          "sha1": "45b246435cdba69afa2312c7fa8c757e212685de",
+          "sha512": "73f88f6a25712a6d11b4f45dded52721a755348bf932525b2a7d3ff84adea4659460f21da88894d69df541a87a079c467d46c6920a6b77016c7b4cc6741755fa",
+          "size": 1077103,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "artifactRequirements": {
+            "puzzleslib": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.1,26.2)",
+                "referralUrl": "https://www.minecraft.net/"
+              },
+              {
+                "modId": "neoforge",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.1.2.99,)",
+                "referralUrl": "https://neoforged.net/"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "UzMXxbTL",
+          "version": "4.4.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "chiseledbookshelfvisualizer-neoforge-26.1-4.4.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/UzMXxbTL/chiseledbookshelfvisualizer-neoforge-26.1-4.4.0.jar",
+          "sha1": "1adb76b55e249d81d71bfa9fda5974976ca066fe",
+          "sha512": "7a5e5311a1588d39b798cb1a59efe031781f2ee8ee30ac58816d5ca26511b1e6e31a3e37bf77598869ba8d14b018f9c19e2122de40d376a44f6661984a71a144",
+          "size": 51410,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "chiseledbookshelfvisualizer": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 26.2)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "anvianslib",
+                "type": "required",
+                "versionRange": "[1.5.0,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "cloth_config",
+                "type": "required",
+                "versionRange": "[26.1.154,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "HLoFZCLI",
+          "version": "1.5.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "anvianslib-neoforge-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/HLoFZCLI/anvianslib-neoforge-26.1-1.5.0.jar",
+          "sha1": "46e4f6d7c023a0cda34365020675726e47de12a6",
+          "sha512": "1f6a2eb99b838a3540d36f048789346c0bf080b9b5be3f3e7aab55b4aa0ddb7084f96e474c958970682c96d4269152e8e3815ced119f2e371a352b833ff5a714",
+          "size": 31086,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "anvianslib": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 27)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "TimoYzse",
+          "version": "26.1.154+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "cloth-config-26.1.154.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/TimoYzse/cloth-config-26.1.154.jar",
+          "sha1": "1700599980477b0ea72608bfdadee7bdde8b9b75",
+          "sha512": "b3084e992459c211617bf5247a94b93c06823277932341e7cec98602a6c6e21ca599aae5e552868ae7a60aac6ec33f3a9cee11615667470483948b3e349d3caf",
+          "size": 1135993,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth_config"
+          ],
+          "artifactRequirements": {
+            "cloth_config": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "RLzHAoZe",
+          "id": "S0pZMui0",
+          "version": "1.8.7",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "Resourcify (26.1-neoforge)-1.8.7.jar",
+          "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/S0pZMui0/Resourcify%20%2826.1-neoforge%29-1.8.7.jar",
+          "sha1": "e77d06b5fcea540faf435c2b9dc6d01248b66780",
+          "sha512": "38481a678c0aad7fe70cdeab9d46273a36422a255c0be5a3f3a43703ad6c00320392a1c81183f9bb6d0290c606f7fda5a41473dd31bedea07a4dad2edee1be68",
+          "size": 2896427,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "ordsPcFz",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "resourcify"
+          ],
+          "artifactRequirements": {
+            "resourcify": [
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1,26.2)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[1,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "kotlin-for-forge",
+          "projectId": "ordsPcFz",
+          "id": "9fo5CJQk",
+          "version": "6.4.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "kotlinforforge-6.4.0-all.jar",
+          "url": "https://cdn.modrinth.com/data/ordsPcFz/versions/9fo5CJQk/kotlinforforge-6.4.0-all.jar",
+          "sha1": "4e5da9058aea1c882974b1c9b9d30e2db651c272",
+          "sha512": "f164697b47a5b23591a4555ce655eb0ba865ceb1972c29e2c53603bb70a38b948e23801e3dc0291a3f6f0bbb40b3fefc0fa79e9b4586ab9e40b821097b61f03c",
+          "size": 7279332,
+          "source": "https://github.com/thedarkcolour/KotlinForForge",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-for-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "kotlinforforge"
+          ],
+          "artifactRequirements": {
+            "kotlinforforge": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "required",
+                "versionRange": "[1.21.9,26.4)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "bssxEhFw",
+          "version": "1.8-neoforge+26.1.x",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "spatial-gui-1.8+26.1.2-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/bssxEhFw/spatial-gui-1.8%2B26.1.2-neoforge.jar",
+          "sha1": "f453bf9fbadedffcd52efeefba22f5bdbe06846b",
+          "sha512": "038592a25af41c93ea7d49554c6ebba64799fadf763a70c2c5f2ff6ec5377b364cf2c889d35f98ce9e226a535f9af0c8336ea28b6f79fca6c6324ace72e6492a",
+          "size": 272636,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial_gui"
+          ],
+          "artifactRequirements": {
+            "spatial_gui": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": ">=26.1 <=26.1.2",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "yet_another_config_lib_v3",
+                "type": "required",
+                "versionRange": "[3.0.0,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "B1mfgQmD",
+          "version": "3.9.7+26.1-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.1-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/B1mfgQmD/yet_another_config_lib_v3-3.9.7%2B26.1-neoforge.jar",
+          "sha1": "9e975787de1cde9e4af741d6973999a52cb68dc1",
+          "sha512": "df39cf9eeabf4c82733436c6561f625c7a4052736bfe2136e213f51e17a1fbd14b444957134097eff073d8ebeb2f7f93ca6505e0779c70cb61ba728202930658",
+          "size": 1116964,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "effortless-building",
+          "projectId": "DYtfQEYj",
+          "id": "YJVsBCh6",
+          "version": "4.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "effortlessbuilding-neoforge-26.1.2-4.3.jar",
+          "url": "https://cdn.modrinth.com/data/DYtfQEYj/versions/YJVsBCh6/effortlessbuilding-neoforge-26.1.2-4.3.jar",
+          "sha1": "1e96e5718b03d46ce1c369d1a6cc8a4b327be8cd",
+          "sha512": "0ef3866f7802d11fe0de4554c58f7bf3f43fd05f23878c220596ff24c579f2058007decf92d75f6c4985b9eb69f5d43a06f500bccb72e75a5722164b24ed1542",
+          "size": 661572,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/effortless-building",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
+          ],
+          "artifactRequirements": {
+            "effortlessbuilding": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.2.7-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 26.2)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "unbox-port-status-effect-bars",
+          "id": "unbox-port-neoforge-26.1.2",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "filename": "status-effect-bars-neoforge-26.1.2.jar",
+          "resource": "status-effect-bars-neoforge-26.1.2.jar",
+          "sha1": "b90d77b589b04006eedb04218c1d3d34ecfc4661",
+          "sha512": "24f7daa71fff140e5f3b05cb94872015f4352589670ef473c7bb9fc823dfcf14ca826f7e568364bc4b1b72152b9e201477488a307a2cbd30f3088afcbd6db9e5",
+          "size": 42371,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "LGPL-3.0-or-later",
+            "url": null
+          },
+          "projectUrl": "https://github.com/A5b84/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status_effect_bars"
+          ]
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-neoforge-26.1.2",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "filename": "colour-scroller-neoforge-26.1.2.jar",
+          "resource": "colour-scroller-neoforge-26.1.2.jar",
+          "sha1": "b774ad55a36b85e06a60d701571b961a71da2ebd",
+          "sha512": "1b578ee6f2c9c7462a38959aef6279dcee2bd075c68a6afae331e1d78cc5c27ee9f22e51199eb4cad64fcb6cb44b22736398f63f463d1fd9fc55e86f3eb1155f",
+          "size": 4895,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
         }
       ]
     },
@@ -2196,6 +5132,708 @@
           "projectUrl": "https://modrinth.com/mod/fabric-language-kotlin",
           "role": "dependency",
           "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "LeMuMhLv",
+          "version": "26.3-2.31-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "MouseTweaks-fabric-mc26.3-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/LeMuMhLv/MouseTweaks-fabric-mc26.3-2.31.jar",
+          "sha1": "65c0f5588900e7ade476164ec4915bfab52c129a",
+          "sha512": "61c011308b5d1d0b2163473cbbc1ad0f1b3ac873b77e3e9ff67ccb437a946fbe5f34077281ebd2b91647324969d319f6499ac4b319cfcb9ea027bac47a52c081",
+          "size": 74569,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-api": "*",
+            "minecraft": "~26.3",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "DzZ9tjVr",
+          "version": "26.3.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "easyshulkerboxes-v26.3.3-mc26.3.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/DzZ9tjVr/easyshulkerboxes-v26.3.3-mc26.3.x%2Bfabric.jar",
+          "sha1": "9ad8263061535a77c53d4f8a5794c6c33aaf9ba1",
+          "sha512": "11196cd096de6742649166e758cedcef585bb9ad9f7899963aa6342c98162aa80115ff99b836c23e3e82a8c1f0996768a0e3206e7e5129e17ba23e1d1004e1dc",
+          "size": 652549,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.3-",
+            "fabricloader": ">=0.19.5",
+            "fabric-api": ">=0.163.0",
+            "forgeconfigapiport": "*",
+            "iteminteractions": "*",
+            "puzzleslib": ">=26.3.12"
+          }
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "68hLXNWE",
+          "version": "26.3.15",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "puzzleslib-v26.3.15-mc26.3.x+fabric.jar",
+          "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/68hLXNWE/puzzleslib-v26.3.15-mc26.3.x%2Bfabric.jar",
+          "sha1": "e46c5f86c692389a0b9e86ac525247085cf9c5cc",
+          "sha512": "de3f32b109c6305190b13e5526b98c9840348f33cb786b3d94a9566a337f73bb8d8e27aad6214f795ad0fa71a4889ca93fe11161386fd57ad703c6ef2c94abae",
+          "size": 1093312,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "ohNO6lps",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.3-",
+            "fabricloader": ">=0.19.5",
+            "fabric-api": ">=0.163.0",
+            "forgeconfigapiport": "*"
+          }
+        },
+        {
+          "slug": "forge-config-api-port",
+          "projectId": "ohNO6lps",
+          "id": "JpKvrr9J",
+          "version": "26.3.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "ForgeConfigAPIPort-v26.3.1-mc26.3.x-Fabric.jar",
+          "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/JpKvrr9J/ForgeConfigAPIPort-v26.3.1-mc26.3.x-Fabric.jar",
+          "sha1": "a0d802d2cb010a5054c72f1ccf248433b6e0bafb",
+          "sha512": "b9339c21e14beec2eae0ca215317284bcaacef72e1d1dee8b3dfbe2de0eefaa758a172446df85419b6534557c479abe972d7d21f4ec194f2d436f9ed4329cb9f",
+          "size": 609574,
+          "source": "https://github.com/Fuzss/forgeconfigapiport",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/forge-config-api-port",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "forgeconfigapiport"
+          ],
+          "artifactRequirements": {
+            "minecraft": "~26.3-",
+            "fabricloader": ">=0.19.4",
+            "fabric-api": ">=0.160.6"
+          }
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "x02cBj9Y",
+          "id": "aAXJqboy",
+          "version": "1.0.12",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "status-effect-bars-1.0.12.jar",
+          "url": "https://cdn.modrinth.com/data/x02cBj9Y/versions/aAXJqboy/status-effect-bars-1.0.12.jar",
+          "sha1": "f29719c3101ebe009dae76bca5215cf7482f8b9c",
+          "sha512": "fc82971d4e91b3e1c0e2919267f16fb29d0690ca1765bae160628b7e6d8552c4c724143b6172e27b4b9d7c8e70fc64bdf428b60e954fa6adc7ae56a6af5abf0b",
+          "size": 44942,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status-effect-bars"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.3",
+            "minecraft": ">=26.2-",
+            "java": ">=25",
+            "cloth-config2": "*"
+          }
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "zBRKCXF5",
+          "version": "5.2.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "chiseledbookshelfvisualizer-fabric-26.3-5.2.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/zBRKCXF5/chiseledbookshelfvisualizer-fabric-26.3-5.2.0.jar",
+          "sha1": "97cd87d12bd011a3a8aae037a52d53ab7bc17e00",
+          "sha512": "a3521d2dcde4c211d5788ce49132ae5b5d3ca58a5bc516e11be7b943c45673d7af389e47073e9b1d7b81be70c686b5448a48d903cabed4047830d3cda2d46ec1",
+          "size": 49710,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-api": "*",
+            "minecraft": "~26.3",
+            "java": ">=25",
+            "cloth-config": ">=26.3.159",
+            "anvianslib": ">=1.5.0"
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "yF1sty8C",
+          "version": "1.5.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "anvianslib-fabric-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/yF1sty8C/anvianslib-fabric-26.1-1.5.0.jar",
+          "sha1": "90703eae117e6189d198a098751d75e21fa70c1c",
+          "sha512": "715ac37c2097b4a5e464cd71a5ae45ce423bd4935d8c5d70639116dcfe1d960728dca2aa6c2457da16d7dced255508a99814f1b6f0fcaff060fee470081cd7af",
+          "size": 31358,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.6",
+            "fabric-api": "*",
+            "minecraft": ">=26.1",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "RLzHAoZe",
+          "id": "fRxNdO2e",
+          "version": "1.8.7",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "Resourcify (26.3-fabric)-1.8.7.jar",
+          "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/fRxNdO2e/Resourcify%20%2826.3-fabric%29-1.8.7.jar",
+          "sha1": "2bc181e1ccb4fedd13cb71da17eb7ede85c21378",
+          "sha512": "994744e136ae942f40b8556f94e428b248092396606761e93947b8fbc814257e4ada17af5bd6dba189592f7f3c5641a205f08abe90be4fd39731dd69dd0e4e75",
+          "size": 2858616,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            },
+            {
+              "projectId": "Ha28R6CL",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "resourcify"
+          ],
+          "artifactRequirements": {
+            "fabric-language-kotlin": ">=1.11.0+kotlin.2.0.0",
+            "fabricloader": ">=0.15.0",
+            "fabric-resource-loader-v0": "*",
+            "minecraft": "~26.3-rc"
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "8y9LJEzb",
+          "version": "1.8-fabric+26.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "spatial-gui-1.8+26.3-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/8y9LJEzb/spatial-gui-1.8%2B26.3-fabric.jar",
+          "sha1": "39260a0d56a5a49bee4c533e1a7f0e9d7c2542d8",
+          "sha512": "c6ddc8deab4189efc1868d83e69cd453c3e773eca2c67b5854e40284d9ccfa72ca4f9e67edfaed644aaed98e708a745dd09e4362340f308dd2c3ab2956ecd59c",
+          "size": 276562,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial-gui"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.3",
+            "fabric-api": "*",
+            "minecraft": "26.3",
+            "yet_another_config_lib_v3": ">=3.9.7+26.3-fabric"
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "s9SjoFu1",
+          "version": "3.9.7+26.3-fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.3-fabric.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/s9SjoFu1/yet_another_config_lib_v3-3.9.7%2B26.3-fabric.jar",
+          "sha1": "e54d86dd4a78f95cd6ec0309d96fae01e661c00d",
+          "sha512": "f3957028dd31cae78f08aee3e768f61bd12c4c8423257d357bc3c1a2172047c769d37901f99775c7ffff1e5ee794025dc72738b2869cab06f1c2811841d68b24",
+          "size": 1125377,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.0",
+            "minecraft": "~26.3",
+            "fabric-resource-loader-v1": "*"
+          }
+        },
+        {
+          "slug": "modmenu",
+          "projectId": "mOgUt4GM",
+          "id": "kyy7dbrZ",
+          "version": "21.0.0",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric",
+            "quilt"
+          ],
+          "filename": "modmenu-21.0.0.jar",
+          "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/kyy7dbrZ/modmenu-21.0.0.jar",
+          "sha1": "66ec40f1cd0c037ddca2b5fc6b4b976d479c18e8",
+          "sha512": "588c0c557963f4778572ee81bfafc190b332c26d5926c5fe7e3e1614dcf8e14f58e3bc80a97694521dd05907e9753a7c8575048ea769e4dbf40a3db74a4e2606",
+          "size": 856779,
+          "source": "https://github.com/TerraformersMC/ModMenu",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/modmenu",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "P7dR8mSH",
+              "id": null,
+              "type": "required"
+            },
+            {
+              "projectId": "eXts2L7r",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "modmenu"
+          ],
+          "artifactRequirements": {
+            "fabric-resource-loader-v1": "*",
+            "fabric-screen-api-v1": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabricloader": ">=0.19.2",
+            "minecraft": ">=26.3-"
+          }
+        },
+        {
+          "slug": "placeholder-api",
+          "projectId": "eXts2L7r",
+          "id": "lXytLqWj",
+          "version": "3.2.0+26.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3-pre-3",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "placeholder-api-3.2.0+26.3.jar",
+          "url": "https://cdn.modrinth.com/data/eXts2L7r/versions/lXytLqWj/placeholder-api-3.2.0%2B26.3.jar",
+          "sha1": "4c455faa6333dbaef72cedbb91fe4a2a03176741",
+          "sha512": "eb2bb31e51068aad2581b7864ea7b11b1209ba1c2b27551cd5837d9b312b818b73bb47c06374b46b99b73401c62c6b6c115f702c55aed6afd467ad8ad6448de4",
+          "size": 254959,
+          "source": "https://github.com/Patbox/TextPlaceholderAPI",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/placeholder-api",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "placeholder-api"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.18.4",
+            "minecraft": ">=26.2-"
+          }
+        },
+        {
+          "slug": "effortless-building",
+          "projectId": "DYtfQEYj",
+          "id": "R8eAP63A",
+          "version": "4.3",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "effortlessbuilding-fabric-26.3-4.3.jar",
+          "url": "https://cdn.modrinth.com/data/DYtfQEYj/versions/R8eAP63A/effortlessbuilding-fabric-26.3-4.3.jar",
+          "sha1": "358ce2e85f0b53369bf48f044451fc062f85d0a0",
+          "sha512": "7dc7e1372295e8d6db140feccda872f0cb746b665b5e1b72d27b7a985c52017851208da50416d855c48ddf6ab729d31037c1d8253f66d3484fd618924a3acb27",
+          "size": 661531,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/effortless-building",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.19.5",
+            "fabric-api": "*",
+            "minecraft": "~26.3",
+            "java": ">=25"
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "fg2uyxOW",
+          "version": "26.3.159+fabric",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "cloth-config-fabric-26.3.159.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/fg2uyxOW/cloth-config-fabric-26.3.159.jar",
+          "sha1": "9a5cce069380a2047250831dcb19f4ef1b15872d",
+          "sha512": "8924e19d41845096724fa10f3717bc51964a0edbbbcad0ff1e6c6187a398b08f356e49579a657c2dc44a7f92e3850771f3ca70bf8c1f654de60425163b91dbb1",
+          "size": 1135009,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth-config"
+          ],
+          "artifactRequirements": {
+            "fabricloader": ">=0.14.0",
+            "minecraft": ">=26.3-"
+          }
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-fabric-26.3",
+          "version": "unbox-port.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "filename": "colour-scroller-fabric-26.3.jar",
+          "resource": "colour-scroller-fabric-26.3.jar",
+          "sha1": "871f66dc0d5174979c6dc526ac9344cbd551a3db",
+          "sha512": "9b5111fdcf02455700cc6b1ff77279512fd967c0cdafebbb512316a2589bfc8740cc9e1d052629494e2723ddd0074b9e111e5a926252f1e2edddfe4ea7b12445",
+          "size": 4824,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
         }
       ]
     },
@@ -2697,6 +6335,625 @@
           "projectUrl": "https://modrinth.com/mod/kotlin-lang-forge",
           "role": "dependency",
           "providedBy": "survival-mods-lock"
+        },
+        {
+          "slug": "mouse-tweaks",
+          "projectId": "aC3cM3Vq",
+          "id": "f4tPRGDq",
+          "version": "26.3-2.31-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "MouseTweaks-neoforge-mc26.3-2.31.jar",
+          "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/f4tPRGDq/MouseTweaks-neoforge-mc26.3-2.31.jar",
+          "sha1": "de224d4e3c270b749345c3a6703b51336a3ce5d3",
+          "sha512": "93e7ac34bbc15de635073722054b11fed3981e0f39954286e8a57214ce5ce007e5562882cb81cd230c8ea49970970c84548cfc598332c539777986090b090798",
+          "size": 74133,
+          "source": "https://github.com/YaLTeR/MouseTweaks",
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/mouse-tweaks",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "mousetweaks"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "easy-shulker-boxes",
+          "projectId": "gA5euN8S",
+          "id": "P329cbZD",
+          "version": "26.3.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "easyshulkerboxes-v26.3.3-mc26.3.x+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/P329cbZD/easyshulkerboxes-v26.3.3-mc26.3.x%2Bneoforge.jar",
+          "sha1": "dde730b323129a610c27fedc985d9c7afa3c1500",
+          "sha512": "426e2a2ba9e0b604cd38d1febee8a008480f0d6bc43ef9d02f8e23a66de42836a10dc7dbe08e461358cc745ffdac1a353d3a8fff822cbbd786bf0f475820a136",
+          "size": 652124,
+          "source": "https://github.com/Fuzss/easyshulkerboxes",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/easy-shulker-boxes",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "QAGBst4M",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "easyshulkerboxes"
+          ],
+          "artifactRequirements": {
+            "easyshulkerboxes": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.3,26.4)",
+                "referralUrl": "https://www.minecraft.net/"
+              },
+              {
+                "modId": "neoforge",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.3.0.76,)",
+                "referralUrl": "https://neoforged.net/"
+              },
+              {
+                "modId": "iteminteractions",
+                "mandatory": true,
+                "type": "REQUIRED"
+              },
+              {
+                "modId": "puzzleslib",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.3.12,)",
+                "referralUrl": "https://www.curseforge.com/minecraft/mc-mods/puzzles-lib"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "puzzles-lib",
+          "projectId": "QAGBst4M",
+          "id": "LkRTTxrD",
+          "version": "26.3.15",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "puzzleslib-v26.3.15-mc26.3.x+neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/LkRTTxrD/puzzleslib-v26.3.15-mc26.3.x%2Bneoforge.jar",
+          "sha1": "a1f8ca297601273668de77c7ce65f04f1f68ec70",
+          "sha512": "2edd07454537b9ba85f87b852f880daf46a98d9d39f3f5a9001fc0ad610a8e38829943a3dc24b2e24e4590a544b4c2c21b09f27a6e51848fd0d6357c656fa4bb",
+          "size": 1034978,
+          "source": "https://github.com/Fuzss/puzzleslib",
+          "license": {
+            "id": "MPL-2.0",
+            "name": "Mozilla Public License 2.0",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/puzzles-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "puzzleslib"
+          ],
+          "artifactRequirements": {
+            "puzzleslib": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.3,26.4)",
+                "referralUrl": "https://www.minecraft.net/"
+              },
+              {
+                "modId": "neoforge",
+                "mandatory": true,
+                "type": "REQUIRED",
+                "versionRange": "[26.3.0.76,)",
+                "referralUrl": "https://neoforged.net/"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "chiseled-bookshelf-visualizer",
+          "projectId": "SQeCtvGg",
+          "id": "lMWXbi0j",
+          "version": "5.2.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "chiseledbookshelfvisualizer-neoforge-26.3-5.2.0.jar",
+          "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/lMWXbi0j/chiseledbookshelfvisualizer-neoforge-26.3-5.2.0.jar",
+          "sha1": "7784f37511cd9134e9363aedfd27608dbd737a06",
+          "sha512": "02e9c3969e397ee8f40c2561448312834652d2057adad51244e48713315f36980a41f32a71051e46057af1a666e53237ddb253c18e56a68cf1e2df80449a4b87",
+          "size": 47604,
+          "source": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://github.com/anviaan/Chiseled-Bookshelf-Visualizer/blob/main/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/chiseled-bookshelf-visualizer",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "PuTjrq4T",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "chiseledbookshelfvisualizer"
+          ],
+          "artifactRequirements": {
+            "chiseledbookshelfvisualizer": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.3.0.48-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.3, 26.4)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "anvianslib",
+                "type": "required",
+                "versionRange": "[1.5.0,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "cloth_config",
+                "type": "required",
+                "versionRange": "[26.3.159,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "anvians-lib",
+          "projectId": "PuTjrq4T",
+          "id": "HLoFZCLI",
+          "version": "1.5.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "anvianslib-neoforge-26.1-1.5.0.jar",
+          "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/HLoFZCLI/anvianslib-neoforge-26.1-1.5.0.jar",
+          "sha1": "46e4f6d7c023a0cda34365020675726e47de12a6",
+          "sha512": "1f6a2eb99b838a3540d36f048789346c0bf080b9b5be3f3e7aab55b4aa0ddb7084f96e474c958970682c96d4269152e8e3815ced119f2e371a352b833ff5a714",
+          "size": 31086,
+          "source": "https://github.com/anviaan/Anvian-sLib",
+          "license": {
+            "id": "GPL-3.0-only",
+            "name": "GNU General Public License v3.0 only",
+            "url": "https://github.com/anviaan/anvians-lib/blob/Multiloader-1.20/LICENSE"
+          },
+          "projectUrl": "https://modrinth.com/mod/anvians-lib",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "anvianslib"
+          ],
+          "artifactRequirements": {
+            "anvianslib": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.1.0.19-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.1, 27)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "spatial-gui",
+          "projectId": "zLBn2IE4",
+          "id": "aI6GSQYL",
+          "version": "1.8-neoforge+26.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "spatial-gui-1.8+26.3-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/aI6GSQYL/spatial-gui-1.8%2B26.3-neoforge.jar",
+          "sha1": "c5b01d137d603f28796fc20aab62549892be1b36",
+          "sha512": "4e208701789960b1962c56dc88fe2be02783f19d5ed830915d43a419061b71ebc9b25f7d82ad381b057cfe7e78e9e408b6b8eaeb5d5c769d17aaf244aa235dd0",
+          "size": 273991,
+          "source": "https://github.com/tastytrash/Spatial-GUI",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/spatial-gui",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "1eAoo2KR",
+              "id": null,
+              "type": "required"
+            }
+          ],
+          "modIds": [
+            "spatial_gui"
+          ],
+          "artifactRequirements": {
+            "spatial_gui": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.3.0.10-beta,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "26.3",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              },
+              {
+                "modId": "yet_another_config_lib_v3",
+                "type": "required",
+                "versionRange": "[3.0.0,)",
+                "ordering": "NONE",
+                "side": "CLIENT"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "yacl",
+          "projectId": "1eAoo2KR",
+          "id": "GL24RgOP",
+          "version": "3.9.7+26.3-neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "yet_another_config_lib_v3-3.9.7+26.3-neoforge.jar",
+          "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/GL24RgOP/yet_another_config_lib_v3-3.9.7%2B26.3-neoforge.jar",
+          "sha1": "2b69bd5bd28b08e17efb7f39ccbf53bbffab4f69",
+          "sha512": "4f94b08706825c0e5f8413a68783355d60bd3da7b6526c817caad997147db6eae42f187c7f14a0242941a7ceec9d69396978e154342f6c9d55862258b0afbfa8",
+          "size": 1117503,
+          "source": "https://github.com/isXander/YetAnotherConfigLib",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "GNU Lesser General Public License v3.0 or later",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/yacl",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "yet_another_config_lib_v3"
+          ],
+          "artifactRequirements": {}
+        },
+        {
+          "slug": "effortless-building",
+          "projectId": "DYtfQEYj",
+          "id": "JblZjSyo",
+          "version": "4.3",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "effortlessbuilding-neoforge-26.3-4.3.jar",
+          "url": "https://cdn.modrinth.com/data/DYtfQEYj/versions/JblZjSyo/effortlessbuilding-neoforge-26.3-4.3.jar",
+          "sha1": "4a0a2e6fb71d224145d7d4fcdf9b6f3d1b543871",
+          "sha512": "23f3e22c5c2568bc5a90ce0298835d2727816f4420ed91d089f5a757da9aac375af614b9e9c18c05dff1259cde71a47c1b5560469e2ee6f87ce092efeea16762",
+          "size": 659282,
+          "source": "https://github.com/Requios/effortless-building-multi",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/effortless-building",
+          "role": "host-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "effortlessbuilding"
+          ],
+          "artifactRequirements": {
+            "effortlessbuilding": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.3.0.1-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              },
+              {
+                "modId": "minecraft",
+                "type": "required",
+                "versionRange": "[26.3, 26.4)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "cloth-config",
+          "projectId": "9s6osm5g",
+          "id": "GchRXPnb",
+          "version": "26.3.159+neoforge",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "cloth-config-neoforge-26.3.159.jar",
+          "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/GchRXPnb/cloth-config-neoforge-26.3.159.jar",
+          "sha1": "d57fa1419228ee371b0c29abf943288d384e2d08",
+          "sha512": "941dd8aab50d658cfa6da071dacd05802c7097643ad569935d0073b39231a2137f2ade2403b791f70cf5ebf1649d7b6337862568a8b340c88e5d364569f94431",
+          "size": 1135657,
+          "source": "https://github.com/shedaniel/ClothConfig/",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "GNU Lesser General Public License v3.0 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/cloth-config",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "cloth_config"
+          ],
+          "artifactRequirements": {
+            "cloth_config": [
+              {
+                "modId": "neoforge",
+                "type": "required",
+                "versionRange": "[26.3.0.3-beta,)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "status-effect-bars",
+          "projectId": "unbox-port-status-effect-bars",
+          "id": "unbox-port-neoforge-26.3",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "filename": "status-effect-bars-neoforge-26.3.jar",
+          "resource": "status-effect-bars-neoforge-26.3.jar",
+          "sha1": "a3d2532bd61e33c5fa84ac84edca0d5209e92366",
+          "sha512": "09de4b08766606fb4cbd88dc28e9b1b361e44b38fd634b7ebd6cc00bd44d4529cb3e85a2440822a89a1e635ca598d18fa8c90aa56ca2b4bb33e39f54a265becb",
+          "size": 42372,
+          "source": "https://github.com/A5b84/status-effect-bars",
+          "license": {
+            "id": "LGPL-3.0-or-later",
+            "name": "LGPL-3.0-or-later",
+            "url": null
+          },
+          "projectUrl": "https://github.com/A5b84/status-effect-bars",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "status_effect_bars"
+          ]
+        },
+        {
+          "slug": "resourcify",
+          "projectId": "unbox-port-resourcify",
+          "id": "unbox-port-neoforge-26.3",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "filename": "resourcify-neoforge-26.3.jar",
+          "resource": "resourcify-neoforge-26.3.jar",
+          "sha1": "95d08b7df8e9e3b28c05ea1a47ad1e16a3d3d1c5",
+          "sha512": "28670416020a9f3e0b8c5435edc097fdf324be51425a2ffe9e76b48a620e5950b5bfdaadedfafd000cf36443f7af1f88e686dcd2e62df5788044a2ef28081df7",
+          "size": 2857924,
+          "source": "https://github.com/DeDiamondPro/Resourcify",
+          "license": {
+            "id": "LGPL-3.0-only",
+            "name": "LGPL-3.0-only",
+            "url": null
+          },
+          "projectUrl": "https://github.com/DeDiamondPro/Resourcify",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "resourcify"
+          ]
+        },
+        {
+          "slug": "kotlin-for-forge",
+          "projectId": "ordsPcFz",
+          "id": "9fo5CJQk",
+          "version": "6.4.0",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "1.21.9",
+            "1.21.10",
+            "1.21.11",
+            "26.1",
+            "26.1.1",
+            "26.1.2",
+            "26.2",
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "kotlinforforge-6.4.0-all.jar",
+          "url": "https://cdn.modrinth.com/data/ordsPcFz/versions/9fo5CJQk/kotlinforforge-6.4.0-all.jar",
+          "sha1": "4e5da9058aea1c882974b1c9b9d30e2db651c272",
+          "sha512": "f164697b47a5b23591a4555ce655eb0ba865ceb1972c29e2c53603bb70a38b948e23801e3dc0291a3f6f0bbb40b3fefc0fa79e9b4586ab9e40b821097b61f03c",
+          "size": 7279332,
+          "source": "https://github.com/thedarkcolour/KotlinForForge",
+          "license": {
+            "id": "LGPL-2.1-only",
+            "name": "GNU Lesser General Public License v2.1 only",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/kotlin-for-forge",
+          "role": "dependency",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "kotlinforforge"
+          ],
+          "artifactRequirements": {
+            "kotlinforforge": [
+              {
+                "modId": "minecraft",
+                "mandatory": true,
+                "type": "required",
+                "versionRange": "[1.21.9,26.4)",
+                "ordering": "NONE",
+                "side": "BOTH"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "colour-scroller",
+          "projectId": "unbox-port-colour-scroller",
+          "id": "unbox-port-neoforge-26.3",
+          "version": "unbox-port.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "filename": "colour-scroller-neoforge-26.3.jar",
+          "resource": "colour-scroller-neoforge-26.3.jar",
+          "sha1": "273f157523d38e2f2ce0f7b36bddb20fe3ec1bd7",
+          "sha512": "d869ece232e0599008d5b4a5239a1a5654ec8469bfcd7a8b1f3da24de244f463075f3708cef2be78447bdd7eed3949282f67b4b68efcffda07021bd07d424056",
+          "size": 4895,
+          "source": "https://github.com/GoldCoops/ColourScroller",
+          "license": {
+            "id": "MIT",
+            "name": "MIT",
+            "url": null
+          },
+          "projectUrl": "https://github.com/GoldCoops/ColourScroller",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [],
+          "modIds": [
+            "colourscroller"
+          ]
         }
       ]
     }

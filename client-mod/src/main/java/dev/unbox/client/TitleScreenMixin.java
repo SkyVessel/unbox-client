@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(Minecraft.class)
 public class TitleScreenMixin {
     @ModifyVariable(method="setScreen",at=@At("HEAD"),argsOnly=true)
-    private Screen unboxTitle(Screen screen){return screen!=null&&screen.getClass()==TitleScreen.class&&!((Minecraft)(Object)this).isDemo()?new UnboxHomeScreen(false):screen;}
+    private Screen unboxTitle(Screen screen){if(screen!=null&&screen.getClass().getName().startsWith("nl.requios.effortlessbuilding.screen.")&&!dev.unbox.client.WorldFeatures.buildingClient())return Minecraft.getInstance().screen;return screen!=null&&screen.getClass()==TitleScreen.class&&!((Minecraft)(Object)this).isDemo()?new UnboxHomeScreen(false):screen;}
 
     // Closing a parentless screen passes null; vanilla creates its title inside
     // setScreen after HEAD. Replace that fallback before it is installed as well.

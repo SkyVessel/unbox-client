@@ -14,7 +14,7 @@ public class MouseMixin {
  @Unique private final net.minecraft.util.SmoothDouble unboxX=new net.minecraft.util.SmoothDouble(),unboxY=new net.minecraft.util.SmoothDouble();
  @Unique private long unboxTurnTime;
  @Inject(method="onScroll",at=@At("HEAD"),cancellable=true)
- private void unboxScroll(long window,double horizontal,double vertical,CallbackInfo ci){if(dev.unbox.client.FreecamController.scroll(window,horizontal,vertical)){ci.cancel();return;}if(UnboxClient.adjustZoom(vertical)){UnboxClient.save();ci.cancel();}}
+ private void unboxScroll(long window,double horizontal,double vertical,CallbackInfo ci){if(dev.unbox.client.CreativeVariants.scroll(window,vertical)){ci.cancel();return;}if(dev.unbox.client.FreecamController.scroll(window,horizontal,vertical)){ci.cancel();return;}if(UnboxClient.adjustZoom(vertical)){UnboxClient.save();ci.cancel();}}
  @Redirect(method="turnPlayer",at=@At(value="INVOKE",target="Lnet/minecraft/client/player/LocalPlayer;turn(DD)V"))
  private void unboxTurn(net.minecraft.client.player.LocalPlayer player,double x,double y){
   long now=System.nanoTime();double dt=unboxTurnTime==0?.016:Math.min(.1,(now-unboxTurnTime)/1e9);unboxTurnTime=now;

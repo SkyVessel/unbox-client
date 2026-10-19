@@ -1,0 +1,38 @@
+name: Feature Request
+description: Ask for new feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # **1.20.5/6 SUPPORT**
+        ## There will be no 1.20.5/6 support.
+        ## Next release will be for 1.21 after it comes out.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## **BEFORE POSTING PLEASE DISCUSS YOUR FEATURE REQUESTS WITH US IN OUT DISCORD SERVER**
+        ### **Have you asked about it in our [Discord Server](https://discord.gg/23YCxmveUM)**
+          if the answer is **NO** then go [there](https://discord.gg/23YCxmveUM) and ask.
+          If, despite above, you still decide to open an issue there will be high probability that the answer will be "Go ask on Discord!"
+  - type: dropdown
+    attributes:
+      label: Have you asked for help in discord?
+      description:
+      multiple: false
+      options:
+        - "NO"
+        - "YES"
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### Describe your desired feature.
+          **Be as descriptive as possible.**
+          **Include screenshots or videos if possible**
+  - type: textarea
+    attributes:
+      label: "Describe your desired feature."
+    validations:
+      required: true

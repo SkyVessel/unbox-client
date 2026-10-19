@@ -8,6 +8,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.level.ServerPlayer;
 final class MapTransport {
  static void init(){
+  PayloadTypeRegistry.serverboundPlay().register(HappyGhastRecall.Request.TYPE,HappyGhastRecall.Request.CODEC);
+  ServerPlayNetworking.registerGlobalReceiver(HappyGhastRecall.Request.TYPE,(p,c)->c.server().execute(()->HappyGhastRecall.receive(c.player())));
   ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->client.execute(()->{WorldMap.disconnected();SurvivalHostMods.clearClientHost();}));
   ClientLifecycleEvents.CLIENT_STOPPING.register(client->WorldMap.shutdown());
   PayloadTypeRegistry.clientboundPlay().register(MapSharing.WorldPacket.TYPE,MapSharing.WorldPacket.CODEC);
@@ -24,6 +26,8 @@ final class MapTransport {
   ClientPlayNetworking.registerGlobalReceiver(MapSharing.DeathPacket.TYPE,(p,c)->c.client().execute(()->WorldMap.death(p.death())));
   ServerLivingEntityEvents.AFTER_DEATH.register((entity,source)->{if(entity instanceof ServerPlayer p)MapSharing.died(p);});
  }
+ static boolean canCallGhast(){return ClientPlayNetworking.canSend(HappyGhastRecall.Request.TYPE);}
+ static void callGhast(){ClientPlayNetworking.send(new HappyGhastRecall.Request());}
  static boolean canSendWorld(ServerPlayer p){return ServerPlayNetworking.canSend(p,MapSharing.WorldPacket.TYPE);}
  static void sendWorld(ServerPlayer p,MapSharing.WorldPacket packet){ServerPlayNetworking.send(p,packet);}
  static boolean badgeCapable(ServerPlayer p){return ServerPlayNetworking.canSend(p,NameBadges.Packet.TYPE);}

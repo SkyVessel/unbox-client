@@ -1,0 +1,31 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[4.11,)" # We need kotlin 2.0+
+license = "LGPL 3.0"
+issueTrackerURL = "https://github.com/DeDiamondPro/Resourcify/issues"
+showAsResourcePack = false
+
+[[mods]]
+modId = "resourcify"
+version = "${version}"
+displayName = "Resourcify"
+authors = "DeDiamondPro"
+description = "In-game resource pack, data pack and shader browser"
+logoFile = "icon.png"
+displayTest = "IGNORE_ALL_VERSION"
+
+[[dependencies.resourcify]]
+modId = "minecraft"
+type = "required"
+versionRange = "${mcVersion}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.resourcify]]
+modId = "neoforge"
+type = "required"
+versionRange = "${minNeoForgeVersion}"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "${mixinPath}"

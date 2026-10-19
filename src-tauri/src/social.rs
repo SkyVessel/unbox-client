@@ -251,6 +251,7 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
     result["inWorld"] = json!(world["inWorld"] == true);
     result["canInvite"] = json!(world["canInvite"] == true);
     result["gameError"] = world["error"].clone();
+    result["joining"] = world["joining"].clone();
     if key(&account(rt).await?) != key(&a) {
         return Err("Account changed. Reconnecting friends…".into());
     }
@@ -353,6 +354,7 @@ pub async fn social_action(
         if world.is_null() {
             return Err("The running game is not connected to this launcher account".into());
         }
+        if op == "join" && world["joining"] == true { return Ok(public_view(rt.social.lock().await.view.clone())); }
         let view = rt.social.lock().await.view.clone();
         let collection = if op == "invite" { "friends" } else { "invites" };
         if !view[collection]

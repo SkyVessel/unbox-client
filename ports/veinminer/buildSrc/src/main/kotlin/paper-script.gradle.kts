@@ -1,0 +1,49 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+
+plugins {
+    kotlin("jvm")
+    id("io.papermc.paperweight.userdev")
+    id("xyz.jpenilla.run-paper")
+    id("de.eldoria.plugin-yml.paper")
+    id("com.modrinth.minotaur")
+}
+
+description = properties["description"] as String
+
+val paperVersion by properties
+val projectName = properties["projectName"] as String
+
+repositories {
+    mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+}
+
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+
+dependencies {
+    paperweight.paperDevBundle("$paperVersion")
+
+    // Kotlin libraries
+    library(kotlin("stdlib"))
+    library(kotlin("reflect"))
+    library("org.jetbrains.kotlinx:kotlinx-serialization-json:1.+")
+    library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.+")
+    library("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.+")
+
+    library("de.miraculixx:kpaper:1.+")
+}
+
+paper {
+    main = "$group.veinminer.Veinminer"
+    bootstrapper = "$group.veinminer.VeinminerBootstrapper"
+    loader = "$group.veinminer.VeinminerLoader"
+    generateLibrariesJson = true
+
+    name = "Veinminer"
+    website = "https://mutils.net"
+
+    foliaSupported = true
+    apiVersion = "1.21"
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
+}

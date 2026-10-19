@@ -1,0 +1,46 @@
+# gradle
+
+.gradle/
+.kotlin/
+build/
+out/
+classes/
+
+# idea
+
+.idea/
+.idea.*
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# fabric
+
+run/
+run
+runServer
+run-server
+runs
+
+# kotlin
+*.ws.kts
+
+*.javaX
+*.ktX
+
+# description
+description/out
+repo
+/common/src/main/gen/
+gen
+
+# macOS
+.DS_Store

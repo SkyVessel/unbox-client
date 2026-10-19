@@ -20,6 +20,9 @@ final class SurvivalLanSmokeTest {
     private static boolean connected,ordinary,finished;
     private static volatile boolean queued;
     private static UUID barrier=UUID.randomUUID();
+    private static net.minecraft.world.entity.animal.happyghast.HappyGhast recallFixture;
+    private static double recallDistance;
+    private static boolean recallSent,recallVerified;
     private static final String GUEST="UnboxLanGuest";
     private SurvivalLanSmokeTest(){}
     private static Path root(Minecraft mc){return Path.of(System.getProperty("unbox.survivalLanRoot",mc.gameDirectory.toString()));}
@@ -51,7 +54,7 @@ final class SurvivalLanSmokeTest {
             stage++;stageAt=ticks;barrier=UUID.randomUUID();
         }
         boolean enabled=stage!=2;
-        UnboxClient.set("veinminer",enabled);UnboxClient.set("fallingtree",enabled);UnboxClient.set("gravestones",enabled);
+        UnboxClient.set("veinminer",enabled);UnboxClient.set("fallingtree",enabled);UnboxClient.set("gravestones",enabled);for(String id:List.of("building","shulker","ghast"))UnboxClient.set(id,enabled);
         if(stage==4&&(!ack.has("ordinaryReady")||!ack.get("ordinaryReady").getAsBoolean()))return;
         if(ticks-stageAt<40||SurvivalHostMods.serverEnabled("veinminer")!=enabled||SurvivalHostMods.serverEnabled("fallingtree")!=enabled||MapSharing.worldId(server).isEmpty()||queued)return;
         queued=true;int current=stage;UUID sentinel=barrier;
@@ -61,6 +64,13 @@ final class SurvivalLanSmokeTest {
                 if(peer==null)return;
                 check(MapTransport.canSendSurvivalHostState(peer)&&MapTransport.canSendHostState(peer)&&MapTransport.canSendWorld(peer)&&MapTransport.canSend(peer)&&MapTransport.badgeCapable(peer),"Guest did not negotiate every native fixture channel");
                 var owner=server.getPlayerList().getPlayer(mc.getUser().getProfileId());check(owner!=null,"Host player missing");
+                if(current==1){
+                    if(recallFixture==null){
+                        peer.setGameMode(net.minecraft.world.level.GameType.CREATIVE);peer.teleportTo(peer.getX(),160,peer.getZ());peer.getAbilities().flying=true;peer.onUpdateAbilities();
+                        recallFixture=(net.minecraft.world.entity.animal.happyghast.HappyGhast)net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.Identifier.withDefaultNamespace("happy_ghast")).create(peer.level(),net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+                        recallFixture.setPos(peer.getX()+6,160,peer.getZ());peer.level().addFreshEntity(recallFixture);recallDistance=recallFixture.distanceToSqr(peer);
+                    }else if(!recallVerified&&HappyGhastRecall.called(recallFixture)&&recallFixture.distanceToSqr(peer)<recallDistance-1){recallVerified=true;CHECKS.add("Guest recall packet makes a nearby ghast fly toward that guest on the host server");}
+                }
                 // This exercises the real production server emission, codec and TCP receive path.
                 // No client receive() is called by the fixture and no player is killed.
                 // LAN stages rely on the normal host tick broadcasts, not manually invoked state receivers/senders.
@@ -69,7 +79,7 @@ final class SurvivalLanSmokeTest {
                 MapSharing.died(owner);
                 // A separate real packet is an ordered barrier: observing this random UUID proves earlier packets arrived.
                 MapTransport.sendBadge(peer,new NameBadges.Packet(List.of(owner.getUUID(),peer.getUUID(),sentinel)));
-                var state=new JsonObject();state.addProperty("stage",current);state.addProperty("enabled",enabled);state.addProperty("barrier",sentinel.toString());state.addProperty("world",MapSharing.worldId(server));state.addProperty("host",owner.getUUID().toString());
+                var state=new JsonObject();state.addProperty("recallVerified",recallVerified);state.addProperty("stage",current);state.addProperty("enabled",enabled);state.addProperty("barrier",sentinel.toString());state.addProperty("world",MapSharing.worldId(server));state.addProperty("host",owner.getUUID().toString());
                 write(shared(mc,"survival-lan-state.json"),state);
             }catch(Throwable error){mc.execute(()->finish(mc,error));}finally{queued=false;}
         });
@@ -88,18 +98,23 @@ final class SurvivalLanSmokeTest {
         int current=state.get("stage").getAsInt();if(current<=lastGuestStage||!NameBadges.known(UUID.fromString(state.get("barrier").getAsString())))return;
         boolean enabled=state.get("enabled").getAsBoolean();UUID owner=UUID.fromString(state.get("host").getAsString());
         // Local preferences must never replace the authoritative host state.
-        UnboxClient.set("veinminer",!enabled);UnboxClient.set("fallingtree",!enabled);UnboxClient.set("gravestones",!enabled);
+        UnboxClient.set("veinminer",!enabled);UnboxClient.set("fallingtree",!enabled);UnboxClient.set("gravestones",!enabled);for(String id:List.of("building","shulker","ghast"))UnboxClient.set(id,!enabled);
         if(current<4){
             check(mc.getCurrentServer().isLan(),"Fixture connection was not classified by native LAN metadata");
             check(SurvivalHostMods.hostKnown()&&GraveKeeper.hostKnown(),"Native host state packet missing");
             check(SurvivalHostMods.hostEnabled("veinminer")==enabled&&SurvivalHostMods.hostEnabled("fallingtree")==enabled&&GraveKeeper.hostEnabled()==enabled,"Host enable/disable state was not received authoritatively");
+            for(String id:List.of("building","shulker","ghast")){check(SurvivalHostMods.hostEnabled(id)==enabled,"Host state missing for "+id);check(!ClientFeaturePolicy.allowed(id),"Guest gained configuration authority for "+id);}
             check(WorldMap.remoteWorld.equals(state.get("world").getAsString()),"Stable world UUID did not cross the native packet channel");
             var death=WorldMap.DEATHS.get(owner);check(death!=null&&death.player().equals(owner),"Same-room host death marker missing on guest");
             check(!ClientFeaturePolicy.allowed("veinminer")&&!ClientFeaturePolicy.allowed("fallingtree")&&!ClientFeaturePolicy.allowed("gravestones"),"Guest gained host configuration authority");
-            CHECKS.add("LAN stage "+current+": real packets report all three host features "+(enabled?"enabled":"disabled")+", world UUID and teammate marker; guest settings cannot override host");
+            if(current==1){if(!recallSent){check(HappyGhastRecall.request().isEmpty(),"LAN guest could not send recall request");recallSent=true;}if(!state.has("recallVerified")||!state.get("recallVerified").getAsBoolean())return;}
+            if(current==2)check(!HappyGhastRecall.request().isEmpty(),"Guest could call while host disabled the feature");
+            CHECKS.add("LAN stage "+current+": real packets report all six host features "+(enabled?"enabled":"disabled")+", world UUID and teammate marker; guest settings cannot override host");
         }else{
+            check(!HappyGhastRecall.canCall(),"Ordinary server allowed ghast call");
             check(!mc.getCurrentServer().isLan(),"Ordinary-server reconnect retained LAN metadata");
             check(!SurvivalHostMods.hostKnown()&&!SurvivalHostMods.hostEnabled("veinminer")&&!SurvivalHostMods.hostEnabled("fallingtree"),"Ordinary server state enabled survival host features");
+            for(String id:List.of("building","shulker","ghast"))check(!SurvivalHostMods.hostEnabled(id),"Ordinary server enabled "+id);
             check(!GraveKeeper.hostKnown()&&!GraveKeeper.hostEnabled(),"Ordinary server state enabled gravestones");
             check(WorldMap.remoteWorld.isEmpty()&&!WorldMap.DEATHS.containsKey(owner),"Ordinary server injected a room UUID or non-team death marker");
             CHECKS.add("Reconnecting with ordinary-server metadata rejects the same real host-state/world/death packets after an ordered native-packet barrier");

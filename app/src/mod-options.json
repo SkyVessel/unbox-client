@@ -1,5 +1,5 @@
 {
-  "sourceSha256": "55aa7c16823f8eb7076e3ab354e0fb13bf77e87ef8198d1f88dc022477a3b6a9",
+  "sourceSha256": "28c69a260046e124390e16989479409cd75fcd147f4bf8d43ad7d48ef9467993",
   "modules": {
     "minimap": {
       "General": [
@@ -2921,6 +2921,399 @@
     },
     "freecam": {
       "General": []
+    },
+    "mousetweaks": {
+      "General": [
+        {
+          "key": "mousetweaks.rightDrag",
+          "label": "Right-button drag",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "mousetweaks.leftDrag",
+          "label": "Left-button drag",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "mousetweaks.collect",
+          "label": "Collect matching stacks",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "mousetweaks.scroll",
+          "label": "Scroll to move items",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "shulker": {
+      "General": [
+        {
+          "key": "shulker.preview",
+          "label": "Contents preview",
+          "kind": "choice",
+          "fallback": "SHIFT",
+          "min": 0,
+          "max": 0,
+          "choices": [
+            "SHIFT",
+            "ALWAYS",
+            "NEVER"
+          ]
+        },
+        {
+          "key": "shulker.count",
+          "label": "Show item counts",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "shulker.indicator",
+          "label": "Storage indicator",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "shulker.nested",
+          "label": "Nested item tooltips",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "shulker.reverseScroll",
+          "label": "Reverse scrolling",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "effectbars": {
+      "General": [
+        {
+          "key": "effectbars.hudLayout",
+          "label": "Show HUD bars",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "effectbars.inventoryLayout",
+          "label": "Show inventory bars",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "effectbars.thickness",
+          "label": "Bar thickness",
+          "kind": "slider",
+          "fallback": "2",
+          "min": 1,
+          "max": 6
+        },
+        {
+          "key": "effectbars.opacity",
+          "label": "Background opacity %",
+          "kind": "slider",
+          "fallback": "50",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "effectbars.color",
+          "label": "Background color",
+          "kind": "color",
+          "fallback": "#000000",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "bookshelf": {
+      "General": [
+        {
+          "key": "bookshelf.scale",
+          "label": "Scale %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 50,
+          "max": 200
+        },
+        {
+          "key": "bookshelf.roman",
+          "label": "Roman enchantment levels",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "resources": {
+      "General": [
+        {
+          "key": "resources.ResourcePacks",
+          "label": "Resource packs",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.DataPacks",
+          "label": "Data packs",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.ShaderPacks",
+          "label": "Shader packs",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.Worlds",
+          "label": "World downloads",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.fullImages",
+          "label": "Full-resolution thumbnails",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.animate",
+          "label": "Animated thumbnails",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "resources.openLinks",
+          "label": "Open supported links",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "spatial": {
+      "General": [
+        {
+          "key": "spatial.autoCamera",
+          "label": "Follow current camera perspective",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.firstInventory",
+          "label": "First-person inventory",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.firstContainers",
+          "label": "First-person containers",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.crosshair",
+          "label": "First-person crosshair cursor",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.disableFirst",
+          "label": "Disable in first person",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.disableThird",
+          "label": "Disable in third person",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.inventory",
+          "label": "Player inventory",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.containers",
+          "label": "Containers",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.hideHud",
+          "label": "Hide HUD while open",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.hideHotbar",
+          "label": "Hide hotbar while open",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.blur",
+          "label": "Blur world",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "spatial.opacity",
+          "label": "Screen opacity %",
+          "kind": "slider",
+          "fallback": "100",
+          "min": 20,
+          "max": 100
+        },
+        {
+          "key": "spatial.transition",
+          "label": "Transition duration (ms)",
+          "kind": "slider",
+          "fallback": "200",
+          "min": 0,
+          "max": 600
+        }
+      ]
+    },
+    "ghast": {
+      "General": [
+        {
+          "key": "ghast.speed",
+          "label": "Ridden flight speed %",
+          "kind": "slider",
+          "fallback": "200",
+          "min": 100,
+          "max": 500
+        },
+        {
+          "key": "ghast.wait",
+          "label": "Wait after arrival (seconds)",
+          "kind": "slider",
+          "fallback": "4",
+          "min": 1,
+          "max": 30
+        },
+        {
+          "key": "ghast.range",
+          "label": "Call area side length (blocks)",
+          "kind": "slider",
+          "fallback": "15",
+          "min": 1,
+          "max": 15
+        }
+      ]
+    },
+    "building": {
+      "General": [
+        {
+          "key": "building.opacity",
+          "label": "Preview opacity %",
+          "kind": "slider",
+          "fallback": "50",
+          "min": 10,
+          "max": 100
+        },
+        {
+          "key": "building.previews",
+          "label": "Maximum preview blocks",
+          "kind": "slider",
+          "fallback": "1000",
+          "min": 50,
+          "max": 5000
+        },
+        {
+          "key": "building.protect",
+          "label": "Protect block entities",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    },
+    "variants": {
+      "General": [
+        {
+          "key": "variants.reverse",
+          "label": "Reverse scroll direction",
+          "kind": "toggle",
+          "fallback": "false",
+          "min": 0,
+          "max": 0
+        },
+        {
+          "key": "variants.stripped",
+          "label": "Include stripped wood",
+          "kind": "toggle",
+          "fallback": "true",
+          "min": 0,
+          "max": 0
+        }
+      ]
     },
     "cape": {
       "General": [

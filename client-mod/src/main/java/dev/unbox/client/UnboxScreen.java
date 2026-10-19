@@ -59,7 +59,7 @@ public class UnboxScreen extends Screen {
         search=addRenderableWidget(new EditBox(font,left+pw-207,sy+7,179,20,PanelStyle.text("Search mods")));
         search.addFormatter((v,i)->PanelStyle.text(v).getVisualOrderText());search.setBordered(false);search.setTextShadow(false);search.setHint(PanelStyle.text("Search mods..."));search.setValue(query);
         search.setResponder(s->{query=s;scroll=0;refreshGrid();});
-        String[] cats={"All","HUD","Visuals","Controls","Survival","Favorites"};
+        String[] cats={"All","HUD","Visuals","Controls","Survival","Building","Favorites"};
         int x=left+18;for(String cat:cats){int w=cat.equals("Favorites")?68:cat.equals("Controls")?65:50;Action b=button(x,sy,w,29,cat,()->{category=cat;scroll=0;init();});b.selected=cat.equals(category);x+=w+4;}
         bodyTop=top+108;bodyBottom=top+ph-31;refreshGrid();
     }
@@ -83,6 +83,7 @@ public class UnboxScreen extends Screen {
     }
     private void openDetail(String id){settingQuery="";detail=id;resetUndo.clear();tab="General";scroll=0;notice="";init();}
     private void initDetail(){
+        if(detail.equals("spatial"))try{SpatialSettings.sync();}catch(ReflectiveOperationException e){notice="Could not synchronize Spatial GUI settings";}
         button(left+17,top+15,54,27,"Back",()->{detail="";scroll=0;recording=null;notice="";init();});
         if(!detail.equals("performance")){
             Action enabled=button(left+pw-155,top+15,103,27,"Toggle "+ModOptions.mod(detail).title(),()->toggleModule(detail));enabled.module=detail;
@@ -93,7 +94,7 @@ public class UnboxScreen extends Screen {
         bodyTop=top+101;bodyBottom=top+ph-32;refreshSettings();
     }
     private void resetDetail(){
-        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():null;
+        KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("freelook")?freelookKey():detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():ClientIntegrations.key(detail);
         var cfg=Freelook.config;
         if(resetUndo.isEmpty()){
             for(String section:ModOptions.tabs(detail))for(var o:ModOptions.options(detail,section))resetUndo.put(o.key(),UnboxClient.CONFIG.getProperty(o.key(),"\u0000"));
@@ -142,14 +143,23 @@ public class UnboxScreen extends Screen {
             body(new Action(left+210,y,82,26,"Paste design",()->{rememberCanvas();notice=CrosshairPattern.importCode(minecraft.keyboardHandler.getClipboard())?"Crosshair imported":"Invalid Unbox crosshair code";}));
             body(new Action(left+300,y,65,26,"Undo",()->{if(!canvasUndo.isEmpty()){UnboxClient.set("crosshair.pixels",canvasUndo.pop());UnboxClient.set("crosshair.shape","Custom");UnboxClient.save();notice="Stroke undone";}}));y+=40;
         }
-        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook")||detail.equals("minimap")||detail.equals("freecam")||detail.equals("veinminer"))){
-            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():freelookKey();
+        if(settingQuery.isBlank()&&(detail.equals("zoom")||detail.equals("freelook")||detail.equals("minimap")||detail.equals("freecam")||detail.equals("veinminer")||detail.equals("building")||detail.equals("variants")||detail.equals("ghast"))){
+            KeyMapping key=detail.equals("zoom")?UnboxClient.zoomKey:detail.equals("minimap")?UnboxClient.mapKey:detail.equals("freecam")?FreecamController.key():detail.equals("veinminer")?SurvivalHostMods.key():detail.equals("freelook")?freelookKey():ClientIntegrations.key(detail);
             if(key!=null){rows.add(new Row(y,"Keybind"));Action b=body(new Action(x+w/2,y+9,w/2-12,27,"Change keybind",()->{recording=key;notice="Press a key. Esc cancels. Delete clears.";}));b.key=key;y+=46;}
         }
         if(settingQuery.isBlank()&&detail.equals("freelook")){
             var cfg=Freelook.config;
             rows.add(new Row(y,"Activation"));Action mode=body(new Action(x+w/2,y+9,w/2-12,27,cfg.isToggle()?"Toggle":"Hold",()->{cfg.setToggle(!cfg.isToggle());cfg.save();UnboxClient.set("freelook.mode",cfg.isToggle()?"Toggle":"Hold");UnboxClient.save();refreshSettings();}));y+=46;
             rows.add(new Row(y,"Camera"));body(new Action(x+w/2,y+9,w/2-12,27,cfg.getPerspective().name().replace('_',' '),()->{cfg.nextPerspective();cfg.save();UnboxClient.set("freelook.camera",cfg.getPerspective().name());UnboxClient.save();refreshSettings();}));y+=46;
+        }
+        if(settingQuery.isBlank()&&detail.equals("spatial")){
+            body(new Action(x,y+9,w,27,"Advanced Spatial GUI settings",()->notice=SpatialSettings.open(this))).active=ClientIntegrations.available("spatial");y+=46;
+        }
+        if(settingQuery.isBlank()&&detail.equals("ghast")){
+            body(new Action(x,y+9,w,27,"Call Happy Ghast",()->{notice=HappyGhastRecall.request();if(notice.isEmpty())minecraft.setScreen(null);})).active=HappyGhastRecall.canCall();y+=46;
+        }
+        if(settingQuery.isBlank()&&detail.equals("resources")){
+            body(new Action(x,y+9,w,27,"Browse resource packs",()->notice=ClientIntegrations.openResources(this))).active=ClientIntegrations.active("resources");y+=46;
         }
         if(settingQuery.isBlank()&&detail.equals("inventory")){
             rows.add(new Row(y,"Keybinds and sorting rules"));
@@ -278,6 +288,15 @@ public class UnboxScreen extends Screen {
             List<String> notes=switch(detail){
                 case "particles"->List.of("Changes affect new particles.","Existing particles fade normally.");
                 case "inventory"->List.of("Powered by Inventory Profiles Next.","Use inventory buttons to sort.","Advanced: keybinds and sort rules.","These toggles are managed by Unbox.");
+                case "mousetweaks"->List.of("Drag across slots to move stacks.","Scroll over items to transfer them.","IPN scrolling pauses to avoid conflicts.");
+                case "shulker"->List.of("The host controls this feature.","Hold Shift over a shulker to preview.","Use right-click and scroll to move items.","Both players need this mod installed.");
+                case "effectbars"->List.of("Bars show remaining effect duration.","HUD and inventory have separate toggles.");
+                case "bookshelf"->List.of("Aim at a chiseled bookshelf slot.","Inspect the book and enchantments.","Server support is needed for remote data.");
+                case "resources"->List.of("Browse opens the resource pack screen.","Use its download button for Resourcify.","Downloaded worlds remain separate.");
+                case "spatial"->List.of("Open your inventory or a container.","Unbox menus retain their own layout.");
+                case "ghast"->List.of("The host controls ridden flight speed.","Saved separately in each world.","Unridden ghasts keep their normal speed.");
+                case "building"->List.of("Creative mode only. Host controlled.","Hold the keybind for the build wheel.","Ctrl+Z undoes; Ctrl+Y redoes.","Survival actions are blocked by the host.");
+                case "variants"->List.of("Creative mode only.","Hold the keybind and scroll.","Cycle shapes of the same material.","Survival items are never converted.");
                 case "gravestones"->List.of("The host controls this feature.","Mine your named stone to reclaim.","Contents survive world reloads.","Inventory, armor and offhand.");
                 case "dynamiclight"->List.of("Powered by Wick · MIT license.","Held and dropped lights glow.","Visual effect only.");
                 case "veinminer"->List.of("Powered by VeinMiner.","Press your key to toggle mining.","The host controls mining rules.","Guests can change their own key.");

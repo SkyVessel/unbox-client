@@ -90,6 +90,7 @@ public final class NativeModIntegrationChecks {
             checks.add("Real loaded VeinMiner mixins toggle on press, stay active on release, turn off on second press, reset on host disable, and discard inventory-screen clicks");
         }
         void clientSettings()throws Exception{
+            for(String id:List.of("veinminer","veinminer_client","inventoryprofilesnext","libipn"))require(Platform.loaded(id),"Required native feature loaded: "+id);
             require(Platform.loaded("itemphysiclite"),"ItemPhysic loaded");
             if(!Platform.loaded("veinminer")){
                 require(Platform.loader().equals("neoforge")&&Platform.mod("minecraft").version().equals("26.1"),"VeinMiner absent only on the explicitly unsupported native target");

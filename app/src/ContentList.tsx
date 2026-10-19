@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {Box,Puzzle,Image,Sun,Upload,LoaderCircle,Trash2,Undo2} from 'lucide-react';
 import {listen} from '@tauri-apps/api/event';
 import {call,native} from './bridge';

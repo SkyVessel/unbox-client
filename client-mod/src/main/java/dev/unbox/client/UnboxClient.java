@@ -33,17 +33,17 @@ public class UnboxClient {
     public static float clickLight(int button){if(buttonDown[button]&&Minecraft.getInstance().screen==null)return 1;return Math.max(0,1-(System.nanoTime()-clickTime[button])/(UnboxClient.number("cps.fade",180,50,500)*1_000_000f));}
     public static void click(int button){if(Minecraft.getInstance().screen!=null||Minecraft.getInstance().player==null)return;long now=System.nanoTime();if(button>=0&&button<2)clickTime[button]=now;if(button==0)LEFT.addLast(now);if(button==1)RIGHT.addLast(now);}
     public static void initialize(){
-        reload();SocialBridge.init();MapSharing.init();Freelook.init();FreecamController.init();
+        reload();SocialBridge.init();MapSharing.init();Freelook.init();FreecamController.init();CreativeVariants.init();HappyGhastRecall.init();
         menuKey=Platform.key(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
         zoomKey=Platform.key(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
         mapKey=Platform.key(new KeyMapping("key.unbox.map",GLFW.GLFW_KEY_M,KeyMapping.Category.MISC));
         Platform.onTick(client->{
             TestStartupDiagnostics.tick(client);
             if(++ticks%40==0){reload();ModuleBindings.apply();}
-            SurvivalSmokeTest.tick(client);GravePersistenceSmokeTest.tick(client);VisualV4SmokeTest.tick(client);UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialNotifications.tick();NameBadges.tick();SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);VanillaInteropSmokeTest.tick(client);SurvivalLanSmokeTest.tick(client);
+            FeatureSmokeTest.tick(client);SurvivalSmokeTest.tick(client);GravePersistenceSmokeTest.tick(client);VisualV4SmokeTest.tick(client);UiSmokeTest.tick(client);HomeSmokeTest.tick(client);SocialBridge.tick(client);SocialNotifications.tick();NameBadges.tick();SocialSmokeTest.tick(client);PrivateWorldSmokeTest.tick(client);VanillaInteropSmokeTest.tick(client);SurvivalLanSmokeTest.tick(client);
             while(menuKey.consumeClick())if(client.screen==null)client.setScreen(new UnboxHomeScreen(true));
             long cutoff=System.nanoTime()-1_000_000_000L;while(!LEFT.isEmpty()&&LEFT.peekFirst()<cutoff)LEFT.removeFirst();while(!RIGHT.isEmpty()&&RIGHT.peekFirst()<cutoff)RIGHT.removeFirst();
-            SurvivalClientMods.sync();SurvivalHostMods.tick(client);GraveKeeper.tick(client);DynamicLightsBridge.sync();Freelook.tick(client);FreecamController.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
+            WorldFeatures.tick(client);CreativeVariants.tick();HappyGhastRecall.tick();OptifineCape.tick();ClientIntegrations.sync();SurvivalClientMods.sync();SurvivalHostMods.tick(client);GraveKeeper.tick(client);DynamicLightsBridge.sync();Freelook.tick(client);FreecamController.tick(client);WorldMap.tick(client);while(mapKey.consumeClick())if(client.screen==null&&enabled("minimap"))WorldMap.open();
             ClientHud.update(LEFT.size(),RIGHT.size());
             boolean held=zoomKey.isDown();if(ClientHud.value("zoom.mode","Hold").equals("Toggle")){if(held&&!zoomHeld&&client.screen==null)zoomToggled=!zoomToggled;}else zoomToggled=false;zoomHeld=held;
             if(!enabled("zoom")||client.player==null)zoomToggled=false;
@@ -55,9 +55,9 @@ public class UnboxClient {
             }else if(priorChatScale!=null){client.options.chatScale().set(priorChatScale);client.options.chatWidth().set(priorChatWidth);client.options.chatHeightFocused().set(priorChatFocused);client.options.chatHeightUnfocused().set(priorChatUnfocused);client.options.chatLineSpacing().set(priorChatSpacing);client.options.chatOpacity().set(priorChatText);priorChatScale=null;client.gui.getChat().rescaleChat();}
         });
         Platform.hud(Identifier.fromNamespaceAndPath("unbox","hud"),(g,t)->drawHud(g));
-        System.out.println("[Unbox] 26.1 client modules initialized");
+        System.out.println("[Unbox] "+net.minecraft.SharedConstants.getCurrentVersion().id()+" client modules initialized");
     }
-    public static void drawHud(GuiGraphicsExtractor g){ClientHud.render(g);if(Minecraft.getInstance().screen==null)SocialNotifications.draw(g);}
+    public static void drawHud(GuiGraphicsExtractor g){ClientHud.render(g);CreativeVariants.draw(g);if(Minecraft.getInstance().screen==null)SocialNotifications.draw(g);}
     public static boolean zooming(){var m=Minecraft.getInstance();return enabled("zoom")&&zoomKey!=null&&(ClientHud.value("zoom.mode","Hold").equals("Toggle")?zoomToggled:zoomKey.isDown())&&m.screen==null&&m.player!=null;}
     public static boolean adjustZoom(double scroll){if(!zooming()||!ClientHud.flag("zoom.scroll",true)||scroll==0)return false;set("zoom.factor",Math.clamp(number("zoom.factor",3,2,12)+(scroll>0?1:-1),2,12));return true;}
     public static float zoomFactor(){
