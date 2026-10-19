@@ -1,0 +1,21 @@
+{
+  "minecraft": "26.3",
+  "loader": "fabric",
+  "platform": "macOS ARM64",
+  "vanillaAtlasPixels": 256,
+  "oldCustomGlyphPixels": 512,
+  "fixedCustomGlyphPixels": 128,
+  "expandedAtlasPixels": 1024,
+  "resourcePackFixture": "Font Compatibility Fixture.zip",
+  "fixtureOverrides": "assets/minecraft/shaders/core/text.vsh",
+  "unboxResourceOverrides": false,
+  "compatibilityFallbackConfirmed": true,
+  "beforeScreenshot": "pack-before.png",
+  "afterScreenshot": "pack-after.png",
+  "vanillaAtlasVisualChecks": 87,
+  "resourcePackVisualChecks": 87,
+  "oldBundlePreflight": "rejected: glyph exceeds vanilla font atlas",
+  "newBundlePreflight": "all six native modules passed",
+  "actualUserPackTested": false,
+  "windowsGameplayTested": false
+}

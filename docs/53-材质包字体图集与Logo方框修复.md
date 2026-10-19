@@ -1,6 +1,6 @@
 # 材质包字体图集与 Logo 方框修复
 
-2026-10-19，目标版本 0.2.14。用户在 Windows 看到姓名牌 Logo 显示为空心方框，并确认开启材质包时触发。
+2026-10-19，[0.2.14](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.14) 已发布为 GitHub latest。用户在 Windows 看到姓名牌 Logo 显示为空心方框，并确认开启材质包时触发。
 
 ## 原因
 
@@ -20,9 +20,14 @@
 ## 验证与边界
 
 - 默认 256 图集下：0.2.13 实际截图出现方框；修复版 87 项视觉检查通过，皇冠姓名牌正常。
-- 开启文字着色器覆盖材质包：旧版出现同样方框；修复版截图显示皇冠，日志确认 ImmediatelyFast 兼容回退仍然触发。完整回归报告保存在证据目录。
+- 开启文字着色器覆盖材质包：旧版出现同样方框；修复版 87 项检查通过、截图显示皇冠，日志确认 ImmediatelyFast 兼容回退仍然触发。完整回归报告保存在证据目录。
 - 六套原生 Fabric / NeoForge 模块构建和资源检查通过。与 0.2.13 逐条目比较，差异限于字体资源、回归辅助代码和版本元数据；其他游戏逻辑保持一致。
 - macOS 68 项原生测试、前端构建通过；macOS 更新包已签名并核对 45 份内嵌资源。
-- Windows 构建与公开更新附件尚待后续验证。未进行 Windows 游戏实玩，也未直接测试用户的具体材质包。
+- [Windows Actions 39274680622](https://github.com/SkyVessel/unbox-client/actions/runs/39274680622) 成功，70 项原生测试通过；1 个子进程探针由两个父测试调用。GUI subsystem 2 校验通过。
+- macOS 包 53,059,343 字节、Windows 包 31,419,240 字节；各核对 45 份内嵌资源，macOS 包内外 ad-hoc codesign 有效。
+- 已匿名下载 latest.json 和全部 12 个公开附件，SHA-256 一致；两平台 updater 签名有效，篡改包被拒绝，沿用原公钥。发布标签、源码与 CI 一致：`6f4fec8e9e5f460c0faeeddc5c9029683f99d787`。
+- 未进行 Windows 游戏实玩，也未直接测试用户的具体材质包。没有修改生产 Worker 或真实账号数据。
 
 证据：`research/verification/2026-10-19-release-0214/`。无需重新兑换或重设资产。
+
+关闭 Minecraft 后，通过 Settings → Updates → Check for updates → Install and restart 更新，再启动游戏；材质包可保持开启。
