@@ -1,0 +1,26 @@
+{
+  "javascript": {
+    "passed": 58,
+    "failed": 0
+  },
+  "macOS_native": {
+    "passed": 68,
+    "failed": 0
+  },
+  "game_visual": {
+    "passed": 85,
+    "minecraft": "26.3",
+    "loader": "fabric",
+    "platform": "macOS ARM64",
+    "isolatedFixture": true
+  },
+  "compiled_modules": 6,
+  "frontendBuild": true,
+  "realTwoUserPlayTest": false,
+  "windowsGameplayTest": false,
+  "windows_native": {
+    "passed": 70,
+    "failed": 0,
+    "helperInvokedByParentTests": 1
+  }
+}

@@ -1,6 +1,6 @@
 # Logo 跨账号同步与游戏内显示修复
 
-2026-10-19，目标版本 0.2.13。用户反馈已装备皇冠，在游戏内及朋友的好友列表仍显示基础图标。
+2026-10-19，[0.2.13](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.13) 已公开发布为 GitHub latest。用户反馈已装备皇冠，在游戏内及朋友的好友列表仍显示基础图标。
 
 ## 原因与修复
 
@@ -17,6 +17,11 @@
 - macOS 26.3 Fabric 隔离世界实际渲染检查 85 项通过，包括本人皇冠、远端玩家现金、过期桥接数据和账号不匹配回退。已检查皇冠姓名牌截图。
 - 与 0.2.12 的六套 JAR 逐条目比较，变更限于姓名牌、好友显示、对应回归辅助代码、字体资源及版本；Mouse Tweaks 和皮肤库布局逻辑保持字节一致。
 - 生产 Worker 版本 `73a4b89a-88f4-4e74-a362-b02a7cc2cb13` 已 100% 部署，D1 和每小时清理保留；没有数据库迁移或修改真实用户的授权与装备。
-- 当前完成本地和生产服务端更新；Windows 构建、GitHub 正式更新附件待后续发布验证。未进行两个真实用户异地游戏联测或 Windows 游戏实玩。
+- [Windows Actions 39271777570](https://github.com/SkyVessel/unbox-client/actions/runs/39271777570) 成功，70 项原生测试通过；1 个子进程探针由两个父测试调用。EXE GUI subsystem 2 校验通过。
+- macOS 更新包 52,978,632 字节、Windows 安装包 31,404,535 字节；各核对 45 份内嵌资源。macOS 打包前后 ad-hoc codesign 均有效。
+- 已匿名下载 latest.json 和全部 12 个公开附件，SHA-256 一致；两个 updater 签名有效，篡改包被拒绝。沿用原 updater 公钥。发布标签、源码与 Windows CI 提交一致：`253c4fdef817c350faef31cf2ac84af47447c7d9`。
+- 未进行两个真实用户异地游戏联测、Windows 游戏实玩或同事机器自更新实测。
 
 证据：`research/verification/2026-10-19-release-0213/`。姓名牌用隔离测试身份和外观夹具验证，服务端跨账号同步用独立测试数据库验证。
+
+关闭 Minecraft 后，在 Settings → Updates → Check for updates → Install and restart 更新。双方均须更新；继续使用测试构建，不包含 Apple 公证或 Windows 发布者签名。

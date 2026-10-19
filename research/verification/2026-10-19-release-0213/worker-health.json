@@ -1,0 +1,7 @@
+{
+  "service": "unbox-friends",
+  "configured": true,
+  "version": 2,
+  "accountAuth": "minecraft",
+  "emailVerification": false
+}
