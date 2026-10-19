@@ -1,0 +1,68 @@
+{
+  "unbox-client.jar": [
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class",
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge.jar": [
+    "META-INF/neoforge.mods.toml",
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class"
+  ],
+  "unbox-client-26.1.2.jar": [
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class",
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge-26.1.2.jar": [
+    "META-INF/neoforge.mods.toml",
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class"
+  ],
+  "unbox-client-26.3.jar": [
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class",
+    "fabric.mod.json"
+  ],
+  "unbox-client-neoforge-26.3.jar": [
+    "META-INF/neoforge.mods.toml",
+    "assets/unbox/font/name_badge.json",
+    "dev/unbox/client/FriendsOverlay$Action.class",
+    "dev/unbox/client/FriendsOverlay.class",
+    "dev/unbox/client/FriendsScreen.class",
+    "dev/unbox/client/NameBadges$Packet.class",
+    "dev/unbox/client/NameBadges.class",
+    "dev/unbox/client/NameplateSmokeTest.class",
+    "dev/unbox/client/mixin/NameBadgeMixin.class"
+  ]
+}

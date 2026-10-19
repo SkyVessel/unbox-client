@@ -15,6 +15,15 @@ export async function ownership(db,id,now=Date.now()){
  const equipped=(await db.prepare('SELECT slot,item FROM player_equipment WHERE uuid=?').bind(id).all()).results;
  return {items:items.map(({features,...item})=>item),features,equipment:equipped.filter(e=>items.some(i=>i.id===e.item&&i.kind===e.slot))};
 }
+// Publish only the equipped appearance, never another player's inventory or roles.
+export async function equippedLogos(db,ids,now=Date.now()){
+ const found={},unique=[...new Set(ids.filter(uuid))];
+ for(let offset=0;offset<unique.length;offset+=80){const chunk=unique.slice(offset,offset+80),marks=chunk.map(()=>'?').join(',');
+  const rows=await db.prepare(`SELECT DISTINCT e.uuid,c.id,c.name,c.resource FROM player_equipment e JOIN player_accounts a ON a.uuid=e.uuid AND a.status='active' JOIN asset_catalog c ON c.id=e.item AND c.kind='logo' AND c.enabled=1 WHERE e.slot='logo' AND e.uuid IN (${marks}) AND EXISTS(SELECT 1 FROM people p WHERE p.uuid=e.uuid AND p.kind='microsoft') AND EXISTS(SELECT 1 FROM asset_grants g WHERE g.uuid=e.uuid AND g.item=e.item AND g.revoked IS NULL AND (g.expires IS NULL OR g.expires>?))`).bind(...chunk,now).all();
+  for(const {uuid,...logo} of rows.results)found[uuid]=logo;
+ }
+ return found;
+}
 export async function hasCapability(db,me,feature,now=Date.now()){
  if(!identifier(feature)||me?.kind!=='microsoft')return false;
  return (await ownership(db,me.uuid,now)).features.includes(feature);

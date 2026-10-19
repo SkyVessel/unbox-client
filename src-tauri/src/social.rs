@@ -313,7 +313,9 @@ async fn assets_inner(rt: &Runtime, account_id: &str, op: &str, value: &str) -> 
 }
 #[tauri::command]
 pub async fn asset_action(rt: tauri::State<'_, Runtime>, account_id: String, op: String, value: String) -> Result<Value, String> {
-    assets_inner(&rt, &account_id, &op, &value).await
+    let result = assets_inner(&rt, &account_id, &op, &value).await?;
+    if op == "equip-logo" { let _ = sync(&rt).await; }
+    Ok(result)
 }
 async fn action(rt: &Runtime, op: &str, id: &str) -> Result<Value, String> {
     if op == "redeem" || op == "equip-logo" {

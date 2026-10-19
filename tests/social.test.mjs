@@ -81,3 +81,18 @@ test('retired email UUID can migrate to local play without inheriting cloud iden
  }finally{db.sql.close()}
 });
 test('local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID',async()=>{const db=database(),p=player('Local');try{await register(db,p);const r=await send(db,p,'assets/redeem',{code:'A'.repeat(40),kind:'microsoft',uuid:'1'.repeat(32)});assert.equal(r.status,403);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM asset_grants').get().n,0)}finally{db.sql.close()}});
+test('equipped logos reach another account through friends and in-world UUID lookup; expired and revoked assets disappear',async()=>{
+ const db=database(),original=globalThis.fetch,a=player('SameName','microsoft'),b=player('SameName','microsoft'),local=player('Local');
+ try{
+  for(const p of [a,b]){await send(db,p,'challenge',{id:p.id});globalThis.fetch=async()=>Response.json({id:p.uuid});await register(db,p)}globalThis.fetch=original;await register(db,local);await befriend(db,a,b);await befriend(db,local,a);
+  for(const id of ['unbox-creator-crown','unbox-fluttering-cash']){db.sql.prepare('INSERT INTO asset_catalog VALUES(?,?,?,?,?,?,?)').run(id,'logo',id,null,1,'[]',Date.now());db.sql.prepare('INSERT INTO asset_grants VALUES(?,?,?,?,?,?,?)').run(id,a.uuid,id,'fixture',Date.now(),null,null)}
+  await send(db,a,'sync',{...a,state:'Playing'});assert.equal((await send(db,a,'assets/equip',{slot:'logo',item:'unbox-creator-crown'})).status,200);
+  const view=()=>send(db,b,'sync',{...b,state:'Playing',players:[a.uuid]});let v=await view();assert.equal(v.friends[0].logo.id,'unbox-creator-crown');assert.equal(v.playerLogos[a.uuid].id,'unbox-creator-crown');assert.equal(v.playerLogos[b.uuid],undefined);assert.deepEqual(Object.keys(v.friends[0].logo).sort(),['id','name','resource']);assert.equal(v.friends[0].assets,undefined);
+  assert.equal((await send(db,local,'sync',local)).friends[0].logo.id,'unbox-creator-crown');
+  await send(db,a,'assets/equip',{slot:'logo',item:'unbox-fluttering-cash'});v=await view();assert.equal(v.friends[0].logo.id,'unbox-fluttering-cash');assert.equal(v.playerLogos[a.uuid].id,'unbox-fluttering-cash');
+  await send(db,a,'assets/equip',{slot:'logo',item:null});v=await view();assert.equal(v.friends[0].logo,null);assert.deepEqual(v.playerLogos,{});
+  await send(db,a,'assets/equip',{slot:'logo',item:'unbox-creator-crown'});db.sql.prepare('UPDATE asset_grants SET expires=1 WHERE item=?').run('unbox-creator-crown');v=await view();assert.equal(v.friends[0].logo,null);assert.deepEqual(v.playerLogos,{});
+  db.sql.prepare('UPDATE asset_grants SET expires=NULL,revoked=1').run();v=await view();assert.equal(v.friends[0].logo,null);
+  db.sql.prepare('UPDATE asset_grants SET revoked=NULL').run();db.sql.prepare("UPDATE player_accounts SET status='suspended' WHERE uuid=?").run(a.uuid);v=await view();assert.equal(v.friends[0].logo,null);
+ }finally{globalThis.fetch=original;db.sql.close()}
+});

@@ -1,7 +1,8 @@
 import React,{createContext,useContext,useEffect,useRef,useState} from 'react';
 import {Box} from 'lucide-react';
+import type {PublicLogo} from './AccountLogo';
 import {call,native} from './bridge';
-export type Friend={id:string;name:string;code:string;face?:string;online:boolean;state:string;accepted:number;direction:string;kind:string};
+export type Friend={logo?:PublicLogo|null;id:string;name:string;code:string;face?:string;online:boolean;state:string;accepted:number;direction:string;kind:string};
 export type Invite={id:string;receiver:string;senderName:string;sender?:string;expires:number;room:{name:string}};
 export type SocialView={connected:boolean;assets?:{items:{id:string;kind:string;name:string;resource:string|null}[];equipment:{slot:string;item:string}[]};self?:{id:string;code:string};friends:Friend[];invites:Invite[];error?:string;canInvite?:boolean;gameError?:string;joining?:boolean};
 const empty:SocialView={connected:false,friends:[],invites:[]};

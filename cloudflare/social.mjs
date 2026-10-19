@@ -1,4 +1,4 @@
-import {platformRoute,ownership} from './platform.mjs';
+import {platformRoute,ownership,equippedLogos} from './platform.mjs';
 import {cleanupAccounts} from './accounts.mjs';
 import {verifyPlayerProof} from './player-proof.mjs';
 const reply=(b,s=200)=>Response.json(b,{status:s,headers:{'Cache-Control':'no-store'}});
@@ -57,7 +57,9 @@ export default {
     const badges=await activeBadges(db,b.players,now);if(badges===null)return reply({error:'Invalid player list'},400);
     const friends=await db.prepare('SELECT p.id,p.code,p.name,p.uuid,p.kind,p.face,p.seen,p.state,f.sender,f.accepted FROM friendships f JOIN people p ON p.id=CASE WHEN f.sender=? THEN f.receiver ELSE f.sender END WHERE f.sender=? OR f.receiver=? ORDER BY p.seen DESC LIMIT 100').bind(me.id,me.id,me.id).all();
     const invites=await db.prepare('SELECT i.*,p.name AS senderName FROM invites i JOIN people p ON p.id=i.sender WHERE (i.receiver=? OR i.sender=?) AND i.expires>? ORDER BY i.expires DESC LIMIT 100').bind(me.id,me.id,now).all();
-    return reply({protocol:2,self:me,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
+    const logos=await equippedLogos(db,[me.uuid,...badges,...friends.results.filter(f=>f.kind==='microsoft').map(f=>f.uuid)],now);
+    const playerLogos=Object.fromEntries([me.uuid,...badges].filter(id=>logos[id]).map(id=>[id,logos[id]]));
+    return reply({protocol:2,self:me,playerLogos,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,logo:f.kind==='microsoft'?logos[f.uuid]||null:null,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
    }
    if(path==='/v1/friends/request'&&request.method==='POST'){
     if(!/^[A-F0-9]{12}$/.test(b.code||''))return reply({error:'Enter the 12-character friend code'},400);

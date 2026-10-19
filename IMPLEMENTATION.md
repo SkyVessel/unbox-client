@@ -1,5 +1,7 @@
 # Unbox Client — implementation status
 
+2026-10-19: 0.2.13 fixes equipped Logos in other players’ friend lists and game nameplates. Production sync is deployed; desktop update packaging is in progress. Evidence and boundaries: [docs/52](docs/52-Logo跨账号同步与游戏内显示修复.md).
+
 2026-10-19: [v0.2.12](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.12) is published for macOS ARM64 and Windows x64. Verified-only redemption and the Logo library are deployed, retaining 0.2.11 Mouse Tweaks and skin-layout fixes. Both signed update packages and all public attachments were anonymously downloaded and verified. No creator privileges or crown grants were issued. Evidence and testing limits: [docs/51](docs/51-兑换码与Logo资产库.md).
 
 2026-10-19: [v0.2.11](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.11) is published for macOS ARM64 and Windows x64. Account/asset administration, local identities, remote News, skin UI and Mouse Tweaks fixes are released; the production Worker and additive database migration are deployed. Release evidence: [docs/50](docs/50-0.2.11更新发布.md). Different-public-IP player testing remains in [docs/48](docs/48-异地联机玩家测试清单.md). Older status below is historical.

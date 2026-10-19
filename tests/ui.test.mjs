@@ -265,3 +265,6 @@ test('skin library restricts redemption to Microsoft and refreshes owned logos a
  }await p.close();
  }
 });
+test('a friend displays their equipped crown, switches to cash, then returns to the basic logo',async()=>{
+ const p=await browser.newPage();await p.addInitScript(()=>{window.__friendLogo={id:'unbox-creator-crown',name:'Creator crown',resource:null};window.__TAURI_INTERNALS__={invoke:async cmd=>{if(cmd==='bootstrap')return {state:{profiles:[],settings:{memory:4096},account:null},dataDirectory:'/fixture'};if(cmd==='status')return {busy:false};if(cmd==='social_status')return {connected:true,friends:[{id:'friend',name:'CreatorFriend',kind:'microsoft',accepted:1,online:true,state:'Playing',logo:window.__friendLogo}],invites:[]};return []}}});await p.goto('http://127.0.0.1:1420');await p.locator('.friend-badge[src$="unbox-creator-crown.svg"]').waitFor();await p.evaluate(()=>{window.__friendLogo={id:'unbox-fluttering-cash',name:'Cash',resource:null}});await p.locator('.friend-badge[src$="unbox-fluttering-cash.svg"]').waitFor();await p.evaluate(()=>{window.__friendLogo=null});await p.locator('svg.friend-badge').waitFor();assert.equal(await p.locator('img.friend-badge').count(),0);await p.close();
+});

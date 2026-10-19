@@ -12,5 +12,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderer.class)
 public abstract class NameBadgeMixin {
  @Inject(method="extractRenderState",at=@At("TAIL"))
- private void unbox$nameBadge(Entity entity,EntityRenderState state,float partialTick,CallbackInfo ci){if(entity instanceof Player&&state.nameTag!=null){state.nameTag=LocalNickname.render(entity.getUUID(),state.nameTag);if(NameBadges.known(entity.getUUID()))state.nameTag=NameBadges.prefix(state.nameTag);}}
+ private void unbox$nameBadge(Entity entity,EntityRenderState state,float partialTick,CallbackInfo ci){if(entity instanceof Player&&state.nameTag!=null){state.nameTag=LocalNickname.render(entity.getUUID(),state.nameTag);if(NameBadges.known(entity.getUUID()))state.nameTag=NameBadges.prefix(entity.getUUID(),state.nameTag);}}
 }

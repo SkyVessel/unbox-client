@@ -1,1 +1,31 @@
-{"providers": [{"type": "bitmap", "file": "unbox:ui/badge.png", "ascent": 8, "height": 9, "chars": ["\ue000"]}]}
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "unbox:ui/badge.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue000"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "unbox:ui/unbox-creator-crown.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\ue001"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "unbox:ui/unbox-fluttering-cash.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\ue002"
+      ]
+    }
+  ]
+}

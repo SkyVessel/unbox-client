@@ -1,0 +1,8 @@
+{
+  "worker": "unbox-client-friends",
+  "version": "73a4b89a-88f4-4e74-a362-b02a7cc2cb13",
+  "deployment": "fea6877c-5b9c-46cd-9dc3-77b1bd5e6c75",
+  "percentage": 100,
+  "cron": "0 * * * *",
+  "schemaChanged": false
+}
