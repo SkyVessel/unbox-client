@@ -29,6 +29,8 @@ if not resume:
     (game/'saves').mkdir(parents=True)
     shutil.copytree(source,game/'saves/Benchmark',ignore=shutil.ignore_patterns('session.lock'))
 (game/'mods').mkdir(exist_ok=True);(game/'config').mkdir(exist_ok=True)
+if os.environ.get('UNBOX_TEST_VANILLA_FONT_ATLAS')=='1':
+    (game/'config/immediatelyfast.json').write_text(json.dumps({'font_atlas_resizing':False}))
 if sys.platform=='darwin' and game_version=='26.3' and loader=='neoforge':
     fml=game/'config/fml.toml';current=fml.read_bytes().decode() if fml.exists() else '';offset=0;updated=None
     for line in current.splitlines(keepends=True):
@@ -106,6 +108,15 @@ shutil.copy2(jar_source,game/'mods/unbox-client.jar')
 (game/'client-build.json').write_text(json.dumps({'sha256':hashlib.sha256(jar_source.read_bytes()).hexdigest(),'mode':mode,'source':str(jar_source)}))
 options={'fullscreen':'false','enableVsync':'false','pauseOnLostFocus':'false','renderDistance':'12','simulationDistance':'8','maxFps':'260','inactivityFpsLimit':'"minimized"','guiScale':'2','graphicsMode':'1','fov':'0.0','tutorialStep':'none','onboardAccessibility':'false','soundCategory_master':'0.0'}
 if os.environ.get('UNBOX_SYNC_FIXTURE')=='1' and mode=='private-host':options['resourcePacks']=json.dumps(['vanilla','file/Unbox Fixture.zip'])
+if os.environ.get('UNBOX_TEST_FONT_PACK')=='1':
+    # A pack overriding the core text shader triggers ImmediatelyFast's compatibility
+    # fallback even when the shader itself is unchanged. Never override Unbox assets.
+    (game/'resourcepacks').mkdir(exist_ok=True)
+    with zipfile.ZipFile(ROOT/f'.cache/client-{game_version}.jar') as client_zip,zipfile.ZipFile(game/'resourcepacks/Font Compatibility Fixture.zip','w') as pack:
+        pv=json.loads(client_zip.read('version.json'))['pack_version'];fmt=[pv['resource_major'],pv['resource_minor']]
+        pack.writestr('pack.mcmeta',json.dumps({'pack':{'description':'Unbox text shader compatibility fixture','min_format':fmt,'max_format':fmt}}))
+        shader='assets/minecraft/shaders/core/text.vsh';pack.writestr(shader,client_zip.read(shader))
+    options['resourcePacks']=json.dumps(['vanilla','file/Font Compatibility Fixture.zip'])
 if not resume:(game/'options.txt').write_text('\n'.join(k+':'+v for k,v in options.items())+'\n')
 (game/'config/unbox.properties').write_text(('minimap=true\nping=true\n' if os.environ.get('UNBOX_MAP_BENCH')=='1' else '')+'fps=true\ncps=true\ncoordinates=true\narmor=true\ncape=false\nfreelook=false\n')
 meta=json.loads((ROOT/f'.cache/{game_version}.json').read_text()) if game_version!='26.1' else json.loads((RUNTIME/'26.1.json').read_text());fabric=json.loads((RUNTIME/'fabric-0.19.5.json').read_text());cp=[]

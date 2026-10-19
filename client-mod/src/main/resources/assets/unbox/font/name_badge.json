@@ -11,7 +11,7 @@
     },
     {
       "type": "bitmap",
-      "file": "unbox:ui/unbox-creator-crown.png",
+      "file": "unbox:font/unbox-creator-crown.png",
       "ascent": 10,
       "height": 12,
       "chars": [
@@ -20,7 +20,7 @@
     },
     {
       "type": "bitmap",
-      "file": "unbox:ui/unbox-fluttering-cash.png",
+      "file": "unbox:font/unbox-fluttering-cash.png",
       "ascent": 10,
       "height": 12,
       "chars": [

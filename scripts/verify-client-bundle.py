@@ -24,6 +24,16 @@ for target in lock['targets']:
  engine=RES/('unbox-client'+('-neoforge' if loader=='neoforge' else '')+suffix+'.jar')
  with zipfile.ZipFile(engine) as z:
   assert 'dev/unbox/client/ClientIntegrations.class' in z.namelist(),engine
+  # Bitmap glyphs must fit the vanilla atlas without ImmediatelyFast resizing it.
+  for provider in json.loads(z.read('assets/unbox/font/name_badge.json'))['providers']:
+   if provider['type']!='bitmap':continue
+   namespace,path=provider['file'].split(':',1)
+   png=z.read(f'assets/{namespace}/textures/{path}')
+   assert png[:8]==b'\x89PNG\r\n\x1a\n',engine
+   width,height=int.from_bytes(png[16:20],'big'),int.from_bytes(png[20:24],'big')
+   rows=provider['chars'];columns=len(rows[0]);assert all(len(row)==columns for row in rows)
+   assert width%columns==0 and height%len(rows)==0,(engine,path)
+   assert width//columns<=256 and height//len(rows)<=256,(engine,path,'glyph exceeds vanilla font atlas')
   if loader=='fabric':assert json.loads(z.read('fabric.mod.json'))['depends']['minecraft']==version
   else:
    meta=tomllib.loads(z.read('META-INF/neoforge.mods.toml').decode())

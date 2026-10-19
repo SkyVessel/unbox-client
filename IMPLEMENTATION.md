@@ -1,5 +1,7 @@
 # Unbox Client — implementation status
 
+2026-10-19: 0.2.14 fixes missing crown/cash glyphs when resource packs trigger vanilla font-atlas fallback. Dedicated 128px textures preserve the approved artwork. Local game reproduction and fix evidence: [docs/53](docs/53-材质包字体图集与Logo方框修复.md). Desktop update packaging is in progress.
+
 2026-10-19: [v0.2.13](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.13) is published for macOS ARM64 and Windows x64. Equipped Logos now sync to other players’ friend lists and game nameplates. Production sync is deployed; both signed update packages and all 12 public attachments were anonymously verified. Existing redemptions and equipment are preserved. Evidence and boundaries: [docs/52](docs/52-Logo跨账号同步与游戏内显示修复.md).
 
 2026-10-19: [v0.2.12](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.12) is published for macOS ARM64 and Windows x64. Verified-only redemption and the Logo library are deployed, retaining 0.2.11 Mouse Tweaks and skin-layout fixes. Both signed update packages and all public attachments were anonymously downloaded and verified. No creator privileges or crown grants were issued. Evidence and testing limits: [docs/51](docs/51-兑换码与Logo资产库.md).
