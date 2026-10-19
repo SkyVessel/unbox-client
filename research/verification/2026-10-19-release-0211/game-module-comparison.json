@@ -1,0 +1,38 @@
+{
+  "unbox-client.jar": {
+    "differencesFromGameTestedJar": [
+      "fabric.mod.json"
+    ],
+    "gameTestPassed": true
+  },
+  "unbox-client-neoforge.jar": {
+    "differencesFromGameTestedJar": [
+      "META-INF/neoforge.mods.toml"
+    ],
+    "gameTestPassed": true
+  },
+  "unbox-client-26.1.2.jar": {
+    "differencesFromGameTestedJar": [
+      "fabric.mod.json"
+    ],
+    "gameTestPassed": true
+  },
+  "unbox-client-neoforge-26.1.2.jar": {
+    "differencesFromGameTestedJar": [
+      "META-INF/neoforge.mods.toml"
+    ],
+    "gameTestPassed": true
+  },
+  "unbox-client-26.3.jar": {
+    "differencesFromGameTestedJar": [
+      "fabric.mod.json"
+    ],
+    "gameTestPassed": true
+  },
+  "unbox-client-neoforge-26.3.jar": {
+    "differencesFromGameTestedJar": [
+      "META-INF/neoforge.mods.toml"
+    ],
+    "gameTestPassed": true
+  }
+}

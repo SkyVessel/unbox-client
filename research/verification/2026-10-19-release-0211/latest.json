@@ -1,0 +1,15 @@
+{
+  "version": "0.2.11",
+  "notes": "Unbox Client 0.2.11 \u2014 accounts, skins and mod toggle fixes\n\n- Fixed Mouse Tweaks remaining active after being disabled, including the first inventory interaction and reopening screens.\n- Retired Unbox email sign-in. Existing identities migrate to local accounts with their UUID, nickname and saved skin library preserved. Local nicknames can be changed in the launcher.\n- Added server-managed cosmetic ownership and role capabilities for verified Minecraft accounts. Existing free features remain free. Local accounts can join private friend worlds; public servers require a Microsoft account.\n- Redesigned launcher and in-game skin selectors with a left-hand avatar list and player identity above the preview.\n- News now loads from the server. Updates show release notes and ask for installation confirmation; the shortcut appears only when an update is available.\n- Removed the Particles client module. Preserved the Windows console-window fix.\n\nSupports Minecraft 26.1, 26.1.2 and 26.3 with native Fabric and NeoForge modules on macOS Apple Silicon and Windows x64.\n\nClose Minecraft, then open Settings \u2192 Updates \u2192 Check for updates \u2192 Install and restart. Both players should update before joining private worlds. Retired email accounts may need to re-add friends using their new local friend code.\n\nTesting: six game/loader combinations passed 47 mod-toggle checks each; additional feature and survival checks passed. Windows installer and native checks are built in GitHub Actions. Different-household network and Windows gameplay testing remain to be completed by testers. Testing builds are not Apple-notarized or Windows publisher-signed; updater packages retain the existing Unbox update signature.\n",
+  "pub_date": "2026-10-19T14:04:55.842003Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN29oYnhhZnZ3R0JyWE9NL3FtOG1pc0lyV1BUYVJHMEltRVUxNUJlRXVOS3ZtdUhnNXBIbXFiTTRBZFNzQ3Z6NXNoa2dHK3NLblI4bDcrbTVNb0w0cFE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDE4Mzg1CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMV9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTEKU3lFb2lFOW9CMTgxa0Zod3NJOTF2Z1dFYjdyV01VQW1hTmFaQ28xc1RKdkNxejZpUWQ5bTZxVm5icXhmWTYvbTZkQ1RIcEVialdnbmxUOGNoU0NkQnc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.11/Unbox.Client_0.2.11_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2szb3FvYkFIRVBwSGdGa29GY3hleWY4dXc5YUFPZDlJVklxNFBadFdmK0dWdkZSWWV3Z2pnSDhFMWlxd3hldC8wcEJwbnp2RlBEeXMxa0xDRTUySEE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDE4NjczCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xMV93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTEKMHNvc1VtdURqYjVMekd2YVZzOU5WU2s3VlNmMXdVTStkVmxXTXdhTkdWczFKbmRFVDZvem9Ld2l0VTFaOEltNWJkVkVCbnZ4Ly9PZ0JjZzRHVmFOQXc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.11/Unbox.Client_0.2.11_windows-x64-setup.exe"
+    }
+  }
+}

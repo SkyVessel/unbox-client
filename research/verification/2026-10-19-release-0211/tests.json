@@ -1,0 +1,10 @@
+{
+  "javascript": [
+    "# pass 49"
+  ],
+  "macOS": [
+    "test result: ok. 68 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s"
+  ],
+  "sourceCommit": "15b0601e56b7cad44cb13a21414c087b620d81b8",
+  "bundleVerification": "six native feature sets and dependency hashes verified"
+}

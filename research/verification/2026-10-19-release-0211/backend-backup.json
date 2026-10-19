@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-10-19T13:56:14.354896+00:00",
+  "sha256": "a8b956b444cf47cba23f79cb68c1dfbae855658ba2d1e998e65e8059fb42b69b",
+  "bytes": 5014,
+  "legacyRowsBefore": {
+    "people": 4,
+    "friendships": 2,
+    "invites": 0,
+    "challenges": 0,
+    "unbox_accounts": 1,
+    "account_sessions": 1,
+    "account_limits": 0
+  },
+  "legacyRowsAfter": {
+    "people": 4,
+    "friendships": 2,
+    "invites": 0,
+    "challenges": 0,
+    "unbox_accounts": 1,
+    "account_sessions": 1,
+    "account_limits": 0
+  },
+  "localRestoreVerified": true,
+  "previousWorkerVersion": "437a683e-affd-450e-bf9f-6f847853a8ad"
+}

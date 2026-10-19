@@ -1,0 +1,42 @@
+[
+  {
+    "path": ".cache/benchmarks/mod-toggle-fabric-263/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-host-features-neo263/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 115
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-neoforge-263/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-neoforge-2612/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-fabric-261/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-neoforge-261/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-fabric-2612/logs/feature-smoke.json",
+    "ok": true,
+    "checkCount": 47
+  },
+  {
+    "path": ".cache/benchmarks/mod-toggle-survival-fabric263/logs/survival-smoke.json",
+    "ok": true,
+    "checkCount": 23
+  }
+]

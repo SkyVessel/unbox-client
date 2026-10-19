@@ -1,0 +1,8 @@
+{
+  "windowsGuiSubsystem": 2,
+  "downloadedInstallerGuiVerified": true,
+  "syncBackgroundProcessWithoutConsole": true,
+  "asyncBackgroundProcessWithoutConsole": true,
+  "nativeTestsPassed": 70,
+  "ignoredChildProbe": "executed by two parent process tests"
+}

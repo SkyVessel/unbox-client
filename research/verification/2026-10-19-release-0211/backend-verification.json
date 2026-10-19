@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-19T14:05:22.103450+00:00",
+  "endpoint": "https://unbox-client-friends.printoria-studio.workers.dev",
+  "checks": [
+    "Production Worker uses Minecraft account platform",
+    "Administration page is served",
+    "Anonymous admin access rejected",
+    "Read-only administrator can inspect catalog",
+    "Read-only administrator cannot modify news",
+    "Retired email login explicitly requests upgrade",
+    "Local registration ReleaseHost",
+    "Local identity stores no nickname or assets ReleaseHost",
+    "Local assets access denied ReleaseHost",
+    "Local registration ReleaseGuest",
+    "Local identity stores no nickname or assets ReleaseGuest",
+    "Local assets access denied ReleaseGuest",
+    "Friend request succeeds",
+    "Friend acceptance succeeds",
+    "Private-world invitation succeeds",
+    "Invite reaches friend with correct native environment",
+    "Release news saved as draft",
+    "Draft news is not public"
+  ],
+  "ok": true,
+  "fixtureIdsLoggedForCleanup": true,
+  "workerVersion": "dffa4eb3-559a-4c81-841b-e765683f54f9",
+  "deploymentId": "dda2f165-606a-4b7d-94be-c7fa081d6d27",
+  "fixtureCleanupVerified": true,
+  "legacyCountsUnchanged": true,
+  "releaseNewsPublished": true,
+  "automaticOffsiteBackupConfigured": false
+}
