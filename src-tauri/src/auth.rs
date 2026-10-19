@@ -111,7 +111,7 @@ pub fn auth_open()->Result<(),String>{
     #[cfg(target_os="macos")]let program="open";
     #[cfg(target_os="windows")]let program="explorer";
     #[cfg(target_os="linux")]let program="xdg-open";
-    std::process::Command::new(program).arg("https://www.microsoft.com/link").spawn().map_err(|_|"Could not open your browser")?;Ok(())
+    crate::process::command(program).arg("https://www.microsoft.com/link").spawn().map_err(|_|"Could not open your browser")?;Ok(())
 }
 #[tauri::command]
 pub async fn auth_cancel(rt:tauri::State<'_,Runtime>)->Result<(),String>{let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;Ok(())}

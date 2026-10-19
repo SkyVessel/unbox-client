@@ -50,7 +50,7 @@ pub async fn prepare(rt:&Runtime,java:&Path,client:&reqwest::Client,meta:&Value)
   let installer=root.join("installer.jar");
   crate::launcher::download(client,&format!("https://maven.neoforged.net/releases/net/neoforged/neoforge/{version}/neoforge-{version}-installer.jar"),&installer,Some(installer_sha1)).await?;
   let log=fs::File::create(root.join("install.log")).map_err(|e|e.to_string())?;
-  let mut command=tokio::process::Command::new(java);command.arg("-jar").arg(&installer).arg("--installClient").arg(&root).current_dir(&root).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).kill_on_drop(true);
+  let mut command=crate::process::async_command(java);command.arg("-jar").arg(&installer).arg("--installClient").arg(&root).current_dir(&root).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).kill_on_drop(true);
   let status=tokio::time::timeout(Duration::from_secs(600),command.status()).await.map_err(|_|"NeoForge installation timed out. Retry to resume verified downloads.")?.map_err(|e|e.to_string())?;
   if !status.success(){return Err(format!("NeoForge installation failed. See {}",root.join("install.log").display()))}
  }

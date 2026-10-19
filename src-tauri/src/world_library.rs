@@ -130,7 +130,7 @@ fn link_dir(target: &Path, link: &Path) -> Result<(), String> {
     }
     #[cfg(windows)]
     {
-        let status = std::process::Command::new("cmd")
+        let status = crate::process::command("cmd")
             .args(["/C", "mklink", "/J"])
             .arg(link)
             .arg(target)

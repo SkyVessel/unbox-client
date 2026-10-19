@@ -45,10 +45,10 @@ pub fn args(values:&Value,vars:&std::collections::HashMap<&str,String>)->Vec<Str
 }
 fn java()->Result<PathBuf,String>{
     let mut candidates=Vec::new();
-    #[cfg(target_os="macos")] {if let Ok(out)=std::process::Command::new("/usr/libexec/java_home").args(["-v","25"]).output(){if out.status.success(){candidates.push(PathBuf::from(String::from_utf8_lossy(&out.stdout).trim()).join("bin/java"));}}}
+    #[cfg(target_os="macos")] {if let Ok(out)=crate::process::command("/usr/libexec/java_home").args(["-v","25"]).output(){if out.status.success(){candidates.push(PathBuf::from(String::from_utf8_lossy(&out.stdout).trim()).join("bin/java"));}}}
     if let Some(home)=std::env::var_os("JAVA_HOME"){candidates.push(PathBuf::from(home).join(if cfg!(windows){"bin/java.exe"}else{"bin/java"}));}
     candidates.push(PathBuf::from("java"));
-    for p in candidates{if let Ok(out)=std::process::Command::new(&p).arg("-version").output(){let s=String::from_utf8_lossy(&out.stderr);if out.status.success()&&s.contains("version \"25"){return Ok(p)}}}
+    for p in candidates{if let Ok(out)=crate::process::command(&p).arg("-version").output(){let s=String::from_utf8_lossy(&out.stderr);if out.status.success()&&s.contains("version \"25"){return Ok(p)}}}
     Err("Java 25 is required. Install Temurin 25, then retry.".into())
 }
 pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_only:bool,verification:bool,app:&tauri::AppHandle)->Result<(),String>{
@@ -137,7 +137,7 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
     let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
     if argv.iter().any(|s|s.contains("${")){return Err("Unresolved launch argument".into())}
     let log=fs::File::create(game.join("logs/unbox-launch.log")).map_err(|e|e.to_string())?;
-    let mut child=tokio::process::Command::new(java).args(argv).current_dir(&game).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).spawn().map_err(|e|e.to_string())?;
+    let mut child=crate::process::async_command(java).args(argv).current_dir(&game).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).spawn().map_err(|e|e.to_string())?;
     phase(rt,"Playing",100);
     let minimize=fs::read(rt.root.join("state.json")).ok().and_then(|b|serde_json::from_slice::<Value>(&b).ok()).is_none_or(|s|s["settings"]["minimize"]!=false);
     if minimize{if let Some(w)=app.get_webview_window("main"){let _=w.minimize();}}

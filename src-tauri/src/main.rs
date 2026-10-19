@@ -1,4 +1,5 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![cfg_attr(all(target_os = "windows", not(test)), windows_subsystem = "windows")]
+mod process;
 mod skin_library;
 mod world_library;
 #[cfg(any(target_os="macos",test))]
@@ -130,7 +131,7 @@ fn open_folder(rt: tauri::State<Runtime>, id: Option<String>) -> Result<(),Strin
     #[cfg(target_os="macos")] let program="open";
     #[cfg(target_os="windows")] let program="explorer";
     #[cfg(target_os="linux")] let program="xdg-open";
-    std::process::Command::new(program).arg(p).spawn().map_err(|e|e.to_string())?;Ok(())
+    crate::process::command(program).arg(p).spawn().map_err(|e|e.to_string())?;Ok(())
 }
 #[tauri::command]
 fn open_licenses(rt: tauri::State<Runtime>) -> Result<(),String> {
@@ -145,7 +146,7 @@ fn open_licenses(rt: tauri::State<Runtime>) -> Result<(),String> {
     #[cfg(target_os="macos")] let program="open";
     #[cfg(target_os="windows")] let program="explorer";
     #[cfg(target_os="linux")] let program="xdg-open";
-    std::process::Command::new(program).arg(index).spawn().map_err(|e|e.to_string())?;Ok(())
+    crate::process::command(program).arg(index).spawn().map_err(|e|e.to_string())?;Ok(())
 }
 fn main() {
     #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--prepare-invite-fixture") {

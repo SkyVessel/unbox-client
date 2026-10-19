@@ -5,7 +5,7 @@ on:
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.9
+        default: v0.2.10
       neoforge_module_sha256:
         description: Expected SHA-256 of unbox-client-neoforge.jar
         required: true
@@ -76,6 +76,8 @@ jobs:
         run: cargo test --locked --manifest-path src-tauri/Cargo.toml
       - name: Build testing installer with Unbox Microsoft sign-in
         run: npm run tauri -- build --debug --config src-tauri/tauri.windows-testing.conf.json --bundles nsis
+      - name: Verify launcher uses the Windows GUI subsystem
+        run: python scripts/verify-windows-gui.py src-tauri/target/debug/unbox-client.exe
       - uses: actions/upload-artifact@v4
         with:
           name: unbox-windows-testing

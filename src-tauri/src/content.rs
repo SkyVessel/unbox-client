@@ -229,7 +229,7 @@ pub fn open_content_folder(
     let command = "explorer";
     #[cfg(target_os = "linux")]
     let command = "xdg-open";
-    std::process::Command::new(command)
+    crate::process::command(command)
         .arg(dir)
         .spawn()
         .map_err(|e| e.to_string())?;
