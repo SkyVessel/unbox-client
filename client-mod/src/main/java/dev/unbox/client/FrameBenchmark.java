@@ -18,10 +18,11 @@ public final class FrameBenchmark {
         long now=System.nanoTime();if(worldStart==0)worldStart=now;
         m.player.setYRot(135);m.player.setXRot(15);
         if(now-worldStart<30_000_000_000L){last=0;return;}
-        if(start==0)start=now;
+        if(start==0){start=now;if(Boolean.getBoolean("unbox.performanceBenchmark"))PerformanceMonitor.start();}
         if(last!=0){times.add((now-last)/1_000_000.0);if(!m.isWindowActive())inactive++;}last=now;
         if(now-start<45_000_000_000L)return;
         done=true;
+        if(PerformanceMonitor.running()){PerformanceMonitor.stop();PerformanceMonitor.export();}
         try{
             Path dir=Platform.gameDir().resolve("logs");Files.createDirectories(dir);
             try(var writer=Files.newBufferedWriter(dir.resolve("frame-times.csv"))){writer.write("frame_ms\n");for(double d:times)writer.write(d+"\n");}

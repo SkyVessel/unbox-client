@@ -1,0 +1,34 @@
+{
+  "runtime": {
+    "neoforge-263-checks": {
+      "ok": true,
+      "checks": 74
+    },
+    "fabric-261-checks": {
+      "ok": true,
+      "checks": 74
+    },
+    "neoforge-2612-checks": {
+      "ok": true,
+      "checks": 74
+    },
+    "fabric-2612-checks": {
+      "ok": true,
+      "checks": 74
+    },
+    "fabric-263-checks": {
+      "ok": true,
+      "checks": 74
+    },
+    "neoforge-261-checks": {
+      "ok": true,
+      "checks": 74
+    }
+  },
+  "totalRuntimeChecks": 444,
+  "fullFeatureChecks": 126,
+  "testedHost": "macOS ARM64",
+  "windowsGameplayTested": false,
+  "remoteNetworkRetested": false,
+  "branch": "codex/mod-toggle-audit"
+}

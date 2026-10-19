@@ -1,0 +1,14 @@
+PASS: all 9792 maximum-viewport tiles remain cached
+PASS: eviction at limit 16384 preserves both pending cells after reopen
+[Unbox] Explored map tile remains queued; retrying in 5 seconds
+[Unbox] Explored map writes remain pending (disk error or timeout)
+PASS: failed disk write retries latest snapshot after close
+[Unbox] Explored map tile remains queued; retrying in 5 seconds
+[Unbox] Explored map writes remain pending (disk error or timeout)
+[Unbox] Explored map writes remain pending (disk error or timeout)
+PASS: delayed retry cannot overwrite newer captures after reopening a world
+[Unbox] Explored map tile remains queued; retrying in 5 seconds
+[Unbox] Explored map writes remain pending (disk error or timeout)
+[Unbox] Explored map tile remains queued; retrying in 5 seconds
+[Unbox] Explored map writes remain pending (disk error or timeout)
+PASS: a damaged target does not starve healthy tiles and recovers after repair

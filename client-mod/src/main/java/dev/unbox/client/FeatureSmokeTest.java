@@ -41,6 +41,7 @@ final class FeatureSmokeTest {
  private static void server(Minecraft mc,Work work){pending=new CompletableFuture<>();mc.getSingleplayerServer().execute(()->{try{work.run();pending.complete(null);}catch(Throwable e){pending.completeExceptionally(e);}});}
  static void tick(Minecraft mc){
   if(!Boolean.getBoolean("unbox.featureSmoke")||finished)return;
+  if(Boolean.getBoolean("unbox.performanceSmoke")){PerformanceSmokeTest.tick(mc);return;}
   mc.getFramerateLimitTracker().onInputReceived();
   if(mc.player==null||mc.getSingleplayerServer()==null)return;
   try{

@@ -14,6 +14,9 @@ public final class MapTerrainStoreTest {
         Path root = Path.of(args[0]);
         maximumViewportRetainsVisibleTiles(root);
         evictionPreservesPendingCells(root);
+        failedWriteRetries(root);
+        oldRetryDoesNotOverwriteReopenedWorld(root);
+        damagedTileDoesNotStarveOtherTiles(root);
     }
 
     private static void maximumViewportRetainsVisibleTiles(Path root) {
@@ -85,6 +88,41 @@ public final class MapTerrainStoreTest {
         } finally {
             reopened.close();
         }
+    }
+
+    private static void failedWriteRetries(Path root)throws Exception {
+        Path blocked=root.resolve("blocked");java.nio.file.Files.createDirectories(root);java.nio.file.Files.writeString(blocked,"obstacle");
+        MapTerrainStore store=new MapTerrainStore(blocked,"retry","overworld");store.capture(0,0,FIRST);store.flush(1);
+        MapTerrainStore.finishWrites(); // First write fails because its parent is a file.
+        store.capture(1,0,SECOND);store.close(); // Newer snapshot must survive replacement and close.
+        java.nio.file.Files.delete(blocked);
+        Thread.sleep(5500);MapTerrainStore.finishWrites();
+        MapTerrainStore reopened=new MapTerrainStore(blocked,"retry","overworld");reopened.tick();reopened.color(0,0);MapTerrainStore.finishWrites();reopened.tick();
+        check(reopened.color(0,0)==FIRST&&reopened.color(1,0)==SECOND,"Failed write lost cells on retry / close");reopened.close();
+        System.out.println("PASS: failed disk write retries latest snapshot after close");
+    }
+
+    private static void oldRetryDoesNotOverwriteReopenedWorld(Path root)throws Exception {
+        Path blocked=root.resolve("reopened-blocked");java.nio.file.Files.writeString(blocked,"obstacle");
+        MapTerrainStore first=new MapTerrainStore(blocked,"world","overworld");first.capture(0,0,FIRST);first.capture(1,0,FIRST);first.close();MapTerrainStore.finishWrites();
+        java.nio.file.Files.delete(blocked);
+        MapTerrainStore second=new MapTerrainStore(blocked,"world","overworld");second.capture(0,0,SECOND);second.close();MapTerrainStore.finishWrites();
+        Thread.sleep(5500);MapTerrainStore.finishWrites();
+        MapTerrainStore reopened=new MapTerrainStore(blocked,"world","overworld");reopened.tick();reopened.color(0,0);MapTerrainStore.finishWrites();reopened.tick();
+        check(reopened.color(0,0)==SECOND,"Old retry overwrote a newer world capture");check(reopened.color(1,0)==FIRST,"Reopening lost another pending cell");reopened.close();
+        System.out.println("PASS: delayed retry cannot overwrite newer captures after reopening a world");
+    }
+
+    private static void damagedTileDoesNotStarveOtherTiles(Path root)throws Exception {
+        MapTerrainStore store=new MapTerrainStore(root,"damaged-target","overworld");
+        var field=MapTerrainStore.class.getDeclaredField("directory");field.setAccessible(true);Path directory=(Path)field.get(store);
+        Path obstacle=directory.resolve("0_0.tile");java.nio.file.Files.createDirectories(obstacle);
+        store.capture(0,0,FIRST);store.capture(16,0,SECOND);store.close();MapTerrainStore.finishWrites();
+        Thread.sleep(5500);MapTerrainStore.finishWrites();
+        check(java.nio.file.Files.isRegularFile(directory.resolve("1_0.tile")),"One damaged target starved a healthy tile");
+        java.nio.file.Files.delete(obstacle);Thread.sleep(5500);MapTerrainStore.finishWrites();
+        check(java.nio.file.Files.isRegularFile(obstacle),"Repaired target did not recover");
+        System.out.println("PASS: a damaged target does not starve healthy tiles and recovers after repair");
     }
 
     private static void check(boolean condition, String message) {

@@ -12,7 +12,10 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 @Mixin(HappyGhast.class)
 public abstract class HappyGhastRecallMixin extends Animal {
+ @org.spongepowered.asm.mixin.Unique private double unbox$lastSpeed;
  protected HappyGhastRecallMixin(EntityType<? extends Animal> type,Level level){super(type,level);}
+ @Inject(method="tick",at=@At("HEAD"))
+ private void unbox$speed(CallbackInfo ci){unbox$lastSpeed=dev.unbox.client.WorldFeatures.updateGhast((HappyGhast)(Object)this,unbox$lastSpeed);}
  @Inject(method="registerGoals",at=@At("TAIL"))
  private void unbox$recallGoal(CallbackInfo ci){goalSelector.addGoal(1,HappyGhastRecall.goal((HappyGhast)(Object)this));}
  @Inject(method="mobInteract",at=@At("HEAD"))

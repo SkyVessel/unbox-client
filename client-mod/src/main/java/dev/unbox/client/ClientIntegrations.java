@@ -7,8 +7,10 @@ import java.util.*;
 
 /** Small adapters to separately distributed upstream mods; Unbox owns only the exposed settings. */
 public final class ClientIntegrations {
-    private static final Map<String,String> errors=new HashMap<>();
+    private static final Map<String,String> errors=new java.util.concurrent.ConcurrentHashMap<>();
     private static int ticks;
+    private static final Map<String,Long> revisions=new HashMap<>(),retryAt=new HashMap<>();
+    private static final Map<String,Boolean> states=new HashMap<>();
     private static boolean buildingWasActive;
     public static final List<String> IDS=List.of("mousetweaks","shulker","effectbars","bookshelf","resources","spatial","building","variants");
     private ClientIntegrations(){}
@@ -20,7 +22,7 @@ public final class ClientIntegrations {
         case "building"->"effortlessbuilding";case "variants"->"colourscroller";default->"";};}
     public static boolean available(String id){return engine(id).isEmpty()||Platform.loaded(engine(id))&&!errors.containsKey(id);}
     public static String reason(String id){return errors.getOrDefault(id,"Launch with Unbox to install "+engine(id));}
-    public static boolean active(String id){return id.equals("building")?WorldFeatures.buildingClient():id.equals("shulker")?SurvivalHostMods.hostEnabled(id):UnboxClient.enabled(id);}
+    public static boolean active(String id){if(!available(id))return false;return id.equals("building")?WorldFeatures.buildingClient():id.equals("shulker")?SurvivalHostMods.hostEnabled(id):UnboxClient.enabled(id);}
     public static KeyMapping key(String id){
         if(id.equals("variants"))return CreativeVariants.key;
         if(id.equals("ghast"))return HappyGhastRecall.key;
@@ -30,12 +32,15 @@ public final class ClientIntegrations {
     }
     public static void sync(){
         if(ticks++%5!=0)return;
-        for(String id:IDS)refresh(id);
+        for(String id:IDS){
+            if(errors.containsKey(id)&&System.nanoTime()<retryAt.getOrDefault(id,0L))continue;
+            if(id.equals("spatial")||errors.containsKey(id)||!Objects.equals(revisions.get(id),UnboxClient.revision())||!Objects.equals(states.get(id),active(id)))refresh(id);
+        }
     }
     public static void refresh(String id){
-        if(!available(id)||!Platform.loaded(engine(id)))return;
-        try{apply(id);}catch(ReflectiveOperationException|LinkageError|RuntimeException e){
-            errors.put(id,"Integration failed; check the installed mod version");
+        if(!Platform.loaded(engine(id))||errors.containsKey(id)&&System.nanoTime()<retryAt.getOrDefault(id,0L))return;
+        try{apply(id);if(errors.remove(id)!=null){revisions.remove(id);states.remove(id);}else{revisions.put(id,UnboxClient.revision());states.put(id,active(id));}}catch(ReflectiveOperationException|LinkageError|RuntimeException e){
+            errors.put(id,"Integration failed; retrying in 5 seconds");retryAt.put(id,System.nanoTime()+5_000_000_000L);
             System.err.println("[Unbox] "+id+" integration: "+e);
         }
     }

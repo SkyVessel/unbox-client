@@ -154,6 +154,9 @@ public final class WorldMap {
   if(!labels&&player!=null)PanelStyle.hudCenter(g,player.getBlockX()+" / "+player.getBlockY()+" / "+player.getBlockZ(),x+size/2,y+size+4,PanelStyle.TEXT,true);
  }
  private static void drawMap(GuiGraphicsExtractor g,int x,int y,int width,int height,boolean labels){
+  long start=PerformanceMonitor.begin();try{drawMapMeasured(g,x,y,width,height,labels);}finally{PerformanceMonitor.end(PerformanceMonitor.Group.MAP_DRAW,start);}
+ }
+ private static void drawMapMeasured(GuiGraphicsExtractor g,int x,int y,int width,int height,boolean labels){
   var mc=Minecraft.getInstance();updateView(mc);
   g.fill(x,y,x+width,y+height,EMPTY);g.enableScissor(x,y,x+width,y+height);
   tiles.draw(g,x,y,width,height,originX,originZ,spanX,spanZ);

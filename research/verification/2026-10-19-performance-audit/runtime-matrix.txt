@@ -1,0 +1,20 @@
+BUILD fabric 26.1 0 
+RECORD ONLY 0 {"run":"audit-perf-record-only","samples":35486,"averageFps":788.568,"onePercentLowFps":255.970,"p95Ms":3.019,"p99Ms":3.344,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}
+BUILD 26.1 fabric 0 
+TEST 26.1 fabric 0 True 74 
+BUILD 26.1 neoforge 0 Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+TEST 26.1 neoforge 0 True 74 
+BUILD 26.1.2 fabric 0 
+TEST 26.1.2 fabric 0 True 74 
+BUILD 26.1.2 neoforge 0 Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+TEST 26.1.2 neoforge 0 True 74 
+BUILD 26.3 fabric 0 
+TEST 26.3 fabric 0 True 74 
+BUILD 26.3 neoforge 0 Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+TEST 26.3 neoforge 0 True 74 

@@ -179,6 +179,7 @@ public class UnboxScreen extends Screen {
     private KeyMapping freelookKey(){for(KeyMapping key:minecraft.options.keyMappings)if(key.getName().equals("freelook.key.activate"))return key;return null;}
     private void initPerformance(){
         int y=bodyTop-scroll;
+        body(new Action(left+18,y+6,220,28,"Open performance tester",()->minecraft.setScreen(new PerformanceScreen(this))));y+=46;
         for(String id:List.of("sodium","lithium","immediatelyfast","entityculling","ferritecore","dynamic_fps")){
             var mod=Platform.mod(id);
             rows.add(new Row(y,mod==null?id:mod.name()));
@@ -252,7 +253,7 @@ public class UnboxScreen extends Screen {
             if(!detail.equals("performance"))renderPreview(g,left+pw-rightWidth-18,bodyTop,rightWidth,bodyBottom-bodyTop);
         }
         if(maxScroll>0){int h=bodyBottom-bodyTop,thumb=Math.max(24,h*h/(h+maxScroll));PanelStyle.round(g,detail.isEmpty()?left+pw-8:left+pw-Math.max(192,pw/3)-30,bodyTop+(h-thumb)*scroll/maxScroll,3,thumb,1,0xff65727c);}
-        String footer=!notice.isEmpty()?notice:recording!=null?"Press a key. Esc cancels. Delete clears.":detail.isEmpty()?"Right Shift to close":"Saved automatically   ·   Click a number to type";
+        String footer=!notice.isEmpty()?notice:!ModuleBindings.reason(detail).isEmpty()?ModuleBindings.reason(detail):recording!=null?"Press a key. Esc cancels. Delete clears.":detail.isEmpty()?"Right Shift to close":"Saved automatically   ·   Click a number to type";
         PanelStyle.label(g,footer,left+19,top+ph-19,PanelStyle.MUTED);
         for(var child:children()){
             if(!(child instanceof AbstractWidget renderable))continue;
@@ -441,7 +442,7 @@ public class UnboxScreen extends Screen {
         if(expandedChoice!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){expandedChoice=null;return true;}if(e.key()==GLFW.GLFW_KEY_DOWN||e.key()==GLFW.GLFW_KEY_UP){dropdownIndex=Math.floorMod(dropdownIndex+(e.key()==GLFW.GLFW_KEY_DOWN?1:-1),expandedChoice.option.choices().length);return true;}if(e.isConfirmation()){Choice choice=expandedChoice;expandedChoice=null;choice.choose(dropdownIndex);return true;}}
         if(recording!=null){if(e.key()==GLFW.GLFW_KEY_ESCAPE){recording=null;notice="Keybind unchanged.";return true;}var candidate=e.key()==GLFW.GLFW_KEY_DELETE?InputConstants.UNKNOWN:InputConstants.Type.KEYSYM.getOrCreate(e.key());
             if(e.key()==GLFW.GLFW_KEY_RIGHT_SHIFT){notice="Right Shift is reserved for the Unbox menu. Choose another key.";return true;}
-            if(e.key()!=GLFW.GLFW_KEY_DELETE){for(KeyMapping other:minecraft.options.keyMappings)if(other!=recording&&other.matches(e)){other.setKey(InputConstants.UNKNOWN);}}
+            if(e.key()!=GLFW.GLFW_KEY_DELETE){for(KeyMapping other:minecraft.options.keyMappings)if(other!=recording&&other.matches(e)){notice="Already used by "+net.minecraft.network.chat.Component.translatable(other.getName()).getString()+". Choose another key.";return true;}}
             recording.setKey(candidate);KeyMapping.resetMapping();minecraft.options.save();UnboxClient.set(detail+".key",recording.saveString());UnboxClient.save();recording=null;notice="Keybind saved.";return true;}
         if(e.key()==GLFW.GLFW_KEY_RIGHT_SHIFT){if(numberKey!=null||colorKey!=null||editing){onClose();return true;}UnboxClient.save();minecraft.setScreen(minecraft.level==null?parent:null);return true;}
         if(editing&&!ClientHud.flag(selected+".locked",false)){var b=ClientHud.bounds(selected,width,height,true);int dx=e.key()==GLFW.GLFW_KEY_LEFT?-1:e.key()==GLFW.GLFW_KEY_RIGHT?1:0,dy=e.key()==GLFW.GLFW_KEY_UP?-1:e.key()==GLFW.GLFW_KEY_DOWN?1:0;if(dx!=0||dy!=0){boolean previous=snap;snap=false;moveHud(b.x()+dx,b.y()+dy);snap=previous;return true;}}

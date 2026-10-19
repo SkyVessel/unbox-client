@@ -1,0 +1,1 @@
+{"run":"audit-perf-matched-off","samples":35665,"averageFps":792.547,"onePercentLowFps":238.347,"p95Ms":3.010,"p99Ms":3.473,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

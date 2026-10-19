@@ -5,7 +5,8 @@ import net.minecraft.client.KeyMapping;
 import java.util.*;
 /** Same persisted settings whether changed in the launcher or inside the game. */
 final class ModuleBindings {
- private static final Map<String,String> applied=new HashMap<>();
+ private static final Map<String,String> applied=new HashMap<>(),conflicts=new HashMap<>();
+ static String reason(String id){return conflicts.getOrDefault(id,"");}
  static void apply(){var mc=Minecraft.getInstance();
   for(KeyMapping key:mc.options.keyMappings)if(key.getName().equals("key.unbox.menu")&&!key.saveString().equals("key.keyboard.right.shift")){key.setKey(InputConstants.Type.KEYSYM.getOrCreate(org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT));KeyMapping.resetMapping();mc.options.save();}
   for(String id:List.of("zoom","freelook","minimap","freecam","veinminer","building","variants","ghast")){
@@ -13,9 +14,12 @@ final class ModuleBindings {
   KeyMapping binding=id.equals("zoom")?UnboxClient.zoomKey:id.equals("minimap")?UnboxClient.mapKey:id.equals("freecam")?FreecamController.key():id.equals("veinminer")?SurvivalHostMods.key():id.equals("building")||id.equals("variants")||id.equals("ghast")?ClientIntegrations.key(id):Arrays.stream(mc.options.keyMappings).filter(k->k.getName().equals("freelook.key.activate")).findFirst().orElse(null);if(binding==null)continue;
   if(value!=null&&value.matches("-?\\d+")){String migrated=KeyBindingNames.migrate(value,binding.saveString(),binding.getDefaultKey().getName());if(migrated==null)continue;value=migrated;UnboxClient.set(id+".key",value);UnboxClient.save();}
   if("key.keyboard.right.shift".equals(value)||binding.saveString().equals("key.keyboard.right.shift")){binding.setKey(InputConstants.UNKNOWN);KeyMapping.resetMapping();mc.options.save();value=InputConstants.UNKNOWN.getName();UnboxClient.set(id+".key",value);UnboxClient.save();}
-  if(value==null||value.equals(applied.get(id))){String actual=binding.saveString();if(!actual.equals(value)){UnboxClient.set(id+".key",actual);UnboxClient.save();}applied.put(id,actual);continue;}
+  if(value==null||value.equals(applied.get(id))){String actual=binding.saveString();if(!actual.equals(value)){conflicts.remove(id);UnboxClient.set(id+".key",actual);UnboxClient.save();}applied.put(id,actual);continue;}
   try{var key=InputConstants.getKey(value);
-   for(KeyMapping other:mc.options.keyMappings)if(other!=binding&&!key.equals(InputConstants.UNKNOWN)&&other.saveString().equals(key.getName()))other.setKey(InputConstants.UNKNOWN);
+   // Imported launcher settings must not steal a live movement/action binding either.
+   KeyMapping conflict=key.equals(InputConstants.UNKNOWN)||binding.saveString().equals(value)?null:Arrays.stream(mc.options.keyMappings).filter(k->k!=binding&&k.saveString().equals(key.getName())).findFirst().orElse(null);
+   if(conflict!=null){conflicts.put(id,"Key already used by "+net.minecraft.network.chat.Component.translatable(conflict.getName()).getString()+"; kept previous key.");String actual=binding.saveString();UnboxClient.set(id+".key",actual);UnboxClient.save();applied.put(id,actual);continue;}
+   conflicts.remove(id);
    binding.setKey(key);KeyMapping.resetMapping();mc.options.save();applied.put(id,value);
   }catch(IllegalArgumentException ignored){}
  }

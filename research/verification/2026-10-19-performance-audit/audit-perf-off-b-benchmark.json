@@ -1,0 +1,1 @@
+{"run":"audit-perf-off-b","samples":35802,"averageFps":795.598,"onePercentLowFps":259.966,"p95Ms":3.014,"p99Ms":3.336,"inactiveFrames":0,"framebufferWidth":2560,"framebufferHeight":1440,"renderDistance":12,"warmupSeconds":30,"sampleSeconds":45}

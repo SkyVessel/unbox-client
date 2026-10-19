@@ -20,7 +20,11 @@ public final class WorldFeatures {
     private static volatile Set<String> enabled=Set.of();
     private static volatile boolean remoteBuilding,remoteShulker,remoteGhast;
     private static String saved="";
-    private static int ticks;
+    private static long revision=-1;
+    private static int readiness=-1;
+    private static volatile int ghastSpeed=200;
+    private static final AsyncSettingsFile WRITER=new AsyncSettingsFile();
+    public static void shutdown(){WRITER.finish();}
     public static boolean manages(String id){return IDS.contains(id);}
     public static boolean serverEnabled(String id){return server!=null&&server==Minecraft.getInstance().getSingleplayerServer()&&enabled.contains(id);}
     public static boolean remote(String id){return switch(id){case "building"->remoteBuilding;case "shulker"->remoteShulker;case "ghast"->remoteGhast;default->false;};}
@@ -39,25 +43,27 @@ public final class WorldFeatures {
             UnboxClient.set("ghast.speed",p.getProperty("ghast.speed","200"));
             UnboxClient.set("ghast.wait",p.getProperty("ghast.wait","4"));
             UnboxClient.set("ghast.range",p.getProperty("ghast.range","15"));
-            server=next;saved="";ticks=0;
+            server=next;saved="";revision=-1;
         }
+        int ready=0;for(String id:IDS)ready=ready*2+(ClientIntegrations.available(id)?1:0);
+        if(revision==UnboxClient.revision()&&readiness==ready)return;
+        readiness=ready;
+        revision=UnboxClient.revision();
         Set<String> wanted=new HashSet<>();for(String id:IDS)if(UnboxClient.configured(id)&&ClientIntegrations.available(id))wanted.add(id);
         enabled=Set.copyOf(wanted);
         int speed=UnboxClient.number("ghast.speed",200,100,500);
         String state=IDS.stream().sorted().map(id->id+"="+enabled.contains(id)).reduce("",(a,b)->a+b+"\n")+"ghast.speed="+speed+"\nghast.wait="+UnboxClient.number("ghast.wait",4,1,30)+"\nghast.range="+UnboxClient.number("ghast.range",15,1,15)+"\n";
-        if(!saved.equals(state))try{Path tmp=path.resolveSibling("unbox-features.properties.tmp");Files.writeString(tmp,state);Files.move(tmp,path,StandardCopyOption.REPLACE_EXISTING);saved=state;}catch(java.io.IOException e){System.err.println("[Unbox] Could not save world features: "+e);}
-        if(ticks++%20!=0)return;
-        boolean active=enabled.contains("ghast");
-        next.execute(()->{
-            if(server!=next)return;
-            for(var level:next.getAllLevels())for(var entity:level.getAllEntities())if(entity instanceof HappyGhast ghast){
-                var attribute=ghast.getAttribute(Attributes.FLYING_SPEED);if(attribute==null)continue;
-                double amount=active&&ghast.getControllingPassenger() instanceof Player?speed/100.0-1:0;
-                var old=attribute.getModifier(SPEED);
-                if(old!=null&&old.amount()==amount)continue;
-                attribute.removeModifier(SPEED);
-                if(amount!=0)attribute.addTransientModifier(new AttributeModifier(SPEED,amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-            }
-        });
+        if(!saved.equals(state)){WRITER.save(path,state);saved=state;}
+        ghastSpeed=speed;
+    }
+    /** Runs only for a loaded ghast, on its server tick; no scan of unrelated entities. */
+    public static double updateGhast(HappyGhast ghast,double previous){
+        if(!(ghast.level() instanceof net.minecraft.server.level.ServerLevel level)||level.getServer()!=server)return previous;
+        double amount=enabled.contains("ghast")&&ghast.getControllingPassenger() instanceof Player?ghastSpeed/100.0-1:0;
+        if(previous==amount)return amount;
+        var attribute=ghast.getAttribute(Attributes.FLYING_SPEED);if(attribute==null)return previous;
+        attribute.removeModifier(SPEED);
+        if(amount!=0)attribute.addTransientModifier(new AttributeModifier(SPEED,amount,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        return amount;
     }
 }
