@@ -29,11 +29,13 @@ public final class ClientIntegrations {
     }
     public static void sync(){
         if(ticks++%5!=0)return;
-        for(String id:IDS){if(!available(id)||!Platform.loaded(engine(id)))continue;
-            try{apply(id);}catch(ReflectiveOperationException|LinkageError|RuntimeException e){
-                errors.put(id,"Integration failed; check the installed mod version");
-                System.err.println("[Unbox] "+id+" integration: "+e);
-            }
+        for(String id:IDS)refresh(id);
+    }
+    public static void refresh(String id){
+        if(!available(id)||!Platform.loaded(engine(id)))return;
+        try{apply(id);}catch(ReflectiveOperationException|LinkageError|RuntimeException e){
+            errors.put(id,"Integration failed; check the installed mod version");
+            System.err.println("[Unbox] "+id+" integration: "+e);
         }
     }
     private static Object field(Object obj,String name)throws ReflectiveOperationException{return obj.getClass().getField(name).get(obj);}

@@ -88,8 +88,8 @@ wick=next(m for m in json.loads((ROOT/"src-tauri/resources/wick-lock.json").read
 wick["slug"]="wick"
 if mode!="baseline":lock.append(wick)
 for mod in lock:
-    # Visual captures need settled frames even when the test window loses focus.
-    if mode=='visual' and mod['slug']=='dynamic-fps':continue
+    # Interactive regression fixtures need ticks even when their test window loses focus.
+    if (mode in ('visual','features','survival') or mode.startswith('private-')) and mod['slug']=='dynamic-fps':continue
     # DynamicFPS is a background limiter, not a foreground FPS optimization.
     if mod['slug']=='dynamic-fps' and mode not in ('ui','home','social','relay','private-host','private-guest','survival','visual','features') or mode=='baseline' and mod['slug'] not in ('fabric-api','freelook'):continue
     target=ROOT/'.cache/benchmark-mods'/mod['filename'];target.parent.mkdir(parents=True,exist_ok=True)
@@ -158,10 +158,13 @@ if os.environ.get('UNBOX_SYNC_FIXTURE')=='1':args.insert(1,'-Dunbox.syncFixture=
 if 'UNBOX_SHARED_CACHE' in os.environ:args.insert(1,'-Dunbox.sharedCache='+os.environ['UNBOX_SHARED_CACHE'])
 if resume or os.environ.get('UNBOX_COLD_JOIN')=='1':args.insert(1,'-Dunbox.syncResume=true')
 if mode=='relay':args.insert(1,'-Dunbox.relaySmoke=true')
+if os.environ.get('UNBOX_TOGGLE_ONLY')=='1':args.insert(1,'-Dunbox.toggleOnly=true')
 if mode in ('home','private-guest'):args=args[:-2]
 if mode.startswith('private-'):
     fixture=json.loads(os.environ['UNBOX_TEST_PROFILE'])
     args.insert(1,'-Dunbox.privateSmoke='+mode.removeprefix('private-'))
+    args.insert(1,'-Dunbox.privateSmokeTicks='+os.environ.get('UNBOX_PRIVATE_TEST_TICKS','100'))
+    args.insert(1,'-Dunbox.accountKind='+json.loads(os.environ.get('UNBOX_TEST_PROFILE','{}')).get('type','local'))
     args=[a for a in args if not a.startswith('-Dunbox.benchmark=')]
     args[args.index('--username')+1]=fixture['name']
     args[args.index('--uuid')+1]=fixture['uuid']

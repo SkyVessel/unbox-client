@@ -48,7 +48,7 @@ final class FeatureSmokeTest {
    if(ticks<100||wait-->0)return;
    if(pending!=null){if(!pending.isDone())return;pending.join();pending=null;}
    switch(stage++){
-    case 0->{for(String id:ClientIntegrations.IDS){check(ClientIntegrations.available(id),id+" native dependency loaded");UnboxClient.set(id,true);}UnboxClient.set("ghast",true);UnboxClient.set("ghast.speed",200);wait=15;}
+    case 0->{checks.addAll(ModToggleChecks.run(mc));if(Boolean.getBoolean("unbox.toggleOnly")){finish(mc,null);return;}for(String id:ClientIntegrations.IDS){check(ClientIntegrations.available(id),id+" native dependency loaded");UnboxClient.set(id,true);}UnboxClient.set("ghast",true);UnboxClient.set("ghast.speed",200);wait=15;}
     case 1->{
      spatial(mc);
      for(String id:ClientIntegrations.IDS)check(ClientIntegrations.available(id),id+" settings adapter succeeds");
@@ -118,7 +118,7 @@ final class FeatureSmokeTest {
  }
  private static void joinCancellation(Minecraft mc)throws Exception{
   var saved=SocialBridge.view;var fixture=new com.google.gson.JsonObject();fixture.addProperty("connected",true);
-  var self=new com.google.gson.JsonObject();self.addProperty("id","local-fixture");self.addProperty("kind","unbox");fixture.add("self",self);
+  var self=new com.google.gson.JsonObject();self.addProperty("id","local-fixture");self.addProperty("kind","local");fixture.add("self",self);
   var invite=new com.google.gson.JsonObject();invite.addProperty("id","cancel-fixture");invite.addProperty("receiver","local-fixture");invite.addProperty("expires",System.currentTimeMillis()+60000);
   var room=new com.google.gson.JsonObject();room.addProperty("loader",Platform.loader().equals("fabric")?"neoforge":"fabric");room.addProperty("minecraft",net.minecraft.SharedConstants.getCurrentVersion().id());invite.add("room",room);
   var invites=new com.google.gson.JsonArray();invites.add(invite);fixture.add("invites",invites);SocialBridge.view=fixture;

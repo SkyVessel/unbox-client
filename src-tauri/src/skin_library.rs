@@ -78,6 +78,22 @@ pub fn skin_library_list(rt: tauri::State<Runtime>) -> Result<Value, String> {
     list(&rt)
 }
 #[tauri::command]
+pub fn skin_library_rename(rt:tauri::State<Runtime>,id:String,name:String)->Result<Value,String>{
+ let name=name.trim();if name.is_empty()||name.chars().count()>48||name.chars().any(char::is_control){return Err("Use a skin name of 1–48 characters".into())}
+ let _guard=mutation_lock();let mut v=index(&rt)?;let e=v.skins.iter_mut().find(|e|e.id==id).ok_or("Saved skin not found")?;e.name=name.into();v.sequence=v.sequence.saturating_add(1);save(&rt,&v)?;list(&rt)
+}
+#[tauri::command]
+pub fn skin_library_folder(rt:tauri::State<Runtime>)->Result<(),String>{
+ let path=root(&rt);fs::create_dir_all(&path).map_err(|e|e.to_string())?;
+ #[cfg(target_os="macos")]let program="open";
+ #[cfg(target_os="windows")]let program="explorer";
+ #[cfg(target_os="linux")]let program="xdg-open";
+ crate::process::command(program).arg(path).spawn().map_err(|e|e.to_string())?;Ok(())
+}
+pub fn decorate(rt:&Runtime,account:&mut Value){
+ if account["type"]!="local"{return}let Ok(v)=index(rt)else{return};let Some(e)=v.selected.get(&account_key(account)).and_then(|id|v.skins.iter().find(|e|&e.id==id))else{return};if let Ok(skin)=public(rt,e){account["skin"]=skin["skin"].clone();account["skinModel"]=json!(e.model);}
+}
+#[tauri::command]
 pub fn skin_library_import(
     rt: tauri::State<Runtime>,
     name: String,
@@ -192,6 +208,7 @@ pub async fn skin_library_apply(
     if let Some(g) = game(&rt) {
         publish(&rt, &g)?
     }
+    if selected["type"]=="local"{return auth::account_snapshot(&rt)}
     Ok(result)
 }
 
@@ -231,7 +248,7 @@ fn publish(rt: &Runtime, g: &Path) -> Result<(), String> {
         .skins
         .iter()
         .into_iter()
-        .map(|e| json!({"id":e.id,"name":e.name,"model":e.model,"created":e.created}))
+        .map(|e| {let face=public(rt,e).ok().and_then(|s|crate::social::face(&s));json!({"id":e.id,"name":e.name,"model":e.model,"created":e.created,"face":face})})
         .collect::<Vec<_>>();
     let active_json = if let Some(e) = active {
         let bytes = fs::read(file(rt, &e.id)?).map_err(|_| "A saved skin file is missing")?;
@@ -240,7 +257,7 @@ fn publish(rt: &Runtime, g: &Path) -> Result<(), String> {
     } else {
         Value::Null
     };
-    atomic(&g.join("unbox-skin-library.json"),&serde_json::to_vec(&json!({"updated":now(),"sequence":library.sequence,"accountId":account_id,"accountUuid":account["uuid"],"accountName":account["name"],"active":active_json,"skins":entries})).unwrap())
+    atomic(&g.join("unbox-skin-library.json"),&serde_json::to_vec(&json!({"updated":now(),"sequence":library.sequence,"accountId":account_id,"accountUuid":account["uuid"],"accountName":account["name"],"accountType":account["type"],"active":active_json,"skins":entries})).unwrap())
 }
 pub fn start(rt: Runtime) {
     tauri::async_runtime::spawn(async move {

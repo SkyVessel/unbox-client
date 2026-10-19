@@ -14,6 +14,7 @@ mod content;
 mod removal;
 mod social;
 mod updates;
+mod news;
 mod sharing;
 use serde_json::{json, Value};
 use std::{fs, path::PathBuf, sync::{Arc, Mutex}};
@@ -149,6 +150,13 @@ fn open_licenses(rt: tauri::State<Runtime>) -> Result<(),String> {
     crate::process::command(program).arg(index).spawn().map_err(|e|e.to_string())?;Ok(())
 }
 fn main() {
+    #[cfg(all(debug_assertions,target_os="macos"))] if std::env::args().nth(1).as_deref()==Some("--private-proof-fixture") {
+        let input=PathBuf::from(std::env::args().nth(2).expect("Fixture input required"));assert!(input.to_string_lossy().contains("/.cache/network-tests/"),"Fixture only");
+        let b:Value=serde_json::from_slice(&fs::read(input).unwrap()).unwrap();let root=PathBuf::from(std::env::var("HOME").unwrap()).join("Library/Application Support/dev.unbox.client");
+        let rt=Runtime{root,resources:PathBuf::new(),job:Arc::default(),auth:Arc::default(),social:Arc::default()};
+        let result=tauri::async_runtime::block_on(async {let account=auth::restore_account(&rt,&Value::Null)?;if account["type"]!="microsoft"{return Err("Select a Microsoft account first".to_string())}let proof=auth::social_player_proof(&rt,b["nonce"].as_str().unwrap(),b["id"].as_str().unwrap(),b["token"].as_str().unwrap()).await?;Ok::<_,String>(json!({"proof":proof,"account":{"name":account["name"],"uuid":account["uuid"],"type":"microsoft"}}))});
+        match result{Ok(v)=>println!("{}",v),Err(e)=>{eprintln!("{}",e);std::process::exit(1)}}return;
+    }
     #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--prepare-invite-fixture") {
         let args:Vec<String>=std::env::args().collect();let root=PathBuf::from(&args[2]);assert!(root.to_string_lossy().contains("/.cache/"),"Fixture root only");
         let rt=Runtime{root:root.clone(),resources:root.clone(),job:Arc::default(),auth:Arc::default(),social:Arc::default()};
@@ -173,5 +181,5 @@ fn main() {
             tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
         social::start(rt.clone());skin_library::start(rt.clone());app.manage(rt);Ok(())
-    }).invoke_handler(tauri::generate_handler![skin_library::skin_library_list,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_unbox_password,auth::auth_unbox_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,open_licenses,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
+    }).invoke_handler(tauri::generate_handler![news::news_feed,skin_library::skin_library_list,skin_library::skin_library_rename,skin_library::skin_library_folder,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_local_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,open_licenses,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");
 }

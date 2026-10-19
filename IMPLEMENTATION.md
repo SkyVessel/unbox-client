@@ -1,5 +1,7 @@
 # Unbox Client — implementation status
 
+2026-10-19: current working-tree account/asset administration, local identity migration, remote News and skin UI changes are documented in [docs/47](docs/47-账号资产后台与本地身份迁移.md). These changes are not yet deployed or released. The external-network player checklist is [docs/48](docs/48-异地联机玩家测试清单.md). The older status below is historical.
+
 
 Working-tree v2 adds email/password Unbox accounts, editable non-unique nicknames and encrypted mixed-identity invitations. Email verification is deferred by user request; Resend is not required. Production remains v1 pending deployment. See `docs/13-Unbox邮箱账号与混合联机.md`.
 Updated 2026-10-07. This is a local development build, not a finished public release.

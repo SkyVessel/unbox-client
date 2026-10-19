@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "unbox",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "name": "Unbox Client",
   "description": "Personal HUD, controls and visual settings for Unbox Client.",
   "environment": "client",

@@ -113,7 +113,7 @@ async fn request(url: &str, i: &Identity, path: &str, body: Value) -> Result<Val
     }
     Ok(v)
 }
-fn face(a: &Value) -> Option<String> {
+pub(crate) fn face(a: &Value) -> Option<String> {
     let s = a["skin"].as_str()?.strip_prefix("data:image/png;base64,")?;
     let bytes = STANDARD.decode(s).ok()?;
     let mut d = png::Decoder::new(std::io::Cursor::new(bytes));
@@ -156,15 +156,15 @@ fn face(a: &Value) -> Option<String> {
     Some(format!("data:image/png;base64,{}", STANDARD.encode(b)))
 }
 fn profile(a: &Value) -> Value {
-    json!({"name":a["name"],"uuid":a["uuid"].as_str().unwrap_or(""),"kind":a["type"],"face":face(a)})
+    json!({"name":if a["type"]=="local"{json!("OfflinePlayer")}else{a["name"].clone()},"uuid":a["uuid"].as_str().unwrap_or(""),"kind":a["type"],"face":if a["type"]=="local"{None}else{face(a)}})
 }
-fn account_identity(a:&Value)->Result<Identity,String>{if a["type"]=="unbox"{let(id,token)=auth::unbox_identity(a)?;Ok(Identity{id,token})}else{identity(&key(a))}}
+fn account_identity(a:&Value)->Result<Identity,String>{identity(&key(a))}
 fn key(a: &Value) -> String {
     if a["type"]=="unbox"{return a["accountId"].as_str().unwrap_or("").to_owned()}
     if a["type"] == "microsoft" {
         format!("msa-{}", a["uuid"].as_str().unwrap_or(""))
     } else {
-        format!("local-{}", a["name"].as_str().unwrap_or(""))
+        format!("local-{}", a["uuid"].as_str().unwrap_or(""))
     }
 }
 fn game(rt: &Runtime) -> Option<std::path::PathBuf> {
@@ -244,7 +244,7 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
         }
         Err(e) => return Err(e),
     };
-    if a["type"]=="unbox"{auth::sync_unbox_name(rt,a["accountId"].as_str().unwrap_or(""),result["self"]["name"].as_str().unwrap_or("")).await?;}
+
     result["connected"] = json!(true);
     result["updated"] = json!(now());
     result["hosting"] = json!(!world["room"].is_null());

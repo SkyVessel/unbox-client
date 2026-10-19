@@ -17,10 +17,9 @@ struct Pending { id:String, device:String, client_id:String, expires:Instant, ne
 #[derive(Clone, Serialize, Deserialize)]
 struct Stored { refresh:String, access:String, expires:u64, client_id:String, xuid:String, account:Value }
 #[derive(Clone, Default, Serialize, Deserialize)]
-struct Vault { accounts:Vec<Stored>, selected:Option<String>, local:Option<String>, #[serde(default)] unbox:Vec<UnboxStored> }
+struct Vault { accounts:Vec<Stored>, selected:Option<String>, local:Option<String>, #[serde(default)] unbox:Vec<UnboxStored>, #[serde(skip)] offline:Vec<Value> }
 #[derive(Clone,Serialize,Deserialize)]
 struct UnboxStored { id:String, token:String, expires:u64, account:Value }
-fn unbox_public(s:&UnboxStored)->Value{let mut a=s.account.clone();a["needsSignIn"]=json!(s.expires<=now()*1000);a}
 pub struct Session { pub name:String, pub uuid:String, pub token:String, pub xuid:String, pub client_id:String }
 struct Api { c:reqwest::Client, microsoft:String, xbox:String, xsts:String, minecraft:String }
 impl Api {
@@ -41,14 +40,14 @@ fn public_account(s:&Stored,current:Option<&str>)->Value{
 impl Vault {
     fn selected_account(&self,current:Option<&str>)->Value{
         if let Some(name)=&self.local{return json!({"name":name,"type":"local"})}
-        if let Some(a)=self.unbox.iter().find(|a|a.account["accountId"].as_str()==self.selected.as_deref()){return unbox_public(a)}
+        if let Some(a)=self.offline.iter().find(|a|a["accountId"].as_str()==self.selected.as_deref()){return a.clone()}
         self.accounts.iter().find(|a|Some(key(a))==self.selected).map(|a|public_account(a,current)).unwrap_or(Value::Null)
     }
     fn upsert(&mut self,s:Stored,select:bool){let id=key(&s);self.accounts.retain(|a|key(a)!=id);self.accounts.push(s);if select{self.selected=Some(id);self.local=None;}}
     // Replace the same Minecraft identity only after fresh Unbox authorization has succeeded.
     fn authorize(&mut self,s:Stored){self.accounts.retain(|a|a.account["uuid"]!=s.account["uuid"]);self.upsert(s,true);}
     fn remove(&mut self,id:&str){self.unbox.retain(|s|s.account["accountId"]!=id);self.accounts.retain(|s|key(s)!=id);if self.selected.as_deref()==Some(id){self.selected=None;}}
-    fn snapshot(&self,current:Option<&str>)->Value{json!({"accounts":self.accounts.iter().map(|s|public_account(s,current)).chain(self.unbox.iter().map(unbox_public)).collect::<Vec<_>>(),"account":self.selected_account(current)})}
+    fn snapshot(&self,current:Option<&str>)->Value{json!({"accounts":self.accounts.iter().map(|s|public_account(s,current)).chain(self.offline.iter().cloned()).collect::<Vec<_>>(),"account":self.selected_account(current)})}
 }
 #[cfg(target_os="macos")]
 fn read_secure(name:&str)->Result<Option<Vec<u8>>,String>{crate::credential_cache::read(SERVICE,name,||match security_framework::passwords::get_generic_password(SERVICE,name){Ok(b)=>Ok(Some(b)),Err(e) if e.code()==-25300=>Ok(None),Err(_)=>Err("macOS Keychain is locked or access was denied. Allow Unbox access and retry.".into())})}
@@ -71,30 +70,54 @@ fn load_vault()->Result<Vault,String>{
     }
     Ok(v)
 }
+fn local_name(name:&str)->bool{!name.is_empty()&&name.len()<=16&&name.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_')}
+fn save_offline(rt:&Runtime,profiles:&[Value])->Result<(),String>{crate::atomic(&rt.root.join("local-accounts.json"),&serde_json::to_vec_pretty(profiles).map_err(|e|e.to_string())?)}
+fn migrate_offline(v:&mut Vault)->bool{
+ let mut changed=false;
+ for old in &v.unbox {let mut p=old.account.clone();p["type"]=json!("local");p["provider"]=json!("Local");p["needsSignIn"]=json!(false);p.as_object_mut().unwrap().remove("emailVerified");if !v.offline.iter().any(|a|a["accountId"]==p["accountId"]){v.offline.push(p);}changed=true;}
+ if let Some(name)=v.local.take(){let id=format!("local:{name}");let uid=crate::launcher::md5_offline(&name);if !v.offline.iter().any(|a|a["accountId"]==id){v.offline.push(json!({"accountId":id,"name":name,"uuid":uid,"type":"local","provider":"Local"}));}v.selected=Some(id);changed=true;}
+ changed
+}
+fn snapshot(rt:&Runtime,v:&Vault)->Value{let mut result=v.snapshot(client_id(rt).ok().as_deref());crate::skin_library::decorate(rt,&mut result["account"]);if let Some(accounts)=result["accounts"].as_array_mut(){for account in accounts{crate::skin_library::decorate(rt,account)}}result}
+fn load_accounts(rt:&Runtime)->Result<Vault,String>{
+ let mut v=load_vault()?;let path=rt.root.join("local-accounts.json");
+ if path.exists(){v.offline=serde_json::from_slice(&std::fs::read(&path).map_err(|e|e.to_string())?).map_err(|_|"Local accounts file is invalid; it has not been overwritten")?;}
+ for p in &mut v.offline {if !local_name(field(p,"name")?)||canonical_uuid(field(p,"uuid")?).is_err()||field(p,"accountId").is_err(){return Err("Local account data is invalid".into())}p["type"]=json!("local");p["provider"]=json!("Local");p["needsSignIn"]=json!(false);}
+ let changed=migrate_offline(&mut v);
+ if changed {save_offline(rt,&v.offline)?;v.unbox.clear();save_vault(&v)?;}
+ Ok(v)
+}
 fn remove_legacy()->Result<(),String>{
     #[cfg(target_os="macos")]
     match security_framework::passwords::delete_generic_password(SERVICE,"primary"){Ok(())=>{},Err(e) if e.code()==-25300=>{},Err(_)=>return Err("Could not remove the legacy credential from Keychain. Retry removing the account.".into())}
     Ok(())
 }
 pub fn restore_account(rt:&Runtime,previous:&Value)->Result<Value,String>{
-    let v=load_vault()?;let account=v.selected_account(client_id(rt).ok().as_deref());
+    let v=load_accounts(&rt)?;let mut account=v.selected_account(client_id(rt).ok().as_deref());crate::skin_library::decorate(rt,&mut account);
     // Old local-only installations have no vault. Do not restore stale Microsoft metadata.
-    if account.is_null()&&read_secure(VAULT)?.is_none()&&previous["type"]=="local"{let mut migrated=v;migrated.local=Some(field(previous,"name")?.to_owned());save_vault(&migrated)?;return Ok(migrated.selected_account(None))}Ok(account)
+    if account.is_null()&&read_secure(VAULT)?.is_none()&&previous["type"]=="local"{let mut migrated=v;migrated.local=Some(field(previous,"name")?.to_owned());save_vault(&migrated)?;return Ok(load_accounts(rt)?.selected_account(None))}Ok(account)
 }
 #[tauri::command]
 pub fn auth_info()->Value{json!({"configured":true,"clientId":UNBOX_CLIENT_ID,"provider":"Unbox"})}
 #[tauri::command]
-pub async fn auth_accounts(rt:tauri::State<'_,Runtime>)->Result<Value,String>{let _guard=rt.auth.lock().await;Ok(load_vault()?.snapshot(client_id(&rt).ok().as_deref()))}
+pub async fn auth_accounts(rt:tauri::State<'_,Runtime>)->Result<Value,String>{let _guard=rt.auth.lock().await;Ok(snapshot(&rt,&load_accounts(&rt)?))}
 #[tauri::command]
 pub async fn auth_select(rt:tauri::State<'_,Runtime>,account_id:String)->Result<Value,String>{
-    let mut a=rt.auth.lock().await;let mut v=load_vault()?;
-    if !v.accounts.iter().any(|s|key(s)==account_id)&&!v.unbox.iter().any(|s|s.account["accountId"]==account_id){return Err("Saved account not found. Sign in again.".into())}
-    a.generation+=1;a.pending=None;v.selected=Some(account_id);v.local=None;save_vault(&v)?;Ok(v.snapshot(client_id(&rt).ok().as_deref()))
+    let mut a=rt.auth.lock().await;let mut v=load_accounts(&rt)?;
+    if !v.accounts.iter().any(|s|key(s)==account_id)&&!v.offline.iter().any(|s|s["accountId"]==account_id){return Err("Saved account not found. Sign in again.".into())}
+    a.generation+=1;a.pending=None;v.selected=Some(account_id);v.local=None;save_vault(&v)?;Ok(snapshot(&rt,&v))
 }
 #[tauri::command]
 pub async fn auth_local(rt:tauri::State<'_,Runtime>,name:String)->Result<Value,String>{
     if name.is_empty()||name.len()>16||!name.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_'){return Err("Use 1–16 letters, numbers or underscores".into())}
-    let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;let mut v=load_vault()?;v.local=Some(name);v.selected=None;save_vault(&v)?;Ok(v.snapshot(client_id(&rt).ok().as_deref()))
+    let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;let mut v=load_accounts(&rt)?;let uid=uuid::Uuid::new_v4().simple().to_string();let id=format!("local:{uid}");v.offline.push(json!({"accountId":id,"name":name,"uuid":uid,"type":"local","provider":"Local"}));save_offline(&rt,&v.offline)?;v.selected=Some(id);v.local=None;save_vault(&v)?;Ok(snapshot(&rt,&v))
+}
+#[tauri::command]
+pub async fn auth_local_rename(rt:tauri::State<'_,Runtime>,account_id:String,name:String)->Result<Value,String>{
+ if rt.job.lock().unwrap()["busy"]==true{return Err("Close Minecraft before changing your name".into())}
+ if !local_name(&name){return Err("Use 1–16 letters, numbers or underscores".into())}
+ let _guard=rt.auth.lock().await;let mut v=load_accounts(&rt)?;
+ let p=v.offline.iter_mut().find(|a|a["accountId"]==account_id).ok_or("Only local identities can be renamed here")?;p["name"]=json!(name);save_offline(&rt,&v.offline)?;Ok(snapshot(&rt,&v))
 }
 #[tauri::command]
 pub async fn auth_begin(rt:tauri::State<'_,Runtime>)->Result<Value,String>{
@@ -134,7 +157,7 @@ pub async fn auth_poll(rt:tauri::State<'_,Runtime>,id:String)->Result<Value,Stri
     a.pending=None;drop(a);
     let saved=minecraft(&api,&v,&client_id).await?;
     let a=rt.auth.lock().await;if a.generation!=generation{return Err("Sign-in canceled".into())}
-    let mut vault=load_vault()?;vault.authorize(saved);save_vault(&vault)?;
+    let mut vault=load_accounts(&rt)?;vault.authorize(saved);save_vault(&vault)?;
     let mut result=vault.snapshot(Some(&client_id));result["status"]=json!("complete");Ok(result)
 }
 async fn checked(r:reqwest::Response,stage:&str)->Result<Value,String>{
@@ -203,7 +226,7 @@ pub(crate) async fn apply_skin_bytes(
 ) -> Result<Value, String> {
     validate_png(&bytes, model)?;
     let _guard = rt.auth.lock().await;
-    let mut v = load_vault()?;
+    let mut v = load_accounts(&rt)?;
     let api = Api::new()?;
     let mut s = usable(rt, &mut v, account_id, &api).await?;
     s.account = upload_skin(&api, &s, bytes, model).await?;
@@ -212,7 +235,7 @@ pub(crate) async fn apply_skin_bytes(
     Ok(v.snapshot(client_id(rt).ok().as_deref()))
 }
 pub(crate) fn account_snapshot(rt: &Runtime) -> Result<Value, String> {
-    Ok(load_vault()?.snapshot(client_id(rt).ok().as_deref()))
+    let mut result=load_accounts(&rt)?.snapshot(client_id(rt).ok().as_deref());crate::skin_library::decorate(rt,&mut result["account"]);Ok(result)
 }
 pub(crate) fn validate_local_skin(bytes: &[u8]) -> Result<(), String> {
     validate_png(bytes, "classic")?;
@@ -244,22 +267,19 @@ async fn usable(rt:&Runtime,v:&mut Vault,id:&str,api:&Api)->Result<Stored,String
     }Ok(s)
 }
 pub async fn launch_account(rt:&Runtime)->Result<(Option<Session>,String),String>{
-    let _guard=rt.auth.lock().await;let mut v=load_vault()?;
+    let _guard=rt.auth.lock().await;let mut v=load_accounts(&rt)?;
     if let Some(name)=v.local{return Ok((None,name))}
     let id=v.selected.clone().ok_or("Select an account before launching")?;
-    if let Some(u)=v.unbox.iter_mut().find(|s|s.account["accountId"]==id){if u.expires<=now()*1000{return Err("Unbox session expired. Sign in again.".into())}
-     let response=unbox_request(rt,"accounts/profile",json!({}),Some(&u.token)).await?;
-     if response["account"]["uuid"]!=u.account["uuid"]||response["account"]["accountId"]!=id{return Err("Account identity changed".into())}
-     u.account=response["account"].clone();let session=Session{name:field(&u.account,"name")?.into(),uuid:field(&u.account,"uuid")?.into(),token:"0".into(),xuid:String::new(),client_id:String::new()};save_vault(&v)?;return Ok((Some(session),String::new()))}
+    if let Some(p)=v.offline.iter().find(|p|p["accountId"]==id){return Ok((Some(Session{name:field(p,"name")?.into(),uuid:field(p,"uuid")?.into(),token:"0".into(),xuid:String::new(),client_id:String::new()}),String::new()))}
     let s=usable(rt,&mut v,&id,&Api::new()?).await?;
     Ok((Some(Session{name:field(&s.account,"name")?.into(),uuid:field(&s.account,"uuid")?.into(),token:s.access,xuid:s.xuid,client_id:s.client_id}),String::new()))
 }
 #[tauri::command]
 pub async fn auth_refresh_profile(rt:tauri::State<'_,Runtime>,account_id:String)->Result<Value,String>{
-    let _guard=rt.auth.lock().await;let mut v=load_vault()?;let api=Api::new()?;let mut s=usable(&rt,&mut v,&account_id,&api).await?;
+    let _guard=rt.auth.lock().await;let mut v=load_accounts(&rt)?;let api=Api::new()?;let mut s=usable(&rt,&mut v,&account_id,&api).await?;
     let mut a=profile(&api,&s.access,s.account["uuid"].as_str()).await?;
     if a["skin"].is_null()&&!s.account["skin"].is_null(){a["skin"]=s.account["skin"].clone();a["skinModel"]=s.account["skinModel"].clone();a["skinStatus"]=json!("cached");}
-    s.account=a;v.upsert(s,false);save_vault(&v)?;Ok(v.snapshot(client_id(&rt).ok().as_deref()))
+    s.account=a;v.upsert(s,false);save_vault(&v)?;Ok(snapshot(&rt,&v))
 }
 async fn upload_skin(api:&Api,s:&Stored,bytes:Vec<u8>,model:&str)->Result<Value,String>{
     validate_png(&bytes,model)?;
@@ -277,7 +297,7 @@ pub async fn auth_upload_skin(rt:tauri::State<'_,Runtime>,account_id:String,png_
 }
 #[tauri::command]
 pub async fn auth_sign_out(rt:tauri::State<'_,Runtime>,account_id:String)->Result<Value,String>{
-    let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;let mut v=load_vault()?;if let Some(u)=v.unbox.iter().find(|s|s.account["accountId"]==account_id){if u.expires>now()*1000{if let Err(e)=unbox_request(&rt,"accounts/logout",json!({}),Some(&u.token)).await{if e!="Sign in to Unbox friends again"{return Err(e)}}}}remove_legacy()?;v.remove(&account_id);save_vault(&v)?;Ok(v.snapshot(client_id(&rt).ok().as_deref()))
+    let mut a=rt.auth.lock().await;a.generation+=1;a.pending=None;let mut v=load_accounts(&rt)?;v.offline.retain(|p|p["accountId"]!=account_id);save_offline(&rt,&v.offline)?;remove_legacy()?;v.remove(&account_id);save_vault(&v)?;Ok(snapshot(&rt,&v))
 }
 #[cfg(test)]mod tests{use super::*;#[test]fn skin_origin_is_restricted(){assert!(skin_url("https://textures.minecraft.net/texture/abc"));for u in ["http://textures.minecraft.net/texture/abc","https://textures.minecraft.net.evil.example/texture/x","https://example.com/x","https://textures.minecraft.net:444/texture/x","https://user@textures.minecraft.net/texture/x"]{assert!(!skin_url(u));}}}
 
@@ -415,48 +435,7 @@ fn make_social_proof(cert:&Value,challenge:&str,id:&str,token:&str,uuid:&str)->R
  Ok(json!({"version":1,"publicKey":STANDARD.encode(public),"certificateSignature":field(cert,"publicKeySignatureV2")?,"expiresAt":field(cert,"expiresAt")?,"signature":STANDARD.encode(signature)}))
 }
 
-// Passwords are sent over HTTPS and never persisted; only session tokens enter the Keychain vault.
-async fn unbox_request(rt:&Runtime,path:&str,b:Value,token:Option<&str>)->Result<Value,String>{
- let mut r=client()?.post(format!("{}/v1/{path}",crate::social::endpoint(rt)?)).json(&b);if let Some(t)=token{r=r.bearer_auth(t)}
- let r=r.send().await.map_err(|_|"Unbox account service is unreachable")?;let status=r.status();let v:Value=r.json().await.map_err(|_|"Invalid account service response")?;
- if !status.is_success(){return Err(if v["error"]=="Unauthorized"&&path!="accounts/logout"{"Account registration is awaiting the service update.".into()}else{v["error"].as_str().unwrap_or("Account request failed").chars().take(160).collect()})}Ok(v)
-}
-#[tauri::command]
-pub async fn auth_unbox_password(rt:tauri::State<'_,Runtime>,email:String,password:String,mode:String)->Result<Value,String>{
- let path=match mode.as_str(){"register"=>"accounts/register","login"=>"accounts/login",_=>return Err("Invalid account action".into())};
- if password.chars().count()<12||password.len()>512{return Err("Use a password with 12–128 characters".into())}
- let mut state=rt.auth.lock().await;
- let response=unbox_request(&rt,path,json!({"email":email,"password":password}),None).await?;
- let u:UnboxStored=serde_json::from_value(response).map_err(|_|"Invalid Unbox account response")?;
- if u.account["type"]!="unbox"||u.token.len()!=64||canonical_uuid(field(&u.account,"uuid")?).is_err(){return Err("Invalid Unbox identity".into())}
- let mut vault=load_vault()?;vault.unbox.retain(|s|s.id!=u.id);vault.selected=Some(field(&u.account,"accountId")?.into());vault.local=None;vault.unbox.push(u);save_vault(&vault)?;
- state.generation+=1;state.pending=None;Ok(vault.snapshot(client_id(&rt).ok().as_deref()))
-}
-#[tauri::command]
-pub async fn auth_unbox_rename(rt:tauri::State<'_,Runtime>,account_id:String,name:String)->Result<Value,String>{
- if rt.job.lock().unwrap()["busy"]==true{return Err("Close the game before changing your player name".into())}
- let _guard=rt.auth.lock().await;let mut v=load_vault()?;
- let u=v.unbox.iter_mut().find(|s|s.account["accountId"]==account_id).ok_or("Unbox account not found")?;
- let response=unbox_request(&rt,"accounts/profile",json!({"name":name}),Some(&u.token)).await?;
- if response["account"]["uuid"]!=u.account["uuid"]||response["account"]["accountId"]!=u.account["accountId"]{return Err("Account identity changed".into())}
- u.account=response["account"].clone();save_vault(&v)?;Ok(v.snapshot(client_id(&rt).ok().as_deref()))
-}
-pub async fn sync_unbox_name(rt:&Runtime,id:&str,name:&str)->Result<(),String>{
- if !(3..=16).contains(&name.len())||!name.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_'){return Err("Invalid player name".into())}
- let _guard=rt.auth.lock().await;let mut v=load_vault()?;if let Some(u)=v.unbox.iter_mut().find(|s|s.account["accountId"]==id){if u.account["name"]!=name{u.account["name"]=json!(name);save_vault(&v)?;}}Ok(())
-}
-pub fn unbox_identity(account:&Value)->Result<(String,String),String>{let vault=load_vault()?;let u=vault.unbox.iter().find(|u|u.account["accountId"]==account["accountId"]).ok_or("Sign in with Unbox again")?;if u.expires<=now()*1000{return Err("Unbox session expired. Sign in again.".into())}Ok((u.id.clone(),u.token.clone()))}
 
-#[cfg(test)]mod unbox_tests{
- use super::*;
- #[test]fn verified_identity_roundtrips_without_leaking_session_and_old_vaults_migrate(){
-  let old:Vault=serde_json::from_str(r#"{"accounts":[],"selected":null,"local":"LocalPlayer"}"#).unwrap();assert!(old.unbox.is_empty());
-  let mut v=Vault::default();let id="unbox:00000000-0000-4000-8000-000000000001";
-  v.unbox.push(UnboxStored{id:"00000000-0000-4000-8000-000000000001".into(),token:"secret-session".into(),expires:(now()+60)*1000,account:json!({"accountId":id,"name":"EmailPlayer","uuid":"00000000000040008000000000000002","type":"unbox"})});v.selected=Some(id.into());
-  let restored:Vault=serde_json::from_slice(&serde_json::to_vec(&v).unwrap()).unwrap();let public=restored.snapshot(None);assert_eq!(public["account"]["name"],"EmailPlayer");assert_eq!(public["account"]["needsSignIn"],false);assert!(!public.to_string().contains("secret-session"));
-  v.unbox[0].expires=0;assert_eq!(v.snapshot(None)["account"]["needsSignIn"],true);v.remove(id);assert!(v.selected_account(None).is_null());assert!(v.unbox.is_empty());
- }
-}
 
 #[cfg(test)]mod player_proof_tests{
  use super::*;
@@ -478,4 +457,14 @@ pub fn unbox_identity(account:&Value)->Result<(String,String),String>{let vault=
   let bad=json!({"keyPair":{"privateKey":"private-invalid-value","publicKey":"public"}});
   let error=make_social_proof(&bad,"nonce","id","token","uuid").unwrap_err();assert!(!error.contains("private-invalid-value"));
  }
+}
+
+#[cfg(test)]mod local_migration_tests{
+ use super::*;
+ #[test]fn old_email_identity_becomes_local_without_losing_uuid_selection_or_skin_key(){
+  let mut v=Vault::default();v.selected=Some("unbox:old".into());v.unbox.push(UnboxStored{id:"old".into(),token:"private-secret".into(),expires:0,account:json!({"accountId":"unbox:old","name":"FormerPlayer","uuid":"00000000000040008000000000000001","type":"unbox","emailVerified":false})});
+  assert!(migrate_offline(&mut v));let p=v.selected_account(None);assert_eq!(p["type"],"local");assert_eq!(p["uuid"],"00000000000040008000000000000001");assert_eq!(p["accountId"],"unbox:old");assert!(!p.to_string().contains("private-secret"));migrate_offline(&mut v);assert_eq!(v.offline.len(),1);
+  v.offline[0]["name"]=json!("NewName");assert_eq!(v.selected_account(None)["uuid"],p["uuid"]);
+ }
+ #[test]fn old_local_profile_keeps_java_uuid_and_previous_skin_selection_key(){let mut v=Vault::default();v.local=Some("Notch".into());assert!(migrate_offline(&mut v));let p=v.selected_account(None);assert_eq!(p["uuid"],"b50ad385829d3141a2167e7d7539ba7f");assert_eq!(p["accountId"],"local:Notch");assert!(!migrate_offline(&mut v));}
 }

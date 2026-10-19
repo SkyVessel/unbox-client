@@ -32,6 +32,7 @@ public final class SocialLogin {
  private static final Set<ClientHandshakePacketListenerImpl> TRUSTED=Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
  public static boolean trustedHost(ClientHandshakePacketListenerImpl h){return TRUSTED.contains(h);}
  /** True only after the current remote server completed the Unbox v2 room proof. */
+ public static boolean hasPendingInvitation(){return joining!=null&&joining.expires>System.currentTimeMillis();}
  public static boolean trustedClientSession(){return trustedClientSession;}
  public static String keyHash(PublicKey key)throws Exception{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(key.getEncoded()));}
  public static byte[] proof(String secret,String side,String room,String person,String nonce,String key)throws Exception{Mac m=Mac.getInstance("HmacSHA256");m.init(new SecretKeySpec(HexFormat.of().parseHex(secret),"HmacSHA256"));return m.doFinal(("unbox-v2|"+side+"|"+room+"|"+person+"|"+nonce+"|"+key).getBytes(StandardCharsets.UTF_8));}
@@ -50,8 +51,10 @@ public final class SocialLogin {
    }catch(Exception e){h.disconnect(Component.literal("Private world verification failed."));}
   });
   LoginTransport.server(CHANNEL,(server,h,understood,buf,sync,sender)->{
-   Pending q=QUERIES.remove(h);try{if(q==null||!understood||q.grant.expires<=System.currentTimeMillis()||GRANTS.get(q.grant.person)!=q.grant||!MessageDigest.isEqual(buf.readByteArray(32),proof(q.grant.secret,"guest",q.grant.room,q.grant.person,q.nonce,q.keyHash))||buf.isReadable())throw new IllegalArgumentException();
-    ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,q.grant.name));VERIFIED.add(h);
+   Pending q=QUERIES.remove(h);try{if(q==null||!understood||q.grant.expires<=System.currentTimeMillis()||GRANTS.get(q.grant.person)!=q.grant||!MessageDigest.isEqual(buf.readByteArray(32),proof(q.grant.secret,"guest",q.grant.room,q.grant.person,q.nonce,q.keyHash)) )throw new IllegalArgumentException();
+    String actualName=buf.isReadable()?buf.readUtf(16):q.grant.name;if(!actualName.matches("[A-Za-z0-9_]{1,16}")||(!q.grant.name.equals("OfflinePlayer")&&!q.grant.name.equals(actualName))||buf.isReadable())throw new IllegalArgumentException();
+    ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,actualName));VERIFIED.add(h);
+    if(q.grant.name.equals("OfflinePlayer")){EnvironmentSync.begin(h,sync);return;}
     // Invitation proves identity; retrieve signed textures for that exact UUID separately.
     // This runs outside the render/server tick and is awaited before login completes.
     sync.waitFor(CompletableFuture.supplyAsync(()->{
@@ -59,14 +62,14 @@ public final class SocialLogin {
      catch(Exception ignored){return null;}
     }).completeOnTimeout(null,8,TimeUnit.SECONDS).thenAccept(result->{
      if(result!=null&&q.grant.uuid.equals(result.profile().id()))
-      ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,q.grant.name,result.profile().properties()));
+      ((SocialLoginAccess)h).unboxProfile(new GameProfile(q.grant.uuid,actualName,result.profile().properties()));
     }));EnvironmentSync.begin(h,sync);
    }catch(Exception e){h.disconnect(Component.literal("Invalid or expired Unbox invitation."));}
   });
   LoginTransport.client(CHANNEL,(mc,h,buf,listener)->{
    try{Grant g=joining;String room=buf.readUtf(40),person=buf.readUtf(40),nonce=buf.readUtf(40),key=KEYS.get(h);byte[] signed=buf.readByteArray(32);
     if(g==null||key==null||g.expires<=System.currentTimeMillis()||!g.room.equals(room)||!g.person.equals(person)||!g.uuid.equals(mc.getUser().getProfileId())||!g.name.equals(mc.getUser().getName())||buf.isReadable()||!MessageDigest.isEqual(signed,proof(g.secret,"host",room,person,nonce,key)))return CompletableFuture.completedFuture(null);
-    FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeByteArray(proof(g.secret,"guest",room,person,nonce,key));joining=null;KEYS.remove(h);TRUSTED.add(h);trustedClientSession=true;return CompletableFuture.completedFuture(out);
+    FriendlyByteBuf out=new FriendlyByteBuf(Unpooled.buffer());out.writeByteArray(proof(g.secret,"guest",room,person,nonce,key));out.writeUtf(mc.getUser().getName(),16);joining=null;KEYS.remove(h);TRUSTED.add(h);trustedClientSession=true;return CompletableFuture.completedFuture(out);
    }catch(Exception e){return CompletableFuture.completedFuture(null);}
   });
   LoginTransport.onServerDisconnect((h,server)->{QUERIES.remove(h);VERIFIED.remove(h);CLAIMS.remove(h);});

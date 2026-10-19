@@ -55,6 +55,7 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
     let version=profile["version"].as_str().unwrap_or("");
     if !crate::versions::supported(version)||!["fabric","vanilla","neoforge"].contains(&profile["loader"].as_str().unwrap_or("")){return Err("This game version or mod loader is not supported by Unbox yet".into())}
     let (session,local_name)=if prepare_only||(verification&&cfg!(debug_assertions)){(None,username.to_owned())}else{crate::auth::launch_account(rt).await?};
+    if !prepare_only&&!(verification&&cfg!(debug_assertions))&&profile["loader"]=="vanilla"&&!session.as_ref().is_some_and(|s|s.token!="0"){return Err("Local play requires a Fabric or NeoForge profile for private-world access controls".into())}
     let java=java()?;
     let client=reqwest::Client::builder().no_proxy().user_agent("UnboxClient/0.1 (local desktop launcher)").connect_timeout(Duration::from_secs(15)).timeout(Duration::from_secs(180)).build().map_err(|e|e.to_string())?;
     let id=profile["id"].as_str().ok_or("Missing profile")?;let game=profile_dir(rt,id)?;crate::sharing::recover(&game)?;let shared=rt.root.join("runtime");
@@ -134,7 +135,7 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
         ("library_directory",library_root.to_string_lossy().into_owned()),("natives_directory",natives.to_string_lossy().into_owned()),("launcher_name","Unbox Client".into()),("launcher_version",env!("CARGO_PKG_VERSION").into()),("classpath",classpath.join(sep)),
         ("auth_player_name",player.into()),("version_name",version.into()),("game_directory",game.to_string_lossy().into_owned()),("assets_root",assets.to_string_lossy().into_owned()),("assets_index_name",index_id.into()),("auth_uuid",digest),
         ("auth_access_token",session.as_ref().map(|s|s.token.clone()).unwrap_or("0".into())),("clientid",session.as_ref().map(|s|s.client_id.clone()).unwrap_or_default()),("auth_xuid",session.as_ref().map(|s|s.xuid.clone()).unwrap_or_default()),("user_type",if session.as_ref().is_some_and(|s|s.token!="0"){"msa"}else{"legacy"}.into()),("version_type","release".into())]);
-    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
+    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(format!("-Dunbox.accountKind={}",if session.as_ref().is_some_and(|s|s.token!="0"){"microsoft"}else{"local"}));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
     if argv.iter().any(|s|s.contains("${")){return Err("Unresolved launch argument".into())}
     let log=fs::File::create(game.join("logs/unbox-launch.log")).map_err(|e|e.to_string())?;
     let mut child=crate::process::async_command(java).args(argv).current_dir(&game).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).spawn().map_err(|e|e.to_string())?;
@@ -325,7 +326,7 @@ fn migrate_managed_mods(game:&Path,next:&Value)->Result<(),String>{
     }
     Ok(())
 }
-fn md5_offline(name:&str)->String{
+pub(crate) fn md5_offline(name:&str)->String{
     // Java UUID.nameUUIDFromBytes hashes raw bytes, without a UUID namespace.
     use md5::{Md5,Digest};let mut bytes:[u8;16]=Md5::digest(format!("OfflinePlayer:{name}").as_bytes()).into();bytes[6]=(bytes[6]&0x0f)|0x30;bytes[8]=(bytes[8]&0x3f)|0x80;uuid::Uuid::from_bytes(bytes).simple().to_string()
 }

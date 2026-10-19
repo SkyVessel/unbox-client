@@ -9,7 +9,7 @@ public final class ModOptions {
     public static final List<Mod> MODS=List.of(
         new Mod("minimap","Minimap","HUD","Terrain and death markers"),new Mod("ping","Latency","HUD","Server round-trip latency"),new Mod("fps","FPS","HUD","Frame rate"),new Mod("cps","CPS","HUD","Left and right clicks"),
         new Mod("keystrokes","Keystrokes","HUD","Movement and mouse feedback"),new Mod("coordinates","Coordinates","HUD","Position and direction"),new Mod("armor","Armor Status","HUD","Equipment durability"),
-        new Mod("crosshair","Crosshair","Visuals","Shape and color"),new Mod("particles","Particles","Visuals","Effect visibility"),
+        new Mod("crosshair","Crosshair","Visuals","Shape and color"),
         new Mod("sprint","Auto Sprint","Controls","Sprint while moving forward"),new Mod("zoom","Zoom","Controls","A closer look"),
         new Mod("chat","Chat","Visuals","Readability and layout"),new Mod("freelook","Freelook","Controls","Look around independently"),
         new Mod("veinminer","VeinMiner","Survival","Host-controlled connected ore mining"),new Mod("fallingtree","FallingTree","Survival","Host-controlled tree felling"),

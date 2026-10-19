@@ -5,7 +5,7 @@ on:
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.10
+        default: v0.2.11
       neoforge_module_sha256:
         description: Expected SHA-256 of unbox-client-neoforge.jar
         required: true

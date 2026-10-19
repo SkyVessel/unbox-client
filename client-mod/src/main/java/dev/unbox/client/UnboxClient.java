@@ -23,7 +23,7 @@ public class UnboxClient {
     private static float zoomAmount;
     private static long zoomFrame;
     public static boolean configured(String key){return Boolean.parseBoolean(CONFIG.getProperty(key,switch(key){case "fps","coordinates","armor","zoom"->"true";default->"false";}));}
-    public static boolean enabled(String key){return configured(key)&&ClientFeaturePolicy.allowed(key);}
+    public static boolean enabled(String key){return !key.equals("particles")&&configured(key)&&ClientFeaturePolicy.allowed(key);}
     public static int number(String key,int fallback,int min,int max){try{return Math.clamp(Integer.parseInt(CONFIG.getProperty(key,""+fallback)),min,max);}catch(NumberFormatException e){return fallback;}}
     public static void set(String key,Object value){CONFIG.setProperty(key,String.valueOf(value));}
     public static void save(){try{Files.createDirectories(FILE.getParent());Path temp=FILE.resolveSibling("unbox.properties.tmp");try(var out=Files.newOutputStream(temp)){CONFIG.store(out,"Unbox Client");}Files.move(temp,FILE,StandardCopyOption.REPLACE_EXISTING);modified=Files.getLastModifiedTime(FILE).toMillis();}catch(IOException e){System.err.println("Unbox settings could not be saved: "+e.getMessage());}}
