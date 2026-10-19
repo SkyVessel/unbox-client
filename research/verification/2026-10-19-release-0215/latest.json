@@ -1,0 +1,15 @@
+{
+  "version": "0.2.15",
+  "notes": "Fixes for resource packs and Client Mods controls:\n\n- Keep the Unbox name badge font and approved logo artwork at the highest resource priority, while preserving custom world textures and fonts.\n- Stop Inventory Sort from continuing enhanced drag and scroll gestures after Mouse Tweaks is disabled.\n- Block Effortless Building shortcuts before opening menus when disabled or outside Creative mode; discard queued disabled clicks.\n\nIncludes the existing skin library layout, logo ownership and friend synchronization fixes. Supports Minecraft 26.1 / 26.1.2 / 26.3 with native Fabric and NeoForge modules. Close Minecraft before updating, then restart the game.\n",
+  "pub_date": "2026-10-19T15:59:51.416937Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN29taWFtNU1pUGxWVkxCYnMzSkFUR2ljMEdKRVg1VGxOMjdxUjRUNGhSaFJEZnA0N3NrYnpVenJvczdwTTBaTDFINmtxRWdEY1h0aSszdW1rUEtVYVFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDIzODk4CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xNV9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTUKNkVBNi9TMkhPczJaeXVaY1A3dG9pbTl3d1AwZHVwM2hyK2dJZFp0bHQveUF1SkQySi92aFJyZFFoSXQ3c2pjc1dYMnk1ZXBZdm14WGVZeEY4YkpTQlE9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.15/Unbox.Client_0.2.15_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN25SeTg3RU0xY0VDU2s2VzBYejZCZHBLdFFlTlVCWEUrcFR5ZmZCdHlBenVMVmtpZ3pVTWw5Zi9WTFhOZUpacmFJbFRjWnM0d1BYVjd5MzlpVkRZY1FzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNDI1NTc3CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xNV93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTUKMjlIR25IbDhpQWlWM3ZKSEM5U1Q5WTRMVTZDZjVZYmhCaGlPSEpJWi9pWm41OTNxaWliV3A0RzU1cnNpR0tBUFhvTkNiWjRKMlZIaDFDRXUxUnRRRGc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.15/Unbox.Client_0.2.15_windows-x64-setup.exe"
+    }
+  }
+}

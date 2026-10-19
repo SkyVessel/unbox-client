@@ -1,6 +1,6 @@
 # 输入开关与 Logo 资源优先级修复
 
-2026-10-19，准备 0.2.15 测试更新。发布状态在完成平台构建、游戏回归和公开附件核验后补充。
+2026-10-19，[0.2.15](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.15) 已发布为 GitHub latest，提供 macOS ARM64 / Windows x64 自动更新。
 
 ## Effortless Building
 
@@ -32,8 +32,12 @@ Mouse Tweaks 自身事件门禁有效，但 Inventory Profiles Next 的 `MiscHan
 - 26.3 Fabric 的冲突材质包夹具通过 94 项视觉检查；截图确认皇冠正常，日志确认 ImmediatelyFast 仍执行 256 字体图集兼容回退。
 - macOS 原生测试 68 项通过。Node 原有 58 项中首次 57 项通过，1 项正确发现启动器设置目录过期；重新导出目录后，该项复测通过。最终前端构建完成。
 - macOS 更新包 53,146,435 字节，45 个内嵌资源核对通过，包内外 ad-hoc 签名和 updater 签名有效，篡改包被拒绝。
-- Windows 构建与公开附件核验进行中；最终源码提交 `7ce9081`。早期 Windows 构建因同步设置目录而取消，最终运行使用完整修复提交。
+- [Windows 构建任务](https://github.com/SkyVessel/unbox-client/actions/runs/39278662661/job/118148845235) 成功完成，70 项原生测试通过；1 个子进程探针由两个父测试调用。安装包 31,443,454 字节，45 份内嵌资源核对通过，GUI subsystem 2 已验证。GitHub workflow 汇总状态存在滞后；具体 job 的完成状态、原生测试日志和实际安装包共同作为成功证据，原始状态保留在 windows-workflow.json。
+- 12 个公开附件及 latest.json 已匿名下载，SHA-256 全部匹配；两平台 updater 签名有效且拒绝篡改，沿用原公钥。
+- 发布标签、最终源码与 Windows job 一致：`7ce9081ff835282df677500629dc91638a1e3bf5`。首次构建因同步设置目录而取消，最终包使用完整修复提交。
 
 证据目录：`research/verification/2026-10-19-release-0215/`。
 
 所有实际游戏测试运行于 macOS 隔离存档；没有 Windows 游戏实玩证据，也未取得用户的具体材质包。保护品牌资源不能保证任意第三方自定义文字着色器的所有绘制效果。未修改生产 Worker、账号权限或资产设计。
+
+退出 Minecraft 后，通过 Settings → Updates → Check for updates → Install and restart 安装 0.2.15，再启动游戏。材质包可以保持开启，无需重新兑换资产。
