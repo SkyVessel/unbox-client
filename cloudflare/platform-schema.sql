@@ -8,3 +8,4 @@ CREATE TABLE IF NOT EXISTS player_equipment(uuid TEXT NOT NULL,slot TEXT NOT NUL
 CREATE TABLE IF NOT EXISTS platform_audit(id TEXT PRIMARY KEY,actor TEXT NOT NULL,action TEXT NOT NULL,target TEXT NOT NULL,detail TEXT NOT NULL,created INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS news_posts(id TEXT PRIMARY KEY,title TEXT NOT NULL,summary TEXT NOT NULL,body TEXT NOT NULL,image TEXT,url TEXT,status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','published')),published INTEGER,updated INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS news_publication ON news_posts(status,published);
+CREATE TABLE IF NOT EXISTS redemption_codes(id TEXT PRIMARY KEY,code_hash TEXT NOT NULL UNIQUE,items TEXT NOT NULL,created INTEGER NOT NULL,expires INTEGER,disabled INTEGER NOT NULL DEFAULT 0,claimed_by TEXT,claimed_at INTEGER,claim_request TEXT UNIQUE);

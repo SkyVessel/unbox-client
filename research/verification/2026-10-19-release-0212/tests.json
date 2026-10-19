@@ -1,0 +1,19 @@
+{
+  "javascript": {
+    "passed": 56,
+    "failed": 0
+  },
+  "macOSNative": {
+    "passed": 68,
+    "failed": 0
+  },
+  "frontendBuild": true,
+  "gameNativeModules": 6,
+  "windows": "pending",
+  "visualGame": {
+    "minecraft": "26.3",
+    "loader": "Fabric",
+    "passed": 79,
+    "failed": 0
+  }
+}

@@ -80,3 +80,4 @@ test('retired email UUID can migrate to local play without inheriting cloud iden
   assert.equal((await send(db,{...player('Duplicate'),uuid:old.uuid},'register',{...player('Duplicate'),uuid:old.uuid})).status,409);
  }finally{db.sql.close()}
 });
+test('local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID',async()=>{const db=database(),p=player('Local');try{await register(db,p);const r=await send(db,p,'assets/redeem',{code:'A'.repeat(40),kind:'microsoft',uuid:'1'.repeat(32)});assert.equal(r.status,403);assert.equal(db.sql.prepare('SELECT COUNT(*) n FROM asset_grants').get().n,0)}finally{db.sql.close()}});

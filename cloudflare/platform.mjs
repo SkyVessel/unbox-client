@@ -1,3 +1,4 @@
+import {issueCode,redeemCode} from './redemption.mjs';
 import {digest} from './accounts.mjs';
 import {adminHtml} from './admin.mjs';
 const json=(v,status=200)=>Response.json(v,{status,headers:{'Cache-Control':'no-store'}});
@@ -31,6 +32,7 @@ export async function platformRoute(request,env,path,b,me=null){
   if(method!=='GET'&&!write)return json({error:'Read-only administrator'},403);
   const actor=write?'administrator':'support';
   if(method==='GET'){
+   if(path==='/v1/admin/codes')return json({codes:(await db.prepare('SELECT id,items,created,expires,disabled,claimed_by,claimed_at FROM redemption_codes ORDER BY created DESC LIMIT 100').all()).results});
    if(path==='/v1/admin/catalog')return json({items:(await db.prepare('SELECT * FROM asset_catalog ORDER BY kind,name').all()).results});
    if(path==='/v1/admin/news')return json({posts:(await db.prepare('SELECT * FROM news_posts ORDER BY updated DESC LIMIT 100').all()).results});
    if(path==='/v1/admin/audit')return json({events:(await db.prepare('SELECT * FROM platform_audit ORDER BY created DESC LIMIT 200').all()).results});
@@ -40,6 +42,11 @@ export async function platformRoute(request,env,path,b,me=null){
    }
   }
   if(method!=='POST')return json({error:'Not found'},404);
+  if(path==='/v1/admin/codes')return issueCode(db,b,actor,now);
+  if(path==='/v1/admin/codes/disable'){
+   if(!text(b.id,64)||!await db.prepare('SELECT id FROM redemption_codes WHERE id=?').bind(b.id).first())return json({error:'Code not found'},404);
+   await db.batch([db.prepare('UPDATE redemption_codes SET disabled=1 WHERE id=?').bind(b.id),audit(db,actor,'disable-code',b.id,{},now)]);return json({ok:true});
+  }
   if(path==='/v1/admin/catalog'){
    if(!identifier(b.id)||!['logo','cape','role'].includes(b.kind)||!text(b.name,80)||!https(b.resource)||typeof b.enabled!=='boolean'||!Array.isArray(b.features)||b.features.length>64||!b.features.every(identifier)||b.kind!=='role'&&b.features.length)return json({error:'Invalid item definition'},400);
    const old=await db.prepare('SELECT kind FROM asset_catalog WHERE id=?').bind(b.id).first();if(old&&old.kind!==b.kind)return json({error:'An item type cannot be changed after creation'},409);
@@ -70,6 +77,7 @@ export async function platformRoute(request,env,path,b,me=null){
  }
  if(!path.startsWith('/v1/assets'))return null;
  if(!me||me.kind!=='microsoft')return json({error:'A verified Minecraft account is required'},403);
+ if(path==='/v1/assets/redeem'&&method==='POST')return redeemCode(db,me,b,now,ownership);
  const value=await ownership(db,me.uuid,now);
  if(path==='/v1/assets'&&method==='POST')return json(value);
  if(path==='/v1/assets/equip'&&method==='POST'){

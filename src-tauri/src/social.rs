@@ -286,7 +286,44 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
     }
     Ok(result)
 }
+async fn assets_inner(rt: &Runtime, account_id: &str, op: &str, value: &str) -> Result<Value, String> {
+    let io = rt.social.lock().await.io.clone();
+    let _io = io.lock().await;
+    let initial = account(rt).await?;
+    if initial["accountId"] != account_id || initial["type"] != "microsoft" {
+        return Err("Sign in with your verified Minecraft account to use assets".into());
+    }
+    sync_inner(rt).await?;
+    // Pin the selected account while spending a one-time code. Account switches use this lock too.
+    let _auth = rt.auth.lock().await;
+    let a = auth::restore_account(rt, &Value::Null)?;
+    if a["accountId"] != account_id || a["type"] != "microsoft" {
+        return Err("Account changed. Please try again.".into());
+    }
+    let (path, body) = match op {
+        "list" => ("assets", json!({})),
+        "redeem" if value.len() <= 100 => ("assets/redeem", json!({"code":value})),
+        "equip-logo" => ("assets/equip", json!({"slot":"logo","item":if value.is_empty(){Value::Null}else{json!(value)}})),
+        _ => return Err("Unknown asset action".into()),
+    };
+    let result = request(&endpoint(rt)?, &account_identity(&a)?, path, body).await?;
+    let mut state = rt.social.lock().await;
+    if state.account_key == key(&a) { state.view["assets"] = result.clone(); }
+    Ok(result)
+}
+#[tauri::command]
+pub async fn asset_action(rt: tauri::State<'_, Runtime>, account_id: String, op: String, value: String) -> Result<Value, String> {
+    assets_inner(&rt, &account_id, &op, &value).await
+}
 async fn action(rt: &Runtime, op: &str, id: &str) -> Result<Value, String> {
+    if op == "redeem" || op == "equip-logo" {
+        let a = account(rt).await?;
+        if game_status(rt, &a).is_null() { return Err("Game account changed".into()); }
+        let result = assets_inner(rt, a["accountId"].as_str().unwrap_or(""), op, id).await?;
+        let _ = sync(rt).await;
+        return Ok(result);
+    }
+
     let io = rt.social.lock().await.io.clone();
     let _guard = io.lock().await;
     let url = endpoint(rt)?;
@@ -396,6 +433,7 @@ pub fn start(rt: Runtime) {
                             }
                             drop(state);
                             if fresh {
+                                if c["op"] == "redeem" { let _ = fs::remove_file(g.join("unbox-social-command.json")); }
                                 let active = account(&rt)
                                     .await
                                     .ok()

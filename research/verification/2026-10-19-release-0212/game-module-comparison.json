@@ -1,0 +1,92 @@
+{
+  "unbox-client.jar": {
+    "changed": [
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class",
+      "fabric.mod.json"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  },
+  "unbox-client-neoforge.jar": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  },
+  "unbox-client-26.1.2.jar": {
+    "changed": [
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class",
+      "fabric.mod.json"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  },
+  "unbox-client-neoforge-26.1.2.jar": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  },
+  "unbox-client-26.3.jar": {
+    "changed": [
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class",
+      "fabric.mod.json"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  },
+  "unbox-client-neoforge-26.3.jar": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/PanelStyle.class",
+      "dev/unbox/client/SkinLibraryScreen$Action.class",
+      "dev/unbox/client/SkinLibraryScreen.class",
+      "dev/unbox/client/VisualV4SmokeTest.class"
+    ],
+    "added": [
+      "assets/unbox/textures/ui/unbox-creator-crown.png",
+      "assets/unbox/textures/ui/unbox-fluttering-cash.png",
+      "dev/unbox/client/RedeemScreen.class"
+    ],
+    "mouseTweaksFixUnchanged": true
+  }
+}

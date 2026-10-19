@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "Worker configured",
+    "Anonymous code administration rejected",
+    "Code migration available and credentials retained",
+    "Read-only code issuance rejected",
+    "Anonymous redemption rejected",
+    "Temporary local fixture registered",
+    "Local token with spoofed Microsoft body rejected",
+    "Approved logo catalogued: Creator crown",
+    "Approved logo catalogued: Cash"
+  ],
+  "ok": true,
+  "noCodesIssued": true,
+  "noGrantsIssued": true,
+  "temporaryFixtureRemoved": true,
+  "productionPeopleCountAfter": 4,
+  "productionGrantsCountAfter": 0,
+  "productionCodesCountAfter": 0
+}

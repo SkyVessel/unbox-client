@@ -42,7 +42,7 @@ final class PanelStyle {
     static final class Motion{private float value;private long time;float to(float target){long now=System.nanoTime();float dt=time==0?1:Math.min(.1f,(now-time)/1e9f);time=now;value+=(target-value)*(1-(float)Math.exp(-dt*18));return value;}}
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int color){icon(g,id,x,y,32,color);}
     static void icon(GuiGraphicsExtractor g,String id,int x,int y,int size,int color){
-        int resolution=id.equals("logo")?768:id.equals("badge")?96:384;
+        int resolution=id.startsWith("unbox-")?512:id.equals("logo")?768:id.equals("badge")?96:384;
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,Identifier.fromNamespaceAndPath("unbox","textures/ui/"+id+".png"),x,y,0f,0f,size,size,resolution,resolution,resolution,resolution,tint(color));
     }
 }
