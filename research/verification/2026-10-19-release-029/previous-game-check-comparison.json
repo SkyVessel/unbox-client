@@ -1,0 +1,128 @@
+{
+  "fabric-26.1": {
+    "changed": [
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "fabric.mod.json",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  },
+  "fabric-26.1.2": {
+    "changed": [
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "fabric.mod.json",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  },
+  "fabric-26.3": {
+    "changed": [
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "fabric.mod.json",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  },
+  "neoforge-26.1": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  },
+  "neoforge-26.1.2": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  },
+  "neoforge-26.3": {
+    "changed": [
+      "META-INF/neoforge.mods.toml",
+      "dev/unbox/client/LocalSkin.class",
+      "dev/unbox/client/OptifineCape.class",
+      "dev/unbox/client/UnboxClient.class",
+      "dev/unbox/client/mixin/CapeMixin.class",
+      "unbox.mixins.json"
+    ],
+    "added": [
+      "dev/unbox/client/OptifineCape$Entry.class"
+    ],
+    "removed": [
+      "dev/unbox/client/DroppedItemState.class",
+      "dev/unbox/client/InventorySorter.class",
+      "dev/unbox/client/mixin/DroppedItemMixin.class",
+      "dev/unbox/client/mixin/DroppedItemStateMixin.class",
+      "dev/unbox/client/mixin/InventorySortScreenMixin.class",
+      "dev/unbox/client/mixin/LocalSkinMixin.class"
+    ]
+  }
+}
