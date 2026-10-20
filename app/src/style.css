@@ -54,3 +54,5 @@ img[src="/assets/logos/unbox-creator-crown.svg"]{transform-origin:50% 100%;trans
 img[src="/assets/logos/unbox-fluttering-cash.svg"]{transform-origin:50% 100%;transform:translateY(5.6%) scale(1.586)}
 /* Floating cash extends above the first friend's name; retain room inside the scroll area. */
 .friend-rows{padding-top:8px}
+
+.profile-rail .friend-profile{position:relative;overflow:visible;flex-shrink:0}.profile-friend-avatar{position:absolute;right:-4px;top:-6px;width:22px;height:22px;display:grid;place-items:center;border-radius:5px;background:#292d35;box-shadow:0 0 0 2px #292d35;pointer-events:none}.profile-friend-avatar img{width:18px;height:18px;image-rendering:pixelated;border-radius:3px}

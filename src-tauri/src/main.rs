@@ -36,20 +36,20 @@ async fn bootstrap(rt: tauri::State<'_,Runtime>) -> Result<Value,String> {
     let path=rt.root.join("state.json");
     let _guard=rt.auth.lock().await;
     let mut saved=if path.exists(){serde_json::from_slice::<Value>(&fs::read(path).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{json!({"profiles":[],"selected":null,"settings":{"memory":4096,"reducedMotion":false,"reducedTransparency":false,"minimize":true},"account":null})};
+    let before=saved.clone();sharing::normalize_profiles(&mut saved);if saved!=before{atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;}
     saved["account"]=auth::restore_account(&rt,&saved["account"])?;
     Ok(json!({"state":saved,"dataDirectory":rt.root,"native":true,"version":"26.1"}))
 }
 #[tauri::command]
-async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<(),String> {
+async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Value,String> {
     if !state.is_object() || !state["profiles"].is_array() {return Err("Invalid state".into())}
     for p in state["profiles"].as_array().unwrap() {profile_dir(&rt,p["id"].as_str().ok_or("Missing ID")?)?;}
     let _guard=rt.auth.lock().await;
     state["account"]=auth::restore_account(&rt,&state["account"])?;
     state["profiles"].as_array_mut().unwrap().retain(|p|profile_dir(&rt,p["id"].as_str().unwrap()).is_ok_and(|d|d.join("profile.json").is_file()));
+    if let Ok(bytes)=fs::read(rt.root.join("state.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){sharing::merge_saved_profiles(&mut state,&saved);}}
     if !state["profiles"].as_array().unwrap().iter().any(|p|p["id"]==state["selected"]){state["selected"]=state["profiles"].get(0).map(|p|p["id"].clone()).unwrap_or(Value::Null)}
-    // A settings write queued before sync finished must not erase the new friend profile.
-    if let Ok(bytes)=fs::read(rt.root.join("state.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){if let Some(existing)=saved["profiles"].as_array(){let profiles=state["profiles"].as_array_mut().unwrap();for p in existing{if p["sharedHost"].is_string()&&!profiles.iter().any(|v|v["id"]==p["id"]){profiles.push(p.clone());}}}}}
-    atomic(&rt.root.join("state.json"),serde_json::to_vec_pretty(&state).map_err(|e|e.to_string())?.as_slice())
+    atomic(&rt.root.join("state.json"),serde_json::to_vec_pretty(&state).map_err(|e|e.to_string())?.as_slice())?;Ok(state)
 }
 #[tauri::command]
 fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String) -> Result<Value,String> {

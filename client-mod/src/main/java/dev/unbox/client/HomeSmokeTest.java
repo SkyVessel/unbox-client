@@ -12,6 +12,7 @@ import java.util.List;
 /** Runs only with an explicit development flag, without loading or modifying a world. */
 final class HomeSmokeTest {
     private static long last;
+    private static boolean startupChecked;
     private static int step;private static boolean sawEntrance,focusedTitle;
     private static final List<String> checks=new ArrayList<>();
     private static void check(boolean value,String label){if(!value)throw new IllegalStateException(label);checks.add(label);}
@@ -25,6 +26,20 @@ final class HomeSmokeTest {
     }
     static void tick(Minecraft m){
         if(!Boolean.getBoolean("unbox.homeSmoke")||m.getOverlay()!=null||m.screen==null)return;
+        String startup=System.getProperty("unbox.joinStartupSmoke","");
+        if(!startup.isEmpty()&&!startupChecked){
+            try{
+                check(m.getUser()!=null,"Cold startup reached a ready Minecraft client");
+                boolean valid=startup.equals("valid");
+                check(SocialBridge.resuming()==valid,"Pending invitation restored only for a valid matching account");
+                check(valid?m.screen instanceof JoinProgressScreen:m.screen instanceof UnboxHomeScreen,"Cold startup selects the correct progress or home screen");
+                check(Files.exists(m.gameDirectory.toPath().resolve("unbox-rejoin.json"))==valid,"Invalid and expired startup records are cleared");
+                shot(m,"join-startup-"+startup);
+                if(valid){m.screen.onClose();check(!SocialBridge.busy(),"Cancel exits restored invitation without restarting");}
+                Files.writeString(m.gameDirectory.toPath().resolve("logs/home-smoke.json"),new com.google.gson.Gson().toJson(java.util.Map.of("ok",true,"checks",checks)));
+            }catch(Exception e){try{Files.writeString(m.gameDirectory.toPath().resolve("logs/home-smoke.json"),new com.google.gson.Gson().toJson(java.util.Map.of("ok",false,"error",e.toString(),"checks",checks)));}catch(Exception ignored){}}
+            startupChecked=true;m.stop();return;
+        }
         if(step==0&&m.screen instanceof UnboxHomeScreen h&&h.menuOffsetY()>0&&!sawEntrance){sawEntrance=true;shot(m,"title-entrance");}
         long now=System.currentTimeMillis();if(last==0){last=now;return;}if(now-last<1500)return;last=now;
         try{

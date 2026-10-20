@@ -15,6 +15,35 @@ fn entries(manifest:&Value)->Result<Vec<(String,u64)>,String>{
  if manifest["schema"]==2{let selected=manifest["resourcePacks"].as_array().ok_or("Missing selected packs")?;if selected.len()>512{return Err("Too many selected packs".into())}for p in selected{let name=p.as_str().and_then(|s|s.strip_prefix("file/")).ok_or("Invalid selected pack")?;if !names.contains(&format!("resourcepacks:{name}")){return Err("Selected resource pack missing".into())}}let shader=manifest["shaderPack"].as_str().ok_or("Missing shader selection")?;if !shader.is_empty()&&!names.contains(&format!("shaderpacks:{shader}")){return Err("Selected shader pack missing".into())}if !manifest["shadersEnabled"].is_boolean(){return Err("Invalid shader state".into())}}
  Ok(out)
 }
+/// Keep a single visible recent environment per friend; version-specific files remain isolated on disk.
+pub fn normalize_profiles(state:&mut Value){
+ let Some(profiles)=state["profiles"].as_array() else{return};
+ let mut latest=std::collections::HashMap::new();
+ for (index,p) in profiles.iter().enumerate(){if let Some(host)=p["sharedHost"].as_str(){let stamp=p["sharedUpdatedAt"].as_u64().unwrap_or(0);let entry=latest.entry(host.to_owned()).or_insert((stamp,index));if stamp>=entry.0{*entry=(stamp,index);}}}
+ let selected_host=profiles.iter().find(|p|p["id"]==state["selected"]).and_then(|p|p["sharedHost"].as_str()).map(str::to_owned);
+ let filtered:Vec<Value>=profiles.iter().enumerate().filter(|(index,p)|p["sharedHost"].as_str().is_none_or(|host|latest[host].1==*index)).map(|(_,p)|p.clone()).collect();
+ if let Some(host)=selected_host{if let Some(p)=filtered.iter().find(|p|p["sharedHost"]==host){state["selected"]=p["id"].clone();}}
+ state["profiles"]=json!(filtered);
+}
+pub fn merge_saved_profiles(state:&mut Value,saved:&Value){
+ // Background joining owns shared profiles. A stale UI settings write cannot restore an older environment.
+ let previous_host=state["profiles"].as_array().and_then(|ps|ps.iter().find(|p|p["id"]==state["selected"])).and_then(|p|p["sharedHost"].as_str()).map(str::to_owned);
+ let profiles=state["profiles"].as_array_mut().unwrap();profiles.retain(|p|!p["sharedHost"].is_string());
+ if let Some(existing)=saved["profiles"].as_array(){profiles.extend(existing.iter().filter(|p|p["sharedHost"].is_string()).cloned());}
+ normalize_profiles(state);
+ if let Some(host)=previous_host{if let Some(p)=state["profiles"].as_array().unwrap().iter().find(|p|p["sharedHost"]==host){state["selected"]=p["id"].clone();}}
+}
+fn select_shared(state:&mut Value,profile:&Value)->Result<(),String>{
+ let profiles=state["profiles"].as_array_mut().ok_or("Invalid profile list")?;
+ profiles.retain(|p|p["id"]!=profile["id"]&&p["sharedHost"]!=profile["sharedHost"]);profiles.push(profile.clone());state["selected"]=profile["id"].clone();Ok(())
+}
+fn describe_friend(profile:&mut Value,view:&Value,invite:&Value,now:u64){
+ let friend=view["friends"].as_array().and_then(|fs|fs.iter().find(|f|f["id"]==profile["sharedHost"]));
+ let name=friend.and_then(|f|f["name"].as_str()).or_else(||invite["senderName"].as_str()).map(str::to_owned).or_else(||profile["sharedHostName"].as_str().map(str::to_owned)).unwrap_or_else(||profile["sharedHost"].as_str().unwrap_or("Friend").chars().take(8).collect());
+ profile["name"]=json!(format!("Last played · {name}"));profile["sharedHostName"]=json!(name);profile["sharedUpdatedAt"]=json!(now);
+ if let Some(friend)=friend{profile["sharedHostFace"]=friend["face"].clone();}
+ if invite["room"]["name"].is_string(){profile["sharedWorld"]=invite["room"]["name"].clone();}
+}
 /// Called only after the guest game exits cleanly. Source profile is never edited.
 pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
  let host=request["hostId"].as_str().ok_or("Missing friend identity")?;let host_uuid=uuid::Uuid::parse_str(host).map_err(|_|"Invalid friend identity")?;
@@ -51,7 +80,8 @@ pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
   let options=dir.join("options.txt");let previous=fs::read_to_string(&options).unwrap_or_default();let mut lines:Vec<String>=previous.lines().filter(|l|!l.starts_with("resourcePacks:")&&!l.starts_with("incompatibleResourcePacks:")).map(str::to_owned).collect();let mut selected=vec![json!("vanilla")];selected.extend(manifest["resourcePacks"].as_array().unwrap().clone());lines.push(format!("resourcePacks:{}",json!(selected)));lines.push("incompatibleResourcePacks:[]".into());atomic(&options,(lines.join("\n")+"\n").as_bytes())?;
   let iris=dir.join("config/iris.properties");let previous=fs::read_to_string(&iris).unwrap_or_default();let mut lines:Vec<String>=previous.lines().filter(|l|!l.starts_with("shaderPack=")&&!l.starts_with("enableShaders=")).map(str::to_owned).collect();lines.push(format!("shaderPack={}",manifest["shaderPack"].as_str().unwrap()));lines.push(format!("enableShaders={}",manifest["shadersEnabled"].as_bool().unwrap()));atomic(&iris,(lines.join("\n")+"\n").as_bytes())?;
  }
- let profile=json!({"id":id,"name":format!("Friend · {}",&host[..8]),"version":version,"loader":loader,"icon":"grass_block","sharedHost":host});
+ let mut profile:Value=fs::read(dir.join("profile.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).filter(Value::is_object).unwrap_or_else(||json!({"name":format!("Friend · {}",&host[..8]),"icon":"grass_block"}));
+ profile["id"]=json!(id);profile["version"]=json!(version);profile["loader"]=json!(loader);profile["sharedHost"]=json!(host);
  atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;atomic(&dir.join("unbox-shared-manifest.json"),&serde_json::to_vec(manifest).unwrap())?;
  Ok(profile)
 }
@@ -68,12 +98,12 @@ pub fn invite_profile(rt:&Runtime,view:&Value,invite_id:&str,account_uuid:&str)-
  let version=invite["room"]["minecraft"].as_str().unwrap();let namespace=crate::versions::shared_namespace(loader,version);
  let id=uuid::Uuid::new_v3(&host_uuid,namespace.as_bytes()).to_string();let dir=profile_dir(rt,&id)?;
  let mut saved:Value=serde_json::from_slice(&fs::read(rt.root.join("state.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
- let profile=if dir.join("profile.json").is_file(){serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{
+ let mut profile=if dir.join("profile.json").is_file(){serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{
   let p=json!({"id":id,"name":format!("Friend · {}",invite["senderName"].as_str().unwrap_or(&host[..8])),"version":version,"loader":loader,"icon":"grass_block","sharedHost":host});
   atomic(&dir.join("profile.json"),&serde_json::to_vec(&p).unwrap())?;
   if let Some(source)=saved["selected"].as_str().and_then(|s|profile_dir(rt,s).ok()){for rel in ["options.txt","config/unbox.properties"]{if source.join(rel).is_file(){atomic(&dir.join(rel),&fs::read(source.join(rel)).map_err(|e|e.to_string())?)?;}}}p
  };
- let profiles=saved["profiles"].as_array_mut().ok_or("Invalid profile list")?;if !profiles.iter().any(|p|p["id"]==id){profiles.push(profile.clone())}saved["selected"]=json!(id);
+ describe_friend(&mut profile,view,invite,now);atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;select_shared(&mut saved,&profile)?;
  atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
  atomic(&dir.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":invite_id,"at":now,"expires":invite["expires"],"accountUuid":account_uuid,"worldName":invite["room"]["name"]})).unwrap())?;
  let mut bridge=view.clone();bridge["updated"]=json!(now);bridge["seenInvites"]=json!([invite_id]);crate::social::atomic(&dir.join("unbox-social-view.json"),&serde_json::to_vec(&bridge).unwrap())?;Ok(profile)
@@ -84,14 +114,27 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
  let path=dir.join("unbox-sync-request.json");if !path.exists(){return Ok(None)}let bytes=fs::read(&path).map_err(|e|e.to_string())?;fs::remove_file(path).map_err(|e|e.to_string())?;if bytes.len()>200000{return Err("Shared manifest is too large".into())}let request:Value=serde_json::from_slice(&bytes).map_err(|_|"Invalid sync completion")?;
  let now=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis()as u64;if request["at"].as_u64().is_none_or(|n|now.saturating_sub(n)>120000){return Err("Sync completion expired; join again".into())}
  let _guard=rt.auth.lock().await;let account=crate::auth::restore_account(rt,&Value::Null)?;let uuid=account["uuid"].as_str().unwrap_or("").replace('-',"");if request["accountUuid"].as_str().unwrap_or("").replace('-',"")!=uuid||uuid.is_empty(){return Err("Account changed during synchronization".into())}
- {let state=rt.social.lock().await;if !state.view["invites"].as_array().is_some_and(|list|list.iter().any(|i|i["id"]==request["inviteId"]&&i["sender"]==request["hostId"])){return Err("Invitation is no longer available. Downloaded mods remain cached.".into())}}
- let copy=rt.clone();let source=source.clone();let r=request.clone();let profile=tauri::async_runtime::spawn_blocking(move||apply(&copy,&source,&r)).await.map_err(|_|"Could not prepare shared mods")??;
- let mut saved:Value=serde_json::from_slice(&fs::read(rt.root.join("state.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;let profiles=saved["profiles"].as_array_mut().ok_or("Invalid profile list")?;if !profiles.iter().any(|p|p["id"]==profile["id"]){profiles.push(profile.clone());}saved["selected"]=profile["id"].clone();atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
+ let view=rt.social.lock().await.view.clone();let invite=view["invites"].as_array().and_then(|list|list.iter().find(|i|i["id"]==request["inviteId"]&&i["sender"]==request["hostId"])).ok_or("Invitation is no longer available. Downloaded mods remain cached.")?;
+ let copy=rt.clone();let source=source.clone();let r=request.clone();let mut profile=tauri::async_runtime::spawn_blocking(move||apply(&copy,&source,&r)).await.map_err(|_|"Could not prepare shared mods")??;
+ let mut saved:Value=serde_json::from_slice(&fs::read(rt.root.join("state.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;describe_friend(&mut profile,&view,invite,now);atomic(&profile_dir(rt,profile["id"].as_str().unwrap())?.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;select_shared(&mut saved,&profile)?;atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
  let target=profile_dir(rt,profile["id"].as_str().unwrap())?;atomic(&target.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":request["inviteId"],"at":now,"accountUuid":uuid})).unwrap())?;Ok(Some(profile))
 }
 #[cfg(test)]mod tests{
  use super::*;use std::io::Write;
  fn jar(p:&Path,id:&str,environment:&str){let mut z=zip::ZipWriter::new(fs::File::create(p).unwrap());z.start_file("fabric.mod.json",zip::write::SimpleFileOptions::default()).unwrap();write!(z,"{}",json!({"id":id,"environment":environment})).unwrap();z.finish().unwrap();}
+ #[test]fn recent_friend_profiles_replace_by_host_and_survive_stale_ui_saves(){
+  let personal=json!({"id":"personal","name":"My world"});
+  let old=json!({"id":"old","sharedHost":"alice","sharedUpdatedAt":10,"sharedHostFace":"old-face"});
+  let latest=json!({"id":"new","sharedHost":"alice","sharedUpdatedAt":20,"sharedHostFace":"new-face","version":"26.3","loader":"neoforge"});
+  let bob=json!({"id":"bob","sharedHost":"bob","sharedUpdatedAt":15});
+  let mut saved=json!({"profiles":[personal,latest,bob,old],"selected":"old"});normalize_profiles(&mut saved);
+  assert_eq!(saved["profiles"].as_array().unwrap().len(),3);assert_eq!(saved["selected"],"new");assert_eq!(saved["profiles"][0],personal);
+  let mut stale=json!({"profiles":[personal,old],"selected":"old","settings":{"memory":8192}});merge_saved_profiles(&mut stale,&saved);
+  assert_eq!(stale["profiles"],saved["profiles"]);assert_eq!(stale["selected"],"new");assert_eq!(stale["settings"]["memory"],8192);
+  let updated=json!({"id":"new","sharedHost":"alice","sharedUpdatedAt":30,"sharedHostFace":"updated-face"});select_shared(&mut saved,&updated).unwrap();
+  assert_eq!(saved["profiles"].as_array().unwrap().len(),3);assert_eq!(saved["profiles"][2],updated);
+  let mut legacy=json!({"profiles":[{"id":"one","sharedHost":"a"},{"id":"two","sharedHost":"a"}],"selected":"one"});normalize_profiles(&mut legacy);assert_eq!(legacy["profiles"].as_array().unwrap().len(),1);assert_eq!(legacy["selected"],"two");
+ }
  #[test]fn invitations_and_cached_mods_select_each_exact_native_environment(){
   let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:Default::default(),auth:Default::default(),social:Default::default()};
   let source=json!({"id":uuid::Uuid::new_v4().to_string(),"loader":"fabric","version":"26.1"});let original=profile_dir(&rt,source["id"].as_str().unwrap()).unwrap();fs::create_dir_all(original.join("mods")).unwrap();fs::create_dir_all(root.join("shared-cache")).unwrap();jar(&original.join("mods/personal.jar"),"personal","client");atomic(&original.join("options.txt"),b"key_key.forward:key.keyboard.i\n").unwrap();
@@ -107,7 +150,7 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
     let profile=apply(&rt,&source,&request).unwrap();assert_eq!(profile["loader"],loader);assert_eq!(profile["version"],*version);assert!(ids.insert(profile["id"].as_str().unwrap().to_owned()));
     let target=profile_dir(&rt,profile["id"].as_str().unwrap()).unwrap();assert!(target.join(format!("mods/{hash}.jar")).exists());assert_eq!(target.join("mods/personal.jar").exists(),loader=="fabric"&&*version=="26.1");assert_eq!(fs::read_to_string(target.join("options.txt")).unwrap(),"key_key.forward:key.keyboard.i\n");assert_eq!(apply(&rt,&source,&request).unwrap(),profile);
     assert_eq!(fs::read(target.join("config/unbox.properties")).unwrap(),fs::read(original.join("config/unbox.properties")).unwrap());
-    let view=json!({"connected":true,"self":{"id":"guest"},"invites":[{"id":"invite","sender":host,"receiver":"guest","expires":now+300000,"room":{"loader":loader,"minecraft":version}}]});assert_eq!(invite_profile(&rt,&view,"invite","account").unwrap(),profile);
+    let view=json!({"connected":true,"self":{"id":"guest"},"invites":[{"id":"invite","sender":host,"receiver":"guest","expires":now+300000,"room":{"loader":loader,"minecraft":version}}]});assert_eq!(invite_profile(&rt,&view,"invite","account").unwrap()["id"],profile["id"]);
     request["manifest"]["loaderVersion"]=json!("unsupported");assert!(apply(&rt,&source,&request).is_err());assert!(target.join(format!("mods/{hash}.jar")).exists());
    }
   }
@@ -131,6 +174,10 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
 
  view["invites"][0]["room"]["loader"]=json!("fabric");let fabric=invite_profile(&rt,&view,"invite","account").unwrap();assert_ne!(fabric["id"],neo["id"]);
  let mut ids=std::collections::HashSet::new();for loader in ["fabric","neoforge"]{for version in crate::versions::SUPPORTED{view["invites"][0]["room"]=json!({"loader":loader,"minecraft":version});let profile=invite_profile(&rt,&view,"invite","account").unwrap();assert_eq!(profile["loader"],loader);assert_eq!(profile["version"],*version);assert!(ids.insert(profile["id"].as_str().unwrap().to_owned()));}}assert_eq!(ids.len(),6);
+ let host=view["invites"][0]["sender"].clone();let saved:Value=serde_json::from_slice(&fs::read(root.join("state.json")).unwrap()).unwrap();assert_eq!(saved["profiles"].as_array().unwrap().iter().filter(|p|p["sharedHost"]==host).count(),1);
+ view["friends"]=json!([{"id":host,"name":"Builder","face":"data:image/png;base64,dGVzdA=="}]);view["invites"][0]["room"]["name"]=json!("New world");
+ let latest=invite_profile(&rt,&view,"invite","account").unwrap();assert_eq!(latest["name"],"Last played · Builder");assert_eq!(latest["sharedHostFace"],view["friends"][0]["face"]);assert_eq!(latest["sharedWorld"],"New world");assert!(dir.join("mods/keep.jar").exists());
+ view["friends"][0]["name"]=json!("Renamed");let refreshed=invite_profile(&rt,&view,"invite","account").unwrap();assert_eq!(refreshed["id"],latest["id"]);assert_eq!(refreshed["name"],"Last played · Renamed");
  view["invites"][0]["receiver"]=json!("other");assert!(invite_profile(&rt,&view,"invite","account").is_err());view["invites"][0]["receiver"]=json!("guest");view["invites"][0]["expires"]=json!(0);assert!(invite_profile(&rt,&view,"invite","account").is_err());fs::remove_dir_all(root).unwrap();
  }
  #[test]fn neoforge_sync_preserves_loader_and_rejects_wrong_metadata(){

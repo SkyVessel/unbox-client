@@ -57,10 +57,10 @@ try{
     firstDownload=await load(paths.guest+'/logs/environment-sync.json');if(!firstDownload?.restart||firstDownload.downloadedBytes<=0)throw Error('Guest did not transfer the host gameplay JAR');
     try{await access(paths.guest+'/mods/shared-fixture.jar');throw Error('Guest was preloaded with host fixture')}catch(e){if(e.code!=='ENOENT')throw e;}
     publicChecks.push('Guest started without the host gameplay mod; first join downloaded missing bytes and requested restart');
-    const sourceFile=paths.guest+'/profile.json';await save(sourceFile,{id:ids.guest,loader:process.env.UNBOX_TEST_LOADER||'fabric',version:process.env.UNBOX_MINECRAFT_VERSION||'26.1'});
+    const sourceFile=paths.guest+'/profile.json';await save(sourceFile,{...await load(sourceFile),id:ids.guest,loader:process.env.UNBOX_TEST_LOADER||'fabric',version:process.env.UNBOX_MINECRAFT_VERSION||'26.1'});
     const native=spawn(resolve('src-tauri/target/debug/unbox-client'),['--apply-sync-fixture',fixtureRoot,sourceFile,paths.guest+'/unbox-sync-request.json'],{stdio:['ignore','pipe','inherit']});let output='';native.stdout.on('data',b=>output+=b);const code=await new Promise(r=>native.on('exit',r));if(code!==0)throw Error('Native environment preparation failed');const profile=JSON.parse(output.trim());
     const manifest=request.manifest;for(const f of manifest.files)await access(fixtureRoot+'/shared-cache/'+f.hash+'.jar');publicChecks.push('Gameplay JAR downloaded through encrypted game login and verified in native shared cache');
-    paths.guest=fixtureRoot+'/profiles/'+profile.id;await save(paths.guest+'/unbox-rejoin.json',{id:request.inviteId,at:Date.now()});restarted=true;guestProcess.result=0;launch('guest',guest,true);
+    paths.guest=fixtureRoot+'/profiles/'+profile.id;await save(paths.guest+'/unbox-rejoin.json',{id:request.inviteId,at:Date.now(),accountUuid:guest.account.uuid});restarted=true;guestProcess.result=0;launch('guest',guest,true);
    }
   }
   guestDone=await load(paths.guest+'/logs/private-world-smoke.json');if(guestDone)await save(paths.host+'/logs/guest-complete.json',{});

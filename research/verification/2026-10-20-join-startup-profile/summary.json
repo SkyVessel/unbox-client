@@ -1,0 +1,29 @@
+{
+  "startupRuns": {
+    "join-startup-fabric261-valid": 5,
+    "join-startup-fabric2612-valid": 5,
+    "join-startup-fabric263-valid": 5,
+    "join-startup-neoforge261-valid": 5,
+    "join-startup-neoforge2612-valid": 5,
+    "join-startup-neoforge263-expired": 4,
+    "join-startup-neoforge263-invalidfields": 4,
+    "join-startup-neoforge263-malformed": 4,
+    "join-startup-neoforge263-valid": 5,
+    "join-startup-neoforge263-wrong-account": 4
+  },
+  "startupChecks": 46,
+  "nativeTests": 70,
+  "nodeTests": 61,
+  "bundleVerification": true,
+  "engineSha256": {
+    "unbox-client.jar": "5862044d6f592fc80d7ec4813d62bde266001c5fa3ca85c3e9772fcedbc5929c",
+    "unbox-client-neoforge-26.1.2.jar": "100e3458e16337b5cce8cbeaf78cc4acfd8adfd72c8768eb70a5c706cad87148",
+    "unbox-client-26.3.jar": "9a1754ced2306e24a2b33bb58febf1acc1b99c59253362d1737378ec30671367",
+    "unbox-client-neoforge.jar": "4502ca26ee7ce5f7df926530e17483ba19396a1582b602ccb48622c092763eeb",
+    "unbox-client-26.1.2.jar": "f9f820d3de77bbb983a57f0a5e44cf979382a59206510499601c02d9f98c47be",
+    "unbox-client-neoforge-26.3.jar": "a6586f37090c9498c926686d1776c2266271d03f2d8655d4b2ba3f2e7a541afd"
+  },
+  "platform": "macOS ARM64",
+  "windowsGameTest": false,
+  "published": false
+}

@@ -39,7 +39,7 @@ public final class SocialBridge {
  private static int ticks;private static volatile boolean queued;private static boolean wasWorld;
  private static volatile String pendingCommand="";private static volatile long commandAt;private static volatile boolean commandOk;
  public static boolean commandPending(){return !pendingCommand.isEmpty();}public static boolean commandSucceeded(){return commandOk;}
- private static String lastAction="",lastAck="";private static boolean rejoined;
+ private static String lastAction="",lastAck="";private static boolean rejoined,resumeLoaded;
  private static volatile String resumeId="",attemptId="",worldName="";private static long resumeUntil;
  private static final Set<String> seenInvites=ConcurrentHashMap.newKeySet();
  public static String worldName(){return worldName;}
@@ -50,12 +50,12 @@ public final class SocialBridge {
  public static void seen(String id){seenInvites.add(id);SocialNotifications.refresh();}
  public static List<JsonObject> availableWorlds(){return rows("invites").stream().filter(i->text(i,"receiver").equals(self())&&i.get("expires").getAsLong()>System.currentTimeMillis()).toList();}
  public static void retryJoin(){String id=attemptId;cancelJoin();if(!id.isEmpty())join(id);}
- public static net.minecraft.client.gui.screens.Screen titleScreen(){return resuming()?new JoinProgressScreen(new UnboxHomeScreen(false)):new UnboxHomeScreen(false);}
+ public static net.minecraft.client.gui.screens.Screen titleScreen(){restoreJoin(Minecraft.getInstance());return resuming()?new JoinProgressScreen(new UnboxHomeScreen(false)):new UnboxHomeScreen(false);}
 
  private static volatile long relayStarted,joinStarted;private static volatile boolean relayFailed;
  public static boolean relayFailed(){return room!=null&&relayFailed;}
  public static void retryRelay(){if(!relayFailed())return;try{if(link.e4mc.E4mcClient.session!=null)link.e4mc.E4mcClient.session.stop();}catch(LinkageError ignored){}relayStarted=0;relayFailed=false;relay="";startRelay();}
- public static void init(){JoinDiagnostics.init();JsonObject resume=read("unbox-rejoin.json");long now=System.currentTimeMillis();if(resume.has("at")&&(!resume.has("accountUuid")||text(resume,"accountUuid").replace("-","").equals(Minecraft.getInstance().getUser().getProfileId().toString().replace("-","")))){resumeUntil=resume.has("expires")?resume.get("expires").getAsLong():resume.get("at").getAsLong()+180000;if(resumeUntil>now){resumeId=text(resume,"id");attemptId=resumeId;seenInvites.add(resumeId);worldName=text(resume,"worldName");message="Connecting to friends and checking your invitation…";}}SocialLogin.init();EnvironmentSync.init();try{link.e4mc.Config.INSTANCE.hostEnabled.setOverride(false);link.e4mc.Config.INSTANCE.dialtoneHostEnabled.setOverride(false);}catch(LinkageError e){message="Update the profile to enable world sharing";}}
+ public static void init(){JoinDiagnostics.init();SocialLogin.init();EnvironmentSync.init();try{link.e4mc.Config.INSTANCE.hostEnabled.setOverride(false);link.e4mc.Config.INSTANCE.dialtoneHostEnabled.setOverride(false);}catch(LinkageError e){message="Update the profile to enable world sharing";}}
  public static void handler(ChannelHandler h){handler=h;}public static void group(EventLoopGroup g){group=g;}
  public static void relayDomain(String domain){if(room==null||relayStarted==0){try{if(link.e4mc.E4mcClient.session!=null)link.e4mc.E4mcClient.session.stop();}catch(LinkageError ignored){}return;}if(room!=null&&relayStarted>0&&domain.matches("[a-z0-9.-]{1,200}\\.e4mc\\.link")){relay=domain;message="Internet sharing ready";}}
  public static String text(JsonObject v,String k){return v.has(k)&&!v.get(k).isJsonNull()?v.get(k).getAsString():"";}
@@ -64,7 +64,22 @@ public final class SocialBridge {
  private static JsonObject read(String name){try{Path p=ROOT.resolve(name);if(Files.size(p)>200000)return new JsonObject();return JsonParser.parseString(Files.readString(p)).getAsJsonObject();}catch(Exception e){return new JsonObject();}}
  private static void write(String name,JsonObject value)throws Exception{Path p=ROOT.resolve(name),tmp=ROOT.resolve(".unbox-"+UUID.randomUUID()+".tmp");if(Files.getFileStore(ROOT).supportsFileAttributeView("posix"))Files.createFile(tmp,java.nio.file.attribute.PosixFilePermissions.asFileAttribute(java.nio.file.attribute.PosixFilePermissions.fromString("rw-------")));else Files.createFile(tmp);Files.writeString(tmp,JSON.toJson(value));Files.move(tmp,p,StandardCopyOption.REPLACE_EXISTING);}
  public static boolean command(String op,String id){if(commandPending()){message="Wait for the previous request";return false;}commandOk=false;commandAt=System.currentTimeMillis();pendingCommand=UUID.randomUUID().toString();JsonObject c=new JsonObject();c.addProperty("requestId",pendingCommand);c.addProperty("op",op);c.addProperty("id",id);c.addProperty("at",System.currentTimeMillis());IO.submit(()->{try{write("unbox-social-command.json",c);}catch(Exception e){pendingCommand="";message="Could not contact launcher";}});return true;}
+ // NeoForge constructs the mod before Minecraft's singleton exists. Restore only once the client is ready.
+ private static void restoreJoin(Minecraft mc){
+  if(resumeLoaded||mc==null||mc.getUser()==null)return;resumeLoaded=true;
+  JsonObject resume=read("unbox-rejoin.json");
+  try{
+   long now=System.currentTimeMillis();
+   if(!resume.has("at"))return;
+   long expires=resume.has("expires")?resume.get("expires").getAsLong():resume.get("at").getAsLong()+180000;
+   if(expires<=now||text(resume,"id").isEmpty())return;
+   if(resume.has("accountUuid")&&!text(resume,"accountUuid").replace("-","").equals(mc.getUser().getProfileId().toString().replace("-","")))return;
+   resumeUntil=expires;resumeId=text(resume,"id");attemptId=resumeId;seenInvites.add(resumeId);worldName=text(resume,"worldName");message="Connecting to friends and checking your invitation…";
+  }catch(RuntimeException invalid){resumeId="";message="Previous invitation could not be restored. Please join again.";}
+  finally{if(!resuming())try{Files.deleteIfExists(ROOT.resolve("unbox-rejoin.json"));}catch(java.io.IOException ignored){}}
+ }
  public static void tick(Minecraft mc){
+  restoreJoin(mc);
   JoinDiagnostics.tick(mc);
   if(resuming()&&System.currentTimeMillis()>resumeUntil){resumeId="";message="Invitation expired. Ask your friend for a new invitation.";}
 

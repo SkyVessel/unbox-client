@@ -192,6 +192,15 @@ if mode.startswith('private-'):
 if neo:
     args[1:1]=[v.replace('${library_directory}',str(neo_root/'libraries')) for v in neo['arguments']['jvm']]
     args.extend(neo['arguments']['game'])
+if os.environ.get('UNBOX_TEST_REJOIN'):
+    import time
+    case=os.environ['UNBOX_TEST_REJOIN'];stamp=int(time.time()*1000)
+    record={'id':'startup-invite','at':stamp,'expires':stamp+180000,'accountUuid':args[args.index('--uuid')+1],'worldName':'Startup regression'}
+    if case=='expired':record['expires']=stamp-1000
+    if case=='wrong-account':record['accountUuid']=uuid.uuid4().hex
+    if case=='invalid-fields':record['worldName']=[]
+    (game/'unbox-rejoin.json').write_text('{broken' if case=='malformed' else json.dumps(record))
+    args.insert(1,'-Dunbox.joinStartupSmoke='+case)
 (game/'logs').mkdir(exist_ok=True)
 (game/'test-launch-args.json').write_text(json.dumps(args))
 print('Starting',name,'in isolated copy',game,flush=True)
