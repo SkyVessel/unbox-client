@@ -96,3 +96,17 @@ test('equipped logos reach another account through friends and in-world UUID loo
   db.sql.prepare('UPDATE asset_grants SET revoked=NULL').run();db.sql.prepare("UPDATE player_accounts SET status='suspended' WHERE uuid=?").run(a.uuid);v=await view();assert.equal(v.friends[0].logo,null);
  }finally{globalThis.fetch=original;db.sql.close()}
 });
+
+test('lightweight invitation mailbox is scoped, keeps grants on reads, and follows relay and revocation',async()=>{
+ const db=database(),a=player('Host'),b=player('Guest'),c=player('Unrelated');try{
+  for(const p of [a,b,c])await register(db,p);await befriend(db,a,b);const world=sampleRoom();
+  await send(db,a,'invites/send',{id:b.id,room:world,joinSecret:'c'.repeat(64)});
+  const mailbox=await send(db,b,'invites');assert.equal(mailbox.invites.length,1);assert.equal(mailbox.invites[0].join_secret,'c'.repeat(64));assert.equal(mailbox.assets,undefined);assert.equal(mailbox.friends,undefined);
+  assert.equal((await send(db,c,'invites')).invites.length,0);
+  assert.equal((await send(db,b,'invites')).invites[0].id,mailbox.invites[0].id);
+  await send(db,b,'invites/relay',{id:mailbox.invites[0].id});assert.equal((await send(db,a,'invites')).invites[0].relay_requested,1);
+  await send(db,a,'room',{room:{...world,relay:'host.e4mc.link'}});assert.equal((await send(db,b,'invites')).invites[0].room.relay,'host.e4mc.link');
+  assert.equal((await send(db,b,'sync',b)).invitePolling,true);
+  await send(db,a,'room',{room:null});assert.equal((await send(db,b,'invites')).invites.length,0);
+ }finally{db.sql.close()}
+});

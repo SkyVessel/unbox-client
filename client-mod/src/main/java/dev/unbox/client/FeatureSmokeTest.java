@@ -41,6 +41,7 @@ final class FeatureSmokeTest {
  private static void server(Minecraft mc,Work work){pending=new CompletableFuture<>();mc.getSingleplayerServer().execute(()->{try{work.run();pending.complete(null);}catch(Throwable e){pending.completeExceptionally(e);}});}
  static void tick(Minecraft mc){
   if(!Boolean.getBoolean("unbox.featureSmoke")||finished)return;
+  if(Boolean.getBoolean("unbox.socialFlowSmoke")){SocialFlowSmokeTest.tick(mc);return;}
   if(Boolean.getBoolean("unbox.performanceSmoke")){PerformanceSmokeTest.tick(mc);return;}
   mc.getFramerateLimitTracker().onInputReceived();
   if(mc.player==null||mc.getSingleplayerServer()==null)return;
@@ -123,7 +124,7 @@ final class FeatureSmokeTest {
   var invite=new com.google.gson.JsonObject();invite.addProperty("id","cancel-fixture");invite.addProperty("receiver","local-fixture");invite.addProperty("expires",System.currentTimeMillis()+60000);
   var room=new com.google.gson.JsonObject();room.addProperty("loader",Platform.loader().equals("fabric")?"neoforge":"fabric");room.addProperty("minecraft",net.minecraft.SharedConstants.getCurrentVersion().id());invite.add("room",room);
   var invites=new com.google.gson.JsonArray();invites.add(invite);fixture.add("invites",invites);SocialBridge.view=fixture;
-  try{SocialBridge.join("cancel-fixture");check(SocialBridge.joining()&&mc.screen instanceof JoinProgressScreen,"Version switch first shows cancellable preparation");var screen=mc.screen;SocialBridge.join("cancel-fixture");check(mc.screen==screen,"Repeated Join reuses the active attempt");screen.onClose();check(!SocialBridge.joining()&&!Files.exists(mc.gameDirectory.toPath().resolve("unbox-switch-request.json")),"Cancel prevents restart request and keeps game running");
+  try{SocialBridge.join("cancel-fixture");check(SocialBridge.joining()&&mc.screen instanceof JoinDecisionScreen,"Version switch first asks before restarting");var screen=mc.screen;SocialBridge.join("cancel-fixture");check(mc.screen==screen,"Repeated Join reuses the active attempt");screen.onClose();check(!SocialBridge.joining()&&!Files.exists(mc.gameDirectory.toPath().resolve("unbox-switch-request.json")),"Cancel prevents restart request and keeps game running");
    var joiningField=SocialBridge.class.getDeclaredField("joining");joiningField.setAccessible(true);joiningField.setBoolean(null,true);
    mc.setScreen(new UnboxHomeScreen(false));SocialBridge.tick(mc);check(!SocialBridge.joining(),"Returning from connection Cancel clears the Join guard");mc.setScreen(null);
   }

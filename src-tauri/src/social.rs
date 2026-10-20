@@ -17,9 +17,10 @@ pub struct State {
     last_command: String,
     last_room: String,
     account_key: String,
+    seen_invites: std::collections::BTreeSet<String>,
     io: std::sync::Arc<tokio::sync::Mutex<()>>,
 }
-fn atomic(path:&std::path::Path,data:&[u8])->Result<(),String>{
+pub(crate) fn atomic(path:&std::path::Path,data:&[u8])->Result<(),String>{
     use std::io::Write;
     let tmp=path.with_file_name(format!(".unbox-{}.tmp",uuid::Uuid::new_v4()));
     let mut options=fs::OpenOptions::new();options.write(true).create_new(true);
@@ -86,13 +87,15 @@ async fn account(rt: &Runtime) -> Result<Value, String> {
     Ok(a)
 }
 async fn request(url: &str, i: &Identity, path: &str, body: Value) -> Result<Value, String> {
-    let r = reqwest::Client::builder()
+    static HTTP: std::sync::OnceLock<reqwest::Client> = std::sync::OnceLock::new();
+    let client = HTTP.get_or_init(|| reqwest::Client::builder()
         .no_proxy()
         .timeout(Duration::from_secs(15))
         .redirect(reqwest::redirect::Policy::none())
         .build()
-        .map_err(|_| "Connection unavailable")?
-        .post(format!("{url}/v1/{path}"))
+        .expect("Friends HTTP client"));
+    let r = client.post(format!("{url}/v1/{path}"))
+        .timeout(Duration::from_secs(if path=="invites" {3} else {15}))
         .bearer_auth(&i.token)
         .json(&body)
         .send()
@@ -267,6 +270,9 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
         return Err("Account changed. Reconnecting friends…".into());
     }
     let mut state = rt.social.lock().await;
+    if state.account_key != key(&a) { state.seen_invites.clear(); }
+    merge_seen(&mut state, &world);
+    result["seenInvites"] = json!(state.seen_invites);
     state.last_room = room;
     state.account_key = key(&a);
     state.view = result.clone();
@@ -285,6 +291,41 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
         )?
     }
     Ok(result)
+}
+// Notification read state is shared by launcher and game. It never revokes a join grant.
+fn merge_seen(state: &mut State, world: &Value) {
+    if let Some(ids)=world["seenInvites"].as_array() {
+        state.seen_invites.extend(ids.iter().filter_map(Value::as_str).filter(|s|s.len()<=80).map(str::to_owned));
+    }
+    if state.seen_invites.len()>512 {
+        let live:std::collections::BTreeSet<String>=state.view["invites"].as_array().into_iter().flatten().filter_map(|i|i["id"].as_str().map(str::to_owned)).collect();
+        state.seen_invites.retain(|id|live.contains(id));
+    }
+}
+async fn mark_seen(rt:&Runtime,id:&str) {
+    let mut state=rt.social.lock().await;
+    state.seen_invites.insert(id.to_owned());
+    state.view["seenInvites"]=json!(state.seen_invites);
+}
+// Read only the invitation mailbox at 2s intervals; assets and presence stay on the 20s sync.
+async fn poll_invites(rt:&Runtime)->Result<(),String> {
+    let io=rt.social.lock().await.io.clone();let _guard=io.lock().await;
+    let a=account(rt).await?;let identity=account_identity(&a)?;
+    {let s=rt.social.lock().await;if s.account_key!=key(&a)||s.view["connected"]!=true{return Ok(())}}
+    let result=request(&endpoint(rt)?,&identity,"invites",json!({})).await?;
+    if key(&account(rt).await?)!=key(&a){return Ok(())}
+    let world=game_status(rt,&a);
+    let room=world["room"].to_string();
+    let changed=rt.social.lock().await.last_room!=room;
+    if changed {request(&endpoint(rt)?,&identity,"room",json!({"room":world["room"]})).await?;}
+    let mut s=rt.social.lock().await;
+    if s.account_key!=key(&a){return Ok(())}
+    s.last_room=room;s.view["invites"]=result["invites"].clone();
+    merge_seen(&mut s,&world);s.view["seenInvites"]=json!(s.seen_invites);
+    s.view["joining"]=world["joining"].clone();s.view["gameError"]=world["error"].clone();s.view["updated"]=json!(now());
+    let view=s.view.clone();drop(s);
+    if let Some(g)=game(rt){if !world.is_null(){atomic(&g.join("unbox-social-view.json"),&serde_json::to_vec(&view).unwrap())?;}}
+    Ok(())
 }
 async fn assets_inner(rt: &Runtime, account_id: &str, op: &str, value: &str) -> Result<Value, String> {
     let io = rt.social.lock().await.io.clone();
@@ -360,7 +401,7 @@ pub async fn social_status(rt: tauri::State<'_, Runtime>) -> Result<Value, Strin
     let account_key=a.as_ref().map(key).unwrap_or_default();
     if s.account_key!=account_key||s.view.is_null(){
         s.view=a.as_ref().map(|a|load_cache(&rt,a)).unwrap_or_else(||cached_view(&Value::Null));
-        s.account_key=account_key;s.last_room.clear();
+        s.account_key=account_key;s.last_room.clear();s.seen_invites.clear();
         if a.is_none(){s.view["error"]=json!("Choose an account to use friends");}
     }
     let view=s.view.clone();
@@ -373,6 +414,7 @@ pub async fn social_action(
     op: String,
     id: String,
 ) -> Result<Value, String> {
+    if op=="hide" {mark_seen(&rt,&id).await;return Ok(public_view(rt.social.lock().await.view.clone()));}
     if op=="join" && rt.job.lock().unwrap()["busy"]!=true {
         sync(&rt).await?;
         let _guard=rt.auth.lock().await;
@@ -384,7 +426,8 @@ pub async fn social_action(
             *job=json!({"busy":true,"stage":"Preparing friend’s world","profileId":profile["id"]});profile};
         let settings:Value=fs::read(rt.root.join("state.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).unwrap_or(Value::Null);
         crate::run_profile(rt.inner().clone(),app,profile,"Player".into(),settings["settings"]["memory"].as_u64().unwrap_or(4096)as u32,false);
-        return Ok(public_view(view));
+        mark_seen(&rt,&id).await;
+        let mut result=public_view(view);result["seenInvites"]=json!(rt.social.lock().await.seen_invites);return Ok(result);
     }
     if op == "invite" || op == "join" {
         let g = game(&rt).ok_or("Wait for the game to finish preparing")?;
@@ -409,16 +452,19 @@ pub async fn social_action(
             )
             .unwrap(),
         )?;
-        return Ok(public_view(view));
+        if op=="join" {mark_seen(&rt,&id).await;}
+        return Ok(public_view(rt.social.lock().await.view.clone()));
     }
     action(&rt, &op, &id).await.map(public_view)
 }
 pub fn start(rt: Runtime) {
     tauri::async_runtime::spawn(async move {
         let mut ticks = 20;
+        let mut fast_poll = true;
         loop {
             tokio::time::sleep(Duration::from_secs(1)).await;
             ticks += 1;
+            if !fast_poll && rt.social.lock().await.view["invitePolling"]==true {fast_poll=true;}
             if let Some(g) = game(&rt) {
                 if let Ok(b) = fs::read(g.join("unbox-social-command.json")) {
                     if b.len() < 16384 {
@@ -461,6 +507,12 @@ pub fn start(rt: Runtime) {
                     }
                 }
             }
+            if ticks % 2 == 0 && ticks < 20 && fast_poll {
+                if let Err(e)=poll_invites(&rt).await {
+                    // Older services remain usable; a full sync advertises support on upgrade.
+                    if e=="Not found" {fast_poll=false;}
+                }
+            }
             if ticks >= 20 {
                 ticks = 0;
                 if let Err(e) = sync(&rt).await {
@@ -488,6 +540,12 @@ pub fn start(rt: Runtime) {
   let v=cached_view(&json!({"self":{"id":"a","code":"123"},"friends":[{"id":"b","online":true,"accepted":1}],"invites":[{"join_secret":"secret"}],"canInvite":true,"connected":true}));
   assert_eq!(v["friends"][0]["id"],"b");assert_eq!(v["friends"][0]["online"],false);
   assert_eq!(v["connected"],false);assert_eq!(v["canInvite"],false);assert_eq!(v["invites"],json!([]));assert!(!v.to_string().contains("secret"));
+ }
+ #[test] fn game_read_notifications_merge_without_deleting_invites_or_exposing_grants(){
+  let mut s=State::default();s.view=json!({"invites":[{"id":"one","join_secret":"private"}]});s.seen_invites.insert("launcher".into());
+  merge_seen(&mut s,&json!({"seenInvites":["one","one"]}));
+  assert!(s.seen_invites.contains("launcher"));assert!(s.seen_invites.contains("one"));assert_eq!(s.seen_invites.len(),2);
+  let public=public_view(s.view);assert_eq!(public["invites"][0]["id"],"one");assert!(public["invites"][0]["join_secret"].is_null());
  }
  #[test] fn old_game_bridge_without_player_list_syncs_an_empty_batch(){
   assert_eq!(player_uuids(&Value::Null),json!([]));

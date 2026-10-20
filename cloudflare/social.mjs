@@ -52,6 +52,10 @@ export default {
    }
    if(path.startsWith('/v1/assets'))return await platformRoute(request,env,path,b,me);
    const mutual=async id=>!!await db.prepare('SELECT 1 FROM friendships WHERE accepted=1 AND ((sender=? AND receiver=?) OR (sender=? AND receiver=?))').bind(me.id,id,id,me.id).first();
+   if(path==='/v1/invites'&&request.method==='POST'){
+    const invites=await db.prepare('SELECT i.*,p.name AS senderName FROM invites i JOIN people p ON p.id=i.sender WHERE (i.receiver=? OR i.sender=?) AND i.expires>? ORDER BY i.expires DESC LIMIT 100').bind(me.id,me.id,now).all();
+    return reply({invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
+   }
    if(path==='/v1/sync'&&request.method==='POST'){
     const values=profile(b);if(me.kind==='local'){values[0]='OfflinePlayer';values[3]=null;}if(b.uuid!==me.uuid||b.kind!==me.kind)return reply({error:'Account identity changed'},403);await db.prepare('UPDATE people SET name=?,uuid=?,kind=?,face=?,seen=?,state=? WHERE id=?').bind(...values,now,['Launcher','Playing','Hosting'].includes(b.state)?b.state:'Launcher',me.id).run();
     const badges=await activeBadges(db,b.players,now);if(badges===null)return reply({error:'Invalid player list'},400);
@@ -59,7 +63,7 @@ export default {
     const invites=await db.prepare('SELECT i.*,p.name AS senderName FROM invites i JOIN people p ON p.id=i.sender WHERE (i.receiver=? OR i.sender=?) AND i.expires>? ORDER BY i.expires DESC LIMIT 100').bind(me.id,me.id,now).all();
     const logos=await equippedLogos(db,[me.uuid,...badges,...friends.results.filter(f=>f.kind==='microsoft').map(f=>f.uuid)],now);
     const playerLogos=Object.fromEntries([me.uuid,...badges].filter(id=>logos[id]).map(id=>[id,logos[id]]));
-    return reply({protocol:2,self:me,playerLogos,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,logo:f.kind==='microsoft'?logos[f.uuid]||null:null,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
+    return reply({protocol:2,invitePolling:true,self:me,playerLogos,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,logo:f.kind==='microsoft'?logos[f.uuid]||null:null,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
    }
    if(path==='/v1/friends/request'&&request.method==='POST'){
     if(!/^[A-F0-9]{12}$/.test(b.code||''))return reply({error:'Enter the 12-character friend code'},400);

@@ -176,6 +176,7 @@ if 'UNBOX_SHARED_CACHE' in os.environ:args.insert(1,'-Dunbox.sharedCache='+os.en
 if resume or os.environ.get('UNBOX_COLD_JOIN')=='1':args.insert(1,'-Dunbox.syncResume=true')
 if mode=='relay':args.insert(1,'-Dunbox.relaySmoke=true')
 if os.environ.get('UNBOX_PERFORMANCE_BENCHMARK')=='1':args.insert(1,'-Dunbox.performanceBenchmark=true')
+if os.environ.get('UNBOX_SOCIAL_FLOW_SMOKE')=='1':args.insert(1,'-Dunbox.socialFlowSmoke=true')
 if os.environ.get('UNBOX_PERFORMANCE_SMOKE')=='1':args.insert(1,'-Dunbox.performanceSmoke=true')
 if os.environ.get('UNBOX_TOGGLE_ONLY')=='1':args.insert(1,'-Dunbox.toggleOnly=true')
 if mode in ('home','private-guest'):args=args[:-2]

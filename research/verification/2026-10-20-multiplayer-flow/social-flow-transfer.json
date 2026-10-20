@@ -1,0 +1,51 @@
+{
+  "publicChecks": [
+    "Guest had no game or profiles; accepted invitation creates matching native-loader friend profile and auto-joins from title screen",
+    "Guest started without the host gameplay mod; first join downloaded missing bytes and requested restart",
+    "Gameplay JAR downloaded through encrypted game login and verified in native shared cache"
+  ],
+  "host": {
+    "passed": 8,
+    "latencyMs": [],
+    "checks": [
+      "Microsoft/local host publishes a private world through normal Invite",
+      "Same-name host and guest coexist with distinct UUIDs and separate owner privileges",
+      "Guest joined with stable cloud UUID, not a nickname-derived identity",
+      "Host uses the mod item and receives its server-side emerald reward",
+      "Raw remote client cannot impersonate the world owner identity",
+      "Guest received world data and completed gameplay ticks",
+      "Host server confirms guest's mod item use and emerald reward",
+      "Host can stop sharing after actual guest login"
+    ]
+  },
+  "guest": {
+    "checks": [
+      "Guest enters the host world with its registered identity",
+      "Transferred gameplay JAR and its custom item registry entry load after native preparation and restart",
+      "Guest uses the synchronized mod item via a real gameplay packet and receives server inventory update",
+      "Host resource pack and shader pack are downloaded, selected and active after restart",
+      "Host Unbox name badge identified through optional native payload",
+      "Guest stays connected and receives playable world data for the configured test duration",
+      "Actual host death is transmitted to guest as a teammate marker",
+      "Guest without operator permission cannot use death teleport",
+      "Rejoin compares the same mod list with zero downloaded bytes and no restart; mod reward persists"
+    ],
+    "passed": 9,
+    "latencyMs": []
+  },
+  "transport": "Direct LAN",
+  "sync": {
+    "firstDownload": {
+      "restart": true,
+      "modCount": 3,
+      "downloadedBytes": 2101824
+    },
+    "rejoin": {
+      "modCount": 3,
+      "restart": false,
+      "downloadedBytes": 0
+    }
+  },
+  "scope": "Two real clients on one Mac. Local Worker service; real Microsoft certificate proof for the Microsoft identity when selected. Public relay mode is not a two-household test.",
+  "identityScope": "Two local test identities; no real Microsoft proof used in this run."
+}

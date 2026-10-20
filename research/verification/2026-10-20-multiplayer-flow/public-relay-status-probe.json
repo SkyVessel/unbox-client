@@ -1,0 +1,97 @@
+{
+  "label": "same-Mac-public-relay",
+  "summary": {
+    "attempts": 12,
+    "successfulStatusPongs": 12,
+    "successRate": 1.0,
+    "medianMs": 202.2835,
+    "p95Ms": 662.47,
+    "maxMs": 662.47
+  },
+  "samples": [
+    {
+      "ok": true,
+      "tcpConnectMs": 138.369,
+      "statusReadyMs": 726.254,
+      "pongMs": 120.808,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 62.708,
+      "statusReadyMs": 384.063,
+      "pongMs": 662.47,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 69.737,
+      "statusReadyMs": 316.359,
+      "pongMs": 240.045,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 64.624,
+      "statusReadyMs": 299.636,
+      "pongMs": 218.768,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 524.817,
+      "statusReadyMs": 760.62,
+      "pongMs": 119.337,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 156.264,
+      "statusReadyMs": 871.209,
+      "pongMs": 122.025,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 60.356,
+      "statusReadyMs": 514.707,
+      "pongMs": 380.926,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 60.213,
+      "statusReadyMs": 306.309,
+      "pongMs": 240.606,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 308.244,
+      "statusReadyMs": 699.506,
+      "pongMs": 143.532,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 64.443,
+      "statusReadyMs": 1281.234,
+      "pongMs": 140.887,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 62.932,
+      "statusReadyMs": 376.944,
+      "pongMs": 579.827,
+      "protocol": 775
+    },
+    {
+      "ok": true,
+      "tcpConnectMs": 72.472,
+      "statusReadyMs": 320.391,
+      "pongMs": 185.799,
+      "protocol": 775
+    }
+  ]
+}

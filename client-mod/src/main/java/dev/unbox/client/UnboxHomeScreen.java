@@ -45,8 +45,7 @@ public final class UnboxHomeScreen extends Screen {
         }else{
             add(15,15,70,28,"Friends","",()->minecraft.setScreen(new FriendsScreen(this)));
             add(centerX-112,logoY+130,224,28,"SINGLEPLAYER","",()->minecraft.setScreen(new SelectWorldScreen(this)));
-            GlassButton multiplayer=add(centerX-112,logoY+165,224,28,"MULTIPLAYER","",()->minecraft.setScreen(minecraft.options.skipMultiplayerWarning?new JoinMultiplayerScreen(this):new SafetyScreen(this)));
-            multiplayer.active=minecraft.allowsMultiplayer()&&!System.getProperty("unbox.accountKind", "microsoft").equals("local");if(!multiplayer.active)multiplayer.setTooltip(Tooltip.create(Component.literal("Local players can join private worlds through Friends. Public servers require Microsoft sign-in.")));
+            add(centerX-112,logoY+165,224,28,"MULTIPLAYER","",()->minecraft.setScreen(new MultiplayerHubScreen(this)));
             add(logicalWidth-45,15,30,28,"Quit game","close",()->minecraft.stop());
             add(centerX-62,logicalHeight-49,36,29,"Client Mods","mods",()->minecraft.setScreen(new UnboxScreen(this)));
             add(centerX-18,logicalHeight-49,36,29,"Skin settings","armor",()->minecraft.setScreen(new SkinCustomizationScreen(this,minecraft.options)));

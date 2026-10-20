@@ -1,0 +1,29 @@
+{
+  "gameChecks": {
+    "fabric261": 28,
+    "neo261": 28,
+    "fabric2612": 28,
+    "neo2612": 28,
+    "fabric263": 28,
+    "neo263": 28
+  },
+  "totalGameChecks": 168,
+  "rustTests": 69,
+  "nodeTests": 59,
+  "launcherInvitationUiTests": 1,
+  "probeTests": 3,
+  "platform": "macOS ARM64",
+  "remoteHouseholdTested": false,
+  "publicP2PEnabled": false,
+  "workerDeployed": false,
+  "releasePublished": false,
+  "engines": {
+    "unbox-client.jar": "a0a44c5e1948e66bb4284075ed32d1e9a93e3b4736aa4631ad838e9565903f21",
+    "unbox-client-neoforge-26.1.2.jar": "c37ddc2f9a1c6e468b13f3e455b709417bec4cebcafee6fee26052fc8893d8f3",
+    "unbox-client-26.3.jar": "a5f4c94bbf3ac74103802b7416feeac5904965151bca3d8c7f4090b4582b04e7",
+    "unbox-client-neoforge.jar": "cf9c489f3eea4c9b399f791b824271aa172612ee11b70318744514d59edd4c94",
+    "unbox-client-26.1.2.jar": "0e15ed7aa707e53dfbe3bf1223a41c7cde19cfecf6b5d1eee9e59850e6231b79",
+    "unbox-client-neoforge-26.3.jar": "1f57936d7aa0a257a487d1816882ce0bc9190aae16e42b7118cf05d40adaf647"
+  },
+  "homeChecks": 30
+}

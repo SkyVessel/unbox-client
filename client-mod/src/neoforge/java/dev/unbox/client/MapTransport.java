@@ -11,7 +11,7 @@ final class MapTransport {
  static void init(){
   Platform.bus.addListener((RegisterPayloadHandlersEvent e)->e.registrar("1").optional().playToServer(HappyGhastRecall.Request.TYPE,HappyGhastRecall.Request.CODEC,(p,c)->c.enqueueWork(()->{if(c.player() instanceof ServerPlayer player)HappyGhastRecall.receive(player);})));
   NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e)->net.minecraft.client.Minecraft.getInstance().execute(()->{WorldMap.disconnected();SurvivalHostMods.clearClientHost();}));
-  NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.GameShuttingDownEvent e)->{WorldMap.shutdown();WorldFeatures.shutdown();});
+  NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.GameShuttingDownEvent e)->{WorldMap.shutdown();WorldFeatures.shutdown();JoinDiagnostics.shutdown();});
   Platform.bus.addListener((RegisterPayloadHandlersEvent e)->e.registrar("1").optional().playToClient(MapSharing.WorldPacket.TYPE,MapSharing.WorldPacket.CODEC));
   Platform.bus.addListener((RegisterClientPayloadHandlersEvent e)->e.register(MapSharing.WorldPacket.TYPE,(p,c)->WorldMap.receiveWorld(p)));
   Platform.bus.addListener((RegisterPayloadHandlersEvent e)->e.registrar("1").optional().playToClient(NameBadges.Packet.TYPE,NameBadges.Packet.CODEC));

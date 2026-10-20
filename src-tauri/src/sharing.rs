@@ -75,7 +75,8 @@ pub fn invite_profile(rt:&Runtime,view:&Value,invite_id:&str,account_uuid:&str)-
  };
  let profiles=saved["profiles"].as_array_mut().ok_or("Invalid profile list")?;if !profiles.iter().any(|p|p["id"]==id){profiles.push(profile.clone())}saved["selected"]=json!(id);
  atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
- atomic(&dir.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":invite_id,"at":now,"expires":invite["expires"],"accountUuid":account_uuid})).unwrap())?;Ok(profile)
+ atomic(&dir.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":invite_id,"at":now,"expires":invite["expires"],"accountUuid":account_uuid,"worldName":invite["room"]["name"]})).unwrap())?;
+ let mut bridge=view.clone();bridge["updated"]=json!(now);bridge["seenInvites"]=json!([invite_id]);crate::social::atomic(&dir.join("unbox-social-view.json"),&serde_json::to_vec(&bridge).unwrap())?;Ok(profile)
 }
 pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
  let dir=profile_dir(rt,source["id"].as_str().ok_or("Missing profile")?)?;
@@ -86,7 +87,7 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
  {let state=rt.social.lock().await;if !state.view["invites"].as_array().is_some_and(|list|list.iter().any(|i|i["id"]==request["inviteId"]&&i["sender"]==request["hostId"])){return Err("Invitation is no longer available. Downloaded mods remain cached.".into())}}
  let copy=rt.clone();let source=source.clone();let r=request.clone();let profile=tauri::async_runtime::spawn_blocking(move||apply(&copy,&source,&r)).await.map_err(|_|"Could not prepare shared mods")??;
  let mut saved:Value=serde_json::from_slice(&fs::read(rt.root.join("state.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;let profiles=saved["profiles"].as_array_mut().ok_or("Invalid profile list")?;if !profiles.iter().any(|p|p["id"]==profile["id"]){profiles.push(profile.clone());}saved["selected"]=profile["id"].clone();atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
- let target=profile_dir(rt,profile["id"].as_str().unwrap())?;atomic(&target.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":request["inviteId"],"at":now})).unwrap())?;Ok(Some(profile))
+ let target=profile_dir(rt,profile["id"].as_str().unwrap())?;atomic(&target.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":request["inviteId"],"at":now,"accountUuid":uuid})).unwrap())?;Ok(Some(profile))
 }
 #[cfg(test)]mod tests{
  use super::*;use std::io::Write;
@@ -126,6 +127,8 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
  let mut view=json!({"connected":true,"self":{"id":"guest"},"invites":[{"id":"invite","sender":uuid::Uuid::new_v4().to_string(),"receiver":"guest","senderName":"Host","expires":now+300000,"room":{"loader":"neoforge","minecraft":"26.1"}}]});
  let neo=invite_profile(&rt,&view,"invite","account").unwrap();assert_eq!(neo["loader"],"neoforge");let dir=profile_dir(&rt,neo["id"].as_str().unwrap()).unwrap();fs::create_dir_all(dir.join("mods")).unwrap();fs::write(dir.join("mods/keep.jar"),"cached").unwrap();assert_eq!(invite_profile(&rt,&view,"invite","account").unwrap()["id"],neo["id"]);assert!(dir.join("mods/keep.jar").exists());
  let pending:Value=serde_json::from_slice(&fs::read(dir.join("unbox-rejoin.json")).unwrap()).unwrap();assert_eq!(pending["accountUuid"],"account");
+ #[cfg(unix)] {use std::os::unix::fs::PermissionsExt;assert_eq!(fs::metadata(dir.join("unbox-social-view.json")).unwrap().permissions().mode()&0o777,0o600);}
+
  view["invites"][0]["room"]["loader"]=json!("fabric");let fabric=invite_profile(&rt,&view,"invite","account").unwrap();assert_ne!(fabric["id"],neo["id"]);
  let mut ids=std::collections::HashSet::new();for loader in ["fabric","neoforge"]{for version in crate::versions::SUPPORTED{view["invites"][0]["room"]=json!({"loader":loader,"minecraft":version});let profile=invite_profile(&rt,&view,"invite","account").unwrap();assert_eq!(profile["loader"],loader);assert_eq!(profile["version"],*version);assert!(ids.insert(profile["id"].as_str().unwrap().to_owned()));}}assert_eq!(ids.len(),6);
  view["invites"][0]["receiver"]=json!("other");assert!(invite_profile(&rt,&view,"invite","account").is_err());view["invites"][0]["receiver"]=json!("guest");view["invites"][0]["expires"]=json!(0);assert!(invite_profile(&rt,&view,"invite","account").is_err());fs::remove_dir_all(root).unwrap();

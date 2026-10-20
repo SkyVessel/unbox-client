@@ -11,7 +11,7 @@ final class MapTransport {
   PayloadTypeRegistry.serverboundPlay().register(HappyGhastRecall.Request.TYPE,HappyGhastRecall.Request.CODEC);
   ServerPlayNetworking.registerGlobalReceiver(HappyGhastRecall.Request.TYPE,(p,c)->c.server().execute(()->HappyGhastRecall.receive(c.player())));
   ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->client.execute(()->{WorldMap.disconnected();SurvivalHostMods.clearClientHost();}));
-  ClientLifecycleEvents.CLIENT_STOPPING.register(client->{WorldMap.shutdown();WorldFeatures.shutdown();});
+  ClientLifecycleEvents.CLIENT_STOPPING.register(client->{WorldMap.shutdown();WorldFeatures.shutdown();JoinDiagnostics.shutdown();});
   PayloadTypeRegistry.clientboundPlay().register(MapSharing.WorldPacket.TYPE,MapSharing.WorldPacket.CODEC);
   ClientPlayNetworking.registerGlobalReceiver(MapSharing.WorldPacket.TYPE,(p,c)->c.client().execute(()->WorldMap.receiveWorld(p)));
   PayloadTypeRegistry.clientboundPlay().register(NameBadges.Packet.TYPE,NameBadges.Packet.CODEC);

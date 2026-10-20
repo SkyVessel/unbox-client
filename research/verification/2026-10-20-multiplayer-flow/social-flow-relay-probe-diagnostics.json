@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "exportedAt": 1792501074697,
+  "measurement": "server_reported_keepalive_ms; repeated 1s observations, not independent packets",
+  "p2pEnabled": false,
+  "latencySamples": 5,
+  "latencyMedianMs": 140,
+  "latencyP95Ms": 140,
+  "connected": true,
+  "attempts": [
+    {
+      "attempt": "49814198-4769-4717-8880-ee052a962dd6",
+      "startedAt": 1792501011696,
+      "minecraft": "26.1",
+      "loader": "fabric",
+      "route": "relay",
+      "p2pEnabled": false,
+      "stages": [
+        {
+          "stage": "accepted",
+          "elapsedMs": 0
+        },
+        {
+          "stage": "route_search",
+          "elapsedMs": 0
+        },
+        {
+          "stage": "connecting",
+          "elapsedMs": 3014
+        },
+        {
+          "stage": "failed",
+          "elapsedMs": 6344
+        }
+      ],
+      "outcome": "failed",
+      "elapsedMs": 6344
+    },
+    {
+      "attempt": "2d0c61a3-d419-4f74-a119-5081d331178a",
+      "startedAt": 1792501019685,
+      "minecraft": "26.1",
+      "loader": "fabric",
+      "route": "relay",
+      "p2pEnabled": false,
+      "stages": [
+        {
+          "stage": "accepted",
+          "elapsedMs": 0
+        },
+        {
+          "stage": "route_search",
+          "elapsedMs": 0
+        },
+        {
+          "stage": "connecting",
+          "elapsedMs": 16
+        },
+        {
+          "stage": "checking_files",
+          "elapsedMs": 1694
+        },
+        {
+          "stage": "joined",
+          "elapsedMs": 5307
+        }
+      ],
+      "outcome": "joined",
+      "elapsedMs": 5307
+    }
+  ]
+}
