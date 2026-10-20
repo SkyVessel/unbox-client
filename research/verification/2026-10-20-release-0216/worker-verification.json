@@ -1,0 +1,10 @@
+{
+  "deploymentId": "092c0821064a4725bda8ae407d8d7e97",
+  "health": true,
+  "unauthenticatedRejected": true,
+  "localIdentitySync": true,
+  "fastPollingAdvertised": true,
+  "authenticatedMailbox": true,
+  "emptyMailboxRoundTripMs": 1339.8,
+  "fixtureCleanup": true
+}

@@ -1,3 +1,5 @@
+> 2026-10-20: 0.2.16 is published for macOS ARM64 and Windows x64, including multiplayer UX, performance diagnostics and the merged Logo scale fix. The compatible invitation endpoint is deployed. See [release verification](docs/57-0.2.16联机与性能更新发布.md). Windows gameplay and two-network P2P remain unverified.
+
 # Unbox Client — implementation status
 
 2026-10-19: [v0.2.14](https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.14) is published for macOS ARM64 and Windows x64. Dedicated 128px crown/cash glyphs fix empty nameplate squares when resource packs trigger vanilla font-atlas fallback. Both signed update packages and all 12 public assets were anonymously verified. Reproduction, regression checks and boundaries: [docs/53](docs/53-材质包字体图集与Logo方框修复.md).

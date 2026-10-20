@@ -1,0 +1,15 @@
+{
+  "version": "0.2.16",
+  "notes": "Unbox Client 0.2.16\n\n- Faster invitation delivery, timed invitation popups, and invited worlds in Multiplayer.\n- Clear joining progress and confirmation before synchronizing files or restarting. Joined invitations no longer stay on screen.\n- Connection diagnostics and a performance tester for FPS, frame times, memory, and major client workloads.\n- More reliable mod toggles, keybinding conflict handling, and background settings/map saves.\n- Faster shared-file transfer on compatible clients.\n- Match equipped Logo variants to the base badge size in the launcher and game.\n\nSupports Minecraft 26.1, 26.1.2, and 26.3 with native Fabric and NeoForge modules.\nUpdates available for macOS Apple Silicon and Windows x64. Close Minecraft before installing.\nCross-network P2P is not enabled; private multiplayer uses direct LAN connections or the existing encrypted public relay.\n",
+  "pub_date": "2026-10-20T13:28:07.326630Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN3N6Z0FkZld0MkFjUjYzT3o3Qm1WYTNDTlVuMXpaVkhWNndaMnhDeTV2ZFhKQStET0R2Y1RoMS9GWWl1a2tzNnhFYUo3M0ZXekV5Z3ZLemU2WWhGbGc0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTAyNTU2CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xNl9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTYKVVkxcnBKbW10N25kVWRqMUlxcDRuQ0wvL25YaDRFYy85YmJxR3FlYzZJNTNObkxyVThKMk5TTlQxTzBXdkRFQ1JiMDVrNXFEbWVCZGQvSERCcDhzQlE9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.16/Unbox.Client_0.2.16_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2cwOU9rckhwUjN6MTRWY1l2cTRoNC93TU4zMWY5TU0zTGFSaDVYSDJBUUlzSXA1Zk4wWDRDRXg0Zk9XNmFCaVVNSFBqNEdGMmRGbWthMHY3SmlobEFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTAyODY1CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xNl93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTYKTjdJM1duMWlyN2VuZUFiM2ZKbVBHTjEveUl0VSs0cndRUU54bDJJSWJsNlZYZ2Y4UjZYVFNCYkllcjl2bHdGOUZkR0p5REQ0RGRwdHl2ZEhnOWpRQ3c9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.16/Unbox.Client_0.2.16_windows-x64-setup.exe"
+    }
+  }
+}
