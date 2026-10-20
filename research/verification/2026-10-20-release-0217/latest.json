@@ -1,0 +1,15 @@
+{
+  "version": "0.2.17",
+  "notes": "Unbox Client 0.2.17\n\n- Fix NeoForge failing to start when accepting an invitation or restarting after shared-file synchronization.\n- Clear expired, mismatched-account, or damaged automatic-join records safely.\n- Keep one recent multiplayer Profile per friend, with their avatar in the top-right corner. Rejoining updates that friend\u2019s environment without adding duplicate entries.\n- Preserve personal settings and protect the latest friend Profile from stale launcher saves.\n- Display the current launcher version accurately.\n\nMinecraft 26.1, 26.1.2, and 26.3: native Fabric and NeoForge.\nmacOS Apple Silicon and Windows x64. Close Minecraft before updating, then retry the invitation.\n",
+  "pub_date": "2026-10-20T14:13:45.938786Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN29jUDFyVTJtbWdEeFVDRCtZWkZaNEVFa1J3Wno2U3VKZmk3VzdubTVXQVArS0M4ZS9lWDg2R0g4a28xSnNraVhLREw0S0p5Tjc1bXd6RTdQUW1ucUFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTA1MjY0CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xN19hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTcKOXkxZkozNUdrVE5jYmxUU2NPYnh0WkNtWWc3Ui9uSlkzdEpsNWI2NHVjVkZhL1RRd0JRaDNQYk9Oa01xWHJqcklCbXhyMEVselBaeXJuWCtNaVFRREE9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.17/Unbox.Client_0.2.17_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2tYbkhGcEhJM0l5V1NNSUpzVzh0SFdJMzR4YzVaeFVHbEF4K2JQM1NENlVFK0pQWUpJMzdmRnpvZkIxY0Y2Tm85OFdGSzZMaHlwVDRveGE1TWRZVVFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTA1NjEyCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xN193aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTcKY2wxRTIxMytDUDVQcndMZnEwdVlhNmZxckU5SldLWjRNajVoK2hMdUxSZmVMWnhnVUZKSGcxVlBJbXQwaGRiN0pwbThUenBMOUhNYnd4QnZneXB4RGc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.17/Unbox.Client_0.2.17_windows-x64-setup.exe"
+    }
+  }
+}

@@ -1,3 +1,5 @@
+> 2026-10-20: 0.2.17 is published for macOS ARM64 and Windows x64, fixing NeoForge invitation cold startup and adding recent friend profiles. See [release verification and test checklist](docs/59-0.2.17启动修复发布.md).
+
 > 2026-10-20: 0.2.16 is published for macOS ARM64 and Windows x64, including multiplayer UX, performance diagnostics and the merged Logo scale fix. The compatible invitation endpoint is deployed. See [release verification](docs/57-0.2.16联机与性能更新发布.md). Windows gameplay and two-network P2P remain unverified.
 
 # Unbox Client — implementation status
