@@ -3,7 +3,7 @@ loaderVersion="[11,)"
 license="All Rights Reserved"
 [[mods]]
 modId="unbox"
-version="0.2.15"
+version="0.2.16"
 displayName="Unbox Client"
 description="Personal HUD, controls, maps and private worlds."
 [[mixins]]
