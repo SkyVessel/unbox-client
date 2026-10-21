@@ -158,7 +158,7 @@ pub async fn auth_poll(rt:tauri::State<'_,Runtime>,id:String)->Result<Value,Stri
     let saved=minecraft(&api,&v,&client_id).await?;
     let a=rt.auth.lock().await;if a.generation!=generation{return Err("Sign-in canceled".into())}
     let mut vault=load_accounts(&rt)?;vault.authorize(saved);save_vault(&vault)?;
-    let mut result=vault.snapshot(Some(&client_id));result["status"]=json!("complete");Ok(result)
+    let mut result=vault.snapshot(Some(&client_id));let _=crate::skin_library::remember_account_skin(&rt,&result["account"]);result["status"]=json!("complete");Ok(result)
 }
 async fn checked(r:reqwest::Response,stage:&str)->Result<Value,String>{
     let status=r.status();let v:Value=r.json().await.unwrap_or(Value::Null);
@@ -191,8 +191,9 @@ async fn profile(api:&Api,access:&str,expected:Option<&str>)->Result<Value,Strin
 }
 async fn account_from_profile(c:&reqwest::Client,p:&Value,expected:Option<&str>)->Result<Value,String>{
     let id=canonical_uuid(field(p,"id")?)?;if expected.is_some_and(|e|e!=id){return Err("Microsoft returned a different account. Sign in again.".into())}
-    let mut a=json!({"name":field(p,"name")?,"uuid":id,"type":"microsoft","skinModel":"classic","skinStatus":"unavailable"});
+    let mut a=json!({"name":field(p,"name")?,"uuid":id,"type":"microsoft","skinModel":"classic","skinStatus":"default"});
     if let Some(skin)=p["skins"].as_array().and_then(|arr|arr.iter().find(|s|s["state"]=="ACTIVE")){
+        a["skinStatus"]=json!("unavailable");
         a["skinModel"]=json!(if skin["variant"]=="SLIM"{"slim"}else{"classic"});
         if let Some(url)=skin["url"].as_str(){
             let url=url.strip_prefix("http://textures.minecraft.net/texture/").map(|s|format!("https://textures.minecraft.net/texture/{s}")).unwrap_or_else(||url.to_owned());
@@ -229,6 +230,11 @@ pub(crate) async fn apply_skin_bytes(
     let mut v = load_accounts(&rt)?;
     let api = Api::new()?;
     let mut s = usable(rt, &mut v, account_id, &api).await?;
+    // Refresh before replacing a remote skin: preserve the real current skin, even
+    // when the launcher cache is empty or another application changed it.
+    let current=profile(&api,&s.access,s.account["uuid"].as_str()).await?;
+    if current["skinStatus"]=="unavailable"{return Err("Could not save your current Minecraft skin. Check your connection and retry.".into())}
+    crate::skin_library::remember_account_skin(rt,&current)?;
     s.account = upload_skin(&api, &s, bytes, model).await?;
     v.upsert(s, false);
     save_vault(&v).map_err(|_|"Skin changed on Minecraft, but Keychain could not cache it. Refresh your skin after unlocking Keychain.")?;
@@ -272,13 +278,16 @@ pub async fn launch_account(rt:&Runtime)->Result<(Option<Session>,String),String
     let id=v.selected.clone().ok_or("Select an account before launching")?;
     if let Some(p)=v.offline.iter().find(|p|p["accountId"]==id){return Ok((Some(Session{name:field(p,"name")?.into(),uuid:field(p,"uuid")?.into(),token:"0".into(),xuid:String::new(),client_id:String::new()}),String::new()))}
     let s=usable(rt,&mut v,&id,&Api::new()?).await?;
+    let _=crate::skin_library::remember_account_skin(rt,&s.account);
     Ok((Some(Session{name:field(&s.account,"name")?.into(),uuid:field(&s.account,"uuid")?.into(),token:s.access,xuid:s.xuid,client_id:s.client_id}),String::new()))
 }
 #[tauri::command]
 pub async fn auth_refresh_profile(rt:tauri::State<'_,Runtime>,account_id:String)->Result<Value,String>{
     let _guard=rt.auth.lock().await;let mut v=load_accounts(&rt)?;let api=Api::new()?;let mut s=usable(&rt,&mut v,&account_id,&api).await?;
     let mut a=profile(&api,&s.access,s.account["uuid"].as_str()).await?;
-    if a["skin"].is_null()&&!s.account["skin"].is_null(){a["skin"]=s.account["skin"].clone();a["skinModel"]=s.account["skinModel"].clone();a["skinStatus"]=json!("cached");}
+    if a["skinStatus"]=="unavailable"&&!s.account["skin"].is_null(){a["skin"]=s.account["skin"].clone();a["skinModel"]=s.account["skinModel"].clone();a["skinStatus"]=json!("cached");}
+    if a["skinStatus"]=="unavailable"&&a["skin"].is_null(){return Err("Could not download your current Minecraft skin. Check your connection and reopen Skins.".into())}
+    crate::skin_library::remember_account_skin(&rt,&a)?;
     s.account=a;v.upsert(s,false);save_vault(&v)?;Ok(snapshot(&rt,&v))
 }
 async fn upload_skin(api:&Api,s:&Stored,bytes:Vec<u8>,model:&str)->Result<Value,String>{

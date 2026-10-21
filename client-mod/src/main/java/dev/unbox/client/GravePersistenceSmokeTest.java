@@ -73,6 +73,15 @@ public final class GravePersistenceSmokeTest {
                     GraveIntegrationChecks.verifyModelShape(mc.level,pos);
                     checks.add("Client received marker metadata; stone hardness 1.5 and upper-tablet selection/collision match the model, ordinary slabs stay unchanged");
                     net.minecraft.client.Screenshot.grab(mc.gameDirectory,"grave-model.png",mc.getMainRenderTarget(),1,c->{});
+                    visualStart=ticks;phase=70;
+                }
+                case 70->{if(ticks-visualStart<20)return;mc.level.destroyBlockProgress(-7654321,run.gravePosition(),2);visualStart=ticks;phase=71;}
+                case 71->{if(ticks-visualStart<20)return;net.minecraft.client.Screenshot.grab(mc.gameDirectory,"grave-cracks-2.png",mc.getMainRenderTarget(),1,c->{});mc.level.destroyBlockProgress(-7654321,run.gravePosition(),7);visualStart=ticks;phase=72;}
+                case 72->{if(ticks-visualStart<20)return;net.minecraft.client.Screenshot.grab(mc.gameDirectory,"grave-cracks-7.png",mc.getMainRenderTarget(),1,c->{});mc.level.destroyBlockProgress(-7654321,run.gravePosition(),-1);visualStart=ticks;phase=73;}
+                case 73->{
+                    if(ticks-visualStart<20)return;
+                    net.minecraft.client.Screenshot.grab(mc.gameDirectory,"grave-cracks-cleared.png",mc.getMainRenderTarget(),1,c->{});
+                    checks.add("Rendered grave crack stages 2 and 7, then cleared progress; screenshots captured for visual comparison");
                     phase=8;server(mc,()->{
                         ServerPlayer player=player(mc);
                         GraveIntegrationChecks.finish(player,run);

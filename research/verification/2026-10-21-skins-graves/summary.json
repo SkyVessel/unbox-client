@@ -1,0 +1,30 @@
+{
+  "branch": "codex/skin-grave-updates",
+  "published": false,
+  "nodeTests": 62,
+  "rustTests": 71,
+  "finalFocusedUiTests": 9,
+  "frontendBuild": "passed",
+  "nativeBuilds": [
+    "26.1/fabric",
+    "26.1/neoforge",
+    "26.1.2/fabric",
+    "26.1.2/neoforge",
+    "26.3/fabric",
+    "26.3/neoforge"
+  ],
+  "bundleVerification": "passed",
+  "titleNavigationTestsPerRun": 30,
+  "runtimeRunsBeforeSilentRequest": [
+    "fabric/26.1",
+    "neoforge/26.3"
+  ],
+  "afterSilentRequest": "Only headless Chromium, background tests, compilation and file inspection; no game launches or foreground app switching",
+  "limitations": [
+    "Final title panorama background compiled, not visually rerun",
+    "No Windows gameplay test",
+    "No real Microsoft skin upload",
+    "No default-skin PNG recovery entry",
+    "No authenticated CurseForge download"
+  ]
+}

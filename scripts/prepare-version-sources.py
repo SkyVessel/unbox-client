@@ -29,6 +29,7 @@ def prepare(version,loader):
                 'InputConstants.Type.KEYSYM':'InputConstants.Type.KEYBOARD',
                 'EntityType.BLOCK_DISPLAY':'net.minecraft.world.entity.EntityTypes.BLOCK_DISPLAY',
                 'EntityType.TEXT_DISPLAY':'net.minecraft.world.entity.EntityTypes.TEXT_DISPLAY',
+                'EntityType.PLAYER':'net.minecraft.world.entity.EntityTypes.PLAYER',
                 'net.minecraft.world.entity.net.minecraft.world.entity.':'net.minecraft.world.entity.',
                 '.setInvulnerable(':'.setPermanentlyInvulnerable(',
                 'Minecraft.renderNames()':'!Minecraft.getInstance().gui.hud.isHidden()',
@@ -56,6 +57,9 @@ def prepare(version,loader):
                 text=text.replace('CameraRenderState state,float partialTick,Matrix4fc matrix,CallbackInfo ci','CallbackInfo ci')
             if source.name=='FreecamController.java':
                 text=text.replace('camera = new SpectatorCamera(mc, level);','camera = new SpectatorCamera(mc, level);\n        camera.setId(DetachedEntityIds.next());')
+            if source.name=='GraveBreakingRenderMixin.java':
+                text=text.replace('collector.submitBreakingBlockModel(pose,model,stone.getSeed(pos),breaking.progress());',
+                    'var parts=new java.util.ArrayList<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart>();\n            model.collectParts(net.minecraft.util.RandomSource.create(stone.getSeed(pos)),parts);\n            collector.submitBreakingBlockModel(pose,java.util.List.copyOf(parts),breaking.progress(),model.hasMaterialFlag(1));')
             if source.name=='NameplateSmokeTest.java':
                 text=text.replace('remote.setPos(', 'remote.setId(DetachedEntityIds.next());\n        remote.setPos(')
             if source.name=='NativeModIntegrationChecks.java':

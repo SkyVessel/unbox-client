@@ -2,7 +2,6 @@ package dev.unbox.client;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
-import net.minecraft.client.gui.screens.options.SkinCustomizationScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.multiplayer.SafetyScreen;
@@ -48,7 +47,7 @@ public final class UnboxHomeScreen extends Screen {
             add(centerX-112,logoY+165,224,28,"MULTIPLAYER","",()->minecraft.setScreen(new MultiplayerHubScreen(this)));
             add(logicalWidth-45,15,30,28,"Quit game","close",()->minecraft.stop());
             add(centerX-62,logicalHeight-49,36,29,"Client Mods","mods",()->minecraft.setScreen(new UnboxScreen(this)));
-            add(centerX-18,logicalHeight-49,36,29,"Skin settings","armor",()->minecraft.setScreen(new SkinCustomizationScreen(this,minecraft.options)));
+            add(centerX-18,logicalHeight-49,36,29,"Skins","armor",()->minecraft.setScreen(new SkinLibraryScreen(this)));
             add(centerX+26,logicalHeight-49,36,29,"Game settings","settings",()->minecraft.setScreen(new OptionsScreen(this,minecraft.options,false)));
         }
     }

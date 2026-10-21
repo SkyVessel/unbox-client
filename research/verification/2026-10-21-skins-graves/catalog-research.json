@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-21",
+  "resourcify": {
+    "id": "RLzHAoZe",
+    "slug": "resourcify",
+    "project_type": "mod",
+    "license": {
+      "id": "LGPL-3.0-only",
+      "name": "GNU Lesser General Public License v3.0 only",
+      "url": null
+    },
+    "source_url": "https://github.com/DeDiamondPro/Resourcify",
+    "loaders": [
+      "fabric",
+      "forge",
+      "neoforge",
+      "quilt"
+    ],
+    "game_versions": [
+      "1.8.9",
+      "1.12.2",
+      "1.16",
+      "1.16.1",
+      "1.16.2",
+      "1.16.3",
+      "1.16.4",
+      "1.16.5",
+      "1.17",
+      "1.17.1",
+      "1.18",
+      "1.18.1",
+      "1.18.2",
+      "1.19",
+      "1.19.1",
+      "1.19.2",
+      "1.19.4",
+      "1.20",
+      "1.20.1",
+      "1.20.2",
+      "1.20.3",
+      "1.20.4",
+      "1.20.5",
+      "1.20.6",
+      "1.21",
+      "1.21.1",
+      "1.21.2",
+      "1.21.3",
+      "1.21.4",
+      "1.21.5",
+      "1.21.6",
+      "1.21.7",
+      "1.21.8",
+      "1.21.9",
+      "1.21.10",
+      "1.21.11",
+      "26.1",
+      "26.1.1",
+      "26.1.2",
+      "26.2",
+      "26.3"
+    ]
+  },
+  "searches": [
+    {
+      "version": "26.1",
+      "loader": "fabric",
+      "total": 10964,
+      "hits": [
+        {
+          "project_id": "P7dR8mSH",
+          "slug": "fabric-api",
+          "title": "Fabric API"
+        },
+        {
+          "project_id": "AANobbMI",
+          "slug": "sodium",
+          "title": "Sodium"
+        },
+        {
+          "project_id": "YL57xq9U",
+          "slug": "iris",
+          "title": "Iris Shaders"
+        }
+      ]
+    },
+    {
+      "version": "26.3",
+      "loader": "neoforge",
+      "total": 4605,
+      "hits": [
+        {
+          "project_id": "AANobbMI",
+          "slug": "sodium",
+          "title": "Sodium"
+        },
+        {
+          "project_id": "YL57xq9U",
+          "slug": "iris",
+          "title": "Iris Shaders"
+        },
+        {
+          "project_id": "NNAgCjsB",
+          "slug": "entityculling",
+          "title": "Entity Culling"
+        }
+      ]
+    }
+  ]
+}

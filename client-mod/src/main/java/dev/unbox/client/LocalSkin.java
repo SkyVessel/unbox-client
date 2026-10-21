@@ -17,6 +17,7 @@ public final class LocalSkin {
  public static PlayerSkin replace(PlayerSkin original,net.minecraft.client.player.AbstractClientPlayer player){
   var mc=Minecraft.getInstance();if(player!=mc.player)return original;poll(mc);return skin==null?original:new PlayerSkin(skin.body(),original.cape(),original.elytra(),skin.model(),false);
  }
+ public static PlayerSkin preview(PlayerSkin original){poll(Minecraft.getInstance());return skin==null?original:new PlayerSkin(skin.body(),original.cape(),original.elytra(),skin.model(),false);}
  private static void poll(Minecraft mc){String current=mc.getUser().getProfileId().toString();if(!owner.equals(current)){clear(mc);owner=current;sequence=-1;}long now=System.currentTimeMillis();if(now-checked<500)return;checked=now;try{
   if(!Files.isRegularFile(MANIFEST)||!Files.isRegularFile(PNG)||Files.size(MANIFEST)>256000||Files.size(PNG)>1048576){clear(mc);sequence=-1;return;}JsonObject m=JsonParser.parseString(Files.readString(MANIFEST)).getAsJsonObject();long next=m.get("sequence").getAsLong();
   String uuid=text(m,"accountUuid").replace("-","");String name=text(m,"accountName");if(!uuid.isEmpty()&&!uuid.equals(current.replace("-",""))){reject(mc,next);return;}if(uuid.isEmpty()&&!name.equals(mc.getUser().getName())){reject(mc,next);return;}if(next==sequence)return;

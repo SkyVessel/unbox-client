@@ -75,7 +75,43 @@ fn list(rt: &Runtime) -> Result<Value, String> {
 
 #[tauri::command]
 pub fn skin_library_list(rt: tauri::State<Runtime>) -> Result<Value, String> {
+    let account=auth::restore_account(&rt,&Value::Null)?;
+    let _=remember_account_skin(&rt,&account);
     list(&rt)
+}
+
+/// Preserve account skins without renaming a user's existing library entry.
+/// The model belongs to the saved variant: identical pixels with different arms
+/// must not overwrite the original variant.
+pub(crate) fn remember_account_skin(rt:&Runtime,account:&Value)->Result<(),String>{
+    let Some(data)=account["skin"].as_str().and_then(|s|s.strip_prefix("data:image/png;base64,"))else{return Ok(())};
+    let bytes=STANDARD.decode(data).map_err(|_|"Cached skin data is damaged")?;
+    let model=account["skinModel"].as_str().unwrap_or("classic");
+    auth::validate_png(&bytes,model)?;
+    let _guard=mutation_lock();let mut v=index(rt)?;
+    if v.skins.iter().any(|e|e.model==model&&file(rt,&e.id).ok().and_then(|p|fs::read(p).ok()).is_some_and(|b|b==bytes)){return Ok(())}
+    if v.skins.len()>=MAX_SKINS{return Err("Save your current skin or remove a library entry before changing skins (library is full).".into())}
+    let id=variant_id(&bytes,model);
+    atomic(&file(rt,&id)?,&bytes)?;
+    v.skins.push(Entry{id,name:format!("{} · Original",account["name"].as_str().unwrap_or("Account")),model:model.into(),created:now()});
+    v.sequence=v.sequence.saturating_add(1);save(rt,&v)
+}
+fn variant_id(bytes:&[u8],model:&str)->String{
+    let mut hash=Sha256::new();hash.update(bytes);hash.update(model.as_bytes());format!("{:x}",hash.finalize())
+}
+
+fn save_variant(rt:&Runtime,entry:&Entry,bytes:Vec<u8>,model:&str)->Result<String,String>{
+    auth::validate_png(&bytes,model)?;
+    if model==entry.model{return Ok(entry.id.clone())}
+    let _guard=mutation_lock();let mut v=index(rt)?;
+    let id=variant_id(&bytes,model);
+    if !v.skins.iter().any(|e|e.id==id){
+        if v.skins.len()>=MAX_SKINS{return Err("Skin library is full. Remove a skin before saving another arm model.".into())}
+        atomic(&file(rt,&id)?,&bytes)?;
+        v.skins.push(Entry{id:id.clone(),name:format!("{} ({})",entry.name,if model=="slim"{"Slim"}else{"Classic"}),model:model.into(),created:now()});
+        v.sequence=v.sequence.saturating_add(1);save(rt,&v)?;
+    }
+    Ok(id)
 }
 #[tauri::command]
 pub fn skin_library_rename(rt:tauri::State<Runtime>,id:String,name:String)->Result<Value,String>{
@@ -178,6 +214,7 @@ pub async fn skin_library_apply(
     rt: tauri::State<'_, Runtime>,
     account_id: String,
     id: String,
+    model: Option<String>,
 ) -> Result<Value, String> {
     let e = index(&rt)?
         .skins
@@ -190,6 +227,10 @@ pub async fn skin_library_apply(
     if account_key(&selected) != account_id {
         return Err("Selected account changed".into());
     }
+    let model=model.as_deref().unwrap_or(&e.model);
+    auth::validate_png(&bytes,model)?;
+    remember_account_skin(&rt,&selected)?;
+    let applied_id=save_variant(&rt,&e,bytes.clone(),model)?;
     let result = if selected["type"] == "microsoft" {
         auth::apply_skin_bytes(
             &rt,
@@ -197,14 +238,14 @@ pub async fn skin_library_apply(
                 .as_str()
                 .ok_or("Microsoft account ID is missing")?,
             bytes,
-            &e.model,
+            model,
         )
         .await?
     } else {
         auth::validate_local_skin(&bytes)?;
         auth::account_snapshot(&rt)?
     };
-    commit_selection(&rt, &account_key(&selected), &id)?;
+    commit_selection(&rt, &account_key(&selected), &applied_id)?;
     if let Some(g) = game(&rt) {
         publish(&rt, &g)?
     }
@@ -240,10 +281,12 @@ fn publish(rt: &Runtime, g: &Path) -> Result<(), String> {
     let account = auth::restore_account(rt, &Value::Null)?;
     let account_id = account_key(&account);
     let library = index(rt)?;
-    let active = library
-        .selected
-        .get(&account_key(&account))
-        .and_then(|id| library.skins.iter().find(|e| &e.id == id));
+    let active = if account["type"]=="microsoft" {
+        // Refreshed official skins take precedence over an older local selection.
+        library.skins.iter().find(|e| e.model==account["skinModel"].as_str().unwrap_or("classic") && public(rt,e).is_ok_and(|skin|skin["skin"]==account["skin"]))
+    } else {
+        library.selected.get(&account_key(&account)).and_then(|id|library.skins.iter().find(|e|&e.id==id))
+    };
     let entries = library
         .skins
         .iter()
@@ -298,6 +341,10 @@ pub fn start(rt: Runtime) {
                     .ok_or("Saved skin not found")?
                     .clone();
                 let bytes = fs::read(file(&rt, id)?).map_err(|_| "A saved skin file is missing")?;
+                let model=c["model"].as_str().unwrap_or(&e.model);
+                auth::validate_png(&bytes,model)?;
+                remember_account_skin(&rt,&selected)?;
+                let applied_id=save_variant(&rt,&e,bytes.clone(),model)?;
                 if selected["type"] == "microsoft" {
                     auth::apply_skin_bytes(
                         &rt,
@@ -305,13 +352,13 @@ pub fn start(rt: Runtime) {
                             .as_str()
                             .ok_or("Microsoft account ID is missing")?,
                         bytes,
-                        &e.model,
+                        model,
                     )
                     .await?;
                 } else {
                     auth::validate_local_skin(&bytes)?;
                 }
-                commit_selection(&rt, &account_key(&selected), id)?;
+                commit_selection(&rt, &account_key(&selected), &applied_id)?;
                 publish(&rt, &g)
             }
             .await;
@@ -350,6 +397,26 @@ mod tests {
                 .unwrap();
         }
         bytes
+    }
+    #[test]
+    fn account_backup_preserves_original_model_name_and_pixels() {
+        let rt=runtime();let bytes=png(70);
+        let account=json!({"name":"FirstPlayer","type":"microsoft","skinModel":"slim","skin":format!("data:image/png;base64,{}",STANDARD.encode(&bytes))});
+        remember_account_skin(&rt,&account).unwrap();
+        let original=index(&rt).unwrap().skins[0].clone();
+        assert_eq!(original.model,"slim");
+        assert_eq!(fs::read(file(&rt,&original.id).unwrap()).unwrap(),bytes);
+        let next=save_variant(&rt,&original,bytes.clone(),"classic").unwrap();
+        assert_ne!(next,original.id);
+        remember_account_skin(&rt,&account).unwrap();
+        let current=index(&rt).unwrap();
+        assert_eq!(current.skins.len(),2);
+        assert_eq!(current.skins[0].name,"FirstPlayer · Original");
+        assert_eq!(current.skins[0].model,"slim");
+        assert_eq!(save_variant(&rt,&original,bytes,"classic").unwrap(),next);
+        assert_eq!(index(&rt).unwrap().skins.len(),2);
+        assert!(remember_account_skin(&rt,&json!({"skin":"data:image/png;base64,bad"})).is_err());
+        fs::remove_dir_all(rt.root).unwrap();
     }
     #[test]
     fn ids_cannot_escape_library() {

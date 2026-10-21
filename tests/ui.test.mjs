@@ -104,8 +104,8 @@ async function accountFixture(p){
    if(cmd==='auth_poll')return {status:'pending'};
    if(cmd==='asset_action')return {items:[],features:[],equipment:[]};if(cmd==='skin_library_list')return window.__savedSkins;
    if(cmd==='skin_library_import'){const skin={id:'saved-'+(window.__savedSkins.length+1),name:args.name,model:args.model,created:Date.now(),skin:'data:image/png;base64,'+args.pngBase64};window.__savedSkins.push(skin);return window.__savedSkins;}
-   if(cmd==='skin_library_apply'){if(window.__uploadFail)throw Error('Skin upload: connection failed');const skin=window.__savedSkins.find(s=>s.id===args.id);Object.assign(window.__accounts.find(a=>a.accountId===args.accountId),{skin:skin.skin,skinModel:skin.model});return snapshot();}
-   if(cmd==='auth_refresh_profile')return snapshot();
+   if(cmd==='skin_library_apply'){if(window.__uploadFail)throw Error('Skin upload: connection failed');const skin=window.__savedSkins.find(s=>s.id===args.id);Object.assign(window.__accounts.find(a=>a.accountId===args.accountId),{skin:skin.skin,skinModel:args.model||skin.model});return snapshot();}
+   if(cmd==='auth_refresh_profile'){const a=snapshot().account;if(!window.__savedSkins.some(s=>s.skin===a.skin&&s.model===a.skinModel))window.__savedSkins.push({id:'original-'+a.accountId,name:a.name+' · Original',model:a.skinModel,created:0,skin:a.skin});return snapshot();}
    if(cmd==='save_state'){window.__saved=args.state;return;}
    if(cmd==='auth_cancel')return;
    return [];
@@ -139,13 +139,24 @@ test('skin preview stays local until Apply; failures preserve saved skin; upload
  const png=await p.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#b56e55';g.fillRect(0,0,64,64);g.clearRect(32,0,32,16);return c.toDataURL().split(',')[1]});
  await p.getByLabel('Choose PNG skin').setInputFiles({name:'new-skin.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});await p.getByRole('group',{name:'Arm model'}).waitFor();
  assert.equal(await p.evaluate(()=>window.__calls.filter(c=>c.cmd==='skin_library_apply').length),0);assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);
- await p.getByRole('button',{name:'Classic',exact:true}).click();await p.getByRole('button',{name:'Save skin',exact:true}).click();await p.getByRole('button',{name:'Preview new-skin.png'}).waitFor();await p.evaluate(()=>window.__uploadFail=true);await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByRole('alert').waitFor();
+ assert.equal(await p.getByRole('switch',{name:'Slim arms'}).getAttribute('aria-checked'),'false');await p.getByRole('button',{name:'Save skin',exact:true}).click();await p.getByRole('button',{name:'Preview new-skin.png'}).waitFor();await p.evaluate(()=>window.__uploadFail=true);await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByRole('alert').waitFor();
  assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);await p.evaluate(()=>window.__uploadFail=false);await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByText('Skin applied.',{exact:true}).waitFor();
  assert.equal(await p.evaluate(()=>window.__saved.account.skinModel),'classic');assert.equal(await p.evaluate(()=>window.__saved.account.skin),'data:image/png;base64,'+png);
  assert.equal(await p.evaluate(()=>window.__calls.find(c=>c.cmd==='skin_library_apply').args.accountId),'a');
  assert.equal(await p.getByRole('button',{name:'Apply selected',exact:true}).isDisabled(),false);
  await p.screenshot({path:'test-results/account-skins.png'});
  await p.getByLabel('Choose PNG skin').setInputFiles({name:'invalid.png',mimeType:'image/png',buffer:Buffer.from('not a skin')});await p.getByRole('alert').waitFor();await p.close();
+});
+test('skin library saves the current account skin and applies arm model only on confirmation',async()=>{
+ const p=await browser.newPage({viewport:{width:1000,height:720}});await accountFixture(p);await p.getByRole('button',{name:'Skins',exact:true}).click();
+ await p.getByRole('button',{name:'Preview AlexFixture · Original',exact:true}).waitFor();const original=await p.evaluate(()=>window.__accounts[0].skin);
+ const arms=p.getByRole('switch',{name:'Slim arms'});await p.waitForFunction(()=>document.querySelector('[role="switch"][aria-label="Slim arms"]')?.getAttribute('aria-checked')==='true');
+ await arms.click();assert.equal(await arms.getAttribute('aria-checked'),'false');assert.equal(await p.evaluate(()=>window.__accounts[0].skinModel),'slim');
+ await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.getByText('Skin applied.',{exact:true}).waitFor();
+ assert.equal(await p.evaluate(()=>window.__accounts[0].skinModel),'classic');assert.equal(await p.evaluate(()=>window.__accounts[0].skin),original);
+ await p.getByRole('button',{name:'Preview AlexFixture · Original',exact:true}).click();assert.equal(await arms.getAttribute('aria-checked'),'true');
+ await p.getByRole('button',{name:'Apply selected',exact:true}).click();await p.waitForFunction(()=>window.__accounts[0].skinModel==='slim');
+ assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:'test-results/skin-arms-original-small.png'});await p.setViewportSize({width:1280,height:820});await p.screenshot({path:'test-results/skin-arms-original-desktop.png'});await p.close();
 });
 test('startup storage failure is visible and retry restores the app instead of leaving a spinner',async()=>{
  const p=await browser.newPage();await p.addInitScript(()=>{window.__attempts=0;window.__TAURI_INTERNALS__={invoke:async cmd=>{
@@ -200,8 +211,8 @@ test('updates are manual, recover from check errors, and cannot install while pl
  assert.equal(await p.locator('.logo').evaluate(e=>e.getBoundingClientRect().width),44);
  assert.equal(await p.locator('svg.logo path').count(),6);assert.equal(await p.locator('svg.logo mask').count(),0);
  await p.locator('.topbar').screenshot({path:'.cache/header-logo-fixed.png'});
- assert.equal(await p.getByRole('button',{name:'Update available',exact:true}).count(),0);await p.getByRole('button',{name:'Settings',exact:true}).click();await p.getByRole('button',{name:'Updates',exact:true}).click();
- const check=p.getByRole('button',{name:'Check for updates',exact:true});
+ assert.equal(await p.getByRole('button',{name:'Update available',exact:true}).count(),0);await p.locator('.rail').getByRole('button',{name:'Check for updates',exact:true}).click();
+ const check=p.getByRole('region',{name:'Client updates'}).getByRole('button',{name:'Check for updates',exact:true});
  await check.click();await p.getByRole('status').getByText('No releases published yet.').waitFor();assert.equal(await p.evaluate(()=>window.__installs),0);
  await check.click();const install=p.getByRole('button',{name:'Install and restart',exact:true});await install.waitFor();assert.equal(await install.isDisabled(),true);
  await p.evaluate(()=>{window.__gameBusy=false});await p.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Install and restart'&&!b.disabled));assert.equal(await p.evaluate(()=>window.__installs),0);
