@@ -1,0 +1,3 @@
+Wrangler: no CLI authentication.
+Configured cloudflare MCP startup: OAuth token refresh failed; upstream invalid_scope.
+New Worker not deployed. Existing health endpoint reports configured=true. Existing LAN / e4mc fallback remains in use.

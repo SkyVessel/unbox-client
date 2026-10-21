@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: Discover sidebar works independently, combines categories and keeps friend profiles read-only
+ok 1 - Discover sidebar works independently, combines categories and keeps friend profiles read-only
+  ---
+  duration_ms: 2794.833958
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3100.330625

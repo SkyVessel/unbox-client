@@ -17,4 +17,4 @@
 - 六套 26.1 / 26.1.2 / 26.3 × Fabric / NeoForge 构建通过，源码和资源预检通过。
 - 本轮只进行无界面测试与构建，没有启动游戏、显示浏览器或操作桌面焦点。联机分支的先前游戏测试证据见 docs/60-VoxLink。
 
-当前 Wrangler 未登录，且本会话无 Cloudflare 部署插件，因此新 Worker 尚未部署。旧 Worker 不接受网络能力字段，客户端继续走 LAN / e4mc 中继，不宣称本次已上线公网 P2P。异地穿透率与 Windows 游戏运行尚未实测。
+当前 Wrangler 未登录；随后找到已有 Cloudflare MCP 连接，但启动时 OAuth 刷新被上游以 invalid_scope 拒绝，需要用户重新登录。因此新 Worker 尚未部署。旧 Worker 不接受网络能力字段，客户端继续走 LAN / e4mc 中继，不宣称本次已上线公网 P2P。异地穿透率与 Windows 游戏运行尚未实测。

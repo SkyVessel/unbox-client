@@ -1,0 +1,5 @@
+2026-10-21T16:29:54.1826197Z test process::tests::console_probe ... ignored, invoked by the two background-process tests
+2026-10-21T16:29:54.2200112Z test process::tests::background_process_has_no_console_and_keeps_output ... ok
+2026-10-21T16:29:54.2201795Z test process::tests::async_background_process_has_no_console_and_keeps_output ... ok
+2026-10-21T16:29:54.7270030Z test result: ok. 81 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.70s
+2026-10-21T16:31:00.3098799Z unbox-client.exe: Windows GUI subsystem confirmed (no launcher console)

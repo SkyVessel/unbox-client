@@ -1,0 +1,88 @@
+   Compiling unbox-client v0.2.18 (/Users/ty/.codex/worktrees/mod-toggle-audit/启动器/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.61s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/unbox_client-c323b641f9c49b59)
+
+running 80 tests
+test auth::response_tests::private_token_structure_is_not_the_public_account ... ok
+test auth::player_proof_tests::invalid_private_certificate_fails_without_exposing_it ... ok
+test auth::local_migration_tests::old_local_profile_keeps_java_uuid_and_previous_skin_selection_key ... ok
+test auth::local_migration_tests::old_email_identity_becomes_local_without_losing_uuid_selection_or_skin_key ... ok
+test catalog::tests::browse_all_and_combined_filters_keep_profile_constraints ... ok
+test auth::lifecycle_tests::vault_roundtrip_switch_remove_and_provider_isolation ... ok
+test auth::tests::skin_origin_is_restricted ... ok
+test catalog::tests::exact_environment_filters_and_no_cross_loader_fallback ... ok
+test catalog::tests::cancellation_interrupts_waiting_download_without_touching_profile ... ok
+test auth::lifecycle_tests::unbox_registration_ignores_old_config_and_requires_fresh_authorization ... ok
+test auth::player_proof_tests::proof_signs_bound_challenge_and_contains_no_private_credentials ... ok
+test auth::lifecycle_tests::refresh_revocation_and_missing_entitlement_are_actionable ... ok
+test catalog::tests::live_modrinth_install ... ignored, Explicit public-network installation test; isolated temporary profile only
+test auth::response_tests::registration_failure_has_actionable_message_without_server_token ... ok
+test auth::response_tests::missing_java_profile_has_specific_message ... ok
+test auth::response_tests::non_json_failure_retains_stage_and_http_status_without_body ... ok
+test auth::response_tests::xbox_profile_and_family_errors_are_distinguished ... ok
+test auth::response_tests::generic_minecraft_forbidden_is_not_reported_as_registration_denial ... ok
+test auth::lifecycle_tests::skin_validation_decodes_pixels_and_rejects_wrong_sizes_and_legacy_slim ... ok
+test auth::lifecycle_tests::upload_uses_minecraft_token_and_only_returns_preview_after_confirmation ... ok
+test credential_cache::tests::successful_unlock_is_reused_and_unchanged_credentials_are_not_written ... ok
+test credential_cache::tests::failed_unlock_or_write_does_not_replace_saved_credentials ... ok
+test catalog::tests::corrupt_cache_and_duplicate_filenames_do_not_install_any_files ... ok
+test content_tests::only_bundled_client_files_are_hidden ... ok
+test auth::lifecycle_tests::refresh_and_full_auth_chain_keep_tokens_in_correct_stages ... ok
+test catalog::tests::interrupted_commit_recovers_files_and_metadata ... ok
+test content::tests::rejects_managed_mods_symlinks_and_running_profile ... ok
+test content::tests::imported_files_stay_in_selected_profile_and_duplicates_never_replace ... ok
+test catalog::tests::invalid_managed_archives_and_addresses_never_write_files ... ok
+test content::tests::renamed_survival_mods_are_rejected_by_native_id_including_secondary_entries ... ok
+test launcher::survival_tests::pinned_targets_have_complete_native_dependencies_and_share_the_fabric_api_pin ... ok
+test launcher::tests::disallow_traversal ... ok
+test launcher::tests::offline_identity_matches_java ... ok
+test content::tests::packs_shaders_and_partial_rejection ... ok
+test catalog::tests::refuses_friend_running_changed_and_duplicate_profiles ... ok
+test launcher::tests::optional_features_are_not_enabled ... ok
+test neoforge::early_window_tests::absent_root_key_is_inserted_before_tables ... ok
+test neoforge::early_window_tests::empty_config_disables_early_window ... ok
+test neoforge::early_window_tests::existing_value_preserves_comments_and_other_keys ... ok
+test neoforge::early_window_tests::other_game_versions_do_not_write_configuration ... ok
+test launcher::survival_tests::cached_install_and_retry_keep_personal_files_and_manifest ... ok
+test neoforge::tests::neoforge_replaces_old_library_versions ... ok
+test content::tests::shared_origin_requires_the_verified_hash ... ok
+test launcher::survival_tests::renamed_jar_in_jar_dependency_is_detected_without_changing_user_files ... ok
+test launcher::survival_tests::bundled_ports_are_verified_before_installation ... ok
+test launcher::tests::managed_update_backs_up_only_verified_old_mods ... ok
+test sharing::tests::recent_friend_profiles_replace_by_host_and_survive_stale_ui_saves ... ok
+test launcher::survival_tests::shared_fabric_api_preflight_preserves_custom_but_accepts_known_upgrade ... ok
+test skin_library::tests::ids_cannot_escape_library ... ok
+test launcher::survival_tests::removed_managed_mods_are_backed_up_and_custom_conflicts_preserved ... ok
+test launcher::survival_tests::sha512_mismatch_stops_install_before_existing_mods_change ... ok
+test social::cache_tests::cached_friends_include_offline_and_strip_invitation_credentials ... ok
+test social::cache_tests::game_read_notifications_merge_without_deleting_invites_or_exposing_grants ... ok
+test skin_library::tests::deleting_selected_skin_clears_every_account_and_advances_sequence ... ok
+test social::cache_tests::old_game_bridge_without_player_list_syncs_an_empty_batch ... ok
+test launcher::survival_tests::same_name_and_renamed_native_conflicts_preserve_user_files ... ok
+test updates::tests::release_assets_are_confined_to_our_repository ... ok
+test updates::tests::updater_cannot_replace_active_game_job_or_race_with_launch ... ok
+test versions::tests::native_versions_have_distinct_pinned_resources_and_shared_profiles ... ok
+test launcher::survival_tests::upgrade_backs_up_old_mod_and_refuses_changed_managed_file ... ok
+test world_library::tests::backup_is_a_separate_copy_and_never_overwrites ... ok
+test catalog::tests::installs_all_three_kinds_and_keeps_catalog_icon ... ok
+test world_library::tests::failed_pack_copy_cleans_staging_and_keeps_the_profile_untouched ... ok
+test removal::tests::removals_are_reversible_and_preserve_worlds ... ok
+test world_library::tests::failed_profile_switch_rolls_back_committed_packs ... ok
+test world_library::tests::pack_conflicts_keep_the_zip_extension ... ok
+test world_library::tests::version_order_prevents_downgrades ... ok
+test sharing::tests::neoforge_sync_preserves_loader_and_rejects_wrong_metadata ... ok
+test world_library::tests::directory_resource_packs_are_migrated_and_preserved ... ok
+test world_library::tests::playing_never_migrates_a_profile ... ok
+test sharing::tests::shared_environment_is_exact_cached_and_never_overwrites_source ... ok
+test skin_library::tests::account_backup_preserves_original_model_name_and_pixels ... ok
+test skin_library::tests::selection_commit_reloads_index_and_rejects_removed_entry ... ok
+test skin_library::tests::reimporting_changes_model_and_advances_sequence ... ok
+test world_library::tests::migration_keeps_original_copy_and_renames_world_conflicts ... ok
+test world_library::tests::preflight_blocks_downgrade_and_cross_loader_gameplay_mods ... ok
+test world_library::tests::upgrade_requires_backup_then_records_setup ... ok
+test sharing::tests::packs_sync_selection_and_removal_without_personal_settings_loss ... ok
+test sharing::tests::cold_invites_choose_native_isolated_profiles_and_reject_stale_or_foreign_invites ... ok
+test sharing::tests::invitations_and_cached_mods_select_each_exact_native_environment ... ok
+
+test result: ok. 79 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.11s
+

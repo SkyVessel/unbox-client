@@ -1,0 +1,38 @@
+{
+  "unbox-client.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  },
+  "unbox-client-neoforge.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  },
+  "unbox-client-26.1.2.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  },
+  "unbox-client-neoforge-26.1.2.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  },
+  "unbox-client-26.3.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  },
+  "unbox-client-neoforge-26.3.jar": {
+    "version": "0.2.18",
+    "graveMining": true,
+    "friendServerList": true,
+    "voxlinkSources": true
+  }
+}

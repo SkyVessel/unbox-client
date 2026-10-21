@@ -1,0 +1,15 @@
+{
+  "version": "0.2.18",
+  "notes": "Unbox Client 0.2.18\n\n- Discover is now available from the sidebar, with grouped categories and multi-select filtering.\n- Browse Modrinth mods, resource packs and shaders; choose an install profile and review required dependencies before downloading. Friend profiles remain read-only.\n- Improved skin library: preserve your current account skin, switch Classic/Slim arms, and open the in-game wardrobe from the title screen.\n- Restored the always-available update checker and grave mining crack feedback.\n- Integrated multiplayer invitations into Minecraft's native server list and included the VoxLink direct-connection transport.\n\nNetworking note: the new P2P signaling endpoint is not yet deployed. Existing LAN and e4mc relay connections remain available. Real cross-network P2P success rates and Windows gameplay still need testing.\n\nPlatforms: macOS Apple Silicon and Windows x64.\n",
+  "pub_date": "2026-10-21T16:32:08.825986Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2xSd0RudXJSZ25jKzZwUkFKWVYwL0tkYlZXUzZuR3JjMmhZQ2xHOFhGZ0JIc2xEQ0d6LzkvdWJoRzVYL2owb0RMU0NHZG5KL0o0NlkxaEk2U09pV2d3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNTk5OTgwCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xOF9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMTgKSW9oUnRVRGJwK1BSY01RZkZSeDZFY3daeTlCM2RiSndLQ2FtSEhtOVNKcGpqS2x2ZldOUm1UUjdYNk92WkRNSlBqOVBybUwvNTU5ZWxWdjBjR20vQWc9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.18/Unbox.Client_0.2.18_aarch64.app.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2t3MkUrbFZ6VlJ3U0x5K2xaTGwrNUZnSXlwOGszR3RQVkFGTW0zbGZmSGM1RkV3eVEwampMVmhuTm5iYjU2RjlDMG9wSENqZDAxdUtVZzdUZzU4SndvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkyNjAwMzIxCWZpbGU6VW5ib3guQ2xpZW50XzAuMi4xOF93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMTgKeGtDdlg0eEQ0aW9aZ2NVYXFNZytlZGxpU0hFZUhmZ2FFZU5DMFZUckVLS2lmNWZEWnlwbTZ4eVlBS3d5MEdxR2ZIL2kzZERBYzFKVXpGbjRnZ1hwQlE9PQo=",
+      "url": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.18/Unbox.Client_0.2.18_windows-x64-setup.exe"
+    }
+  }
+}
