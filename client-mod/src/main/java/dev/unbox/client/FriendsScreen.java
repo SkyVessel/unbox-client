@@ -22,6 +22,7 @@ public final class FriendsScreen extends Screen {
   add(x+299,y+73,104,23,"Copy my code",()->{if(SocialBridge.view.has("self")){minecraft.keyboardHandler.setClipboard(SocialBridge.text(SocialBridge.view.getAsJsonObject("self"),"code"));SocialBridge.message="Friend code copied";}});
   add(x+449,y+15,53,24,"Back",this::onClose);
   for(int i=page*6;i<Math.min(rows.size(),page*6+6);i++){var f=rows.get(i);int yy=y+117+(i-page*6)*33;String id=SocialBridge.text(f,"id");if(f.get("accepted").getAsInt()==0&&SocialBridge.text(f,"direction").equals("incoming")){add(x+361,yy,64,24,"Accept",()->SocialBridge.command("accept",id));add(x+434,yy,68,24,"Decline",()->SocialBridge.command("remove",id));}else if(f.get("accepted").getAsInt()==1){var b=add(x+426,yy,76,24,"Invite",()->SocialBridge.invite(id));b.active=SocialBridge.flag(f,"online")&&minecraft.getSingleplayerServer()!=null;}}
+  add(x+18,y+321,132,24,"Popup: "+SocialNotifications.popupSeconds()+"s",()->{int s=SocialNotifications.popupSeconds();UnboxClient.set("social.popupSeconds",s<15?15:s<30?30:s<60?60:15);UnboxClient.save();init();});
   add(x+370,y+321,60,24,"Previous",()->{page=Math.max(0,page-1);init();});add(x+439,y+321,63,24,"Next",()->{page=Math.min(Math.max(0,(rows.size()-1)/6),page+1);init();});
  }
  @Override public void tick(){String next=SocialBridge.rows("friends").toString()+SocialBridge.view.get("self")+(minecraft.getSingleplayerServer()!=null);if(!next.equals(signature)){signature=next;init();}}

@@ -2,6 +2,7 @@
 """Compile Unbox sources against the pinned, native NeoForge client for each version."""
 import pathlib,subprocess,os,json,shutil,zipfile,hashlib,urllib.request,sys
 ROOT=pathlib.Path(__file__).resolve().parents[1];os.chdir(ROOT)
+subprocess.run([sys.executable,str(ROOT/'scripts/prepare-voxlink.py')],check=True)
 version=os.environ.get('UNBOX_MINECRAFT_VERSION','26.1')
 neo_versions={'26.1':'26.1.0.19-beta','26.1.2':'26.1.2.116','26.3':'26.3.0.86'}
 if version not in neo_versions:raise SystemExit('Unsupported Minecraft version: '+version)
@@ -31,7 +32,7 @@ if version=='26.3':
 else:
  neo_libs=[str(p) for p in libs.rglob('*.jar') if p!=patched]
  game_libs=[str(ROOT/'.cache/libs/*')]
-cp=[str(patched),*game_libs,str(dep),*neo_libs,str(cache/'e4mc-neoforge-deps/*')]
+cp=[str(ROOT/'.cache/voxlink/classes'),str(patched),*game_libs,str(dep),*neo_libs,str(cache/'e4mc-neoforge-deps/*')]
 sources=list((ROOT/'client-mod/src/main/java').rglob('*.java'))+list((ROOT/'client-mod/src/neoforge/java').rglob('*.java'))
 if version=='26.3':
  source_root=pathlib.Path(subprocess.check_output([sys.executable,str(ROOT/'scripts/prepare-version-sources.py'),version,'neoforge'],text=True).strip())
@@ -41,6 +42,7 @@ for file in build.rglob('*.class'):
     data=file.read_bytes()
     if b'net/fabricmc/' in data or b'freelook/freelook/' in data:
         raise SystemExit('Fabric-only dependency leaked into native NeoForge build: '+str(file))
+shutil.copytree(ROOT/'.cache/voxlink/classes',build,dirs_exist_ok=True)
 shutil.copytree(ROOT/'client-mod/src/main/resources',build,dirs_exist_ok=True);(build/'fabric.mod.json').unlink()
 shutil.copytree(ROOT/'client-mod/src/neoforge/resources',build,dirs_exist_ok=True)
 toml=build/'META-INF/neoforge.mods.toml';toml.write_text(toml.read_text().replace('versionRange="[26.1]"',f'versionRange="[{version}]"'))

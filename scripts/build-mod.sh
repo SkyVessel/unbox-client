@@ -3,16 +3,18 @@ set -eu
 cd "$(dirname "$0")/.."
 version=${UNBOX_MINECRAFT_VERSION:-26.1}
 python3 scripts/prepare-sharing.py
+python3 scripts/prepare-voxlink.py
 rm -rf client-mod/build/classes
 mkdir -p client-mod/build/classes src-tauri/resources
 if [ "$version" = "26.3" ]; then
     python3 scripts/prepare-version-deps.py "$version" fabric
     sources=$(python3 scripts/prepare-version-sources.py "$version" fabric)
     libraries=$(find .cache/runtime-26.3/libraries -name '*.jar' -print | paste -sd ':' -)
-    javac --release 25 -proc:none -classpath ".cache/client-${version}.jar:.cache/fabric-loader.jar:.cache/26.3/freelook.jar:.cache/26.3/e4mc.jar:.cache/26.3/e4mc-deps/*:.cache/26.3/fabric-api/*:$libraries" -d client-mod/build/classes "$sources"/*.java
+    javac --release 25 -proc:none -classpath ".cache/voxlink/classes:.cache/client-${version}.jar:.cache/fabric-loader.jar:.cache/26.3/freelook.jar:.cache/26.3/e4mc.jar:.cache/26.3/e4mc-deps/*:.cache/26.3/fabric-api/*:$libraries" -d client-mod/build/classes "$sources"/*.java
 else
-    javac --release 25 -proc:none -classpath ".cache/client-${version}.jar:.cache/fabric-loader.jar:.cache/freelook.jar:.cache/e4mc.jar:.cache/e4mc-deps/*:.cache/libs/*:.cache/fabric-api/*" -d client-mod/build/classes client-mod/src/main/java/dev/unbox/client/*.java client-mod/src/fabric/java/dev/unbox/client/*.java
+    javac --release 25 -proc:none -classpath ".cache/voxlink/classes:.cache/client-${version}.jar:.cache/fabric-loader.jar:.cache/freelook.jar:.cache/e4mc.jar:.cache/e4mc-deps/*:.cache/libs/*:.cache/fabric-api/*" -d client-mod/build/classes client-mod/src/main/java/dev/unbox/client/*.java client-mod/src/fabric/java/dev/unbox/client/*.java
 fi
+cp -R .cache/voxlink/classes/. client-mod/build/classes/
 cp -R client-mod/src/main/resources/. client-mod/build/classes/
 suffix=""
 if [ "$version" != "26.1" ]; then suffix="-$version"; fi

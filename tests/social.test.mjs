@@ -110,3 +110,41 @@ test('lightweight invitation mailbox is scoped, keeps grants on reads, and follo
   await send(db,a,'room',{room:null});assert.equal((await send(db,b,'invites')).invites.length,0);
  }finally{db.sql.close()}
 });
+
+test('VoxLink candidates are invitation-scoped, role-bound, idempotent, and preserved on room updates',async()=>{
+ const db=database(),host=player('Host'),guest=player('Guest'),stranger=player('Other');
+ try{
+  for(const p of[host,guest,stranger])await register(db,p);await befriend(db,host,guest);
+  const world={...sampleRoom(),network:'voxlink-v1'};
+  assert.equal((await send(db,host,'invites/send',{id:guest.id,room:world,joinSecret:'a'.repeat(64)})).status,200);
+  const id=(await send(db,guest,'invites')).invites[0].id,attempt=crypto.randomUUID();
+  const offer={candidates:[{kind:'udp',host:'1.1.1.1',port:34567,slot:0,range:16}]};
+  const request={id,attempt,side:'guest',offer};
+  assert.equal((await send(db,stranger,'invites/transport',request)).status,404);
+  assert.equal((await send(db,host,'invites/transport',request)).status,404);
+  assert.equal((await send(db,guest,'invites/transport',request)).status,200);
+  assert.equal((await send(db,host,'invites/transport',{...request,side:'host'})).status,200);
+  assert.equal((await send(db,guest,'invites/transport',request)).status,200);
+  assert.deepEqual((await send(db,guest,'invites')).invites[0].room.transport.host,offer);
+  await send(db,host,'room',{room:{...world,relay:'host.e4mc.link'}});
+  assert.deepEqual((await send(db,guest,'invites')).invites[0].room.transport.guest,offer);
+  const next={...request,attempt:crypto.randomUUID()};await send(db,guest,'invites/transport',next);
+  assert.equal((await send(db,host,'invites/transport',{...request,side:'host'})).status,409);
+  assert.equal((await send(db,guest,'invites')).invites[0].room.transport.host,undefined);
+  for(const ip of['127.0.0.1','::ffff:127.0.0.1','::ffff:7f00:1','192.168.1.1','169.254.169.254','::1','fc00::1','example.com','999.1.1.1'])assert.equal((await send(db,guest,'invites/transport',{...next,offer:{candidates:[{...offer.candidates[0],host:ip}]}})).status,400,ip);
+  await send(db,guest,'friends/remove',{id:host.id});assert.equal((await send(db,guest,'invites/transport',next)).status,404);
+ }finally{db.sql.close()}
+});
+
+test('VoxLink old-client capability and expired attempts fail closed without removing relay support',async()=>{
+ const db=database(),host=player('Host'),guest=player('Guest');try{
+  for(const p of[host,guest])await register(db,p);await befriend(db,host,guest);
+  let world=sampleRoom();await send(db,host,'invites/send',{id:guest.id,room:world,joinSecret:'a'.repeat(64)});
+  let id=(await send(db,guest,'invites')).invites[0].id;let req={id,attempt:crypto.randomUUID(),side:'guest',offer:{candidates:[]}};
+  assert.equal((await send(db,guest,'invites/transport',req)).status,409);assert.equal((await send(db,guest,'invites/relay',{id})).status,200);
+  world.network='voxlink-v1';await send(db,host,'invites/send',{id:guest.id,room:world,joinSecret:'a'.repeat(64)});id=(await send(db,guest,'invites')).invites[0].id;req.id=id;await send(db,guest,'invites/transport',req);
+  db.sql.prepare("UPDATE invites SET room=json_set(room,'$.transport.created',?) WHERE id=?").run(Date.now()-46000,id);
+  assert.equal((await send(db,host,'invites/transport',{...req,side:'host'})).status,409);
+  db.sql.prepare('UPDATE invites SET expires=? WHERE id=?').run(Date.now()-1,id);assert.equal((await send(db,guest,'invites/transport',req)).status,404);
+ }finally{db.sql.close()}
+});

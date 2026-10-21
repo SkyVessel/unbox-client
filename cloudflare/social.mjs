@@ -1,3 +1,4 @@
+import {exchange,transportVersion} from './transport.mjs';
 import {platformRoute,ownership,equippedLogos} from './platform.mjs';
 import {cleanupAccounts} from './accounts.mjs';
 import {verifyPlayerProof} from './player-proof.mjs';
@@ -13,7 +14,7 @@ async function activeBadges(db,players,now){
  for(let offset=0;offset<ids.length;offset+=80){const chunk=ids.slice(offset,offset+80),marks=chunk.map(()=>'?').join(',');const rows=await db.prepare(`SELECT uuid FROM people WHERE kind='microsoft' AND seen>? AND state IN ('Playing','Hosting') AND uuid IN (${marks})`).bind(now-90000,...chunk).all();for(const row of rows.results)found.push(row.uuid)}
  return [...new Set(found)].sort();
 }
-export function room(b){if(!b||!uuid(b.id)||typeof b.name!=='string'||b.name.length>80||!Number.isInteger(b.port)||b.port<1||b.port>65535||!Number.isInteger(b.probePort)||b.probePort<1||b.probePort>65535||!/^[a-f0-9]{64}$/.test(b.probeToken||''))throw Error('Invalid world invitation');if(!Array.isArray(b.lan)||b.lan.length>8||!b.lan.every(ip=>/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)&&ip.split('.').every(x=>+x<256)&&(ip.startsWith('10.')||ip.startsWith('192.168.')||(/^172\.(1[6-9]|2\d|3[01])\./.test(ip)))))throw Error('Invalid LAN addresses');if(b.relay&&!/^[a-z0-9.-]{1,200}\.e4mc\.link$/.test(b.relay))throw Error('Invalid relay');if(b.loader!==undefined&&(!['fabric','neoforge'].includes(b.loader)||!['26.1','26.1.2','26.3'].includes(b.minecraft)))throw Error('Unsupported world environment');return {...(b.loader?{loader:b.loader,minecraft:b.minecraft}:{}),id:b.id,name:b.name,port:b.port,probePort:b.probePort,probeToken:b.probeToken,lan:b.lan,relay:b.relay||null,protocol:b.protocol===2?2:1}}
+export function room(b){if(!b||!uuid(b.id)||typeof b.name!=='string'||b.name.length>80||!Number.isInteger(b.port)||b.port<1||b.port>65535||!Number.isInteger(b.probePort)||b.probePort<1||b.probePort>65535||!/^[a-f0-9]{64}$/.test(b.probeToken||''))throw Error('Invalid world invitation');if(!Array.isArray(b.lan)||b.lan.length>8||!b.lan.every(ip=>/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)&&ip.split('.').every(x=>+x<256)&&(ip.startsWith('10.')||ip.startsWith('192.168.')||(/^172\.(1[6-9]|2\d|3[01])\./.test(ip)))))throw Error('Invalid LAN addresses');if(b.relay&&!/^[a-z0-9.-]{1,200}\.e4mc\.link$/.test(b.relay))throw Error('Invalid relay');if(b.loader!==undefined&&(!['fabric','neoforge'].includes(b.loader)||!['26.1','26.1.2','26.3'].includes(b.minecraft)))throw Error('Unsupported world environment');return {...(b.network===transportVersion?{network:transportVersion}:{}),...(b.loader?{loader:b.loader,minecraft:b.minecraft}:{}),id:b.id,name:b.name,port:b.port,probePort:b.probePort,probeToken:b.probeToken,lan:b.lan,relay:b.relay||null,protocol:b.protocol===2?2:1}}
 export default {
  async fetch(request,env){
   if(new URL(request.url).pathname==='/health')return reply({service:'unbox-friends',configured:!!env.DB,version:2,accountAuth:"minecraft",emailVerification:false});
@@ -54,7 +55,7 @@ export default {
    const mutual=async id=>!!await db.prepare('SELECT 1 FROM friendships WHERE accepted=1 AND ((sender=? AND receiver=?) OR (sender=? AND receiver=?))').bind(me.id,id,id,me.id).first();
    if(path==='/v1/invites'&&request.method==='POST'){
     const invites=await db.prepare('SELECT i.*,p.name AS senderName FROM invites i JOIN people p ON p.id=i.sender WHERE (i.receiver=? OR i.sender=?) AND i.expires>? ORDER BY i.expires DESC LIMIT 100').bind(me.id,me.id,now).all();
-    return reply({invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
+    return reply({transport:transportVersion,invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
    }
    if(path==='/v1/sync'&&request.method==='POST'){
     const values=profile(b);if(me.kind==='local'){values[0]='OfflinePlayer';values[3]=null;}if(b.uuid!==me.uuid||b.kind!==me.kind)return reply({error:'Account identity changed'},403);await db.prepare('UPDATE people SET name=?,uuid=?,kind=?,face=?,seen=?,state=? WHERE id=?').bind(...values,now,['Launcher','Playing','Hosting'].includes(b.state)?b.state:'Launcher',me.id).run();
@@ -63,7 +64,7 @@ export default {
     const invites=await db.prepare('SELECT i.*,p.name AS senderName FROM invites i JOIN people p ON p.id=i.sender WHERE (i.receiver=? OR i.sender=?) AND i.expires>? ORDER BY i.expires DESC LIMIT 100').bind(me.id,me.id,now).all();
     const logos=await equippedLogos(db,[me.uuid,...badges,...friends.results.filter(f=>f.kind==='microsoft').map(f=>f.uuid)],now);
     const playerLogos=Object.fromEntries([me.uuid,...badges].filter(id=>logos[id]).map(id=>[id,logos[id]]));
-    return reply({protocol:2,invitePolling:true,self:me,playerLogos,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,logo:f.kind==='microsoft'?logos[f.uuid]||null:null,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
+    return reply({protocol:2,invitePolling:true,transport:transportVersion,self:me,playerLogos,assets:me.kind==='microsoft'?await ownership(db,me.uuid,now):{items:[],features:[],equipment:[]},badges,friends:friends.results.map(f=>({...f,logo:f.kind==='microsoft'?logos[f.uuid]||null:null,online:now-f.seen<90000,direction:f.sender===me.id?'outgoing':'incoming'})),invites:invites.results.map(i=>({...i,room:JSON.parse(i.room)}))});
    }
    if(path==='/v1/friends/request'&&request.method==='POST'){
     if(!/^[A-F0-9]{12}$/.test(b.code||''))return reply({error:'Enter the 12-character friend code'},400);
@@ -84,12 +85,13 @@ export default {
     const sender=await db.prepare('SELECT kind FROM people WHERE id=?').bind(me.id).first();const peer=await db.prepare('SELECT kind FROM people WHERE id=?').bind(b.id).first();if(!['microsoft','local'].includes(sender.kind)||!['microsoft','local'].includes(peer.kind))return reply({error:'Choose Microsoft or local play'},400);if(r.protocol!==2||!/^[a-f0-9]{64}$/.test(b.joinSecret||''))return reply({error:'Update Unbox to use verified private invitations'},400);
     await db.batch([db.prepare('DELETE FROM invites WHERE sender=? AND receiver=?').bind(me.id,b.id),db.prepare('INSERT INTO invites(id,sender,receiver,room,expires,join_secret) VALUES(?,?,?,?,?,?)').bind(crypto.randomUUID(),me.id,b.id,JSON.stringify(r),now+300000,b.joinSecret)]);return reply({ok:true});
    }
+   if(path==='/v1/invites/transport'&&request.method==='POST'){const result=await exchange(db,me,b,now,mutual);const {status=200,...value}=result;return reply(value,status);}
    if(path==='/v1/invites/relay'&&request.method==='POST'){
     const i=await db.prepare('SELECT sender FROM invites WHERE id=? AND receiver=? AND expires>?').bind(b.id,me.id,now).first();if(!i||!await mutual(i.sender))return reply({error:'Invitation expired'},404);
     await db.prepare('UPDATE invites SET relay_requested=1 WHERE id=?').bind(b.id).run();return reply({ok:true});
    }
    if(path==='/v1/room'&&request.method==='POST'){
-    if(!b.room){await db.prepare('DELETE FROM invites WHERE sender=?').bind(me.id).run();return reply({ok:true})}const r=room(b.room);await db.prepare('UPDATE invites SET room=? WHERE sender=? AND expires>? AND json_extract(room,\'$.id\')=?').bind(JSON.stringify(r),me.id,now,r.id).run();return reply({ok:true});
+    if(!b.room){await db.prepare('DELETE FROM invites WHERE sender=?').bind(me.id).run();return reply({ok:true})}const r=room(b.room);await db.prepare("UPDATE invites SET room=json_set(?, '$.transport',json_extract(room,'$.transport')) WHERE sender=? AND expires>? AND json_extract(room,'$.id')=?").bind(JSON.stringify(r),me.id,now,r.id).run();return reply({ok:true});
    }
    if(path==='/v1/invites/dismiss'&&request.method==='POST'){await db.prepare('DELETE FROM invites WHERE id=? AND receiver=?').bind(b.id,me.id).run();return reply({ok:true});}
    return reply({error:'Not found'},404);
