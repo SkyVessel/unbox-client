@@ -14,7 +14,7 @@ pub fn folder(kind: &str) -> Result<&'static str, String> {
         _ => Err("Unknown content type".into()),
     }
 }
-fn metadata(path: &Path, kind: &str) -> Result<Value, String> {
+pub(crate) fn metadata(path: &Path, kind: &str) -> Result<Value, String> {
     let mut zip = zip::ZipArchive::new(fs::File::open(path).map_err(|e| e.to_string())?)
         .map_err(|_| "Not a valid JAR/ZIP file")?;
     if zip.len() > 50000 {
@@ -88,8 +88,9 @@ pub fn list(rt: &Runtime, id: &str, kind: &str) -> Result<Value, String> {
         .and_then(|b| serde_json::from_slice(&b).ok())
         .unwrap_or_else(|| json!({}));
     let shared_files = shared["files"].as_array().cloned().unwrap_or_default();
+    let catalog = crate::catalog::index(&dir);
     let mut files = Vec::new();
-    for e in fs::read_dir(dir).map_err(|e| e.to_string())?.flatten() {
+    for e in fs::read_dir(&dir).map_err(|e| e.to_string())?.flatten() {
         let name = e.file_name().to_string_lossy().into_owned();
         if name.starts_with('.')
             || !e.path().is_file()
@@ -106,7 +107,7 @@ pub fn list(rt: &Runtime, id: &str, kind: &str) -> Result<Value, String> {
             "Shaders" => "shaderpacks",
             _ => "",
         };
-        let digest = sha256(&e.path());
+        let digest = if shared_files.is_empty(){None}else{sha256(&e.path())};
         let host = shared_files.iter().any(|item| {
             item["kind"].as_str().unwrap_or("mods") == expected_kind
                 && item["hash"]
@@ -119,6 +120,7 @@ pub fn list(rt: &Runtime, id: &str, kind: &str) -> Result<Value, String> {
         } else {
             "Your library"
         });
+        if !host { crate::catalog::decorate(&catalog,&e.path(),&name,&mut v); }
         files.push(v)
     }
     files.sort_by(|a, b| a["name"].as_str().cmp(&b["name"].as_str()));
@@ -132,6 +134,7 @@ pub fn import(rt: &Runtime, id: &str, kind: &str, paths: Vec<String>) -> Result<
     if job["busy"] == true && job["profileId"] == id {
         return Err("Close this profile's game before changing its files".into());
     }
+    crate::catalog::writable(rt,id)?;
     let game = profile_dir(rt, id)?;
     if !game.join("profile.json").exists() {
         return Err("Select an existing profile".into());

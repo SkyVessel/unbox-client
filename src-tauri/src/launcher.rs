@@ -4,7 +4,7 @@ use sha1::{Sha1,Digest};
 use std::{fs,path::{Path,PathBuf},time::Duration};
 use tauri::Manager;
 
-fn performance_lock(loader:&str,version:&str)->Result<Value,String>{
+pub(crate) fn performance_lock(loader:&str,version:&str)->Result<Value,String>{
     let text=match(loader,version){
         ("fabric","26.1")=>include_str!("../resources/performance-lock.json"),
         ("fabric","26.1.2")=>include_str!("../resources/performance-lock-26.1.2.json"),

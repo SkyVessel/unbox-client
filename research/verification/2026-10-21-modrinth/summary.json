@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-21",
+  "branch": "codex/modrinth-market",
+  "published": false,
+  "tests": {
+    "rust": 78,
+    "fullNode": 64,
+    "finalMarketUi": 3,
+    "typescriptVite": "passed"
+  },
+  "liveInstallations": [
+    {
+      "project": "AppleSkin",
+      "files": 1,
+      "provided": [
+        "Fabric API"
+      ]
+    },
+    {
+      "project": "Fresh Animations",
+      "files": 1
+    },
+    {
+      "project": "Complementary Reimagined",
+      "files": 1
+    },
+    {
+      "project": "Item Borders",
+      "files": 3,
+      "dependencies": [
+        "Iceberg",
+        "Prism"
+      ],
+      "provided": [
+        "Fabric API"
+      ]
+    }
+  ],
+  "liveEnvironment": "26.1 Fabric, isolated disposable profiles, no game launched",
+  "negativeLiveCheck": "Waystones had no exact compatible file in the tested environment and was rejected",
+  "network": "Initial environment proxy aborted CONNECT; successful public network tests used direct connections in those test processes only; system settings unchanged",
+  "visualEvidence": "real-packs.png uses actual public Modrinth search data and images; other screenshots use fixtures for deterministic interaction tests",
+  "boundaries": [
+    "No GUI game launch, no focus changes",
+    "No Windows gameplay",
+    "No GitHub release",
+    "Downloads do not enable packs or shaders automatically",
+    "Third-party game runtime compatibility has not been tested"
+  ]
+}

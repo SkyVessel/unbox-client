@@ -16,7 +16,7 @@ fn archive(rt:&Runtime,source:&Path,record:Value)->Result<String,String>{
  fs::rename(source,target.join("data")).map_err(|e|e.to_string())?;Ok(token)
 }
 pub fn remove_file(rt:&Runtime,id:&str,kind:&str,name:&str)->Result<Value,String>{
- let _job=available(rt,id)?;let dir=profile_dir(rt,id)?;let folder=crate::content::folder(kind)?;
+ let _job=available(rt,id)?;let dir=profile_dir(rt,id)?;let folder=crate::content::folder(kind)?;crate::catalog::writable(rt,id)?;
  if !dir.join("profile.json").is_file(){return Err("Profile not found".into())}
  if kind=="Mods"&&crate::managed_mod_names(&dir).contains(name){return Err("Built-in client modules are managed by Unbox".into())}
  if fs::symlink_metadata(dir.join(folder)).map_err(|_|"Content folder not found")?.file_type().is_symlink(){return Err("Linked content folders cannot be modified".into())}
@@ -38,6 +38,7 @@ pub fn restore_inner(rt:&Runtime,token:&str)->Result<(),String>{
  uuid::Uuid::parse_str(token).map_err(|_|"Invalid recovery token")?;let dir=rt.root.join("removed").join(token);
  let r:Value=serde_json::from_slice(&fs::read(dir.join("record.json")).map_err(|_|"Removed item not found")?).map_err(|_|"Invalid recovery record")?;
  let id=r["id"].as_str().ok_or("Missing profile")?;let _job=available(rt,id)?;let profile=profile_dir(rt,id)?;
+ if !r["profile"].is_object(){crate::catalog::writable(rt,id)?;}
  let target=if r["profile"].is_object(){profile}else{if !profile.join("profile.json").is_file(){return Err("Restore the profile first".into())}let name=r["name"].as_str().ok_or("Missing file name")?;if name.contains(['/', '\\', ':'])||name=="."||name==".."{return Err("Invalid recovery record".into())}profile.join(crate::content::folder(r["kind"].as_str().unwrap_or(""))?).join(name)};
  if target.exists(){return Err("An item already exists at this location; it has not been replaced".into())}
  fs::create_dir_all(target.parent().unwrap()).map_err(|e|e.to_string())?;fs::rename(dir.join("data"),&target).map_err(|e|e.to_string())?;
