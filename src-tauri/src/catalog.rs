@@ -131,17 +131,23 @@ fn cdn(s: &str) -> Result<reqwest::Url, String> {
 fn facets(p: &Value, kind: &str, category: &str) -> Result<Value, String> {
     let mut v = vec![
         json!([format!("project_type:{}", project_type(kind)?)]),
-        json!([format!("versions:{}", field(p, "version")?)]),
+
     ];
-    if kind == "Mods" {
+    if let Some(version) = p["version"].as_str() {
+        v.push(json!([format!("versions:{version}")]))
+    }
+    if kind == "Mods" && p["loader"].is_string() {
         v.push(json!([format!("categories:{}", field(p, "loader")?)]))
     }
     if kind == "Shaders" {
         v.push(json!(["categories:iris"]))
     }
-    if !category.is_empty() {
-        identifier(category)?;
-        v.push(json!([format!("categories:{category}")]))
+    if category.len() > 1024 || category.split(',').count() > 12 {
+        return Err("Too many categories".into());
+    }
+    for selected in category.split(',').filter(|s| !s.is_empty()) {
+        identifier(selected)?;
+        v.push(json!([format!("categories:{selected}")]))
     }
     Ok(json!(v))
 }
@@ -155,7 +161,7 @@ pub async fn catalog_search(
     sort: String,
     offset: u32,
 ) -> Result<Value, String> {
-    let p = profile(&rt, &id)?;
+    let p = if id.is_empty() { Value::Null } else { profile(&rt, &id)? };
     if (kind == "Mods" || kind == "Shaders") && p["loader"] == "vanilla" {
         return Err("Choose a Fabric or NeoForge profile to browse mods or shaders.".into());
     }
@@ -896,6 +902,12 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.rt.root);
         }
+    }
+    #[test]
+    fn browse_all_and_combined_filters_keep_profile_constraints() {
+        assert_eq!(facets(&Value::Null, "Mods", "adventure,decoration").unwrap(), json!([["project_type:mod"],["categories:adventure"],["categories:decoration"]]));
+        assert!(facets(&Value::Null,"Mods","bad:filter").is_err());
+        assert!(facets(&Value::Null,"Mods",&vec!["a";13].join(",")).is_err());
     }
     #[test]
     fn exact_environment_filters_and_no_cross_loader_fallback() {
