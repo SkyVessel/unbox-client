@@ -1,0 +1,11 @@
+   Compiling unbox-client v0.2.17 (/Users/ty/.codex/worktrees/mod-toggle-audit/启动器/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.90s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/unbox_client-39607157c19227c7)
+
+running 1 test
+plan: {"entries":[{"kind":"Mods","title":"AppleSkin","version":"3.0.10+mc26.1.2"}],"project":"appleskin","provided":[{"managed":true,"title":"Fabric API"}]}
+verified installation and duplicate detection: {"installed":1}
+test catalog::tests::live_modrinth_install ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 78 filtered out; finished in 4.30s
+

@@ -1,0 +1,16 @@
+   Compiling unbox-client v0.2.17 (/Users/ty/.codex/worktrees/mod-toggle-audit/启动器/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.40s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/unbox_client-39607157c19227c7)
+
+running 8 tests
+test catalog::tests::live_modrinth_install ... ignored, Explicit public-network installation test; isolated temporary profile only
+test catalog::tests::exact_environment_filters_and_no_cross_loader_fallback ... ok
+test catalog::tests::cancellation_interrupts_waiting_download_without_touching_profile ... ok
+test catalog::tests::invalid_managed_archives_and_addresses_never_write_files ... ok
+test catalog::tests::corrupt_cache_and_duplicate_filenames_do_not_install_any_files ... ok
+test catalog::tests::interrupted_commit_recovers_files_and_metadata ... ok
+test catalog::tests::refuses_friend_running_changed_and_duplicate_profiles ... ok
+test catalog::tests::installs_all_three_kinds_and_keeps_catalog_icon ... ok
+
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 71 filtered out; finished in 0.01s
+

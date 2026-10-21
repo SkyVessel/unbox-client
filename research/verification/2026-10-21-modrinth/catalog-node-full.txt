@@ -1,0 +1,406 @@
+
+> unbox-client@0.2.17 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# (node:75245) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: all old email endpoints are retired and cannot create or authenticate an account
+ok 1 - all old email endpoints are retired and cannot create or authenticate an account
+  ---
+  duration_ms: 25.3675
+  type: 'test'
+  ...
+# Subtest: local signaling never stores the player name or skin and expires with its relationships
+ok 2 - local signaling never stores the player name or skin and expires with its relationships
+  ---
+  duration_ms: 7.135291
+  type: 'test'
+  ...
+# Subtest: a second verified device resolves to the original account after fresh ownership proof
+ok 3 - a second verified device resolves to the original account after fresh ownership proof
+  ---
+  duration_ms: 3.188
+  type: 'test'
+  ...
+# Subtest: local registration cannot reuse a verified Minecraft UUID
+ok 4 - local registration cannot reuse a verified Minecraft UUID
+  ---
+  duration_ms: 1.20625
+  type: 'test'
+  ...
+# (node:75246) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: administrator can create, preview, publish and withdraw news through the real management page
+ok 5 - administrator can create, preview, publish and withdraw news through the real management page
+  ---
+  duration_ms: 830.519833
+  type: 'test'
+  ...
+# Subtest: administrator creates and disables a one-time bundle code without granting it to a player
+ok 6 - administrator creates and disables a one-time bundle code without granting it to a player
+  ---
+  duration_ms: 567.927333
+  type: 'test'
+  ...
+# Subtest: unconfigured cloud service fails closed
+ok 7 - unconfigured cloud service fails closed
+  ---
+  duration_ms: 24.01875
+  type: 'test'
+  ...
+# Subtest: publisher authentication precedes database mutation
+ok 8 - publisher authentication precedes database mutation
+  ---
+  duration_ms: 2.834083
+  type: 'test'
+  ...
+# Subtest: unsupported game versions are rejected before storing manifests
+ok 9 - unsupported game versions are rejected before storing manifests
+  ---
+  duration_ms: 1.318917
+  type: 'test'
+  ...
+# Subtest: launcher setting catalogue matches the current game source
+ok 10 - launcher setting catalogue matches the current game source
+  ---
+  duration_ms: 1.651208
+  type: 'test'
+  ...
+# (node:75249) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: administrator credentials are mandatory and read-only operators cannot mutate
+ok 11 - administrator credentials are mandatory and read-only operators cannot mutate
+  ---
+  duration_ms: 31.457125
+  type: 'test'
+  ...
+# Subtest: grants are idempotent; revoking one source preserves independent ownership; equipment cannot bypass ownership
+ok 12 - grants are idempotent; revoking one source preserves independent ownership; equipment cannot bypass ownership
+  ---
+  duration_ms: 7.346125
+  type: 'test'
+  ...
+# Subtest: role capabilities expire and suspension disables benefits without deleting saved assets
+ok 13 - role capabilities expire and suspension disables benefits without deleting saved assets
+  ---
+  duration_ms: 3.740583
+  type: 'test'
+  ...
+# Subtest: news drafts and scheduled posts stay private; publication and withdrawal require no client build
+ok 14 - news drafts and scheduled posts stay private; publication and withdrawal require no client build
+  ---
+  duration_ms: 3.013625
+  type: 'test'
+  ...
+# Subtest: single-use codes atomically grant assets and permissions, stay private, and reject local identities
+ok 15 - single-use codes atomically grant assets and permissions, stay private, and reject local identities
+  ---
+  duration_ms: 4.060833
+  type: 'test'
+  ...
+# Subtest: codes reject disabled bundles, expiration, suspended accounts and brute-force attempts without spending the code
+ok 16 - codes reject disabled bundles, expiration, suspended accounts and brute-force attempts without spending the code
+  ---
+  duration_ms: 4.943959
+  type: 'test'
+  ...
+# Subtest: a failed bundle transaction rolls back the claim and all grants
+ok 17 - a failed bundle transaction rolls back the claim and all grants
+  ---
+  duration_ms: 1.951458
+  type: 'test'
+  ...
+# Subtest: simultaneous verified users cannot both consume a code
+ok 18 - simultaneous verified users cannot both consume a code
+  ---
+  duration_ms: 2.09475
+  type: 'test'
+  ...
+# Subtest: player proof requires both the trusted certificate and possession of its private key
+ok 19 - player proof requires both the trusted certificate and possession of its private key
+  ---
+  duration_ms: 9.308416
+  type: 'test'
+  ...
+# Subtest: certificate proof cannot be replayed for another challenge, account, session token or UUID
+ok 20 - certificate proof cannot be replayed for another challenge, account, session token or UUID
+  ---
+  duration_ms: 3.381042
+  type: 'test'
+  ...
+# Subtest: modified certificates, malformed keys, oversized input and unsupported proof versions fail closed
+ok 21 - modified certificates, malformed keys, oversized input and unsupported proof versions fail closed
+  ---
+  duration_ms: 1.973125
+  type: 'test'
+  ...
+# Subtest: invitation timeout and Hide preserve the world; launcher and game share read state
+ok 22 - invitation timeout and Hide preserve the world; launcher and game share read state
+  ---
+  duration_ms: 1815.366916
+  type: 'test'
+  ...
+# Subtest: recent friend profile shows an avatar and refreshes an existing slot after joining
+ok 23 - recent friend profile shows an avatar and refreshes an existing slot after joining
+  ---
+  duration_ms: 1712.727417
+  type: 'test'
+  ...
+# (node:75252) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: friends require receiver acceptance, expose only own graph, and removal is bilateral
+ok 24 - friends require receiver acceptance, expose only own graph, and removal is bilateral
+  ---
+  duration_ms: 34.243875
+  type: 'test'
+  ...
+# Subtest: invites gate authenticated friendship, relay requests, expiry and sender room updates
+ok 25 - invites gate authenticated friendship, relay requests, expiry and sender room updates
+  ---
+  duration_ms: 10.386833
+  type: 'test'
+  ...
+# Subtest: Mojang verification is required, cannot replace another social identity or change UUID
+ok 26 - Mojang verification is required, cannot replace another social identity or change UUID
+  ---
+  duration_ms: 2.352417
+  type: 'test'
+  ...
+# Subtest: invalid addresses and missing service fail closed
+ok 27 - invalid addresses and missing service fail closed
+  ---
+  duration_ms: 0.272459
+  type: 'test'
+  ...
+# Subtest: Microsoft and local accounts can add each other and exchange private-world invitations
+ok 28 - Microsoft and local accounts can add each other and exchange private-world invitations
+  ---
+  duration_ms: 8.913958
+  type: 'test'
+  ...
+# Subtest: Minecraft verification uses Workers-compatible manual redirects and rejects redirected responses
+ok 29 - Minecraft verification uses Workers-compatible manual redirects and rejects redirected responses
+  ---
+  duration_ms: 2.11375
+  type: 'test'
+  ...
+# Subtest: invalid player proof never falls back to session checks or creates an identity
+ok 30 - invalid player proof never falls back to session checks or creates an identity
+  ---
+  duration_ms: 1.412125
+  type: 'test'
+  ...
+# Subtest: world invitations preserve the native loader and reject unknown versions
+ok 31 - world invitations preserve the native loader and reject unknown versions
+  ---
+  duration_ms: 0.243125
+  type: 'test'
+  ...
+# Subtest: badge lookup returns only requested, active, verified player UUIDs
+ok 32 - badge lookup returns only requested, active, verified player UUIDs
+  ---
+  duration_ms: 6.592667
+  type: 'test'
+  ...
+# Subtest: retired email UUID can migrate to local play without inheriting cloud identity or assets
+ok 33 - retired email UUID can migrate to local play without inheriting cloud identity or assets
+  ---
+  duration_ms: 2.1815
+  type: 'test'
+  ...
+# Subtest: local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID
+ok 34 - local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID
+  ---
+  duration_ms: 1.567042
+  type: 'test'
+  ...
+# Subtest: equipped logos reach another account through friends and in-world UUID lookup; expired and revoked assets disappear
+ok 35 - equipped logos reach another account through friends and in-world UUID lookup; expired and revoked assets disappear
+  ---
+  duration_ms: 6.153625
+  type: 'test'
+  ...
+# Subtest: lightweight invitation mailbox is scoped, keeps grants on reads, and follows relay and revocation
+ok 36 - lightweight invitation mailbox is scoped, keeps grants on reads, and follows relay and revocation
+  ---
+  duration_ms: 5.005208
+  type: 'test'
+  ...
+# Subtest: profile wizard validates input, retains draft on Back, and persists only on completion
+ok 37 - profile wizard validates input, retains draft on Back, and persists only on completion
+  ---
+  duration_ms: 1176.8335
+  type: 'test'
+  ...
+# Subtest: home panel adapts to compact, windowed and fullscreen dimensions without blank lower half
+ok 38 - home panel adapts to compact, windowed and fullscreen dimensions without blank lower half
+  ---
+  duration_ms: 173.430583
+  type: 'test'
+  ...
+# Subtest: reduced motion and cloud status communicate real implementation state
+ok 39 - reduced motion and cloud status communicate real implementation state
+  ---
+  duration_ms: 210.178209
+  type: 'test'
+  ...
+# Subtest: running game has orange styling and pause glyph, then returns to Launch on exit
+ok 40 - running game has orange styling and pause glyph, then returns to Launch on exit
+  ---
+  duration_ms: 1431.269875
+  type: 'test'
+  ...
+# Subtest: Microsoft sign-in completes through IPC without storing tokens in frontend state and renders the returned skin
+ok 41 - Microsoft sign-in completes through IPC without storing tokens in frontend state and renders the returned skin
+  ---
+  duration_ms: 2958.056125
+  type: 'test'
+  ...
+# Subtest: canceling Microsoft authorization leaves the selected account unchanged
+ok 42 - canceling Microsoft authorization leaves the selected account unchanged
+  ---
+  duration_ms: 323.599959
+  type: 'test'
+  ...
+# Subtest: restored accounts switch immediately and removal clears only the chosen identity
+ok 43 - restored accounts switch immediately and removal clears only the chosen identity
+  ---
+  duration_ms: 1460.011667
+  type: 'test'
+  ...
+# Subtest: legacy accounts start fresh Unbox authorization without exposing application setup
+ok 44 - legacy accounts start fresh Unbox authorization without exposing application setup
+  ---
+  duration_ms: 845.593625
+  type: 'test'
+  ...
+# Subtest: skin preview stays local until Apply; failures preserve saved skin; upload and refresh use selected identity
+ok 45 - skin preview stays local until Apply; failures preserve saved skin; upload and refresh use selected identity
+  ---
+  duration_ms: 2130.140541
+  type: 'test'
+  ...
+# Subtest: skin library saves the current account skin and applies arm model only on confirmation
+ok 46 - skin library saves the current account skin and applies arm model only on confirmation
+  ---
+  duration_ms: 2690.338709
+  type: 'test'
+  ...
+# Subtest: startup storage failure is visible and retry restores the app instead of leaving a spinner
+ok 47 - startup storage failure is visible and retry restores the app instead of leaving a spinner
+  ---
+  duration_ms: 173.847416
+  type: 'test'
+  ...
+# Subtest: file drops target the selected list, report rejects, and icon plus opens that folder
+ok 48 - file drops target the selected list, report rejects, and icon plus opens that folder
+  ---
+  duration_ms: 333.0775
+  type: 'test'
+  ...
+# Subtest: friend list sends codes, accepts requests, disables offline invites and passes Join to game
+ok 49 - friend list sends codes, accepts requests, disables offline invites and passes Join to game
+  ---
+  duration_ms: 320.476375
+  type: 'test'
+  ...
+# Subtest: email registration is removed; Microsoft and local identities remain available
+ok 50 - email registration is removed; Microsoft and local identities remain available
+  ---
+  duration_ms: 793.891625
+  type: 'test'
+  ...
+# Subtest: Local rename updates the account card while retaining UUID and handles a running-game rejection
+ok 51 - Local rename updates the account card while retaining UUID and handles a running-game rejection
+  ---
+  duration_ms: 313.771958
+  type: 'test'
+  ...
+# Subtest: updates are manual, recover from check errors, and cannot install while playing
+ok 52 - updates are manual, recover from check errors, and cannot install while playing
+  ---
+  duration_ms: 1234.414709
+  type: 'test'
+  ...
+# Subtest: cached offline friends render while reconnecting silently
+ok 53 - cached offline friends render while reconnecting silently
+  ---
+  duration_ms: 155.069542
+  type: 'test'
+  ...
+# Subtest: launcher removes personal mod settings and selects an existing isolated profile
+ok 54 - launcher removes personal mod settings and selects an existing isolated profile
+  ---
+  duration_ms: 172.353083
+  type: 'test'
+  ...
+# Subtest: home keeps the original tabs while content origins remain interactive
+ok 55 - home keeps the original tabs while content origins remain interactive
+  ---
+  duration_ms: 202.635416
+  type: 'test'
+  ...
+# Subtest: home skin strip applies a saved skin and reports completion
+ok 56 - home skin strip applies a saved skin and reports completion
+  ---
+  duration_ms: 2387.43325
+  type: 'test'
+  ...
+# Subtest: file removal and profile deletion expose undo and folder actions
+ok 57 - file removal and profile deletion expose undo and folder actions
+  ---
+  duration_ms: 534.024375
+  type: 'test'
+  ...
+# Subtest: invitation popups persist across pages, keep pending invites in Friends and join without a running profile
+ok 58 - invitation popups persist across pages, keep pending invites in Friends and join without a running profile
+  ---
+  duration_ms: 3250.326667
+  type: 'test'
+  ...
+# Subtest: local skin rail scrolls, renames skins and keeps player identity stable
+ok 59 - local skin rail scrolls, renames skins and keeps player identity stable
+  ---
+  duration_ms: 1814.268709
+  type: 'test'
+  ...
+# Subtest: server news opens safely and the update icon requires an available release
+ok 60 - server news opens safely and the update icon requires an available release
+  ---
+  duration_ms: 240.53875
+  type: 'test'
+  ...
+# Subtest: skin library restricts redemption to Microsoft and refreshes owned logos after redemption
+ok 61 - skin library restricts redemption to Microsoft and refreshes owned logos after redemption
+  ---
+  duration_ms: 704.277417
+  type: 'test'
+  ...
+# Subtest: a friend displays their equipped crown, switches to cash, then returns to the basic logo
+ok 62 - a friend displays their equipped crown, switches to cash, then returns to the basic logo
+  ---
+  duration_ms: 2208.827791
+  type: 'test'
+  ...
+# Subtest: market locks environment, filters search and installs a dependency plan into the chosen profile
+ok 63 - market locks environment, filters search and installs a dependency plan into the chosen profile
+  ---
+  duration_ms: 1805.043042
+  type: 'test'
+  ...
+# Subtest: market retries failed downloads, shares pack/shader entry flow and blocks friend profile mutations
+ok 64 - market retries failed downloads, shares pack/shader entry flow and blocks friend profile mutations
+  ---
+  duration_ms: 1357.380667
+  type: 'test'
+  ...
+1..64
+# tests 64
+# suites 0
+# pass 64
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31704.330375
