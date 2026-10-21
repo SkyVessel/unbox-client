@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/AUGUHDAR/VoxLink",
+  "commit": "b80595db5485f455db31c5454d897a960e664393",
+  "sha256": {
+    "ReliableUdpTransport": "4655ee099914ee70c67a4103f120bac35ec5061817c8f34b00ada161713c4b31",
+    "UdpPath": "04f4aec7d53e4933870feebb49d8c17997bf18fcd87c4c1dfd79a84523f13bc2",
+    "PunchAuth": "5e5cbf7fbf115d48b86978037184af6eb1c2667c0c844787b42727fcbc25955e",
+    "UdpHolePuncher": "3e4c8c716e2b96a1efbce284bdea69a9c3477d88d01a9cb5e1a664adbaa7754a",
+    "StunProbe": "b4db99a5e5c774dcab25654c1b3c97f5e241ec8e448ae1aea4eee956018e4e4f",
+    "PunchProfile": "d273210aea0197c7125ff8a5a4ef45bc839392339d3987d2dbf4bf1b72050320",
+    "PunchParams": "aa1a695de6744cc6cb91f892a6cb8ea915a9416e6fe487207bc721d1b53e6fa5",
+    "PunchResult": "fbe6f7f67897803cbb04ef9e7ba40d4c3941f52b9de7484081fe1d738fa965a4",
+    "PunchFailureClassifier": "00fadc2b8b216fe5185ced7dec18d3773e9b825a653a0f1e3b2a97f28b501938",
+    "AddressBlacklist": "8bdd6bb2db638afe8b2ae83da922f95b5da629bdbd1101b875205d99e195c2ac",
+    "UPnPManager": "1b7da5ff590c9394c8000e1ac9abd347e8a0ea43900cffc1e54c23ec813c32cb",
+    "TcpHolePuncher": "9b92e9110fcb94314ef2d45f477df154f52da2c082f43c1d20c33d9a2a6a4381"
+  }
+}

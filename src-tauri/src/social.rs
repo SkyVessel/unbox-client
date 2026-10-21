@@ -18,6 +18,7 @@ pub struct State {
     last_room: String,
     account_key: String,
     seen_invites: std::collections::BTreeSet<String>,
+    route_sent: std::collections::BTreeMap<String,String>,
     io: std::sync::Arc<tokio::sync::Mutex<()>>,
 }
 pub(crate) fn atomic(path:&std::path::Path,data:&[u8])->Result<(),String>{
@@ -270,7 +271,7 @@ async fn sync_inner(rt: &Runtime) -> Result<Value, String> {
         return Err("Account changed. Reconnecting friends…".into());
     }
     let mut state = rt.social.lock().await;
-    if state.account_key != key(&a) { state.seen_invites.clear(); }
+    if state.account_key != key(&a) { state.seen_invites.clear();state.route_sent.clear(); }
     merge_seen(&mut state, &world);
     result["seenInvites"] = json!(state.seen_invites);
     state.last_room = room;
@@ -312,6 +313,20 @@ async fn poll_invites(rt:&Runtime)->Result<(),String> {
     let io=rt.social.lock().await.io.clone();let _guard=io.lock().await;
     let a=account(rt).await?;let identity=account_identity(&a)?;
     {let s=rt.social.lock().await;if s.account_key!=key(&a)||s.view["connected"]!=true{return Ok(())}}
+    let world=game_status(rt,&a);
+    if let Some(signals)=world["routeSignals"].as_array() {
+        for signal in signals.iter().take(16) {
+            let id=signal["id"].as_str().unwrap_or("");
+            let encoded=signal.to_string();
+            if id.len()!=36 || encoded.len()>4096 {continue}
+            if rt.social.lock().await.route_sent.get(id)==Some(&encoded) {continue}
+            if request(&endpoint(rt)?,&identity,"invites/transport",signal.clone()).await.is_ok() {
+                let mut state=rt.social.lock().await;
+                if state.route_sent.len()>128 {state.route_sent.clear();}
+                state.route_sent.insert(id.into(),encoded);
+            }
+        }
+    }
     let result=request(&endpoint(rt)?,&identity,"invites",json!({})).await?;
     if key(&account(rt).await?)!=key(&a){return Ok(())}
     let world=game_status(rt,&a);
@@ -320,7 +335,7 @@ async fn poll_invites(rt:&Runtime)->Result<(),String> {
     if changed {request(&endpoint(rt)?,&identity,"room",json!({"room":world["room"]})).await?;}
     let mut s=rt.social.lock().await;
     if s.account_key!=key(&a){return Ok(())}
-    s.last_room=room;s.view["invites"]=result["invites"].clone();
+    s.last_room=room;s.view["invites"]=result["invites"].clone();s.view["transport"]=result["transport"].clone();
     merge_seen(&mut s,&world);s.view["seenInvites"]=json!(s.seen_invites);
     s.view["joining"]=world["joining"].clone();s.view["gameError"]=world["error"].clone();s.view["updated"]=json!(now());
     let view=s.view.clone();drop(s);
@@ -393,7 +408,7 @@ async fn action(rt: &Runtime, op: &str, id: &str) -> Result<Value, String> {
     request(&url, &i, path, b).await?;
     sync_inner(rt).await
 }
-fn public_view(mut v:Value)->Value{if let Some(invites)=v["invites"].as_array_mut(){for i in invites{if let Some(o)=i.as_object_mut(){o.remove("join_secret");}}}v}
+fn public_view(mut v:Value)->Value{if let Some(invites)=v["invites"].as_array_mut(){for i in invites{if let Some(o)=i.as_object_mut(){o.remove("join_secret");if let Some(room)=o.get_mut("room").and_then(Value::as_object_mut){room.remove("transport");}}}}v}
 #[tauri::command]
 pub async fn social_status(rt: tauri::State<'_, Runtime>) -> Result<Value, String> {
     let a = account(&rt).await.ok();
@@ -401,7 +416,7 @@ pub async fn social_status(rt: tauri::State<'_, Runtime>) -> Result<Value, Strin
     let account_key=a.as_ref().map(key).unwrap_or_default();
     if s.account_key!=account_key||s.view.is_null(){
         s.view=a.as_ref().map(|a|load_cache(&rt,a)).unwrap_or_else(||cached_view(&Value::Null));
-        s.account_key=account_key;s.last_room.clear();s.seen_invites.clear();
+        s.account_key=account_key;s.last_room.clear();s.seen_invites.clear();s.route_sent.clear();
         if a.is_none(){s.view["error"]=json!("Choose an account to use friends");}
     }
     let view=s.view.clone();
@@ -542,10 +557,10 @@ pub fn start(rt: Runtime) {
   assert_eq!(v["connected"],false);assert_eq!(v["canInvite"],false);assert_eq!(v["invites"],json!([]));assert!(!v.to_string().contains("secret"));
  }
  #[test] fn game_read_notifications_merge_without_deleting_invites_or_exposing_grants(){
-  let mut s=State::default();s.view=json!({"invites":[{"id":"one","join_secret":"private"}]});s.seen_invites.insert("launcher".into());
+  let mut s=State::default();s.view=json!({"invites":[{"id":"one","join_secret":"private","room":{"name":"World","transport":{"host":{"candidates":[{"host":"1.1.1.1"}]}}}}]});s.seen_invites.insert("launcher".into());
   merge_seen(&mut s,&json!({"seenInvites":["one","one"]}));
   assert!(s.seen_invites.contains("launcher"));assert!(s.seen_invites.contains("one"));assert_eq!(s.seen_invites.len(),2);
-  let public=public_view(s.view);assert_eq!(public["invites"][0]["id"],"one");assert!(public["invites"][0]["join_secret"].is_null());
+  let public=public_view(s.view);assert_eq!(public["invites"][0]["id"],"one");assert!(public["invites"][0]["join_secret"].is_null());assert!(public["invites"][0]["room"]["transport"].is_null());assert_eq!(public["invites"][0]["room"]["name"],"World");
  }
  #[test] fn old_game_bridge_without_player_list_syncs_an_empty_batch(){
   assert_eq!(player_uuids(&Value::Null),json!([]));

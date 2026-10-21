@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run a local, isolated world benchmark using already prepared game libraries.
 Usage: python3 scripts/benchmark.py baseline|optimized|ui|home|social|relay WORLD_DIRECTORY [run-name] [client-jar]
-The source world is copied, never opened or changed in place. Keep game foreground.
+The source world is copied, never opened or changed in place. UNBOX_SILENT_TEST=1 keeps test windows hidden.
 """
 import hashlib,json,pathlib,shutil,subprocess,sys,urllib.request,uuid,os,zipfile,re
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -108,6 +108,7 @@ shutil.copy2(jar_source,game/'mods/unbox-client.jar')
 (game/'client-build.json').write_text(json.dumps({'sha256':hashlib.sha256(jar_source.read_bytes()).hexdigest(),'mode':mode,'source':str(jar_source)}))
 options={'fullscreen':'false','enableVsync':'false','pauseOnLostFocus':'false','renderDistance':'12','simulationDistance':'8','maxFps':'260','inactivityFpsLimit':'"minimized"','guiScale':'2','graphicsMode':'1','fov':'0.0','tutorialStep':'none','onboardAccessibility':'false','soundCategory_master':'0.0'}
 if os.environ.get('UNBOX_SYNC_FIXTURE')=='1' and mode=='private-host':options['resourcePacks']=json.dumps(['vanilla','file/Unbox Fixture.zip'])
+if os.environ.get('UNBOX_SILENT_TEST')=='1':options['maxFps']='60'
 if os.environ.get('UNBOX_TEST_FONT_PACK')=='1':
     # A pack overriding the core text shader triggers ImmediatelyFast's compatibility
     # fallback even when the shader itself is unchanged. Never override Unbox assets.
@@ -165,6 +166,10 @@ if game_version=='26.3':
         for key,value in {'natives_directory':str(game/'natives'),'launcher_name':'Unbox-development','launcher_version':'local'}.items():argument=argument.replace('${'+key+'}',value)
         vanilla_jvm.append(argument)
     args[1:1]=vanilla_jvm
+if os.environ.get('UNBOX_SILENT_TEST')=='1':
+    agent=ROOT/'.cache/silent-agent/agent.jar'
+    if not agent.is_file():raise SystemExit('Build scripts/build-silent-agent.py before a silent test')
+    args[1:1]=['-javaagent:'+str(agent),'-Djava.awt.headless=true','-Dapple.awt.UIElement=true']
 args.insert(1,'-Dunbox.startupDiagnostics=true')
 args.insert(1,'-Dunbox.testUpgradeBackup=true')
 if os.environ.get('UNBOX_SURVIVAL_LAN')=='host':
@@ -181,6 +186,7 @@ if os.environ.get('UNBOX_PERFORMANCE_SMOKE')=='1':args.insert(1,'-Dunbox.perform
 if os.environ.get('UNBOX_TOGGLE_ONLY')=='1':args.insert(1,'-Dunbox.toggleOnly=true')
 if mode in ('home','private-guest'):args=args[:-2]
 if mode.startswith('private-'):
+    if os.environ.get('UNBOX_VOXLINK_FIXTURE')=='1':args.insert(1,'-Dunbox.voxlinkFixture=true')
     fixture=json.loads(os.environ['UNBOX_TEST_PROFILE'])
     args.insert(1,'-Dunbox.privateSmoke='+mode.removeprefix('private-'))
     args.insert(1,'-Dunbox.privateSmokeTicks='+os.environ.get('UNBOX_PRIVATE_TEST_TICKS','100'))
