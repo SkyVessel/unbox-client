@@ -1,0 +1,183 @@
+{
+  "checks": [
+    "production service healthy",
+    "unauthenticated signaling rejected",
+    "temporary local identity registered",
+    "temporary local identity registered",
+    "temporary local identity registered",
+    "friend request",
+    "friend acceptance",
+    "private invitation sent",
+    "P2P capability advertised",
+    "room preserves P2P capability",
+    "stranger cannot signal",
+    "host cannot impersonate guest role",
+    "guest offer accepted",
+    "host offer accepted",
+    "repeated guest delivery accepted",
+    "duplicate delivery preserves host answer",
+    "room address update accepted",
+    "room update preserves negotiation",
+    "new join attempt accepted",
+    "stale host answer rejected",
+    "reject unsafe candidate 127.0.0.1",
+    "reject unsafe candidate 192.168.1.1",
+    "reject unsafe candidate ::1",
+    "reject unsafe candidate ::ffff:127.0.0.1",
+    "reject unsafe candidate 169.254.169.254",
+    "reject unsafe candidate example.com",
+    "relay fallback remains available",
+    "host receives relay request",
+    "friend removal",
+    "revoked friendship cannot negotiate"
+  ],
+  "requests": [
+    {
+      "path": "/health",
+      "ms": 254.2,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 663.0,
+      "status": 401
+    },
+    {
+      "path": "/v1/register",
+      "ms": 321.9,
+      "status": 201
+    },
+    {
+      "path": "/v1/register",
+      "ms": 396.3,
+      "status": 201
+    },
+    {
+      "path": "/v1/register",
+      "ms": 686.7,
+      "status": 201
+    },
+    {
+      "path": "/v1/friends/request",
+      "ms": 888.1,
+      "status": 200
+    },
+    {
+      "path": "/v1/friends/accept",
+      "ms": 518.3,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/send",
+      "ms": 384.2,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites",
+      "ms": 476.3,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 711.3,
+      "status": 404
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 529.1,
+      "status": 404
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 331.0,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 520.0,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 524.2,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites",
+      "ms": 316.8,
+      "status": 200
+    },
+    {
+      "path": "/v1/room",
+      "ms": 401.8,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites",
+      "ms": 332.9,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 343.6,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 896.7,
+      "status": 409
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 683.0,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 923.8,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 297.2,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 293.4,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 606.9,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 1193.2,
+      "status": 400
+    },
+    {
+      "path": "/v1/invites/relay",
+      "ms": 747.5,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites",
+      "ms": 304.0,
+      "status": 200
+    },
+    {
+      "path": "/v1/friends/remove",
+      "ms": 389.8,
+      "status": 200
+    },
+    {
+      "path": "/v1/invites/transport",
+      "ms": 328.8,
+      "status": 404
+    }
+  ],
+  "fixtureCleanup": true,
+  "scope": "Production HTTPS signaling using temporary local identities; synthetic public candidate addresses, not a NAT success-rate test."
+}

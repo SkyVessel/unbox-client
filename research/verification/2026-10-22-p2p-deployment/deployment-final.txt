@@ -1,0 +1,14 @@
+
+ ⛅️ wrangler 4.151.3
+────────────────────
+Total Upload: 48.92 KiB / gzip: 15.04 KiB
+Worker Startup Time: 3 ms
+Your Worker has access to the following bindings:
+Binding                     Resource         
+env.DB (unbox-friends)      D1 Database      
+
+Uploaded unbox-client-friends (3.21 sec)
+Deployed unbox-client-friends triggers (1.21 sec)
+  https://unbox-client-friends.printoria-studio.workers.dev
+  schedule: 0 * * * *
+Current Version ID: 5cb2efc4-ba4d-456d-81ad-4c3865fac4a3

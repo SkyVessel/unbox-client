@@ -1,0 +1,34 @@
+{
+  "publicChecks": [
+    "Production Worker registration, friendship, invitation and signaling completed with temporary local identities."
+  ],
+  "host": {
+    "passed": 6,
+    "latencyMs": [],
+    "checks": [
+      "Microsoft/local host publishes a private world through normal Invite",
+      "Same-name host and guest coexist with distinct UUIDs and separate owner privileges",
+      "Guest joined with stable cloud UUID, not a nickname-derived identity",
+      "Raw remote client cannot impersonate the world owner identity",
+      "Guest received world data and completed gameplay ticks",
+      "Host can stop sharing after actual guest login"
+    ]
+  },
+  "guest": {
+    "passed": 5,
+    "latencyMs": [],
+    "checks": [
+      "Wrong invitation secret is rejected by real encrypted login",
+      "Guest enters the host world with its registered identity",
+      "Guest stays connected and receives playable world data for the configured test duration",
+      "Actual host death is transmitted to guest as a teammate marker",
+      "Guest without operator permission cannot use death teleport"
+    ]
+  },
+  "transport": "VoxLink RUDP through loopback NAT fixture",
+  "scope": "Two hidden clients on one Mac, production Cloudflare Worker signaling. VoxLink run uses a loopback NAT fixture; relay run uses real e4mc. No two-household NAT or Windows gameplay validation.",
+  "identities": [
+    "local",
+    "local"
+  ]
+}

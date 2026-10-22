@@ -1,0 +1,142 @@
+PASS private, local, and DNS route targets rejected
+PASS public literal candidates accepted
+[22:21:49] [unbox-route-prepare/INFO]: [UdpHolePuncher] punchWithPortPrediction start: target=127.0.0.1:51812, range=0, fixed=false, profile=DEFAULT(sym=SHARED_RECIPE)
+[22:21:49] [unbox-route-prepare/INFO]: [UdpHolePuncher] punchWithPortPrediction start: target=127.0.0.1:49839, range=0, fixed=false, profile=DEFAULT(sym=SHARED_RECIPE)
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread start: target=127.0.0.1, port=49839, range=0, local port=51812
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread start: target=127.0.0.1, port=51812, range=0, local port=49839
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send #1: PUNCH to 127.0.0.1:49839 (cycle=0, local port=51812)
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send #1: PUNCH to 127.0.0.1:51812 (cycle=0, local port=49839)
+[22:21:49] [VoxLink-PunchRecv/INFO]: [UdpHolePuncher] Received #1: from 127.0.0.1:49839, len=9, bytes=[86,76,1]
+[22:21:49] [VoxLink-PunchRecv/INFO]: [UdpHolePuncher] Received #1: from 127.0.0.1:51812, len=9, bytes=[86,76,1]
+[22:21:49] [unbox-route-prepare/INFO]: [UdpHolePuncher] punchWithPortPrediction start: target=127.0.0.1:57559, range=0, fixed=false, profile=DEFAULT(sym=SHARED_RECIPE)
+[22:21:49] [unbox-route-prepare/INFO]: [UdpHolePuncher] punchWithPortPrediction start: target=127.0.0.1:50380, range=0, fixed=false, profile=DEFAULT(sym=SHARED_RECIPE)
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread start: target=127.0.0.1, port=57559, range=0, local port=50380
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread end: cyclesPerformed=1, holeOpen=false, punching=false
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread end: cyclesPerformed=1, holeOpen=false, punching=false
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread start: target=127.0.0.1, port=50380, range=0, local port=57559
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send #1: PUNCH to 127.0.0.1:57559 (cycle=0, local port=50380)
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send #1: PUNCH to 127.0.0.1:50380 (cycle=0, local port=57559)
+[22:21:49] [VoxLink-PunchRecv/INFO]: [UdpHolePuncher] Received #1: from 127.0.0.1:50380, len=9, bytes=[86,76,1]
+[22:21:49] [VoxLink-PunchRecv/INFO]: [UdpHolePuncher] Received #1: from 127.0.0.1:57559, len=9, bytes=[86,76,1]
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread end: cyclesPerformed=1, holeOpen=false, punching=false
+[22:21:49] [VoxLink-PunchSend/INFO]: [UdpHolePuncher] Send thread end: cyclesPerformed=1, holeOpen=false, punching=false
+[22:21:49] [VoxLink-UdpRecv/WARN]: [ReliableUdp] Received DISCONNECT packet
+PASS negotiated VoxLink UDP route
+PASS selected path recorded
+PASS 2 MiB bidirectional byte stream preserved over udp
+[22:21:55] [VoxLink-UdpRecv/WARN]: [ReliableUdp] Received DISCONNECT packet
+PASS negotiated TCP route
+PASS selected path recorded
+PASS 2 MiB bidirectional byte stream preserved over tcp
+PASS wrong transport secret never exposes a local game bridge
+PASS failed direct methods expire into relay fallback
+PASS expired negotiation cannot publish or accept late candidates
+PASS VoxLink reliable UDP preserves bytes with loss, reordering and duplicates
+[22:22:21] [VoxLink-UdpRecv/WARN]: [ReliableUdp] Received DISCONNECT packet
+PASS cancellation releases waiting candidate exchange
+/Users/ty/.codex/worktrees/mod-toggle-audit/启动器/.cache/silent-agent/agent.jar
+[SilentTest] GLFW creation instrumented: hidden, unfocused, no focus on show
+[SilentTest] SDL creation instrumented: hidden
+Silent GLFW/SDL creation and focus suppression passed
+TAP version 13
+# (node:88390) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: friends require receiver acceptance, expose only own graph, and removal is bilateral
+ok 1 - friends require receiver acceptance, expose only own graph, and removal is bilateral
+  ---
+  duration_ms: 37.759834
+  type: 'test'
+  ...
+# Subtest: invites gate authenticated friendship, relay requests, expiry and sender room updates
+ok 2 - invites gate authenticated friendship, relay requests, expiry and sender room updates
+  ---
+  duration_ms: 6.312958
+  type: 'test'
+  ...
+# Subtest: Mojang verification is required, cannot replace another social identity or change UUID
+ok 3 - Mojang verification is required, cannot replace another social identity or change UUID
+  ---
+  duration_ms: 1.758875
+  type: 'test'
+  ...
+# Subtest: invalid addresses and missing service fail closed
+ok 4 - invalid addresses and missing service fail closed
+  ---
+  duration_ms: 0.224291
+  type: 'test'
+  ...
+# Subtest: Microsoft and local accounts can add each other and exchange private-world invitations
+ok 5 - Microsoft and local accounts can add each other and exchange private-world invitations
+  ---
+  duration_ms: 6.15875
+  type: 'test'
+  ...
+# Subtest: Minecraft verification uses Workers-compatible manual redirects and rejects redirected responses
+ok 6 - Minecraft verification uses Workers-compatible manual redirects and rejects redirected responses
+  ---
+  duration_ms: 1.478
+  type: 'test'
+  ...
+# Subtest: invalid player proof never falls back to session checks or creates an identity
+ok 7 - invalid player proof never falls back to session checks or creates an identity
+  ---
+  duration_ms: 0.889833
+  type: 'test'
+  ...
+# Subtest: world invitations preserve the native loader and reject unknown versions
+ok 8 - world invitations preserve the native loader and reject unknown versions
+  ---
+  duration_ms: 0.199667
+  type: 'test'
+  ...
+# Subtest: badge lookup returns only requested, active, verified player UUIDs
+ok 9 - badge lookup returns only requested, active, verified player UUIDs
+  ---
+  duration_ms: 5.074083
+  type: 'test'
+  ...
+# Subtest: retired email UUID can migrate to local play without inheriting cloud identity or assets
+ok 10 - retired email UUID can migrate to local play without inheriting cloud identity or assets
+  ---
+  duration_ms: 1.79125
+  type: 'test'
+  ...
+# Subtest: local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID
+ok 11 - local bearer credentials cannot redeem even when the body claims a verified Microsoft UUID
+  ---
+  duration_ms: 1.302959
+  type: 'test'
+  ...
+# Subtest: equipped logos reach another account through friends and in-world UUID lookup; expired and revoked assets disappear
+ok 12 - equipped logos reach another account through friends and in-world UUID lookup; expired and revoked assets disappear
+  ---
+  duration_ms: 4.97975
+  type: 'test'
+  ...
+# Subtest: lightweight invitation mailbox is scoped, keeps grants on reads, and follows relay and revocation
+ok 13 - lightweight invitation mailbox is scoped, keeps grants on reads, and follows relay and revocation
+  ---
+  duration_ms: 2.524292
+  type: 'test'
+  ...
+# Subtest: VoxLink candidates are invitation-scoped, role-bound, idempotent, and preserved on room updates
+ok 14 - VoxLink candidates are invitation-scoped, role-bound, idempotent, and preserved on room updates
+  ---
+  duration_ms: 5.750333
+  type: 'test'
+  ...
+# Subtest: VoxLink old-client capability and expired attempts fail closed without removing relay support
+ok 15 - VoxLink old-client capability and expired attempts fail closed without removing relay support
+  ---
+  duration_ms: 2.199625
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 152.560709
