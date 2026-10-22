@@ -26,3 +26,7 @@
 同机测试不能给出异地 NAT 穿透成功率、跨家庭游戏延迟或 Windows 游戏验证结论。正式异地测试应使用两个不同公网网络，记录实际 route（voxlink_udp / tcp / ipv6 / relay）、成功率、连接耗时和游戏延迟。
 
 证据：`research/verification/2026-10-22-p2p-deployment/`。全部游戏隐藏运行，未抢占桌面焦点。此前 docs/62、63 的 Worker 待部署项已在本次解决。
+
+## 发布说明同步
+
+已更新 GitHub 0.2.18 发布说明与 updater latest.json 的说明文字，去除待部署标记。版本号、两平台下载地址及安装包签名保持一致；更新说明和 SHA256SUMS 同步后，12 项公开附件重新匿名下载验哈希，两平台验签通过。
