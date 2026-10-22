@@ -11,6 +11,13 @@ fn manifest(release:&Value)->Result<String,String>{
  if !trusted_asset(url){return Err("Untrusted update manifest location".into())}Ok(url.into())
 }
 fn reserve(job:&Mutex<Value>)->Result<Value,String>{let mut job=job.lock().unwrap();if job["busy"]==true{return Err("Close Minecraft and wait for downloads to finish before installing".into())}let previous=job.clone();*job=json!({"busy":true,"stage":"Updating Unbox"});Ok(previous)}
+fn install_error(error:&tauri_plugin_updater::Error)->String{
+ #[cfg(target_os="macos")]
+ if matches!(error,tauri_plugin_updater::Error::Io(e) if e.kind()==std::io::ErrorKind::PermissionDenied){
+  return format!("macOS blocked the update installation. Quit Unbox, move the app to your Applications folder, reopen it and retry. Administrator approval alone does not grant access to protected folders such as Documents. Details: {error}")
+ }
+ format!("Could not install the update. Details: {error}")
+}
 #[tauri::command]
 pub fn update_status(state:tauri::State<State>,app:tauri::AppHandle)->Value{let mut v=state.progress.lock().unwrap().clone();if v.is_null(){v=json!({"status":"idle"})}v["currentVersion"]=json!(app.package_info().version.to_string());v["testingBuild"]=json!(cfg!(debug_assertions));v}
 #[tauri::command]
@@ -40,7 +47,7 @@ pub async fn install_update(state:tauri::State<'_,State>,rt:tauri::State<'_,Runt
   let mut downloaded=0u64;
   let bytes=update.download(|n,total|{downloaded+=n as u64;*state.progress.lock().unwrap()=json!({"status":"downloading","version":update.version,"downloaded":downloaded,"total":total});},||{}).await.map_err(|_|"Download or signature verification failed. No update was installed.")?;
   *state.progress.lock().unwrap()=json!({"status":"installing","version":update.version});
-  update.install(bytes).map_err(|_|"Could not install the update. Check app permissions and retry.")?;Ok::<(),String>(())
+  update.install(bytes).map_err(|e|install_error(&e))?;Ok::<(),String>(())
  }.await;
  if let Err(e)=result{*rt.job.lock().unwrap()=previous;*state.progress.lock().unwrap()=json!({"status":"available","version":update.version,"notes":update.body,"error":e});return Err(e)}
  *state.progress.lock().unwrap()=json!({"status":"restarting"});app.restart();
@@ -53,4 +60,15 @@ pub async fn install_update(state:tauri::State<'_,State>,rt:tauri::State<'_,Runt
   assert!(manifest(&json!({"assets":[]})).is_err());assert!(manifest(&json!({"draft":true,"assets":valid["assets"]})).is_err());
  }
  #[test]fn updater_cannot_replace_active_game_job_or_race_with_launch(){let job=Mutex::new(json!({"busy":true,"stage":"Playing","profileId":"test"}));let before=job.lock().unwrap().clone();assert!(reserve(&job).is_err());assert_eq!(*job.lock().unwrap(),before);*job.lock().unwrap()=json!({"busy":false});let previous=reserve(&job).unwrap();assert_eq!(previous["busy"],false);assert!(reserve(&job).is_err());}
+ #[test]fn install_failure_preserves_the_actual_cause(){
+  let error=tauri_plugin_updater::Error::Io(std::io::Error::new(std::io::ErrorKind::Other,"No space left on device"));
+  let message=install_error(&error);assert!(message.contains("No space left on device"));assert!(!message.contains("permissions"));assert!(!message.contains("Administrator"));
+  let error=tauri_plugin_updater::Error::PreviousAppNotRestored(std::path::PathBuf::from("/backup/Unbox Client.app"));
+  assert!(install_error(&error).contains("/backup/Unbox Client.app"));
+ }
+ #[cfg(target_os="macos")]
+ #[test]fn mac_permission_failure_explains_folder_access(){
+  let error=tauri_plugin_updater::Error::Io(std::io::Error::from(std::io::ErrorKind::PermissionDenied));
+  let message=install_error(&error);assert!(message.contains("Applications"));assert!(message.contains("Documents"));assert!(message.contains(&error.to_string()));
+ }
 }
