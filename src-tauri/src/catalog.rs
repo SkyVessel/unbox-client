@@ -1030,10 +1030,12 @@ mod tests {
     #[test]
     fn invalid_managed_archives_and_addresses_never_write_files() {
         let f = Fixture::new();
-        let managed = f.entry("renamed.jar", "Mods", "mousetweaks");
-        assert!(commit(&f.rt, &f.plan(vec![managed]))
-            .unwrap_err()
-            .contains("managed"));
+        for id in ["mousetweaks", "freecam"] {
+            let managed = f.entry("renamed.jar", "Mods", id);
+            assert!(commit(&f.rt, &f.plan(vec![managed]))
+                .unwrap_err()
+                .contains("managed"));
+        }
         for url in [
             "http://cdn.modrinth.com/data/x",
             "https://evil.test/file.jar",

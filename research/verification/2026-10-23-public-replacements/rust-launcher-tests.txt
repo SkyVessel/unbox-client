@@ -1,0 +1,11 @@
+   Compiling unbox-client v0.2.18 (/Users/ty/Documents/ChatGPT/启动器/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.54s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/unbox_client-c323b641f9c49b59)
+
+running 4 tests
+test launcher::tests::disallow_traversal ... ok
+test launcher::tests::managed_update_backs_up_only_verified_old_mods ... ok
+test launcher::tests::offline_identity_matches_java ... ok
+test launcher::tests::optional_features_are_not_enabled ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 79 filtered out; finished in 0.00s

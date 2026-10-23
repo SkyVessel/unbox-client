@@ -182,6 +182,7 @@ if resume or os.environ.get('UNBOX_COLD_JOIN')=='1':args.insert(1,'-Dunbox.syncR
 if mode=='relay':args.insert(1,'-Dunbox.relaySmoke=true')
 if os.environ.get('UNBOX_PERFORMANCE_BENCHMARK')=='1':args.insert(1,'-Dunbox.performanceBenchmark=true')
 if os.environ.get('UNBOX_SOCIAL_FLOW_SMOKE')=='1':args.insert(1,'-Dunbox.socialFlowSmoke=true')
+if os.environ.get('UNBOX_REPLACEMENT_SMOKE')=='1':args.insert(1,'-Dunbox.replacementSmoke=true')
 if os.environ.get('UNBOX_PERFORMANCE_SMOKE')=='1':args.insert(1,'-Dunbox.performanceSmoke=true')
 if os.environ.get('UNBOX_TOGGLE_ONLY')=='1':args.insert(1,'-Dunbox.toggleOnly=true')
 if mode in ('home','private-guest'):args=args[:-2]
@@ -216,7 +217,7 @@ with (game/'logs/launch.log').open('w') as log:
     try:code=p.wait(timeout=240)
     except subprocess.TimeoutExpired:
         p.terminate();code=p.wait(timeout=30)
-result=game/('logs/survival-lan-host.json' if os.environ.get('UNBOX_SURVIVAL_LAN')=='host' else 'logs/feature-smoke.json' if mode=='features' else 'logs/visual-smoke.json' if mode=='visual' else 'logs/survival-smoke.json' if mode=='survival' else 'logs/vanilla-interop.json' if os.environ.get('UNBOX_VANILLA_INTEROP')=='1' else 'logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
+result=game/('logs/replacement-smoke.json' if os.environ.get('UNBOX_REPLACEMENT_SMOKE')=='1' else 'logs/survival-lan-host.json' if os.environ.get('UNBOX_SURVIVAL_LAN')=='host' else 'logs/feature-smoke.json' if mode=='features' else 'logs/visual-smoke.json' if mode=='visual' else 'logs/survival-smoke.json' if mode=='survival' else 'logs/vanilla-interop.json' if os.environ.get('UNBOX_VANILLA_INTEROP')=='1' else 'logs/private-world-smoke.json' if mode.startswith('private-') else 'logs/social-smoke.json' if mode in ('social','relay') else 'logs/home-smoke.json' if mode=='home' else 'logs/ui-smoke.json' if mode=='ui' else 'logs/benchmark.json')
 report_ok=False
 if result.exists():
     report_text=result.read_text();print(report_text,flush=True)

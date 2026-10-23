@@ -27,6 +27,7 @@ public final class ClientFeaturePolicy {
         if(module(key).equals("variants")&&(Minecraft.getInstance().player==null||!Minecraft.getInstance().player.isCreative()))return false;
         if(!SurvivalClientMods.available(module(key))) return false;
         if(!SurvivalHostMods.available(module(key))) return false;
+        if(module(key).equals("freecam")&&!FreecamController.available())return false;
         if(module(key).equals("dynamiclight")) return Platform.loaded("wick");
         Minecraft mc = Minecraft.getInstance();
         return allowed(scope(key), mc.getSingleplayerServer() != null, recognizedLan(mc), SocialLogin.trustedClientSession());
@@ -46,6 +47,7 @@ public final class ClientFeaturePolicy {
         if(module(key).equals("variants"))return "Available only in Creative mode";
         if(!SurvivalClientMods.available(module(key))) return SurvivalClientMods.reason(module(key));
         if(!SurvivalHostMods.available(module(key))) return SurvivalHostMods.reason(module(key));
+        if(module(key).equals("freecam")&&!FreecamController.available())return FreecamController.reason();
         if(module(key).equals("dynamiclight")) return "Launch with Unbox to install Wick";
         return switch (scope(key)) {
             case LOCAL_VISUAL -> "";

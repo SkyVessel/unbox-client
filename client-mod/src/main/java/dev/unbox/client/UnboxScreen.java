@@ -89,7 +89,7 @@ public class UnboxScreen extends Screen {
             Action enabled=button(left+pw-155,top+15,103,27,"Toggle "+ModOptions.mod(detail).title(),()->toggleModule(detail));enabled.module=detail;
             int x=left+18;for(String s:ModOptions.tabs(detail)){Action b=button(x,top+60,84,26,s,()->{tab=s;scroll=0;init();});b.selected=tab.equals(s);x+=90;}
             settingSearch=addRenderableWidget(new EditBox(font,left+pw-192,top+68,172,18,PanelStyle.text("Search settings")));settingSearch.addFormatter((v,i)->PanelStyle.text(v).getVisualOrderText());settingSearch.setBordered(false);settingSearch.setTextShadow(false);settingSearch.setHint(PanelStyle.text("Search settings..."));settingSearch.setValue(settingQuery);settingSearch.setResponder(v->{settingQuery=v;scroll=0;refreshSettings();});
-            button(left+pw-117,top+ph-27,99,22,resetUndo.isEmpty()?"Reset settings":"Undo reset",this::resetDetail).active=ClientFeaturePolicy.scope(detail)!=ClientFeaturePolicy.Scope.HOST_MANAGED||minecraft.getSingleplayerServer()!=null;
+            button(left+pw-117,top+ph-27,99,22,resetUndo.isEmpty()?(detail.equals("freecam")?"Reset keybind":"Reset settings"):"Undo reset",this::resetDetail).active=ClientFeaturePolicy.scope(detail)!=ClientFeaturePolicy.Scope.HOST_MANAGED||minecraft.getSingleplayerServer()!=null;
         }
         bodyTop=top+101;bodyBottom=top+ph-32;refreshSettings();
     }
@@ -101,7 +101,7 @@ public class UnboxScreen extends Screen {
             UnboxClient.CONFIG.forEach((k,v)->{String name=k.toString();if(name.startsWith(detail+".")&&!name.equals(detail+".x")&&!name.equals(detail+".y"))resetUndo.put(name,v.toString());});
             if(key!=null){resetUndo.put("$key",key.saveString());key.setKey(key.getDefaultKey());KeyMapping.resetMapping();minecraft.options.save();}
             if(detail.equals("freelook")){resetUndo.put("$toggle",""+cfg.isToggle());resetUndo.put("$camera",cfg.getPerspective().name());cfg.setToggle(false);cfg.setPerspective(3);cfg.save();}
-            ModOptions.reset(detail);notice="Settings reset. Positions preserved.";
+            ModOptions.reset(detail);notice=detail.equals("freecam")?"Keybind reset. Camera options are in Freecam settings.":"Settings reset. Positions preserved.";
         }else{
             ModOptions.reset(detail);
             resetUndo.forEach((k,v)->{if(k.startsWith("$"))return;if(v.equals("\u0000"))UnboxClient.CONFIG.remove(k);else UnboxClient.set(k,v);});
@@ -151,6 +151,9 @@ public class UnboxScreen extends Screen {
             var cfg=Freelook.config;
             rows.add(new Row(y,"Activation"));Action mode=body(new Action(x+w/2,y+9,w/2-12,27,cfg.isToggle()?"Toggle":"Hold",()->{cfg.setToggle(!cfg.isToggle());cfg.save();UnboxClient.set("freelook.mode",cfg.isToggle()?"Toggle":"Hold");UnboxClient.save();refreshSettings();}));y+=46;
             rows.add(new Row(y,"Camera"));body(new Action(x+w/2,y+9,w/2-12,27,cfg.getPerspective().name().replace('_',' '),()->{cfg.nextPerspective();cfg.save();UnboxClient.set("freelook.camera",cfg.getPerspective().name());UnboxClient.save();refreshSettings();}));y+=46;
+        }
+        if(settingQuery.isBlank()&&detail.equals("freecam")){
+            body(new Action(x,y+9,w,27,"Freecam settings",()->notice=FreecamController.openSettings(this))).active=FreecamController.available();y+=46;
         }
         if(settingQuery.isBlank()&&detail.equals("spatial")){
             body(new Action(x,y+9,w,27,"Advanced Spatial GUI settings",()->notice=SpatialSettings.open(this))).active=ClientIntegrations.available("spatial");y+=46;

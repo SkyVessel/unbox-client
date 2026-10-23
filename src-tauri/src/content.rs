@@ -177,7 +177,7 @@ pub fn import(rt: &Runtime, id: &str, kind: &str, paths: Vec<String>) -> Result<
                     || crate::launcher::jar_mod_ids(path)?.iter().any(|id| [
                         "unbox", "fabric-api", "sodium", "iris", "lithium",
                         "ferritecore", "entityculling", "immediatelyfast", "dynamic_fps",
-                        "e4mc", "freelook", "wick", "itemphysiclite", "creativecore",
+                        "e4mc", "freelook","freecam", "wick", "itemphysiclite", "creativecore",
                         "inventoryprofilesnext", "libipn", "fabric-language-kotlin", "klf",
                         "veinminer", "veinminer_client", "fallingtree",
                     ].contains(&id.as_str())))

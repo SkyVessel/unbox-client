@@ -1,0 +1,13 @@
+   Compiling unbox-client v0.2.18 (/Users/ty/Documents/ChatGPT/启动器/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.81s
+     Running unittests src/main.rs (src-tauri/target/debug/deps/unbox_client-c323b641f9c49b59)
+
+running 6 tests
+test sharing::tests::cold_invites_choose_native_isolated_profiles_and_reject_stale_or_foreign_invites ... ok
+test sharing::tests::invitations_and_cached_mods_select_each_exact_native_environment ... ok
+test sharing::tests::neoforge_sync_preserves_loader_and_rejects_wrong_metadata ... ok
+test sharing::tests::packs_sync_selection_and_removal_without_personal_settings_loss ... ok
+test sharing::tests::recent_friend_profiles_replace_by_host_and_survive_stale_ui_saves ... ok
+test sharing::tests::shared_environment_is_exact_cached_and_never_overwrites_source ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 77 filtered out; finished in 0.08s

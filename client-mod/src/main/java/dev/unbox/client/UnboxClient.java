@@ -40,7 +40,7 @@ public class UnboxClient {
     public static float clickLight(int button){if(buttonDown[button]&&Minecraft.getInstance().screen==null)return 1;return Math.max(0,1-(System.nanoTime()-clickTime[button])/(UnboxClient.number("cps.fade",180,50,500)*1_000_000f));}
     public static void click(int button){if(Minecraft.getInstance().screen!=null||Minecraft.getInstance().player==null)return;long now=System.nanoTime();if(button>=0&&button<2)clickTime[button]=now;if(button==0)LEFT.addLast(now);if(button==1)RIGHT.addLast(now);}
     public static void initialize(){
-        reload();SocialBridge.init();MapSharing.init();Freelook.init();FreecamController.init();CreativeVariants.init();HappyGhastRecall.init();
+        reload();SocialBridge.init();MapSharing.init();Freelook.init();CreativeVariants.init();HappyGhastRecall.init();
         menuKey=Platform.key(new KeyMapping("key.unbox.menu",GLFW.GLFW_KEY_RIGHT_SHIFT,KeyMapping.Category.MISC));
         zoomKey=Platform.key(new KeyMapping("key.unbox.zoom",GLFW.GLFW_KEY_C,KeyMapping.Category.MISC));
         mapKey=Platform.key(new KeyMapping("key.unbox.map",GLFW.GLFW_KEY_M,KeyMapping.Category.MISC));

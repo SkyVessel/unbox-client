@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "resolvedAt": "2026-10-16",
+  "resolvedAt": "2026-10-23",
   "targets": [
     {
       "loader": "fabric",
@@ -1220,6 +1220,61 @@
           "modIds": [
             "colourscroller"
           ]
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "98LZft3E",
+          "version": "1.5.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "freecam-fabric-1.5.1+mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/98LZft3E/freecam-fabric-1.5.1%2Bmc26.1.2.jar",
+          "sha1": "8106da2743fb74f8c20bf42503ed93e76637d9b9",
+          "sha512": "e49ae3e7e41d31817b5cb998f930db890b78f12dd850c91663775702708038a7d38bacb99f4e2a1c2cd426da748f394b2ad625e56ab25020e9f86d7825a5a5ed",
+          "size": 2003349,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1.0 <26.2.0-0",
+            "fabricloader": ">=0.14.25",
+            "fabric-api-base": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-resource-loader-v1": "*"
+          }
         }
       ]
     },
@@ -2453,6 +2508,61 @@
           "modIds": [
             "colourscroller"
           ]
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "98LZft3E",
+          "version": "1.5.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "freecam-fabric-1.5.1+mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/98LZft3E/freecam-fabric-1.5.1%2Bmc26.1.2.jar",
+          "sha1": "8106da2743fb74f8c20bf42503ed93e76637d9b9",
+          "sha512": "e49ae3e7e41d31817b5cb998f930db890b78f12dd850c91663775702708038a7d38bacb99f4e2a1c2cd426da748f394b2ad625e56ab25020e9f86d7825a5a5ed",
+          "size": 2003349,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.1.0 <26.2.0-0",
+            "fabricloader": ">=0.14.25",
+            "fabric-api-base": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-resource-loader-v1": "*"
+          }
         }
       ]
     },
@@ -3468,6 +3578,73 @@
           "sha1": "85edec59b2628fb52343e88a3c112119a2bc6ef5",
           "sha512": "0d93311cec2ed44cbb402ead3656028a3d793428b744a3c6ccb994b8b1784122a3dab0c88b47ad50f6a2f22463f4af2d3eee53e1238891e402a98f9774cd0620",
           "size": 205136
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "yWJZrIQR",
+          "version": "1.5.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "freecam-neoforge-1.5.1+mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/yWJZrIQR/freecam-neoforge-1.5.1%2Bmc26.1.2.jar",
+          "sha1": "7f21568e3c401fc5404927d015ed3f6d0c550842",
+          "sha512": "24e15e04306de3c52c8313630c287007ee975158c1cac53c87d46db0d03db6e91c4edd352057e115f05437bccff844d40823acebfef58bc4154abe487fa8082e",
+          "size": 1782231,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "freecam": [
+              {
+                "modId": "minecraft",
+                "versionRange": "[26.1.0,26.2.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "neoforge",
+                "versionRange": "[26.1.0-alpha,)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "cloth_config",
+                "versionRange": "[26.1.0,26.2.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "optional"
+              }
+            ]
+          }
         }
       ],
       "unavailableFeatures": []
@@ -4649,6 +4826,73 @@
           "modIds": [
             "colourscroller"
           ]
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "yWJZrIQR",
+          "version": "1.5.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.1.2"
+          ],
+          "upstreamGameVersions": [
+            "26.1",
+            "26.1.1",
+            "26.1.2"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "freecam-neoforge-1.5.1+mc26.1.2.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/yWJZrIQR/freecam-neoforge-1.5.1%2Bmc26.1.2.jar",
+          "sha1": "7f21568e3c401fc5404927d015ed3f6d0c550842",
+          "sha512": "24e15e04306de3c52c8313630c287007ee975158c1cac53c87d46db0d03db6e91c4edd352057e115f05437bccff844d40823acebfef58bc4154abe487fa8082e",
+          "size": 1782231,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "freecam": [
+              {
+                "modId": "minecraft",
+                "versionRange": "[26.1.0,26.2.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "neoforge",
+                "versionRange": "[26.1.0-alpha,)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "cloth_config",
+                "versionRange": "[26.1.0,26.2.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "optional"
+              }
+            ]
+          }
         }
       ]
     },
@@ -5834,6 +6078,59 @@
           "modIds": [
             "colourscroller"
           ]
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "lwrkvqym",
+          "version": "1.5.1",
+          "loader": "fabric",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "fabric"
+          ],
+          "filename": "freecam-fabric-1.5.1+mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/lwrkvqym/freecam-fabric-1.5.1%2Bmc26.3.jar",
+          "sha1": "507cb204ffc411c81f94c890370a54d04ff59efb",
+          "sha512": "bc7bf23c41e5c3ddb43f4b455ff7d4d061cff8b574ff33aef0450a2c5ab9acd992020a9ffe6c0478993248861ee1232a85f7d64f19ad9c4e1f37d6cbdfbcb3b1",
+          "size": 2010574,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            },
+            {
+              "projectId": "mOgUt4GM",
+              "id": null,
+              "type": "optional"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "minecraft": ">=26.3.0 <26.4.0-0",
+            "fabricloader": ">=0.14.25",
+            "fabric-api-base": "*",
+            "fabric-key-mapping-api-v1": "*",
+            "fabric-lifecycle-events-v1": "*",
+            "fabric-resource-loader-v1": "*"
+          }
         }
       ]
     },
@@ -6954,6 +7251,71 @@
           "modIds": [
             "colourscroller"
           ]
+        },
+        {
+          "slug": "freecam",
+          "projectId": "XeEZ3fK2",
+          "id": "nFiMOIVC",
+          "version": "1.5.1",
+          "loader": "neoforge",
+          "gameVersions": [
+            "26.3"
+          ],
+          "upstreamGameVersions": [
+            "26.3"
+          ],
+          "upstreamLoaders": [
+            "neoforge"
+          ],
+          "filename": "freecam-neoforge-1.5.1+mc26.3.jar",
+          "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/nFiMOIVC/freecam-neoforge-1.5.1%2Bmc26.3.jar",
+          "sha1": "bcf757adb74cee4807dc34c1cdfb1e996346c0a2",
+          "sha512": "2d6a5c3f296c11a6759c047a3ab87ce7e65a63712ba4c38eddc5a790d5c75a1b3b55c52c85d9dfcfc3a7aaaeaec3c1a9e6001fbb745f1ecdc81793d882b0a749",
+          "size": 1783418,
+          "source": "https://github.com/MinecraftFreecam/Freecam",
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": null
+          },
+          "projectUrl": "https://modrinth.com/mod/freecam",
+          "role": "client-feature",
+          "providedBy": "survival-mods-lock",
+          "dependencies": [
+            {
+              "projectId": "9s6osm5g",
+              "id": null,
+              "type": "embedded"
+            }
+          ],
+          "modIds": [
+            "freecam"
+          ],
+          "artifactRequirements": {
+            "freecam": [
+              {
+                "modId": "minecraft",
+                "versionRange": "[26.3.0,26.4.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "neoforge",
+                "versionRange": "[26.3.0-0,)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "required"
+              },
+              {
+                "modId": "cloth_config",
+                "versionRange": "[26.3.0,26.4.0-0)",
+                "ordering": "NONE",
+                "side": "CLIENT",
+                "type": "optional"
+              }
+            ]
+          }
         }
       ]
     }

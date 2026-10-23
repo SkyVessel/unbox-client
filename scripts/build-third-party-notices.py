@@ -27,7 +27,7 @@ def main():
    with zipfile.ZipFile(path) as z:
     for name in z.namelist():
      base=Path(name).name.lower()
-     if not base.startswith(('license','copying','notice')) or name.endswith('/') or z.getinfo(name).file_size>200000:continue
+     if not (base.startswith(('license','copying','notice')) or base.endswith(('.license','.copying','.notice'))) or name.endswith('/') or z.getinfo(name).file_size>200000:continue
      text=z.read(name).decode('utf-8',errors='replace');digest=hashlib.sha256(text.encode()).hexdigest()
      if digest in seen:continue
      seen.add(digest);out.append('<details><summary>'+html.escape(name)+'</summary><pre>'+html.escape(text)+'</pre></details>')

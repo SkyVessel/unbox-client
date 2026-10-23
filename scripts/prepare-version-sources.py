@@ -51,12 +51,6 @@ def prepare(version,loader):
                 text=text.replace('@Mixin(Gui.class)','@Mixin(net.minecraft.client.gui.Hud.class)')
             if source.name=='TitleScreenMixin.java':
                 text=text.replace('@Mixin(Minecraft.class)','@Mixin(net.minecraft.client.gui.Gui.class)').replace('((Minecraft)(Object)this).isDemo()','Minecraft.getInstance().isDemo()')
-            if source.name=='FreecamBodyRenderMixin.java':
-                text=text.replace('@Mixin(LevelRenderer.class)','@Mixin(net.minecraft.client.renderer.extract.LevelExtractor.class)')
-            if source.name=='FreecamHandMixin.java':
-                text=text.replace('CameraRenderState state,float partialTick,Matrix4fc matrix,CallbackInfo ci','CallbackInfo ci')
-            if source.name=='FreecamController.java':
-                text=text.replace('camera = new SpectatorCamera(mc, level);','camera = new SpectatorCamera(mc, level);\n        camera.setId(DetachedEntityIds.next());')
             if source.name=='GraveBreakingRenderMixin.java':
                 text=text.replace('collector.submitBreakingBlockModel(pose,model,stone.getSeed(pos),breaking.progress());',
                     'var parts=new java.util.ArrayList<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart>();\n            model.collectParts(net.minecraft.util.RandomSource.create(stone.getSeed(pos)),parts);\n            collector.submitBreakingBlockModel(pose,java.util.List.copyOf(parts),breaking.progress(),model.hasMaterialFlag(1));')

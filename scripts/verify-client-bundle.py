@@ -8,7 +8,7 @@ expected={(loader,version) for loader in ('fabric','neoforge') for version in ('
 assert {(t['loader'],t['minecraft']) for t in lock['targets']}==expected
 for target in lock['targets']:
  loader,version=target['loader'],target['minecraft'];ids={i for m in target['mods'] for i in m['modIds']}
- required={'inventoryprofilesnext','libipn','veinminer','veinminer_client','itemphysiclite','fallingtree','mousetweaks','easyshulkerboxes','chiseledbookshelfvisualizer','resourcify','effortlessbuilding','colourscroller', 'status-effect-bars' if loader=='fabric' else 'status_effect_bars','spatial-gui' if loader=='fabric' else 'spatial_gui'}
+ required={'freecam','inventoryprofilesnext','libipn','veinminer','veinminer_client','itemphysiclite','fallingtree','mousetweaks','easyshulkerboxes','chiseledbookshelfvisualizer','resourcify','effortlessbuilding','colourscroller', 'status-effect-bars' if loader=='fabric' else 'status_effect_bars','spatial-gui' if loader=='fabric' else 'spatial_gui'}
  assert required<=ids,(loader,version,required-ids)
  assert not target.get('unavailableFeatures'),(loader,version)
  for mod in target['mods']:
@@ -24,6 +24,10 @@ for target in lock['targets']:
  engine=RES/('unbox-client'+('-neoforge' if loader=='neoforge' else '')+suffix+'.jar')
  with zipfile.ZipFile(engine) as z:
   assert 'dev/unbox/client/ClientIntegrations.class' in z.namelist(),engine
+  assert 'dev/unbox/client/FreecamController$SpectatorCamera.class' not in z.namelist(),engine
+  mixins=json.loads(z.read('unbox.mixins.json'))['client']
+  assert {'FreecamEntryGateMixin','FreecamSpeedMixin'}<=set(mixins),engine
+  assert not {'FreecamInputMixin','FreecamTurnMixin','FreecamBodyRenderMixin','FreecamHandMixin','FreecamInteractionMixin'}&set(mixins),engine
   # Bitmap glyphs must fit the vanilla atlas without ImmediatelyFast resizing it.
   for provider in json.loads(z.read('assets/unbox/font/name_badge.json'))['providers']:
    if provider['type']!='bitmap':continue
