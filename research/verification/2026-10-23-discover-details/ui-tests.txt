@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: market locks environment, filters search and installs a dependency plan into the chosen profile
+ok 1 - market locks environment, filters search and installs a dependency plan into the chosen profile
+  ---
+  duration_ms: 3236.865333
+  type: 'test'
+  ...
+# Subtest: market retries failed downloads, shares pack/shader entry flow and blocks friend profile mutations
+ok 2 - market retries failed downloads, shares pack/shader entry flow and blocks friend profile mutations
+  ---
+  duration_ms: 2156.48375
+  type: 'test'
+  ...
+# Subtest: market search errors recover and an in-flight download can be canceled without losing its profile
+ok 3 - market search errors recover and an in-flight download can be canceled without losing its profile
+  ---
+  duration_ms: 2026.058
+  type: 'test'
+  ...
+# Subtest: Discover sidebar works independently, combines categories and keeps friend profiles read-only
+ok 4 - Discover sidebar works independently, combines categories and keeps friend profiles read-only
+  ---
+  duration_ms: 2154.450959
+  type: 'test'
+  ...
+# Subtest: project descriptions load without a profile, sanitize remote HTML and install from detail
+ok 5 - project descriptions load without a profile, sanitize remote HTML and install from detail
+  ---
+  duration_ms: 1952.93425
+  type: 'test'
+  ...
+# Subtest: project description errors retry and missing cover or failed icon has a visible fallback
+ok 6 - project description errors retry and missing cover or failed icon has a visible fallback
+  ---
+  duration_ms: 1520.713833
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13305.429417

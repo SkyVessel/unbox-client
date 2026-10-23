@@ -165,7 +165,7 @@ pub async fn catalog_search(
     if (kind == "Mods" || kind == "Shaders") && p["loader"] == "vanilla" {
         return Err("Choose a Fabric or NeoForge profile to browse mods or shaders.".into());
     }
-    if query.chars().count() > 200 || offset > 10000 {
+    if query.chars().count() > 200 {
         return Err("Search is too long".into());
     }
     if !["relevance", "downloads", "updated", "newest"].contains(&sort.as_str()) {
@@ -191,13 +191,24 @@ pub async fn catalog_search(
             if h["featured_gallery"].is_null() {
                 h["featured_gallery"] = h["gallery"]
                     .as_array()
-                    .and_then(|a| a.first())
-                    .map(safe_image)
+                    .and_then(|a| a.iter().map(safe_image).find(|v| !v.is_null()))
                     .unwrap_or(Value::Null)
             }
         }
     }
     Ok(v)
+}
+#[tauri::command]
+pub async fn catalog_project(project: String) -> Result<Value, String> {
+    identifier(&project)?;
+    let mut v = get(&client()?, &format!("project/{project}"), &[]).await?;
+    v["icon_url"] = safe_image(&v["icon_url"]);
+    if let Some(gallery) = v["gallery"].as_array_mut() {
+        gallery.retain(|g| !safe_image(&g["url"]).is_null());
+        gallery.sort_by_key(|g| (!g["featured"].as_bool().unwrap_or(false), g["ordering"].as_i64().unwrap_or(0)));
+    }
+    // The frontend renders body as sanitized Markdown/HTML, never as a remote document.
+    Ok(json!({"id":v["id"],"slug":v["slug"],"title":v["title"],"description":v["description"],"body":v["body"],"icon_url":v["icon_url"],"gallery":v["gallery"],"downloads":v["downloads"],"license":v["license"],"source_url":v["source_url"],"issues_url":v["issues_url"],"wiki_url":v["wiki_url"],"game_versions":v["game_versions"],"loaders":v["loaders"]}))
 }
 #[tauri::command]
 pub async fn catalog_categories(kind: String) -> Result<Value, String> {
@@ -905,9 +916,20 @@ mod tests {
     }
     #[test]
     fn browse_all_and_combined_filters_keep_profile_constraints() {
+        assert_eq!(facets(&Value::Null, "Mods", "").unwrap(), json!([["project_type:mod"]]));
         assert_eq!(facets(&Value::Null, "Mods", "adventure,decoration").unwrap(), json!([["project_type:mod"],["categories:adventure"],["categories:decoration"]]));
         assert!(facets(&Value::Null,"Mods","bad:filter").is_err());
         assert!(facets(&Value::Null,"Mods",&vec!["a";13].join(",")).is_err());
+    }
+    #[tokio::test]
+    #[ignore = "Explicit read-only public Modrinth API check"]
+    async fn live_project_description_without_a_profile() {
+        assert!(catalog_project("../search".into()).await.is_err());
+        let project = catalog_project("searchables".into()).await.unwrap();
+        assert_eq!(project["slug"], "searchables");
+        assert!(!project["body"].as_str().unwrap().is_empty());
+        assert!(!safe_image(&project["icon_url"]).is_null());
+        assert!(project["gallery"].is_array());
     }
     #[test]
     fn exact_environment_filters_and_no_cross_loader_fallback() {

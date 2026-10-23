@@ -1,0 +1,20 @@
+
+> unbox-client@0.2.18 build
+> tsc --noEmit && vite build
+
+vite v6.4.4 building for production...
+transforming...
+✓ 1917 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                           0.39 kB │ gzip:   0.27 kB
+../dist/assets/index-DTEmYEOf.css           44.40 kB │ gzip:  10.30 kB
+../dist/assets/ProjectDetails-t84w7NDe.js  344.36 kB │ gzip: 106.32 kB
+../dist/assets/index-DZZSpTzd.js           369.32 kB │ gzip: 115.36 kB
+../dist/assets/skinview3d-fa4Yw2G9.js      515.39 kB │ gzip: 129.17 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.09s
