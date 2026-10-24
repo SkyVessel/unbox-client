@@ -1,0 +1,62 @@
+[
+  {
+    "name": "latest.json",
+    "bytes": 1889,
+    "sha256": "e5ab9ab3574614fc21000f55e356b2f0e13fa0d2dec9b757dc0c09fcebf847c3"
+  },
+  {
+    "name": "SHA256SUMS.txt",
+    "bytes": 1061,
+    "sha256": "c8bb45811d09f31578cfa5d95ef53f7e7eb271eed6f7c055118ede2c436ac2ef"
+  },
+  {
+    "name": "unbox-client-26.1.2.jar",
+    "bytes": 1382967,
+    "sha256": "6856cd902601f4fd4a07d282bd308c8c6a33dd10c36696bc62aebf7b841d7682"
+  },
+  {
+    "name": "unbox-client-26.3.jar",
+    "bytes": 1385599,
+    "sha256": "98cd945be065d1b0caa2244389ca07aff37b6256d998cfb0d81fd7f06c97ea0f"
+  },
+  {
+    "name": "unbox-client-neoforge-26.1.2.jar",
+    "bytes": 1395117,
+    "sha256": "db44eedd766007cb40f8472d6ab70772460db13ea397035ee570e28bc45b05f1"
+  },
+  {
+    "name": "unbox-client-neoforge-26.3.jar",
+    "bytes": 1397781,
+    "sha256": "c314ca9ddd7a9c1dcc5c949700f120ecff9be1d00b7b6ef794efb6d4c8bd1f19"
+  },
+  {
+    "name": "unbox-client-neoforge.jar",
+    "bytes": 1395116,
+    "sha256": "5035dc94d8c4265dc810af8fedd7d20a3f27e65d807830128df05013df8309dc"
+  },
+  {
+    "name": "unbox-client.jar",
+    "bytes": 1382966,
+    "sha256": "1883e505d66d0ea84a61d83183067c5bf5be0b36f369a9d64ec932dcca09d8ae"
+  },
+  {
+    "name": "Unbox.Client_0.2.20_aarch64.app.tar.gz",
+    "bytes": 55162375,
+    "sha256": "7679870371425bc551c48a93154ea0e138333a838bc4ecd780562de42801e349"
+  },
+  {
+    "name": "Unbox.Client_0.2.20_aarch64.app.tar.gz.sig",
+    "bytes": 452,
+    "sha256": "981ecee0ad6fcdad5e94d2a158f81c9641a2a554f0c1b42b7d33e83e6b13f56a"
+  },
+  {
+    "name": "Unbox.Client_0.2.20_windows-x64-setup.exe",
+    "bytes": 32052729,
+    "sha256": "152535b69a1607c180237c1192e41499954dbcf7a124fd4e0e541bcb3069278f"
+  },
+  {
+    "name": "Unbox.Client_0.2.20_windows-x64-setup.exe.sig",
+    "bytes": 456,
+    "sha256": "25730bf7d60390b1544d674bc9e940747c9cb83d16e4d070dfee665cac4cd9d8"
+  }
+]

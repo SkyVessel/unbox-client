@@ -1,0 +1,22 @@
+2026-10-24T03:39:11.4296689Z PASS private, local, and DNS route targets rejected
+2026-10-24T03:39:11.4297620Z PASS public literal candidates accepted
+2026-10-24T03:39:12.0898104Z PASS negotiated VoxLink UDP route
+2026-10-24T03:39:12.0898675Z PASS selected path recorded
+2026-10-24T03:39:17.9112313Z PASS 2 MiB bidirectional byte stream preserved over udp
+2026-10-24T03:39:17.9230251Z PASS negotiated TCP route
+2026-10-24T03:39:17.9232201Z PASS selected path recorded
+2026-10-24T03:39:17.9449208Z PASS 2 MiB bidirectional byte stream preserved over tcp
+2026-10-24T03:39:42.9488366Z PASS wrong transport secret never exposes a local game bridge
+2026-10-24T03:39:42.9489721Z PASS failed direct methods expire into relay fallback
+2026-10-24T03:39:42.9490539Z PASS expired negotiation cannot publish or accept late candidates
+2026-10-24T03:39:44.6022647Z PASS VoxLink reliable UDP preserves bytes with loss, reordering and duplicates
+2026-10-24T03:39:44.9971188Z PASS 1200-byte UDP path with 60 ms RTT preserves large encrypted-stream bytes
+2026-10-24T03:39:44.9972140Z PASS DATA and FEC include authentication within the 1200-byte datagram budget
+2026-10-24T03:39:56.9993924Z PASS Idle keepalives stay periodic, with no reply feedback loop (frames=24)
+2026-10-24T03:39:57.0421814Z PASS Connection remains usable after idle beyond the old failure window
+2026-10-24T03:39:57.0551631Z PASS cancellation releases waiting candidate exchange
+2026-10-24T03:43:49.6978432Z test process::tests::console_probe ... ignored, invoked by the two background-process tests
+2026-10-24T03:43:49.7421841Z test process::tests::background_process_has_no_console_and_keeps_output ... ok
+2026-10-24T03:43:49.7432796Z test process::tests::async_background_process_has_no_console_and_keeps_output ... ok
+2026-10-24T03:43:50.3169259Z test result: ok. 82 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.90s
+2026-10-24T03:45:19.6489513Z unbox-client.exe: Windows GUI subsystem confirmed (no launcher console)

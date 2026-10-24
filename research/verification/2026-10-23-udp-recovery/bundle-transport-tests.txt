@@ -1,0 +1,17 @@
+PASS private, local, and DNS route targets rejected
+PASS public literal candidates accepted
+PASS negotiated VoxLink UDP route
+PASS selected path recorded
+PASS 2 MiB bidirectional byte stream preserved over udp
+PASS negotiated TCP route
+PASS selected path recorded
+PASS 2 MiB bidirectional byte stream preserved over tcp
+PASS wrong transport secret never exposes a local game bridge
+PASS failed direct methods expire into relay fallback
+PASS expired negotiation cannot publish or accept late candidates
+PASS VoxLink reliable UDP preserves bytes with loss, reordering and duplicates
+PASS 1200-byte UDP path with 60 ms RTT preserves large encrypted-stream bytes
+PASS DATA and FEC include authentication within the 1200-byte datagram budget
+PASS Idle keepalives stay periodic, with no reply feedback loop (frames=24)
+PASS Connection remains usable after idle beyond the old failure window
+PASS cancellation releases waiting candidate exchange
