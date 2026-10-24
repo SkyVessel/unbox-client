@@ -16,7 +16,7 @@ def upload(path):
     mime = mimetypes.guess_type(path.name)[0] or 'application/octet-stream'
     if path.suffix == '.glsl': mime = 'text/plain'
     request = urllib.request.Request('https://unbox-release-upload.printoria-studio.workers.dev/' + key,
-        data=path.read_bytes(), method='PUT', headers={'Authorization': token, 'Content-Type': mime})
+        data=path.read_bytes(), method='PUT', headers={'Authorization': token, 'Content-Type': mime, 'User-Agent': 'Unbox-Release-Uploader/1.0'})
     with opener.open(request, timeout=300) as response:
         assert response.status == 200
     print(f'Uploaded {key} ({path.stat().st_size} bytes)', flush=True)

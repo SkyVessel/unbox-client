@@ -2,6 +2,10 @@ name: Windows testing build
 on:
   workflow_dispatch:
     inputs:
+      verify_update:
+        description: Verify the published Cloudflare update in an isolated Windows installation
+        type: boolean
+        default: false
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
@@ -29,6 +33,7 @@ permissions:
   contents: write
 jobs:
   windows:
+    if: ${{ !inputs.verify_update }}
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
@@ -90,3 +95,48 @@ jobs:
           path: src-tauri/target/debug/bundle/nsis/*.exe
           if-no-files-found: error
           retention-days: 7
+  update-smoke:
+    if: ${{ inputs.verify_update }}
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install previous release and apply the signed Cloudflare update
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $fixture = Join-Path $env:RUNNER_TEMP 'unbox-update-fixture'
+          $old = Join-Path $env:RUNNER_TEMP 'unbox-old.exe'
+          $log = Join-Path $env:RUNNER_TEMP 'unbox-update-smoke.log'
+          Invoke-WebRequest 'https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.20/Unbox.Client_0.2.20_windows-x64-setup.exe' -OutFile $old
+          $install = Start-Process $old -ArgumentList @('/S', "/D=$fixture") -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "Old installer failed: $($install.ExitCode)" }
+          $exe = Join-Path $fixture 'unbox-client.exe'
+          if (!(Test-Path $exe)) { throw 'Previous application missing' }
+          if ((Get-Item $exe).VersionInfo.ProductVersion -notlike '0.2.20*') { throw 'Wrong previous version' }
+          cargo run --locked --manifest-path src-tauri/Cargo.toml --example cloudflare-update-smoke -- $exe 2>&1 | Tee-Object -FilePath $log
+          if ($LASTEXITCODE -ne 0) { throw 'Updater harness failed' }
+          $deadline = (Get-Date).AddMinutes(3)
+          do {
+            Start-Sleep -Seconds 2
+            $version = (Get-Item $exe).VersionInfo.ProductVersion
+          } while ($version -notlike '0.2.21*' -and (Get-Date) -lt $deadline)
+          if ($version -notlike '0.2.21*') { throw "Update not installed: $version" }
+          if (!(Select-String -Path $log -Pattern 'Invalid signature rejected' -Quiet)) { throw 'Signature rejection not tested' }
+          Write-Output "Actual Windows installation updated from 0.2.20 to $version through Cloudflare."
+          $app = Start-Process $exe -PassThru
+          Start-Sleep -Seconds 8
+          if ($app.HasExited) { throw 'Updated application exited during startup' }
+          Stop-Process -Id $app.Id
+          Write-Output 'Updated Windows application started successfully.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unbox-cloudflare-update-smoke
+          path: ${{ runner.temp }}/unbox-update-smoke.log

@@ -25,5 +25,5 @@ for name in ['index.html', 'website.css', 'website.js', 'contours.glsl']:
         if original.is_file():
             shutil.copy2(original, out / relative)
     (out / name).write_text(text)
-shutil.copy2(source / 'assets/LUCIDE-LICENSE.txt', out / 'assets/LUCIDE-LICENSE.txt') if (source / 'assets/LUCIDE-LICENSE.txt').exists() else None
+shutil.copy2(source / 'assets/LUCIDE-LICENSE', out / 'assets/LUCIDE-LICENSE')
 print(f'Packaged {len(list(out.rglob("*")))} public files in {out}')
