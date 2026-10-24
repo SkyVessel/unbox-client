@@ -1,0 +1,96 @@
+[
+  {
+    "minecraft": "26.1",
+    "loader": "fabric",
+    "route": "voxlink_udp",
+    "outcome": "cancelled",
+    "connectedToEndMs": 11726,
+    "stages": [
+      "accepted",
+      "route_search",
+      "candidates_ready",
+      "udp_punch",
+      "tcp_punch",
+      "udp_punch",
+      "connecting",
+      "checking_files",
+      "awaiting_confirmation",
+      "syncing_files",
+      "cancelled"
+    ]
+  },
+  {
+    "minecraft": "26.1",
+    "loader": "fabric",
+    "route": "voxlink_udp",
+    "outcome": "failed",
+    "connectedToEndMs": 12803,
+    "stages": [
+      "accepted",
+      "route_search",
+      "candidates_ready",
+      "udp_punch",
+      "tcp_punch",
+      "udp_punch",
+      "connecting",
+      "checking_files",
+      "awaiting_confirmation",
+      "syncing_files",
+      "failed"
+    ]
+  },
+  {
+    "minecraft": "26.1",
+    "loader": "fabric",
+    "route": "voxlink_udp",
+    "outcome": "failed",
+    "connectedToEndMs": 11828,
+    "stages": [
+      "accepted",
+      "route_search",
+      "candidates_ready",
+      "udp_punch",
+      "tcp_punch",
+      "udp_punch",
+      "connecting",
+      "checking_files",
+      "failed"
+    ]
+  },
+  {
+    "minecraft": "26.1",
+    "loader": "fabric",
+    "route": "voxlink_udp",
+    "outcome": "failed",
+    "connectedToEndMs": 11837,
+    "stages": [
+      "accepted",
+      "route_search",
+      "candidates_ready",
+      "udp_punch",
+      "tcp_punch",
+      "udp_punch",
+      "connecting",
+      "checking_files",
+      "failed"
+    ]
+  },
+  {
+    "minecraft": "26.1",
+    "loader": "fabric",
+    "route": "voxlink_udp",
+    "outcome": "failed",
+    "connectedToEndMs": 13126,
+    "stages": [
+      "accepted",
+      "route_search",
+      "candidates_ready",
+      "udp_punch",
+      "tcp_punch",
+      "udp_punch",
+      "connecting",
+      "checking_files",
+      "failed"
+    ]
+  }
+]

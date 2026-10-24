@@ -5,7 +5,8 @@ import {readFile,writeFile,mkdir,access} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {database} from '../tests/social-database.mjs';
 import worker from '../cloudflare/social.mjs';
-const voxlink=process.argv.includes('--voxlink');
+const recovery=process.argv.includes('--recover-stream'),lanFailure=process.argv.includes('--lan-failure');
+const voxlink=process.argv.includes('--voxlink')||recovery;
 const relay=process.argv.includes('--relay'),syncMods=process.argv.includes('--sync-mods'),coldJoin=process.argv.includes('--cold-join');if(coldJoin&&!syncMods)throw Error('--cold-join requires --sync-mods');
 const source=process.argv[2],run=process.argv[3]||('private-'+Date.now());
 if(!source||!/^[-a-z0-9]+$/.test(run))throw Error('Usage: node scripts/test-private-world.mjs WORLD_DIRECTORY RUN_NAME');
@@ -15,7 +16,7 @@ await new Promise(r=>http.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'
 async function call(path,b,token){const r=await fetch(url+'/v1/'+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(b)});const v=await r.json();if(!r.ok)throw Error(v.error||path);return v}
 const children=[],publicChecks=[],paths={};let stopping=false;
 const fixtureRoot=resolve('.cache/network-tests',run),ids={host:crypto.randomUUID(),guest:crypto.randomUUID()};let guestProcess,restarted=false,firstDownload;
-function launch(role,p,resume=false){const child=spawn('python3',['scripts/benchmark.py','private-'+role,source,run+'-'+role],{env:{...process.env,...(voxlink?{UNBOX_VOXLINK_FIXTURE:'1'}:{}),UNBOX_TEST_PROFILE:JSON.stringify(p.account),...(syncMods?{UNBOX_SYNC_FIXTURE:'1',UNBOX_BENCH_GAME_DIR:paths[role],UNBOX_SHARED_CACHE:fixtureRoot+'/shared-cache',UNBOX_BENCH_RESUME:resume?'1':'0',...(coldJoin&&role==='guest'?{UNBOX_COLD_JOIN:'1'}:{})}:{})},detached:true,stdio:['ignore','pipe','pipe']});children.push(child);child.stdout.on('data',b=>process.stdout.write(b));child.stderr.on('data',b=>process.stderr.write(b));child.on('exit',code=>{child.result=code});if(role==='guest')guestProcess=child;return child;}
+function launch(role,p,resume=false){const child=spawn('python3',['scripts/benchmark.py','private-'+role,source,run+'-'+role],{env:{...process.env,...(voxlink?{UNBOX_VOXLINK_FIXTURE:'1'}:{}),...(recovery&&role==='guest'?{UNBOX_STREAM_FAILURE:'1'}:{}),...(lanFailure&&role==='guest'?{UNBOX_DIRECT_FAILURE:'1'}:{}),UNBOX_TEST_PROFILE:JSON.stringify(p.account),...(syncMods?{UNBOX_SYNC_FIXTURE:'1',UNBOX_BENCH_GAME_DIR:paths[role],UNBOX_SHARED_CACHE:fixtureRoot+'/shared-cache',UNBOX_BENCH_RESUME:resume?'1':'0',...(coldJoin&&role==='guest'?{UNBOX_COLD_JOIN:'1'}:{})}:{})},detached:true,stdio:['ignore','pipe','pipe']});children.push(child);child.stdout.on('data',b=>process.stdout.write(b));child.stderr.on('data',b=>process.stderr.write(b));child.on('exit',code=>{child.result=code});if(role==='guest')guestProcess=child;return child;}
 async function register(kind){
  const id=crypto.randomUUID(),token=crypto.randomUUID().replaceAll('-','')+crypto.randomUUID().replaceAll('-','');let account={name:'SameName',uuid:crypto.randomUUID().replaceAll('-',''),type:kind},proof;
  if(kind==='microsoft'){
@@ -49,7 +50,8 @@ try{
    }
    try{await access(dir)}catch{continue}
    const world=await load(dir+'/unbox-world.json'),command=await load(dir+'/unbox-social-command.json');
-   if(command&&!seen.has(command.requestId)){seen.add(command.requestId);if(command.op==='send')await call('invites/send',{id:command.id,room:world.room,joinSecret:world.grants[command.id]},p.token);else if(command.op==='relay'){if(!relay)throw Error('LAN probe failed; this test must use direct LAN');await call('invites/relay',{id:command.id},p.token);}await save(dir+'/unbox-social-ack.json',{requestId:command.requestId,ok:true,at:Date.now()});}
+   if(recovery&&role==='guest'&&world?.error?.startsWith('Could not join.'))throw Error('Stream failure did not recover through relay');
+   if(command&&!seen.has(command.requestId)){seen.add(command.requestId);if(command.op==='send')await call('invites/send',{id:command.id,room:world.room,joinSecret:world.grants[command.id]},p.token);else if(command.op==='relay'){if(!relay&&!recovery&&!lanFailure)throw Error('LAN probe failed; this test must use direct LAN');await call('invites/relay',{id:command.id},p.token);}await save(dir+'/unbox-social-ack.json',{requestId:command.requestId,ok:true,at:Date.now()});}
    if(world?.room&&rooms.get(role)!==JSON.stringify(world.room)){await call('room',{room:world.room},p.token);rooms.set(role,JSON.stringify(world.room));}
    for(const signal of world?.routeSignals||[]){
     const encoded=JSON.stringify(signal);if(routes.get(role+signal.id)===encoded)continue;
@@ -58,7 +60,7 @@ try{
     if(voxlink)for(const c of sent.offer.candidates)c.host='198.51.100.1'; // Local fixture's wire-safe placeholder.
     await call('invites/transport',sent,p.token);routes.set(role+signal.id,encoded);
    }
-   const v=await call('sync',{name:p.account.name,uuid:p.account.uuid,kind:p.account.type,state:world?.room?'Hosting':'Playing'},p.token);if((relay||voxlink)&&role==='guest')for(const i of v.invites)i.room.lan=[];if(voxlink)for(const i of v.invites)for(const side of ['host','guest'])for(const c of i.room.transport?.[side]?.candidates||[])c.host='127.0.0.1';v.connected=true;v.updated=Date.now();await save(dir+'/unbox-social-view.json',v);
+   const v=await call('sync',{name:p.account.name,uuid:p.account.uuid,kind:p.account.type,state:world?.room?'Hosting':'Playing'},p.token);if((relay||voxlink)&&role==='guest')for(const i of v.invites)i.room.lan=[];if(voxlink)for(const i of v.invites)for(const side of ['host','guest'])for(const c of i.room.transport?.[side]?.candidates||[])c.host='127.0.0.1';if(lanFailure&&role==='guest')for(const i of v.invites)i.room.port=1;v.connected=true;v.updated=Date.now();await save(dir+'/unbox-social-view.json',v);
   }
   if(syncMods&&!restarted&&guestProcess?.result!=null){
    const request=await load(paths.guest+'/unbox-sync-request.json');if(request){
@@ -77,7 +79,9 @@ try{
   await new Promise(r=>setTimeout(r,500));
  }
  if(!hostDone||!guestDone)throw Error('Two-player test did not complete');
- const diagnostics=await load(paths.guest+'/logs/unbox-network.json');if(voxlink&&!diagnostics?.attempts.some(a=>a.route==='voxlink_udp'&&a.outcome==='joined'))throw Error('VoxLink did not carry the game session');if(relay&&!diagnostics?.attempts.some(a=>a.route==='relay'&&a.outcome==='joined'&&a.stages.some(s=>s.stage==='direct_exhausted')))throw Error('Automatic direct-to-relay fallback not verified');
- const result={publicChecks,host:hostDone,guest:guestDone,transport:relay?'Direct attempts exhausted, real e4mc public relay':voxlink?'VoxLink RUDP through loopback NAT fixture':'Direct LAN',...(syncMods?{sync:{firstDownload,rejoin:await load(paths.guest+'/logs/environment-sync.json')}}:{}),scope:'Two real clients on one Mac. Local Worker service; real Microsoft certificate proof for the Microsoft identity when selected. Public relay mode is not a two-household test.'};
+ const diagnostics=await load(paths.guest+'/logs/unbox-network.json');if(voxlink&&!recovery&&!diagnostics?.attempts.some(a=>a.route==='voxlink_udp'&&a.outcome==='joined'))throw Error('VoxLink did not carry the game session');if(relay&&!diagnostics?.attempts.some(a=>a.route==='relay'&&a.outcome==='joined'&&a.stages.some(s=>s.stage==='direct_exhausted')))throw Error('Automatic direct-to-relay fallback not verified');
+ if((recovery||lanFailure)&&!diagnostics?.attempts.some(a=>a.route==='relay'&&a.outcome==='joined'&&a.stages.filter(s=>s.stage==='direct_connection_failed').length===1))throw Error('Established-stream relay recovery not verified');
+ if(recovery&&diagnostics.attempts.some(a=>a.stages.filter(s=>s.stage==='direct_connection_failed').length>1))throw Error('More than one relay fallback in a join attempt');
+ const result={publicChecks,host:hostDone,guest:guestDone,transport:lanFailure?'LAN probe succeeds but game port refuses; automatic real e4mc relay':recovery?'Established VoxLink connection interrupted; fresh login over real e4mc relay':relay?'Direct attempts exhausted, real e4mc public relay':voxlink?'VoxLink RUDP through loopback NAT fixture':'Direct LAN',...(syncMods?{sync:{firstDownload,rejoin:await load(paths.guest+'/logs/environment-sync.json')}}:{}),scope:'Two real clients on one Mac. Local Worker service; real Microsoft certificate proof for the Microsoft identity when selected. Public relay mode is not a two-household test.'};
  await mkdir('.cache/network-tests',{recursive:true});await save('.cache/network-tests/'+run+'.json',result);console.log(JSON.stringify(result));
 }finally{stopping=true;for(const c of children)if(c.result==null)try{process.kill(-c.pid,'SIGTERM')}catch{};http.closeAllConnections();http.close();db.sql.close()}

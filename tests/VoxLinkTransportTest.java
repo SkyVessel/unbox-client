@@ -10,7 +10,7 @@ public final class VoxLinkTransportTest {
  public static void main(String[] args)throws Exception{
   check(!VoxLinkTransport.allowed("127.0.0.1",false)&&!VoxLinkTransport.allowed("::ffff:127.0.0.1",false)&&!VoxLinkTransport.allowed("192.168.1.1",false)&&!VoxLinkTransport.allowed("fe80::1",false)&&!VoxLinkTransport.allowed("fc00::1",false)&&!VoxLinkTransport.allowed("metadata.google.internal",false),"private, local, and DNS route targets rejected");
   check(VoxLinkTransport.allowed("2606:4700::1111",false)&&VoxLinkTransport.allowed("1.1.1.1",false),"public literal candidates accepted");
-  run(false);run(true);rejectAndExpire();lossy();
+  run(false);run(true);rejectAndExpire();lossy();lowMtuAndIdle();
   AtomicReference<JsonObject> offer=new AtomicReference<>();try(var s=new VoxLinkTransport.Session("invitation",UUID.randomUUID().toString(),"aa".repeat(32),false,0,()->null,offer::set,e->{},true,List.of())){s.start();while(offer.get()==null)Thread.sleep(10);s.close();check(s.result.get(2,TimeUnit.SECONDS)==null,"cancellation releases waiting candidate exchange");}
  }
  static void run(boolean tcp)throws Exception{
@@ -35,6 +35,26 @@ public final class VoxLinkTransportTest {
    var delayed=Executors.newSingleThreadScheduledExecutor();
    Thread.ofVirtual().start(()->{int n=0;while(!proxy.isClosed())try{var packet=new DatagramPacket(new byte[2048],2048);proxy.receive(packet);if(++n%17==0)continue;byte[] data=Arrays.copyOf(packet.getData(),packet.getLength());int target=packet.getPort()==portA?portB:portA;Runnable send=()->{try{proxy.send(new DatagramPacket(data,data.length,loop,target));}catch(IOException ignored){}};if(n%11==0)delayed.schedule(send,30,TimeUnit.MILLISECONDS);else send.run();if(n%19==0)send.run();}catch(IOException ignored){}});
    try{left.start();right.start();byte[] expected=new byte[512*1024];new Random(9).nextBytes(expected);var send=CompletableFuture.runAsync(()->{try{left.getOutputStream().write(expected);}catch(IOException e){throw new CompletionException(e);}});var read=CompletableFuture.supplyAsync(()->{try{return right.getInputStream().readNBytes(expected.length);}catch(IOException e){throw new CompletionException(e);}});check(Arrays.equals(expected,read.get(35,TimeUnit.SECONDS)),"VoxLink reliable UDP preserves bytes with loss, reordering and duplicates");send.get(5,TimeUnit.SECONDS);}finally{delayed.shutdownNow();}
+  }
+ }
+ static void lowMtuAndIdle()throws Exception{
+  var loop=InetAddress.getLoopbackAddress();var a=new DatagramSocket(0,loop);var b=new DatagramSocket(0,loop);
+  var max=new AtomicInteger();var heartbeats=new AtomicInteger();var dropped=new AtomicInteger();var dataFrames=new AtomicInteger();var fecFrames=new AtomicInteger();
+  try(var proxy=new DatagramSocket(0,loop);var left=new icu.wuhui.voxlink.network.ReliableUdpTransport(a,new InetSocketAddress(loop,proxy.getLocalPort()));var right=new icu.wuhui.voxlink.network.ReliableUdpTransport(b,new InetSocketAddress(loop,proxy.getLocalPort()))){
+   int pa=a.getLocalPort(),pb=b.getLocalPort();byte[] key=new byte[32];Arrays.fill(key,(byte)5);left.setAuthKey(key);right.setAuthKey(key);
+   var delay=Executors.newSingleThreadScheduledExecutor();
+   Thread.ofVirtual().start(()->{while(!proxy.isClosed())try{var p=new DatagramPacket(new byte[2048],2048);proxy.receive(p);max.accumulateAndGet(p.getLength(),Math::max);int type=p.getData()[2];if(type==8)heartbeats.incrementAndGet();if(type==3)dataFrames.incrementAndGet();if(type==9)fecFrames.incrementAndGet();if(p.getLength()>1200){dropped.incrementAndGet();continue;}byte[] data=Arrays.copyOf(p.getData(),p.getLength());int target=p.getPort()==pa?pb:pa;delay.schedule(()->{try{proxy.send(new DatagramPacket(data,data.length,loop,target));}catch(IOException ignored){}},30,TimeUnit.MILLISECONDS);}catch(IOException|RejectedExecutionException ignored){}});
+   try{
+    left.start();right.start();byte[] payload=new byte[256*1024];new Random(12).nextBytes(payload);
+    var send=CompletableFuture.runAsync(()->{try{left.getOutputStream().write(payload);}catch(IOException e){throw new CompletionException(e);}});
+    var read=CompletableFuture.supplyAsync(()->{try{return right.getInputStream().readNBytes(payload.length);}catch(IOException e){throw new CompletionException(e);}});
+    check(Arrays.equals(payload,read.get(20,TimeUnit.SECONDS)),"1200-byte UDP path with 60 ms RTT preserves large encrypted-stream bytes");send.get(5,TimeUnit.SECONDS);
+    check(dataFrames.get()>0&&fecFrames.get()>0&&max.get()<=1200&&dropped.get()==0,"DATA and FEC include authentication within the 1200-byte datagram budget");
+    int before=heartbeats.get();Thread.sleep(12000);int idle=heartbeats.get()-before;
+    check(idle>=20&&idle<=28,"Idle keepalives stay periodic, with no reply feedback loop (frames="+idle+")");
+    right.getOutputStream().write(new byte[]{42});var after=CompletableFuture.supplyAsync(()->{try{return left.getInputStream().read();}catch(IOException e){throw new CompletionException(e);}});
+    check(after.get(3,TimeUnit.SECONDS)==42,"Connection remains usable after idle beyond the old failure window");
+   }finally{delay.shutdownNow();}
   }
  }
  static JsonObject filter(JsonObject o,boolean tcp){JsonArray a=new JsonArray();for(var c:o.getAsJsonArray("candidates"))if(c.getAsJsonObject().get("kind").getAsString().equals(tcp?"tcp":"udp"))a.add(c);JsonObject f=new JsonObject();f.add("candidates",a);return f;}

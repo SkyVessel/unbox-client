@@ -7,6 +7,12 @@ import java.nio.file.*;
 import java.util.*;
 /** Opt-in isolated two-process gameplay test. Uses the normal invitation and login path. */
 final class PrivateWorldSmokeTest {
+ private static boolean interruptedStream;
+ static boolean interruptStreamForTest(Minecraft mc){
+  if(!Boolean.getBoolean("unbox.streamFailure")||!Boolean.getBoolean("unbox.voxlinkFixture")||!"guest".equals(System.getProperty("unbox.privateSmoke"))||interruptedStream)return false;
+  interruptedStream=true;checks.add("Authenticated P2P file check reached before injected stream failure");
+  VoxLinkNetwork.cancelJoin();return true;
+ }
  private static int step,ticks,badgeWait;private static boolean usedItem,guestReward;private static long begun;private static String inviteId;private static java.util.concurrent.CompletableFuture<Boolean> ownerProbe;private static final List<String> checks=new ArrayList<>();private static final List<Integer> latencies=new ArrayList<>();
  private static void finish(Minecraft mc)throws Exception{Screenshot.grab(mc.gameDirectory,"private-world.png",mc.getMainRenderTarget(),1,c->{});Files.writeString(mc.gameDirectory.toPath().resolve("logs/private-world-smoke.json"),new Gson().toJson(Map.of("passed",checks.size(),"checks",checks,"latencyMs",latencies)));mc.stop();}
  static void tick(Minecraft mc){String role=System.getProperty("unbox.privateSmoke","");if(role.isEmpty())return;if(begun==0)begun=System.currentTimeMillis();if(System.currentTimeMillis()-begun>300000)throw new IllegalStateException("Private world test timeout: "+SocialBridge.message);if(++ticks%20!=0)return;mc.getFramerateLimitTracker().onInputReceived();if(role.equals("guest")&&mc.getConnection()!=null){var info=mc.getConnection().getPlayerInfo(mc.getUser().getProfileId());if(info!=null&&info.getLatency()>0)latencies.add(info.getLatency());}try{
@@ -24,6 +30,7 @@ final class PrivateWorldSmokeTest {
    if(step==3&&Files.exists(mc.gameDirectory.toPath().resolve("logs/guest-complete.json"))){if(!ownerProbe.join())throw new IllegalStateException("Owner spoof was not rejected");checks.add("Raw remote client cannot impersonate the world owner identity");checks.add("Guest received world data and completed gameplay ticks");if(Boolean.getBoolean("unbox.syncFixture")){if(!guestReward)throw new IllegalStateException("Guest mod reward not present on server");checks.add("Host server confirms guest's mod item use and emerald reward");}SocialBridge.stopSharing();checks.add("Host can stop sharing after actual guest login");finish(mc);step=3;}
   }else{
    if(Boolean.getBoolean("unbox.syncResume")&&step==0)step=3;
+   if((Boolean.getBoolean("unbox.streamFailure")||Boolean.getBoolean("unbox.directFailure"))&&step==0&&!SocialBridge.rows("invites").isEmpty()){inviteId=SocialBridge.text(SocialBridge.rows("invites").getFirst(),"id");SocialBridge.join(inviteId);step=3;}
    if(step==0&&!SocialBridge.rows("invites").isEmpty()&&SocialBridge.flag(SocialBridge.view,"connected")){JsonObject invite=SocialBridge.rows("invites").getFirst();inviteId=SocialBridge.text(invite,"id");String secret=SocialBridge.text(invite,"join_secret");invite.addProperty("join_secret","0".repeat(64));SocialBridge.join(inviteId);invite.addProperty("join_secret",secret);step=1;}
    else if(step==1&&mc.screen instanceof DisconnectedScreen){checks.add("Wrong invitation secret is rejected by real encrypted login");step=2;}
    else if(step==2){SocialBridge.join(inviteId);step=3;}

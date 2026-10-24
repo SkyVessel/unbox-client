@@ -188,6 +188,8 @@ if os.environ.get('UNBOX_TOGGLE_ONLY')=='1':args.insert(1,'-Dunbox.toggleOnly=tr
 if mode in ('home','private-guest'):args=args[:-2]
 if mode.startswith('private-'):
     if os.environ.get('UNBOX_VOXLINK_FIXTURE')=='1':args.insert(1,'-Dunbox.voxlinkFixture=true')
+    if os.environ.get('UNBOX_STREAM_FAILURE')=='1':args.insert(1,'-Dunbox.streamFailure=true')
+    if os.environ.get('UNBOX_DIRECT_FAILURE')=='1':args.insert(1,'-Dunbox.directFailure=true')
     fixture=json.loads(os.environ['UNBOX_TEST_PROFILE'])
     args.insert(1,'-Dunbox.privateSmoke='+mode.removeprefix('private-'))
     args.insert(1,'-Dunbox.privateSmokeTicks='+os.environ.get('UNBOX_PRIVATE_TEST_TICKS','100'))

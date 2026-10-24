@@ -40,9 +40,10 @@ public class ReliableUdpTransport implements AutoCloseable {
    private static final int FEC_GROUP_SIZE = 4;
    private static final int HEADER_SIZE = 11;
    private static final int PAYLOAD_LEN_SIZE = 2;
-   private static final int MAX_PAYLOAD = 1400;
-   // 保 FEC 帧(22头+块+4MAC)不超节点 1400
-   private static final int TURN_MAX_SEND_CHUNK = 1374;
+   // Keep DATA and FEC below a 1200-byte UDP payload, including authentication.
+   private static final int MAX_PAYLOAD = 1174;
+   // FEC: 22-byte header + payload + 4-byte MAC <= 1200.
+   private static final int TURN_MAX_SEND_CHUNK = 1174;
    private static final int WINDOW_SIZE = 64;
    private static final long RETRANSMIT_TIMEOUT_MS = 800L;
    private static final int KEEPALIVE_INTERVAL_S = 1;
@@ -466,7 +467,7 @@ public class ReliableUdpTransport implements AutoCloseable {
    /** 按当前主路径取发送分块上限 */
    private int currentMaxSendChunk() {
       UdpPath pri = this.primaryPath;
-      return pri != null && pri.codec != null ? TURN_MAX_SEND_CHUNK : MAX_PAYLOAD;
+      return (pri != null && pri.codec != null ? TURN_MAX_SEND_CHUNK : MAX_PAYLOAD) - (this.muxEnabled ? 1 : 0);
    }
 
    public void sendVoice(byte[] payload) {
@@ -721,7 +722,7 @@ public class ReliableUdpTransport implements AutoCloseable {
                         LOGGER.info("[ReliableUdp] writeState restored to WRITABLE");
                      }
 
-                     this.sendKeepalive();
+                     // Both peers send periodic keepalives; replying here creates an echo loop.
                      break;
                   case 9:
                      this.handleFecXor(readInt32(buf, 3), buf, packetLen);

@@ -12,6 +12,8 @@ public lobby, account system, mod synchronization or external binary downloader.
 Local modifications:
 - StunProbe uses an SLF4J logger directly and omits persistent STUN-cache writes.
 - ReliableUdpTransport omits upstream LogUploadManager callbacks. No logs are uploaded.
+- Unbox caps DATA/FEC frames at 1200 UDP bytes including authentication, and uses
+  periodic keepalives without echoing received keepalives.
 - UdpHolePuncher omits P2PBridge's global timeout registry. Unbox owns every puncher
   and calls cancel() when it loses, times out, or its invitation/world is closed.
 

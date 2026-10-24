@@ -16,7 +16,7 @@ final class JoinDecisionScreen extends Screen {
  @Override protected void init(){clearWidgets();int y=height/2+40;addRenderableWidget(new SocialScreenButton(width/2-130,y,160,"Restart and join",()->answer(true)));addRenderableWidget(new SocialScreenButton(width/2+36,y,94,"Cancel",()->answer(false)));}
  @Override public void onClose(){answer(false);}
  @Override public boolean isPauseScreen(){return false;}
- @Override public void tick(){var p=response;if(p!=null&&p.isDone()&&!answered){answer(false);}}
+ @Override public void tick(){var p=response;if(p!=null&&p.isDone()&&!answered){answered=true;minecraft.setScreen(parent);}}
  @Override public void extractBackground(GuiGraphicsExtractor g,int x,int y,float d){if(minecraft.level==null)extractPanorama(g,d);extractBlurredBackground(g);}
  @Override public void extractRenderState(GuiGraphicsExtractor g,int x,int y,float d){PanelStyle.center(g,getTitle().getString(),width/2,height/2-58,PanelStyle.TEXT);int yy=height/2-32;for(String line:lines){for(var part:font.split(Component.literal(line),Math.min(510,width-32))){g.centeredText(font,part,width/2,yy,PanelStyle.MUTED);yy+=12;}}super.extractRenderState(g,x,y,d);}
 }
