@@ -1,9 +1,14 @@
 import {feedback} from './feedback.mjs';
+import {auth} from './auth.mjs';
 // Mounted before Printoria's existing handler. Every object is confined to unbox/.
 export async function unbox(request, env) {
   const url = new URL(request.url);
   if (url.pathname === '/unbox') return Response.redirect(url.origin + '/unbox/' + url.search, 308);
   if (!url.pathname.startsWith('/unbox/')) return null;
+  if (url.pathname.startsWith('/unbox/api/auth/')) {
+    try { return await auth(request, env); }
+    catch { return new Response(JSON.stringify({error: 'Sign-in is temporarily unavailable. Please try again.'}), {status: 503, headers: {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}}); }
+  }
   if (url.pathname === '/unbox/api/feedback') {
     try { return await feedback(request, env); }
     catch (error) { console.error('Unbox feedback request failed', error); return new Response(JSON.stringify({error: 'Could not load feedback. Please try again.'}), {status: 503, headers: {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}}); }
@@ -20,13 +25,18 @@ export async function unbox(request, env) {
     if (!target.startsWith(url.origin + '/unbox/releases/')) return new Response('Release unavailable', {status: 503});
     return new Response(null, {status: 302, headers: {Location: target, 'Cache-Control': 'no-store'}});
   }
-  const key = 'unbox/' + (path || 'index.html');
+  const key = 'unbox/' + (path === 'auth/callback' ? 'auth-callback.html' : path || 'index.html');
   const head = await env.FILES.head(key);
   if (!head) return new Response('Not found', {status: 404});
   const headers = new Headers({'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'Accept-Ranges': 'bytes', ETag: head.httpEtag});
   head.writeHttpMetadata(headers);
   const versioned = /^releases\/v\d+\.\d+\.\d+\//.test(path);
   headers.set('Cache-Control', versioned ? 'public, max-age=31536000, immutable' : 'no-cache');
+  if (path === 'auth/callback') {
+    headers.set('Cache-Control', 'no-store');
+    headers.set('Referrer-Policy', 'no-referrer');
+    headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://login.microsoftonline.com; base-uri 'none'; frame-ancestors 'none'");
+  }
   if (versioned && /\.(exe|gz)$/.test(path)) headers.set('Content-Disposition', `attachment; filename="${path.split('/').pop()}"`);
   if (request.headers.get('If-None-Match') === head.httpEtag) return new Response(null, {status: 304, headers});
   let range;

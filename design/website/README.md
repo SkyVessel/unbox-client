@@ -2,7 +2,7 @@
 
 ## Current deployment — 2026-10-24
 
-The approved design is live at https://printoria.printoria-studio.workers.dev/unbox/. Windows and macOS download buttons serve signed 0.2.21 packages from Cloudflare. The public feedback board uses Cloudflare D1 and supports optional names, posting and pagination in both themes. Production setup and verification are documented in `../../deploy/unbox/README.md` and `../../docs/72-Cloudflare网站与更新迁移.md`.
+The approved design is live at https://printoria.printoria-studio.workers.dev/unbox/. Windows and macOS download buttons serve signed 0.2.21 packages from Cloudflare. The public feedback board uses Cloudflare D1 and supports Microsoft sign-in, optional public names, posting and pagination in both themes. Each post retains the Microsoft contact email privately for studio replies; public API responses never include it. Production setup and verification are documented in `../../deploy/unbox/README.md` and `../../docs/72-Cloudflare网站与更新迁移.md`.
 
 The notes below preserve the earlier prototype iterations; their placeholder/download status applies only to those iterations. The local Python preview renders the interface but does not serve the Cloudflare feedback API.
 

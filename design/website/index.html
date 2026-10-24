@@ -11,7 +11,7 @@
   <nav class="nav" aria-label="Main navigation">
     <a href="#" class="brand"><span class="brand-icon"><img class="brand-dark" src="assets/unbox-mark-dark.svg" alt=""><img class="brand-light" src="assets/unbox-mark-light.svg" alt=""></span><span>UNBOX<small>CLIENT</small></span></a>
     <div class="nav-links"><a href="#features">Features</a><a href="#together">Play together</a><a href="#feedback">Feedback</a><a href="#download">Download</a></div>
-    <div class="nav-actions"><button id="theme" aria-label="Switch color theme">◐</button><a class="button nav-download download-wipe" href="#download"><span>DOWNLOAD</span></a></div>
+    <div class="nav-actions"><button id="account" type="button" aria-label="Sign in with Microsoft">Sign in</button><button id="theme" aria-label="Switch color theme">◐</button><a class="button nav-download download-wipe" href="#download"><span>DOWNLOAD</span></a></div>
   </nav>
   <section class="hero" aria-label="Welcome to Unbox">
     <div class="hero-scenery" aria-hidden="true"><img class="active" src="../../app/public/assets/autumn-ravine.png" alt=""><img src="../../app/public/assets/alpine-evening.png" alt=""><img src="../../app/public/assets/underwater-ruins.png" alt=""></div>
@@ -36,12 +36,12 @@
     <div class="section-heading"><div><p class="eyebrow">HELP SHAPE UNBOX</p><h2 id="feedback-title">YOUR FEEDBACK.</h2></div><p>Share an idea or tell us what could work better.</p></div>
     <div class="feedback-layout">
       <form id="feedback-form" class="feedback-form">
-        <h3>LEAVE A MESSAGE.</h3>
-        <label for="feedback-name">Name <span>(optional)</span></label><input id="feedback-name" name="name" maxlength="32" autocomplete="nickname" placeholder="Anonymous">
-        <label for="feedback-message">Your message</label><textarea id="feedback-message" name="message" minlength="10" maxlength="1200" rows="6" required placeholder="What would you like to see in Unbox?" aria-describedby="feedback-help feedback-count"></textarea>
-        <div class="feedback-hint"><span id="feedback-help">Posts are public.</span><span id="feedback-count">0 / 1,200</span></div>
+        <h3>LEAVE A MESSAGE.</h3><div id="feedback-account" class="feedback-account" aria-live="polite">Checking sign-in…</div>
+        <label for="feedback-name">Public name <span>(optional)</span></label><input id="feedback-name" name="name" maxlength="32" disabled autocomplete="nickname" placeholder="Anonymous">
+        <label for="feedback-message">Your message</label><textarea id="feedback-message" name="message" minlength="10" disabled maxlength="1200" rows="6" required placeholder="What would you like to see in Unbox?" aria-describedby="feedback-help feedback-count"></textarea>
+        <div class="feedback-hint"><span id="feedback-help">Messages are public. Your email is kept privately for replies.</span><span id="feedback-count">0 / 1,200</span></div>
         <div class="feedback-trap" aria-hidden="true"><label for="feedback-website">Website</label><input id="feedback-website" name="website" tabindex="-1" autocomplete="off"></div>
-        <button type="submit" class="feedback-submit">Post message</button>
+        <button type="submit" class="feedback-submit" disabled>Post message</button>
         <p id="feedback-status" role="status" aria-live="polite"></p>
       </form>
       <div class="feedback-board" aria-label="Community messages"><div class="feedback-board-heading"><h3>FROM THE COMMUNITY.</h3><span>Ideas & experiences</span></div><div id="feedback-list" aria-live="polite"><p class="feedback-empty">Loading messages…</p></div><button id="feedback-more" type="button" hidden>Load more</button><button id="feedback-retry" type="button" hidden>Try again</button></div>
@@ -52,4 +52,5 @@
 </main>
 <script src="website.js"></script>
 <script src="feedback.js"></script>
+<script src="auth.js"></script>
 </body></html>

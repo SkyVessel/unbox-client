@@ -10,6 +10,8 @@
   const seen = new Set();
   const count = () => { document.querySelector('#feedback-count').textContent = `${message.value.length.toLocaleString('en')} / 1,200`; };
   message.addEventListener('input', count);
+  try { const draft = JSON.parse(sessionStorage.getItem('unbox-feedback-draft') || 'null'); if (draft) { form.elements.name.value = draft.name || ''; message.value = draft.message || ''; count(); sessionStorage.removeItem('unbox-feedback-draft'); } } catch {}
+
   function render(post, first = false) {
     if (seen.has(post.id)) return;
     seen.add(post.id);
@@ -49,10 +51,11 @@
     try {
       const response = await fetch('/unbox/api/feedback', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name: form.elements.name.value, message: message.value, website: form.elements.website.value})});
       const data = await response.json();
+      if (response.status === 401) document.dispatchEvent(new Event('unbox-auth-expired'));
       if (!response.ok) throw new Error(data.error || 'Could not post your message. Please try again.');
       render(data.post, true); message.value = ''; count(); status.textContent = 'Message posted. Thank you for your feedback.';
     } catch (error) { status.textContent = error.message; }
-    finally { posting = false; submit.disabled = false; submit.textContent = 'Post message'; }
+    finally { posting = false; submit.disabled = message.disabled; submit.textContent = 'Post message'; }
   });
   load();
 })();

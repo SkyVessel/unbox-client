@@ -1,3 +1,4 @@
+import {getSession} from './auth.mjs';
 const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(body), {status, headers: {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extra}});
 
 export function validateFeedback(body) {
@@ -26,6 +27,8 @@ export async function feedback(request, env) {
   }
   if (request.method !== 'POST') return json({error: 'Method not allowed.'}, 405, {Allow: 'GET, POST'});
   if (request.headers.get('Origin') !== url.origin) return json({error: 'Please post from the Unbox website.'}, 403);
+  const user = await getSession(request, env);
+  if (!user) return json({error: 'Sign in with Microsoft before posting.'}, 401);
   if (!request.headers.get('Content-Type')?.startsWith('application/json')) return json({error: 'Expected a message.'}, 415);
   // Bound actual bytes, including chunked bodies, before parsing user input.
   const reader = request.body?.getReader();
@@ -50,7 +53,7 @@ export async function feedback(request, env) {
   const actor = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
   const now = Date.now(); const id = crypto.randomUUID();
   // One statement makes the rate check and insertion atomic.
-  const result = await env.DB.prepare('INSERT INTO unbox_feedback (id,name,message,created_at,actor_hash) SELECT ?,?,?,?,? WHERE (SELECT COUNT(*) FROM unbox_feedback WHERE actor_hash=? AND created_at>?) < 3').bind(id, fields.name, fields.message, now, actor, actor, now - 3600000).run();
+  const result = await env.DB.prepare('INSERT INTO unbox_feedback (id,name,message,created_at,actor_hash,account_id,contact_email) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM unbox_feedback WHERE (actor_hash=? OR account_id=?) AND created_at>?) < 3').bind(id, fields.name, fields.message, now, actor, user.account_id, user.email, actor, user.account_id, now - 3600000).run();
   if (!result.meta.changes) return json({error: 'You have posted 3 messages this hour. Please try again later.'}, 429, {'Retry-After': '3600'});
   return json({post: {id, ...fields, created_at: now}}, 201);
 }
