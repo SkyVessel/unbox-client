@@ -122,7 +122,12 @@ jobs:
           $exe = Join-Path $fixture 'unbox-client.exe'
           if (!(Test-Path $exe)) { throw 'Previous application missing' }
           if ((Get-Item $exe).VersionInfo.ProductVersion -notlike '0.2.20*') { throw 'Wrong previous version' }
-          cargo run --locked --manifest-path src-tauri/Cargo.toml --example cloudflare-update-smoke -- $exe 2>&1 | Tee-Object -FilePath $log
+          # Cargo examples do not inherit the app binary's Windows activation manifest.
+          # https://github.com/tauri-apps/tauri/blob/dev/examples/api/src-tauri/build.rs
+          $manifest = (Resolve-Path 'src-tauri/examples/windows-app-manifest.xml').Path
+          cargo rustc --locked --manifest-path src-tauri/Cargo.toml --example cloudflare-update-smoke -- -C 'link-arg=/MANIFEST:EMBED' -C "link-arg=/MANIFESTINPUT:$manifest"
+          if ($LASTEXITCODE -ne 0) { throw 'Updater harness build failed' }
+          & 'src-tauri/target/debug/examples/cloudflare-update-smoke.exe' $exe 2>&1 | Tee-Object -FilePath $log
           if ($LASTEXITCODE -ne 0) { throw 'Updater harness failed' }
           $deadline = (Get-Date).AddMinutes(3)
           do {
