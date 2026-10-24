@@ -1,0 +1,27 @@
+{
+  "node": {
+    "passed": 70,
+    "failed": 0
+  },
+  "macOSRust": {
+    "passed": 81,
+    "failed": 0,
+    "ignored": 2
+  },
+  "ignoredRustTests": "Explicit external-network tests; Modrinth API was verified during the preceding implementation task.",
+  "gameRuntime": "Six environments \u00d7 32 checks before version bump. All release .class bytes match those tested builds.",
+  "macOS": "Apple Silicon; ad-hoc codesign and updater signature verified; 46 resources checked.",
+  "windows": {
+    "passed": 82,
+    "failed": 0,
+    "ignored": 3,
+    "guiSubsystem": true,
+    "backgroundNoConsoleTests": 2,
+    "verifiedResources": 46,
+    "updaterSignature": true,
+    "tamperedPayloadRejected": true,
+    "workflow": "https://github.com/SkyVessel/unbox-client/actions/runs/40055159667",
+    "gameplay": "Not tested on Windows"
+  },
+  "userInteraction": "No visible launcher/game started during release validation."
+}

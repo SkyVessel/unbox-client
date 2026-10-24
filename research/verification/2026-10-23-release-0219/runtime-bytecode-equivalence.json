@@ -1,0 +1,32 @@
+[
+  {
+    "jar": "unbox-client.jar",
+    "unchangedClasses": 274,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-fabric261-gated/logs/replacement-smoke.json"
+  },
+  {
+    "jar": "unbox-client-26.1.2.jar",
+    "unchangedClasses": 274,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-fabric2612-gated/logs/replacement-smoke.json"
+  },
+  {
+    "jar": "unbox-client-26.3.jar",
+    "unchangedClasses": 274,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-fabric263-gated/logs/replacement-smoke.json"
+  },
+  {
+    "jar": "unbox-client-neoforge.jar",
+    "unchangedClasses": 282,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-neoforge261-gated/logs/replacement-smoke.json"
+  },
+  {
+    "jar": "unbox-client-neoforge-26.1.2.jar",
+    "unchangedClasses": 282,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-neoforge2612-gated/logs/replacement-smoke.json"
+  },
+  {
+    "jar": "unbox-client-neoforge-26.3.jar",
+    "unchangedClasses": 282,
+    "runtimeEvidence": ".cache/benchmarks/public-replacement-neoforge263-gated/logs/replacement-smoke.json"
+  }
+]
