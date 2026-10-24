@@ -15,7 +15,7 @@ def asset(match):
     shutil.copy2(path, dest)
     return 'assets/' + path.name
 
-for name in ['index.html', 'website.css', 'website.js', 'contours.glsl']:
+for name in ['index.html', 'website.css', 'website.js', 'feedback.js', 'contours.glsl']:
     text = (source / name).read_text()
     if name == 'website.css':
         text = re.sub(r'\.pen-canvas \.contours\{[^}]*\}\.pen-canvas\[data-theme=light\] \.contours\{[^}]*\}', '', text)

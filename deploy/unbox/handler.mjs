@@ -1,8 +1,13 @@
+import {feedback} from './feedback.mjs';
 // Mounted before Printoria's existing handler. Every object is confined to unbox/.
 export async function unbox(request, env) {
   const url = new URL(request.url);
   if (url.pathname === '/unbox') return Response.redirect(url.origin + '/unbox/' + url.search, 308);
   if (!url.pathname.startsWith('/unbox/')) return null;
+  if (url.pathname === '/unbox/api/feedback') {
+    try { return await feedback(request, env); }
+    catch (error) { console.error('Unbox feedback request failed', error); return new Response(JSON.stringify({error: 'Could not load feedback. Please try again.'}), {status: 503, headers: {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}}); }
+  }
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', {status: 405, headers: {Allow: 'GET, HEAD'}});
   let path;
   try { path = decodeURIComponent(url.pathname.slice(7)); } catch { return new Response('Not found', {status: 404}); }
