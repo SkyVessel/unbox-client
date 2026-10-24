@@ -2,13 +2,14 @@ use crate::Runtime;
 use serde_json::{json,Value};
 use std::{sync::Mutex,time::Duration};
 use tauri_plugin_updater::{Update,UpdaterExt};
-const REPO:&str="https://github.com/SkyVessel/unbox-client/releases/download/";
+const RELEASES:&str="https://printoria.printoria-studio.workers.dev/unbox/releases/";
+const MANIFEST:&str="https://printoria.printoria-studio.workers.dev/unbox/releases/latest.json";
 #[derive(Default)] pub struct State { pending:tokio::sync::Mutex<Option<Update>>, progress:Mutex<Value> }
-fn trusted_asset(url:&str)->bool {url.starts_with(REPO)&&url.len()>REPO.len()&&!url.contains(['?','#','\\'])}
-fn manifest(release:&Value)->Result<String,String>{
- if release["draft"]==true||release["prerelease"]==true{return Err("No stable release is published yet".into())}
- let url=release["assets"].as_array().and_then(|assets|assets.iter().find(|a|a["name"]=="latest.json")).and_then(|a|a["browser_download_url"].as_str()).ok_or("This release has no signed updater package yet")?;
- if !trusted_asset(url){return Err("Untrusted update manifest location".into())}Ok(url.into())
+fn trusted_asset(url:&str)->bool {
+ let Some(path)=url.strip_prefix(RELEASES) else{return false};
+ let Some((version,file))=path.split_once('/') else{return false};
+ version.starts_with('v')&&version[1..].split('.').count()==3&&version[1..].split('.').all(|p|!p.is_empty()&&p.bytes().all(|c|c.is_ascii_digit()))
+ &&!file.is_empty()&&file.bytes().all(|c|c.is_ascii_alphanumeric()||b"._-".contains(&c))&&(file.ends_with(".app.tar.gz")||file.ends_with(".exe"))
 }
 fn reserve(job:&Mutex<Value>)->Result<Value,String>{let mut job=job.lock().unwrap();if job["busy"]==true{return Err("Close Minecraft and wait for downloads to finish before installing".into())}let previous=job.clone();*job=json!({"busy":true,"stage":"Updating Unbox"});Ok(previous)}
 fn install_error(error:&tauri_plugin_updater::Error)->String{
@@ -24,13 +25,8 @@ pub fn update_status(state:tauri::State<State>,app:tauri::AppHandle)->Value{let 
 pub async fn check_update(state:tauri::State<'_,State>,app:tauri::AppHandle)->Result<Value,String>{
  let mut pending=state.pending.try_lock().map_err(|_|"An update operation is already in progress")?;*pending=None;
  let result=async{
-  let r=reqwest::Client::builder().no_proxy().timeout(Duration::from_secs(20)).user_agent("Unbox-Client-Updater").build().map_err(|_|"Could not start update check")?.get("https://api.github.com/repos/SkyVessel/unbox-client/releases/latest").send().await.map_err(|_|"Could not reach GitHub. Check your connection and retry.")?;
-  if r.status()==reqwest::StatusCode::NOT_FOUND{return Ok(json!({"status":"unpublished"}))}
-  if r.status()==reqwest::StatusCode::FORBIDDEN||r.status()==reqwest::StatusCode::TOO_MANY_REQUESTS{return Err("GitHub is limiting requests. Try again later.".into())}
-  if !r.status().is_success(){return Err("GitHub could not check updates. Try again later.".into())}
-  let release:Value=r.json().await.map_err(|_|"Invalid GitHub release response")?;let url=manifest(&release)?;
-  let update=app.updater_builder().no_proxy().timeout(Duration::from_secs(30)).endpoints(vec![url.parse().map_err(|_|"Invalid update URL")?]).map_err(|_|"Invalid updater configuration")?.build().map_err(|_|"Could not configure updater")?.check().await.map_err(|_|"Could not read the signed update manifest. Retry later.")?;
-  if let Some(mut u)=update{if !trusted_asset(u.download_url.as_str())||u.signature.is_empty(){return Err("Update package is not from the configured release repository".into())}u.timeout=Some(Duration::from_secs(300));let v=json!({"status":"available","version":u.version,"notes":u.body.as_deref().unwrap_or("")});*pending=Some(u);Ok(v)}else{Ok(json!({"status":"current"}))}
+  let update=app.updater_builder().no_proxy().timeout(Duration::from_secs(30)).endpoints(vec![MANIFEST.parse().map_err(|_|"Invalid update URL")?]).map_err(|_|"Invalid updater configuration")?.build().map_err(|_|"Could not configure updater")?.check().await.map_err(|_|"Could not read the signed update manifest. Retry later.")?;
+  if let Some(mut u)=update{if !trusted_asset(u.download_url.as_str())||u.signature.is_empty(){return Err("Update package is not from the configured download server".into())}u.timeout=Some(Duration::from_secs(300));let v=json!({"status":"available","version":u.version,"notes":u.body.as_deref().unwrap_or("")});*pending=Some(u);Ok(v)}else{Ok(json!({"status":"current"}))}
  }.await;
  let view=match &result{Ok(v)=>v.clone(),Err(e)=>json!({"status":"error","error":e})};*state.progress.lock().unwrap()=view;result
 }
@@ -54,10 +50,11 @@ pub async fn install_update(state:tauri::State<'_,State>,rt:tauri::State<'_,Runt
 }
 #[cfg(test)]mod tests{
  use super::*;
- #[test]fn release_assets_are_confined_to_our_repository(){
-  let valid=json!({"assets":[{"name":"latest.json","browser_download_url":format!("{REPO}v0.2.0/latest.json")}]});assert!(manifest(&valid).is_ok());
-  for url in ["http://github.com/SkyVessel/unbox-client/releases/download/v1/latest.json","https://github.com/other/repo/releases/download/v1/latest.json","https://github.com.evil.test/SkyVessel/unbox-client/releases/download/v1/latest.json"]{assert!(manifest(&json!({"assets":[{"name":"latest.json","browser_download_url":url}]})).is_err())}
-  assert!(manifest(&json!({"assets":[]})).is_err());assert!(manifest(&json!({"draft":true,"assets":valid["assets"]})).is_err());
+ #[test]fn release_assets_are_confined_to_cloudflare(){
+  assert!(trusted_asset(&format!("{RELEASES}v0.2.21/Unbox.Client_0.2.21_aarch64.app.tar.gz")));
+  assert!(trusted_asset(&format!("{RELEASES}v0.2.21/Unbox.Client_0.2.21_windows-x64-setup.exe")));
+  for path in ["../bad.exe","v1/evil.exe","v1.2.3/../bad.exe","v1.2.3/a.exe?x=1","v1.2.3/a.exe#x","v1.2.3/%2e%2e.exe","v1.2.3/a/b.exe","v1.2.3/","v1.2.3/a.json"]{assert!(!trusted_asset(&format!("{RELEASES}{path}")),"{path}");}
+  for url in ["https://github.com/SkyVessel/unbox-client/releases/download/v1.2.3/a.exe","http://printoria.printoria-studio.workers.dev/unbox/releases/v1.2.3/a.exe","https://printoria.printoria-studio.workers.dev.evil.test/unbox/releases/v1.2.3/a.exe"]{assert!(!trusted_asset(url));}
  }
  #[test]fn updater_cannot_replace_active_game_job_or_race_with_launch(){let job=Mutex::new(json!({"busy":true,"stage":"Playing","profileId":"test"}));let before=job.lock().unwrap().clone();assert!(reserve(&job).is_err());assert_eq!(*job.lock().unwrap(),before);*job.lock().unwrap()=json!({"busy":false});let previous=reserve(&job).unwrap();assert_eq!(previous["busy"],false);assert!(reserve(&job).is_err());}
  #[test]fn install_failure_preserves_the_actual_cause(){

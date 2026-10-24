@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Unbox Client",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "identifier": "dev.unbox.client",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -44,7 +44,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVFMTc2REMxNEE5RjY0NkIKUldSclpKOUt3VzBYN2xlajdWVGFpSC9zNkU3SnVDS0xTLytJNHJmQzVjSHRaa0lSNHZDc29PUHAK",
       "endpoints": [
-        "https://github.com/SkyVessel/unbox-client/releases/latest/download/latest.json"
+        "https://printoria.printoria-studio.workers.dev/unbox/releases/latest.json"
       ]
     }
   }
