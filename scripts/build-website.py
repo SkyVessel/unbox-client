@@ -1,10 +1,10 @@
 """Package only the approved public landing page and its referenced assets."""
 from pathlib import Path
-import re, shutil
+import re, shutil, sys
 
 root = Path(__file__).resolve().parents[1]
 source = root / 'design/website'
-out = root / '.cache/website-public'
+out = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root / '.cache/website-public'
 out.mkdir(parents=True, exist_ok=True)
 (out / 'assets').mkdir(exist_ok=True)
 
