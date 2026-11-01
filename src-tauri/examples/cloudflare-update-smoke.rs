@@ -16,7 +16,10 @@ fn main() {
     context.config_mut().app.windows.clear();
     // Model an installed earlier version without changing production metadata.
     if !current { context.package_info_mut().version = "0.2.21".parse().unwrap(); }
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+    #[cfg(target_os="macos")]
+    let builder = builder.activate_ignoring_other_apps(false);
+    let mut application = builder
         .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(move |app| {
             let app = app.handle().clone();
@@ -48,5 +51,8 @@ fn main() {
             });
             Ok(())
         })
-        .run(context).expect("Updater test runtime failed");
+        .build(context).expect("Updater test runtime failed");
+    #[cfg(target_os="macos")]
+    application.set_activation_policy(tauri::ActivationPolicy::Prohibited);
+    application.run(|_, _| {});
 }

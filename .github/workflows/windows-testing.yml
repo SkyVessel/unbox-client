@@ -127,7 +127,7 @@ jobs:
           $manifest = (Resolve-Path 'src-tauri/examples/windows-app-manifest.xml').Path
           cargo rustc --locked --manifest-path src-tauri/Cargo.toml --example cloudflare-update-smoke -- -C 'link-arg=/MANIFEST:EMBED' -C "link-arg=/MANIFESTINPUT:$manifest"
           if ($LASTEXITCODE -ne 0) { throw 'Updater harness build failed' }
-          & 'src-tauri/target/debug/examples/cloudflare-update-smoke.exe' $exe 2>&1 | Tee-Object -FilePath $log
+          & 'src-tauri/target/debug/examples/cloudflare-update-smoke.exe' $exe 'https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.22/latest.json' 2>&1 | Tee-Object -FilePath $log
           if ($LASTEXITCODE -ne 0) { throw 'Updater harness failed' }
           $deadline = (Get-Date).AddMinutes(3)
           do {
