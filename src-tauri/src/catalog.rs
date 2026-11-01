@@ -908,11 +908,81 @@ mod tests {
         fn plan(&self, entries: Vec<Value>) -> Value {
             json!({"token":uuid::Uuid::new_v4().to_string(),"profileId":self.id,"profile":profile(&self.rt,&self.id).unwrap(),"snapshot":snapshot(&profile_dir(&self.rt,&self.id).unwrap()).unwrap(),"entries":entries})
         }
+        fn archive_entry(&self, name: &str, descriptors: &[(&str, &[u8])]) -> Value {
+            let mut z = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
+            for (path, bytes) in descriptors {
+                z.start_file(*path, zip::write::SimpleFileOptions::default()).unwrap();
+                z.write_all(bytes).unwrap();
+            }
+            self.cached_archive(name, &z.finish().unwrap().into_inner())
+        }
+        fn cached_archive(&self, name: &str, bytes: &[u8]) -> Value {
+            let hash = format!("{:x}", Sha512::digest(bytes));
+            atomic(&self.rt.root.join("catalog-cache").join(&hash), bytes).unwrap();
+            json!({"kind":"Mods","title":"WorldEdit","projectId":"worldedit","versionId":"7.4.6","sha512":hash,"file":{"filename":name,"size":bytes.len()}})
+        }
     }
     impl Drop for Fixture {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.rt.root);
         }
+    }
+    #[test]
+    fn multiline_existing_mod_and_universal_jar_install_without_rewriting_archives() {
+        let f = Fixture::new();
+        let existing = f.archive_entry("spatial.jar", &[("fabric.mod.json", b"{\"id\":\"spatial-gui\",\"name\":\"Spatial GUI\",\"description\":\"First line\nSecond line\"}")]);
+        let game = profile_dir(&f.rt, &f.id).unwrap();
+        let bytes = fs::read(f.rt.root.join("catalog-cache").join(field(&existing,"sha512").unwrap())).unwrap();
+        atomic(&game.join("mods/spatial.jar"), &bytes).unwrap();
+        let entry = f.archive_entry("worldedit.jar", &[
+            ("fabric.mod.json", br#"{"id":"worldedit","provides":["worldedit","worldedit_alias"]}"#),
+            ("META-INF/neoforge.mods.toml", b"[[mods]]\nmodId='worldedit'\n")]);
+        let original = fs::read(f.rt.root.join("catalog-cache").join(field(&entry,"sha512").unwrap())).unwrap();
+        commit(&f.rt, &f.plan(vec![entry.clone()])).unwrap();
+        assert_eq!(fs::read(game.join("mods/worldedit.jar")).unwrap(), original);
+        assert_eq!(fs::read(game.join("mods/spatial.jar")).unwrap(), bytes);
+        assert_eq!(content::metadata(&game.join("mods/spatial.jar"),"Mods").unwrap()["title"], "Spatial GUI");
+        assert_eq!(crate::launcher::jar_mod_ids(&game.join("mods/worldedit.jar")).unwrap(), vec!["worldedit", "worldedit_alias"]);
+        let mut duplicate = entry; duplicate["file"]["filename"] = json!("renamed.jar");
+        assert!(commit(&f.rt, &f.plan(vec![duplicate])).unwrap_err().contains("Duplicate mod worldedit"));
+        assert!(!game.join("mods/renamed.jar").exists());
+    }
+    #[test]
+    fn distinct_archives_with_same_id_are_still_rejected_before_installing() {
+        let f = Fixture::new();
+        let a = f.entry("one.jar", "Mods", "worldedit");
+        let b = f.entry("two.jar", "Mods", "worldedit");
+        assert!(commit(&f.rt, &f.plan(vec![a,b])).unwrap_err().contains("Duplicate mod worldedit"));
+        assert!(!profile_dir(&f.rt,&f.id).unwrap().join("mods/one.jar").exists());
+    }
+    #[test]
+    fn invalid_existing_descriptor_names_the_jar_and_leaves_profile_untouched() {
+        let f = Fixture::new();
+        let bad = f.archive_entry("broken.jar", &[("fabric.mod.json",br#"{"id":"broken",}"#)]);
+        let bytes = fs::read(f.rt.root.join("catalog-cache").join(field(&bad,"sha512").unwrap())).unwrap();
+        let game = profile_dir(&f.rt,&f.id).unwrap();
+        atomic(&game.join("mods/broken.jar"),&bytes).unwrap();
+        let entry = f.entry("new.jar","Mods","newmod");
+        let error = commit(&f.rt,&f.plan(vec![entry])).unwrap_err();
+        assert!(error.contains("broken.jar") && error.contains("fabric.mod.json"));
+        assert_eq!(fs::read(game.join("mods/broken.jar")).unwrap(), bytes);
+        assert!(!game.join("mods/new.jar").exists());
+    }
+    #[test]
+    #[ignore = "Explicit local copies of the checksum-verified published Spatial GUI and WorldEdit JARs"]
+    fn published_spatial_worldedit_install_regression() {
+        let f = Fixture::new();
+        let spatial = fs::read(std::env::var("UNBOX_SPATIAL_JAR").unwrap()).unwrap();
+        let worldedit = fs::read(std::env::var("UNBOX_WORLDEDIT_JAR").unwrap()).unwrap();
+        let game = profile_dir(&f.rt,&f.id).unwrap();
+        atomic(&game.join("mods/spatial.jar"),&spatial).unwrap();
+        let entry = f.cached_archive("worldedit.jar",&worldedit);
+        commit(&f.rt,&f.plan(vec![entry.clone()])).unwrap();
+        assert_eq!(crate::launcher::jar_mod_ids(&game.join("mods/worldedit.jar")).unwrap(),vec!["worldedit"]);
+        assert_eq!(fs::read(game.join("mods/worldedit.jar")).unwrap(),worldedit);
+        assert_eq!(fs::read(game.join("mods/spatial.jar")).unwrap(),spatial);
+        let mut duplicate = entry; duplicate["file"]["filename"] = json!("duplicate.jar");
+        assert!(commit(&f.rt,&f.plan(vec![duplicate])).unwrap_err().contains("Duplicate mod worldedit"));
     }
     #[test]
     fn browse_all_and_combined_filters_keep_profile_constraints() {

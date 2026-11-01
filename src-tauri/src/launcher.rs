@@ -158,7 +158,7 @@ pub(crate) fn jar_mod_ids(path:&Path)->Result<Vec<String>,String>{
     let mut ids=Vec::new();
     if let Ok(f)=zip.by_name("fabric.mod.json"){
         if f.size()>262144{return Err("Mod metadata is too large".into())}
-        let m:Value=serde_json::from_reader(f).map_err(|e|e.to_string())?;
+        let m=crate::content::fabric_metadata(f).map_err(|e|format!("Cannot read fabric.mod.json in {}: {e}",path.file_name().unwrap_or_default().to_string_lossy()))?;
         if let Some(id)=m["id"].as_str(){ids.push(id.to_owned())}
         if let Some(provides)=m["provides"].as_array(){ids.extend(provides.iter().filter_map(|v|v.as_str().map(str::to_owned)));}
     }
@@ -194,6 +194,8 @@ pub(crate) fn jar_mod_ids(path:&Path)->Result<Vec<String>,String>{
             }
         }
     }
+    // A universal JAR may declare the same ID for both loaders (e.g. WorldEdit).
+    let mut seen=std::collections::HashSet::new();ids.retain(|id|seen.insert(id.clone()));
     Ok(ids)
 }
 async fn prepare_survival_mods(rt:&Runtime,client:&reqwest::Client,game:&Path,loader:&str,version:&str)->Result<(),String>{

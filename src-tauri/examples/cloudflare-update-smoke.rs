@@ -15,7 +15,7 @@ fn main() {
     let mut context = tauri::generate_context!();
     context.config_mut().app.windows.clear();
     // Model an installed earlier version without changing production metadata.
-    if !current { context.package_info_mut().version = "0.2.20".parse().unwrap(); }
+    if !current { context.package_info_mut().version = "0.2.21".parse().unwrap(); }
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(move |app| {
@@ -30,8 +30,8 @@ fn main() {
                     let update = builder().build()?.check().await?;
                     if current { assert!(update.is_none()); println!("Current version correctly reports no update"); return Ok(()); }
                     let update = update.expect("Expected a newer release");
-                    assert_eq!(update.version, "0.2.21");
-                    assert!(update.download_url.as_str().starts_with("https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.21/"));
+                    assert_eq!(update.version, env!("CARGO_PKG_VERSION"));
+                    assert!(update.download_url.as_str().starts_with(&format!("https://printoria.printoria-studio.workers.dev/unbox/releases/v{}/", env!("CARGO_PKG_VERSION"))));
                     println!("Cloudflare manifest: {}", update.version);
                     let bytes = update.download(|_, _| {}, || {}).await?;
                     println!("Cloudflare download and signature passed: {} bytes", bytes.len());

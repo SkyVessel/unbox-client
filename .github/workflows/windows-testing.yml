@@ -9,7 +9,7 @@ on:
       release_tag:
         description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.20
+        default: v0.2.22
       neoforge_module_sha256:
         description: Expected SHA-256 of unbox-client-neoforge.jar
         required: true
@@ -116,12 +116,12 @@ jobs:
           $fixture = Join-Path $env:RUNNER_TEMP 'unbox-update-fixture'
           $old = Join-Path $env:RUNNER_TEMP 'unbox-old.exe'
           $log = Join-Path $env:RUNNER_TEMP 'unbox-update-smoke.log'
-          Invoke-WebRequest 'https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.20/Unbox.Client_0.2.20_windows-x64-setup.exe' -OutFile $old
+          Invoke-WebRequest 'https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.21/Unbox.Client_0.2.21_windows-x64-setup.exe' -OutFile $old
           $install = Start-Process $old -ArgumentList @('/S', "/D=$fixture") -Wait -PassThru
           if ($install.ExitCode -ne 0) { throw "Old installer failed: $($install.ExitCode)" }
           $exe = Join-Path $fixture 'unbox-client.exe'
           if (!(Test-Path $exe)) { throw 'Previous application missing' }
-          if ((Get-Item $exe).VersionInfo.ProductVersion -notlike '0.2.20*') { throw 'Wrong previous version' }
+          if ((Get-Item $exe).VersionInfo.ProductVersion -notlike '0.2.21*') { throw 'Wrong previous version' }
           # Cargo examples do not inherit the app binary's Windows activation manifest.
           # https://github.com/tauri-apps/tauri/blob/dev/examples/api/src-tauri/build.rs
           $manifest = (Resolve-Path 'src-tauri/examples/windows-app-manifest.xml').Path
@@ -133,10 +133,10 @@ jobs:
           do {
             Start-Sleep -Seconds 2
             $version = (Get-Item $exe).VersionInfo.ProductVersion
-          } while ($version -notlike '0.2.21*' -and (Get-Date) -lt $deadline)
-          if ($version -notlike '0.2.21*') { throw "Update not installed: $version" }
+          } while ($version -notlike '0.2.22*' -and (Get-Date) -lt $deadline)
+          if ($version -notlike '0.2.22*') { throw "Update not installed: $version" }
           if (!(Select-String -Path $log -Pattern 'Invalid signature rejected' -Quiet)) { throw 'Signature rejection not tested' }
-          Write-Output "Actual Windows installation updated from 0.2.20 to $version through Cloudflare."
+          Write-Output "Actual Windows installation updated from 0.2.21 to $version through Cloudflare."
           $app = Start-Process $exe -PassThru
           Start-Sleep -Seconds 8
           if ($app.HasExited) { throw 'Updated application exited during startup' }
