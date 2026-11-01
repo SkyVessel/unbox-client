@@ -1,0 +1,10 @@
+{
+  "Unbox.Client_0.2.22_aarch64.app.tar.gz": {
+    "bytes": 58944128,
+    "sha256": "1b3912526007ff1e393d53755f7a7e5864951926b18e54f928b56b7298c28d7f"
+  },
+  "Unbox.Client_0.2.22_aarch64.app.tar.gz.sig": {
+    "bytes": 452,
+    "sha256": "916ab7290c93d54a3aa42021735facc00db5473ee4790e3237dd417386a293ae"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "Unbox.Client_0.2.22_windows-x64-setup.exe": {
+    "bytes": 35851299,
+    "sha256": "857f70c1b7fce8820e51eb0d1b71de4d53e1a69df01c63e152fef89b76e864e3"
+  },
+  "Unbox.Client_0.2.22_windows-x64-setup.exe.sig": {
+    "bytes": 456,
+    "sha256": "4bd1e8cce9ed475bc145241cdc9b90b8542c510f13702b9f9a54b0d64c5af7f9"
+  }
+}

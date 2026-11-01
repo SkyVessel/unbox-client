@@ -1,0 +1,22 @@
+{
+  "version": "0.2.22",
+  "endpoint": "https://printoria.printoria-studio.workers.dev/unbox/releases/latest.json",
+  "checkedAt": "2026-11-01T17:49:53.748520+00:00",
+  "manifest": {
+    "version": "0.2.22",
+    "notes": "Unbox Client 0.2.22\n\n- Fixed mod installation being blocked by literal line breaks in Spatial GUI metadata.\n- Fixed universal Fabric / NeoForge JARs such as WorldEdit being mistaken for duplicate mods.\n- Kept duplicate checks between separate JARs and added the offending filename to Fabric metadata errors.\n\nSupports macOS Apple silicon and Windows x64. Existing profiles, worlds and mod archives are preserved. Game modules for Minecraft 26.1 / 26.1.2 / 26.3 are unchanged.\n",
+    "pub_date": "2026-11-01T17:43:36.683298Z",
+    "platforms": {
+      "darwin-aarch64": {
+        "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2pPa0xEVS9HZUVBaGdoMWtUekQ2eDk5TXFYR2g5K28rVEFXcUE2UHQwSllZaFhJUFV4UkV6cFJaZzRxNi9ZdVJIU1pXbEZHZGVadDJXUE9lbWY2K0FJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzNTU0NTg3CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4yMl9hYXJjaDY0LmFwcC50YXIuZ3oJdmVyc2lvbjowLjIuMjIKeTBRZFB0Um5ETkt1TzkwVEFqQ053MytUUkFqRHkxYjlYeGVTbExBUFlTZHgxMWswSS9zRUZlZlRkWno1akM5WEZvVzV5VGoydk5WbW0yRmVncS9RQUE9PQo=",
+        "url": "https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.22/Unbox.Client_0.2.22_aarch64.app.tar.gz"
+      },
+      "windows-x86_64": {
+        "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSclpKOUt3VzBYN2cvU3JhY3FYajZDQklXZ29iMnUrVWpocHhkM2xDNkYzSDR4K1REcHptcFZlK04rdE1NV3c2NlJLMWtqZ2p5ZG80eFhhRThxdDR5TWp6Z0RERkRCSFFjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkzNTU1MDA3CWZpbGU6VW5ib3guQ2xpZW50XzAuMi4yMl93aW5kb3dzLXg2NC1zZXR1cC5leGUJdmVyc2lvbjowLjIuMjIKN2J5SFNnUjUwL1ovbHNsemVXQ3BEZGJ4bVBJMEVqOEtwbWVUS2EwZFNiYllMWWhxSUgrenZkZ29zRk8zS2liYmMxdDMxSGljaW5mV2ZCYlRSRDhqQ3c9PQo=",
+        "url": "https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.22/Unbox.Client_0.2.22_windows-x64-setup.exe"
+      }
+    }
+  },
+  "signatureAndTamperChecksPassed": true,
+  "rangeRequestsPassed": true
+}

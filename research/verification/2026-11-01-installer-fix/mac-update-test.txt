@@ -1,0 +1,4 @@
+Cloudflare manifest: 0.2.22
+Cloudflare download and signature passed: 58944128 bytes
+Invalid signature rejected
+Real Tauri update installed into disposable app

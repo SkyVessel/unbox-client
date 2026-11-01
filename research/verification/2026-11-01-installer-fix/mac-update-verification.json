@@ -1,0 +1,11 @@
+{
+  "from": "0.2.21",
+  "to": "0.2.22",
+  "actualTauriInstall": true,
+  "executableMatchesBuiltApp": true,
+  "executableSha256": "77600ed82c95b331ae96504614964d2201c6bd5b63446251ccdeeb270f05e253",
+  "adHocSignatureVerified": true,
+  "noWindowsCreated": true,
+  "activationPolicy": "Prohibited",
+  "invalidSignatureRejected": true
+}

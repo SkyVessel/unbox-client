@@ -1,0 +1,27 @@
+2026-11-01T17:38:00.2150253Z PASS private, local, and DNS route targets rejected
+2026-11-01T17:38:00.2150761Z PASS public literal candidates accepted
+2026-11-01T17:38:00.8413673Z PASS negotiated VoxLink UDP route
+2026-11-01T17:38:00.8414134Z PASS selected path recorded
+2026-11-01T17:38:06.6930990Z PASS 2 MiB bidirectional byte stream preserved over udp
+2026-11-01T17:38:06.6996977Z PASS negotiated TCP route
+2026-11-01T17:38:06.6997388Z PASS selected path recorded
+2026-11-01T17:38:06.7176329Z PASS 2 MiB bidirectional byte stream preserved over tcp
+2026-11-01T17:38:31.7209524Z PASS wrong transport secret never exposes a local game bridge
+2026-11-01T17:38:31.7209978Z PASS failed direct methods expire into relay fallback
+2026-11-01T17:38:31.7210346Z PASS expired negotiation cannot publish or accept late candidates
+2026-11-01T17:38:32.8887976Z PASS VoxLink reliable UDP preserves bytes with loss, reordering and duplicates
+2026-11-01T17:38:33.2823836Z PASS 1200-byte UDP path with 60 ms RTT preserves large encrypted-stream bytes
+2026-11-01T17:38:33.2824362Z PASS DATA and FEC include authentication within the 1200-byte datagram budget
+2026-11-01T17:38:45.2843517Z PASS Idle keepalives stay periodic, with no reply feedback loop (frames=24)
+2026-11-01T17:38:45.3246043Z PASS Connection remains usable after idle beyond the old failure window
+2026-11-01T17:38:45.3370227Z PASS cancellation releases waiting candidate exchange
+2026-11-01T17:42:04.2506361Z test catalog::tests::distinct_archives_with_same_id_are_still_rejected_before_installing ... ok
+2026-11-01T17:42:04.2639378Z test catalog::tests::invalid_existing_descriptor_names_the_jar_and_leaves_profile_untouched ... ok
+2026-11-01T17:42:04.2650048Z test content::tests::fabric_description_accepts_literal_whitespace_without_changing_escapes ... ok
+2026-11-01T17:42:04.2661898Z test content::tests::fabric_metadata_still_rejects_invalid_json_and_oversized_input ... ok
+2026-11-01T17:42:04.2805057Z test catalog::tests::multiline_existing_mod_and_universal_jar_install_without_rewriting_archives ... ok
+2026-11-01T17:42:04.3371430Z test process::tests::console_probe ... ignored, invoked by the two background-process tests
+2026-11-01T17:42:04.3615727Z test process::tests::background_process_has_no_console_and_keeps_output ... ok
+2026-11-01T17:42:04.3642129Z test process::tests::async_background_process_has_no_console_and_keeps_output ... ok
+2026-11-01T17:42:04.5826427Z test result: ok. 87 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.36s
+2026-11-01T17:43:02.3221948Z unbox-client.exe: Windows GUI subsystem confirmed (no launcher console)
