@@ -19,7 +19,11 @@ final class PvpControls {
         if(world!=mc.theWorld||!UiState.on("sprint"))sprinting=false;
         if(!playing||world!=mc.theWorld){sneaking=zooming=false;restoreLook();}world=mc.theWorld;
         if(playing){
-            if(UiState.on("sprint")){if(s&&!lastSprint)sprinting=!sprinting;if(sprinting&&mc.thePlayer.movementInput.moveForward>=.8f&&!mc.thePlayer.isSneaking()&&!mc.thePlayer.isCollidedHorizontally&&!mc.thePlayer.isUsingItem()&&(mc.thePlayer.getFoodStats().getFoodLevel()>6||mc.thePlayer.capabilities.allowFlying))mc.thePlayer.setSprinting(true);else if(!sprinting)mc.thePlayer.setSprinting(false);}else sprinting=false;
+            if(UiState.on("sprint")){
+                if(s&&!lastSprint){sprinting=!sprinting;if(!sprinting)mc.thePlayer.setSprinting(false);}
+                if(sprinting&&mc.thePlayer.movementInput.moveForward>=.8f&&!mc.thePlayer.isSneaking()&&!mc.thePlayer.isCollidedHorizontally&&!mc.thePlayer.isUsingItem()&&(mc.thePlayer.getFoodStats().getFoodLevel()>6||mc.thePlayer.capabilities.allowFlying))mc.thePlayer.setSprinting(true);
+                // An inactive toggle must leave vanilla hold/double-tap sprint alone.
+            }else sprinting=false;
             if(UiState.on("sneak")){if(n&&!lastSneak)sneaking=!sneaking;}else sneaking=false;
             if(!UiState.on("zoom"))zooming=false;else if(UiState.get("zoom.mode","Hold").equals("Hold"))zooming=z;else if(z&&!lastZoom)zooming=!zooming;
             if(z&&!lastZoom)factor=UiState.number("zoom.factor",3,2,12);

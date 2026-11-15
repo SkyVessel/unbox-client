@@ -29,7 +29,9 @@ public final class PrivateLogin {
  private static final Map<NetHandlerLoginServer,Pending> PENDING=Collections.synchronizedMap(new WeakHashMap<NetHandlerLoginServer,Pending>());
  private static volatile Grant joining;
  private static final Map<NetworkManager,Grant> CLIENTS=Collections.synchronizedMap(new WeakHashMap<NetworkManager,Grant>());
- public static void track(NetworkManager n){Grant g=joining;if(g!=null)CLIENTS.put(n,g);}
+ private static final Map<NetworkManager,String> ROUTES=Collections.synchronizedMap(new WeakHashMap<NetworkManager,String>());
+ public static String route(NetworkManager n){String r=ROUTES.get(n);return r==null?"public-direct":r;}
+ public static void track(NetworkManager n){Grant g=joining;if(g!=null){CLIENTS.put(n,g);ROUTES.put(n,JoinDiagnostics.currentRoute());}}
  private static final Set<NetworkManager> VERIFIED=Collections.newSetFromMap(new WeakHashMap<NetworkManager,Boolean>());
  private static final SecureRandom RANDOM=new SecureRandom();
  private static final java.lang.reflect.Field STATE=net.minecraftforge.fml.relauncher.ReflectionHelper.findField(NetHandlerLoginServer.class,"currentLoginState","field_147328_g");

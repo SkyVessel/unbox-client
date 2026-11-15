@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 /** Version-specific Unbox UI and PvP preferences. */
 final class UiState {
     static final Properties VALUES=new Properties();
+    private static final Map<String,Parsed> NUMBERS=new HashMap<>(),COLORS=new HashMap<>();
+    private static final class Parsed{final String raw;final int value;Parsed(String raw,int value){this.raw=raw;this.value=value;}}
     static final List<Module> MODULES=new ArrayList<>();
     static final List<String> HUD=Arrays.asList("fps","cps","coordinates","armor","keystrokes","ping","potions","scoreboard");
     static final String PREVIEW="Personal PvP settings";
@@ -26,8 +28,8 @@ final class UiState {
     static String get(String k,String fallback){return VALUES.getProperty(k,fallback);}
     static void set(String k,Object value){VALUES.setProperty(k,String.valueOf(value));if(k.indexOf('.')<0)PvpSettings.refresh();}
     static boolean flag(String k,boolean fallback){return Boolean.parseBoolean(get(k,String.valueOf(fallback)));}
-    static int number(String k,int fallback,int min,int max){try{return clamp(Integer.parseInt(get(k,""+fallback)),min,max);}catch(NumberFormatException e){return clamp(fallback,min,max);}}
-    static int color(String k,String fallback){try{return 0xff000000|Integer.parseInt(get(k,fallback).replace("#",""),16);}catch(NumberFormatException e){return 0xffffffff;}}
+    static int number(String k,int fallback,int min,int max){String raw=VALUES.getProperty(k);if(raw==null)return clamp(fallback,min,max);Parsed p=NUMBERS.get(k);if(p==null||!p.raw.equals(raw)){try{p=new Parsed(raw,Integer.parseInt(raw));NUMBERS.put(k,p);}catch(NumberFormatException e){return clamp(fallback,min,max);}}return clamp(p.value,min,max);}
+    static int color(String k,String fallback){String raw=get(k,fallback);Parsed p=COLORS.get(k);if(p==null||!p.raw.equals(raw)){try{p=new Parsed(raw,0xff000000|Integer.parseInt(raw.replace("#",""),16));COLORS.put(k,p);}catch(NumberFormatException e){return 0xffffffff;}}return p.value;}
     static int clamp(int n,int a,int b){return Math.max(a,Math.min(b,n));}
     static float clamp(float n,float a,float b){return Math.max(a,Math.min(b,n));}
     static Module module(String id){for(Module m:MODULES)if(m.id.equals(id))return m;throw new IllegalArgumentException(id);}

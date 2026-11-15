@@ -16,6 +16,7 @@ mod content;
 mod catalog;
 mod removal;
 mod social;
+mod feedback;
 mod updates;
 mod news;
 mod sharing;

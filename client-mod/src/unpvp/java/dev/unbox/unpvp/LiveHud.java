@@ -3,7 +3,6 @@ package dev.unbox.unpvp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -12,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.Arrays;
 import java.util.List;
 
-/** Native 1.8.9 port of modern ClientHud / KeystrokesHud. No network polling or input rewriting. */
+/** Native 1.8.9 port of modern ClientHud / KeystrokesHud; no input rewriting. */
 final class LiveHud {
     static final List<String> IDS=Arrays.asList("fps","cps","keystrokes","ping");
     private static final ClickWindow[] clicks={new ClickWindow(),new ClickWindow()};
@@ -35,17 +34,17 @@ final class LiveHud {
     static void reset(){for(ClickWindow c:clicks)c.clear();Arrays.fill(held,false);Arrays.fill(released,0);Arrays.fill(keyHeld,false);Arrays.fill(keyReleased,0);}
     static void tick(){
         Minecraft mc=Minecraft.getMinecraft();
+        Latency.tick();
         if(mc.theWorld==null){reset();return;}
         if(mc.currentScreen!=null||!mc.inGameHasFocus){Arrays.fill(held,false);Arrays.fill(keyHeld,false);}
         long now=System.nanoTime();int interval=250;
         try{interval=Integer.parseInt(UiState.get("fps.interval","250 ms").split(" ")[0]);}catch(NumberFormatException ignored){}
         if(now-refreshed>=Math.max(100,interval)*1_000_000L){
             fps=Minecraft.getDebugFPS()+(UiState.flag("fps.label",true)?" FPS":"");
-            NetworkPlayerInfo info=mc.getNetHandler()==null||mc.thePlayer==null?null:mc.getNetHandler().getPlayerInfo(mc.thePlayer.getUniqueID());
-            ping=latency(mc.isSingleplayer(),info==null?null:info.getResponseTime(),UiState.flag("ping.label",true));refreshed=now;
+            ping=latency(mc.isSingleplayer(),Latency.value(),UiState.flag("ping.label",true));refreshed=now;
         }
     }
-    static String latency(boolean local,Integer ms,boolean label){return local?"Local":ms==null||ms<0?(label?"-- ms":"--"):ms+(label?" ms":"");}
+    static String latency(boolean local,Integer ms,boolean label){return local?"Local":ms==null||ms<0?(label?"-- ms":"--"):"~"+ms+(label?" ms":"");}
     static String text(String id){return id.equals("fps")?fps:ping;}
     static boolean visible(String id){Minecraft mc=Minecraft.getMinecraft();return UiState.on(id)&&(!mc.gameSettings.showDebugInfo||UiState.flag(id+".inDebug",false))&&(!(mc.currentScreen instanceof GuiChat)||UiState.flag(id+".inChat",true));}
     @SubscribeEvent public void render(RenderGameOverlayEvent.Post e){

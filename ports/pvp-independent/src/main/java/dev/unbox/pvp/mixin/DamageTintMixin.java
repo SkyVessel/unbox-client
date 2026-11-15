@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RendererLivingEntity.class)
@@ -19,6 +21,16 @@ public class DamageTintMixin {
     @Inject(method = "setBrightness", at = @At("HEAD"))
     private void set(EntityLivingBase entitylivingbaseIn, float partialTicks, boolean combineTextures, CallbackInfoReturnable<Boolean> cir) {
         damageTint$entitylivingbaseIn = entitylivingbaseIn;
+    }
+
+    // OptiFine's shader path bypasses the fixed-function buffer with separate RGBA arguments.
+    @ModifyArgs(method = "setBrightness", at = @At(value = "INVOKE", target = "Lnet/optifine/shaders/Shaders;setEntityColor(FFFF)V", ordinal = 0, remap = false), require = 0)
+    private void unbox$shaderHurtColor(Args args) {
+        if (!PvpSettings.on("hitcolor")) return;
+        args.set(0, getRedTint(args.get(0)));
+        args.set(1, getGreenTint(args.get(1)));
+        args.set(2, getBlueTint(args.get(2)));
+        args.set(3, getAlphaTint(args.get(3)));
     }
 
     @ModifyArg(method = "setBrightness", at = @At(value = "INVOKE", target = "Ljava/nio/FloatBuffer;put(F)Ljava/nio/FloatBuffer;", ordinal = 0))

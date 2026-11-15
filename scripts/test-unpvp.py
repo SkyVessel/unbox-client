@@ -6,7 +6,10 @@ from pathlib import Path
 import argparse,importlib.util,json,os,shutil,subprocess,zipfile,concurrent.futures,hashlib,time
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('build',ROOT/'scripts/build-unpvp.py');b=importlib.util.module_from_spec(spec);spec.loader.exec_module(b)
-p=argparse.ArgumentParser();p.add_argument('name');p.add_argument('--width',type=int,default=1600);p.add_argument('--gui-scale',type=int,default=2);p.add_argument('--render-distance',type=int,default=8);p.add_argument('--height',type=int,default=900);p.add_argument('--world',action='store_true');p.add_argument('--mods',type=Path);p.add_argument('--legacy-panorama',action='store_true');p.add_argument('--client-jar',type=Path,default=ROOT/'src-tauri/resources/unpvp-forge-1.8.9.jar');p.add_argument('--perf',action='store_true');p.add_argument('--retina',action='store_true');p.add_argument('--display-only',action='store_true');p.add_argument('--presentation',action='store_true');p.add_argument('--load',action='store_true');p.add_argument('--solid',action='store_true');p.add_argument('--pvp',action='store_true');p.add_argument('--response',action='store_true');p.add_argument('--lobby',action='store_true');p.add_argument('--occlusion',action='store_true');p.add_argument('--intel',action='store_true');p.add_argument('--no-culling',action='store_true');p.add_argument('--stock-startup',action='store_true');p.add_argument('--first-thread',action='store_true');p.add_argument('--manual',action='store_true');p.add_argument('--runtime',type=Path,default=ROOT/'.cache/unpvp-launcher-check/runtime');p.add_argument('--social',choices=['host','guest','ui']);p.add_argument('--reject',action='store_true');p.add_argument('--badges',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('name');p.add_argument('--width',type=int,default=1600);p.add_argument('--gui-scale',type=int,default=2);p.add_argument('--render-distance',type=int,default=8);p.add_argument('--height',type=int,default=900);p.add_argument('--world',action='store_true');p.add_argument('--mods',type=Path);p.add_argument('--legacy-panorama',action='store_true');p.add_argument('--client-jar',type=Path,default=ROOT/'src-tauri/resources/unpvp-forge-1.8.9.jar');p.add_argument('--perf',action='store_true');p.add_argument('--retina',action='store_true');p.add_argument('--display-only',action='store_true');p.add_argument('--presentation',action='store_true');p.add_argument('--load',action='store_true');p.add_argument('--solid',action='store_true');p.add_argument('--pvp',action='store_true');p.add_argument('--response',action='store_true');p.add_argument('--lobby',action='store_true');p.add_argument('--occlusion',action='store_true');p.add_argument('--intel',action='store_true');p.add_argument('--no-culling',action='store_true');p.add_argument('--stock-startup',action='store_true');p.add_argument('--first-thread',action='store_true');p.add_argument('--manual',action='store_true');p.add_argument('--runtime',type=Path,default=ROOT/'.cache/unpvp-launcher-check/runtime');p.add_argument('--social',choices=['host','guest','ui']);p.add_argument('--reject',action='store_true');p.add_argument('--badges',action='store_true');p.add_argument('--combat',action='store_true');p.add_argument('--fullbright',action='store_true');p.add_argument('--g1',action='store_true');p.add_argument('--badge-cost',action='store_true');p.add_argument('--no-badge-hooks',action='store_true');a=p.parse_args()
+if a.combat:a.pvp=True
+if a.fullbright or a.badge_cost:a.lobby=True
+if a.no_badge_hooks and not a.badge_cost:raise SystemExit("--no-badge-hooks requires isolated --badge-cost")
 if Path(a.name).name!=a.name:raise SystemExit('Use a single directory name')
 run=ROOT/('.cache/unpvp-manual' if a.manual else '.cache/unpvp-tests')/a.name
 if run.exists() and not a.manual:raise SystemExit('Choose a new test name; existing test data is preserved')
@@ -53,6 +56,15 @@ if a.mods:
 if a.mods:
  for name in ['unpvp-pvp.jar','unpvp-patcher-performance.jar','unpvp-network.jar']:shutil.copy2(ROOT/'src-tauri/resources'/name,run/'mods'/name)
 shutil.copy2(a.client_jar,run/'mods/unpvp.jar')
+if a.no_badge_hooks:
+ jar=run/'mods/unpvp-pvp.jar';temp=jar.with_suffix('.test-tmp')
+ with zipfile.ZipFile(jar) as source,zipfile.ZipFile(temp,'w',zipfile.ZIP_DEFLATED) as target:
+  for entry in source.infolist():
+   data=source.read(entry.filename)
+   if entry.filename=='mixins.unbox-pvp.json':
+    config=json.loads(data);config['client']=[m for m in config['client'] if m not in ['NameBadgeMixin','BadgeFontMixin']];data=json.dumps(config).encode()
+   target.writestr(entry,data)
+ temp.replace(jar)
 if not a.manual or not (run/'options.txt').exists():
  (run/'options.txt').write_text(f'guiScale:{a.gui_scale}\nmaxFps:120\nenableVsync:false\npauseOnLostFocus:false\nrenderDistance:{a.render_distance}\nmipmapLevels:4\nuseVbo:true\nsoundCategory_master:0.0\n')
 if a.manual:
@@ -73,9 +85,13 @@ if a.display_only:args.insert(1,'-Dunpvp.test.displayOnly=true')
 if a.retina:
  args.remove('-Dunpvp.test=true');args.insert(1,'-Dunpvp.test.retina=true')
 if a.first_thread:args[1:1]=['-XstartOnFirstThread','-Djava.awt.headless=true']
+if a.g1:args[1:1]=["-XX:+UseG1GC","-XX:MaxGCPauseMillis=50"]
+if a.combat:args.insert(1,'-Dunpvp.test.combat=true');args.insert(1,'-Dmixin.debug.export=true')
 if a.pvp:
  args.remove('-Dunpvp.test=true');args.insert(1,'-Dunpvp.test.pvp=true')
 if a.occlusion:args.insert(1,'-Dunpvp.test.occlusion=true')
+if a.badge_cost:args.insert(1,'-Dunpvp.test.badgeCost=true')
+if a.fullbright:args.insert(1,'-Dunpvp.test.fullbright=true')
 if a.lobby:
  args.remove('-Dunpvp.test=true');args.insert(1,'-Dunpvp.test.lobby=true')
 if a.response:

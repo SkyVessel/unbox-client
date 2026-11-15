@@ -1,3 +1,4 @@
+import {connectionFeedback} from './connection-feedback.mjs';
 import {exchange,transportVersion} from './transport.mjs';
 import {platformRoute,ownership,equippedLogos} from './platform.mjs';
 import {cleanupAccounts} from './accounts.mjs';
@@ -51,6 +52,7 @@ export default {
     const state=await db.prepare('SELECT status FROM player_accounts WHERE uuid=?').bind(me.uuid).first();
     if(state?.status==='suspended')return reply({error:'This platform account is suspended'},403);
    }
+   if(path==='/v1/connection-feedback')return await connectionFeedback(request,db,me,b,now);
    if(path.startsWith('/v1/assets'))return await platformRoute(request,env,path,b,me);
    const mutual=async id=>!!await db.prepare('SELECT 1 FROM friendships WHERE accepted=1 AND ((sender=? AND receiver=?) OR (sender=? AND receiver=?))').bind(me.id,id,id,me.id).first();
    if(path==='/v1/invites'&&request.method==='POST'){
@@ -97,5 +99,5 @@ export default {
    return reply({error:'Not found'},404);
   }catch(e){return reply({error:e instanceof SyntaxError?'Invalid request':/^(Invalid|Request)/.test(e.message)?e.message:'Friends service unavailable; retry shortly'},400)}
  },
- async scheduled(event,env){if(env.DB){await cleanupAccounts(env.DB,Date.now());const cutoff=Date.now()-86400000;await env.DB.batch([env.DB.prepare("DELETE FROM friendships WHERE sender IN (SELECT id FROM people WHERE kind='local' AND seen<?) OR receiver IN (SELECT id FROM people WHERE kind='local' AND seen<?)").bind(cutoff,cutoff),env.DB.prepare("DELETE FROM invites WHERE sender IN (SELECT id FROM people WHERE kind='local' AND seen<?) OR receiver IN (SELECT id FROM people WHERE kind='local' AND seen<?)").bind(cutoff,cutoff),env.DB.prepare("DELETE FROM people WHERE kind='local' AND seen<?").bind(cutoff),env.DB.prepare('DELETE FROM account_devices WHERE created<?').bind(Date.now()-30*86400000)]);await env.DB.batch([env.DB.prepare('DELETE FROM invites WHERE expires<=?').bind(Date.now()),env.DB.prepare('DELETE FROM challenges WHERE expires<=?').bind(Date.now())]);}}
+ async scheduled(event,env){if(env.DB){await env.DB.prepare('DELETE FROM connection_feedback WHERE received_at<?').bind(Date.now()-7*86400000).run();await cleanupAccounts(env.DB,Date.now());const cutoff=Date.now()-86400000;await env.DB.batch([env.DB.prepare("DELETE FROM friendships WHERE sender IN (SELECT id FROM people WHERE kind='local' AND seen<?) OR receiver IN (SELECT id FROM people WHERE kind='local' AND seen<?)").bind(cutoff,cutoff),env.DB.prepare("DELETE FROM invites WHERE sender IN (SELECT id FROM people WHERE kind='local' AND seen<?) OR receiver IN (SELECT id FROM people WHERE kind='local' AND seen<?)").bind(cutoff,cutoff),env.DB.prepare("DELETE FROM people WHERE kind='local' AND seen<?").bind(cutoff),env.DB.prepare('DELETE FROM account_devices WHERE created<?').bind(Date.now()-30*86400000)]);await env.DB.batch([env.DB.prepare('DELETE FROM invites WHERE expires<=?').bind(Date.now()),env.DB.prepare('DELETE FROM challenges WHERE expires<=?').bind(Date.now())]);}}
 };

@@ -578,3 +578,12 @@ pub fn start(rt: Runtime) {
   assert_eq!(player_uuids(&json!({"players":["abc"]})),json!(["abc"]));
  }
 }
+
+/// Held only in launcher memory for the account that started this game.
+pub(crate) struct FeedbackAccount { identity: Identity }
+pub(crate) fn feedback_account(uuid: &str, microsoft: bool) -> Result<FeedbackAccount,String> {
+    Ok(FeedbackAccount { identity: identity(&format!("{}-{}",if microsoft {"microsoft"} else {"local"},uuid))? })
+}
+pub(crate) async fn send_feedback(rt:&Runtime, account:&FeedbackAccount, report:Value)->Result<(),String>{
+    request(&endpoint(rt)?,&account.identity,"connection-feedback",report).await.map(|_|())
+}

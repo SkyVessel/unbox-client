@@ -4,7 +4,7 @@ These are selected, modified upstream implementations, not the complete upstream
 
 ## Changes from upstream
 
-- DamageTint v3.3.0: preserve four `FloatBuffer` component hooks; Unbox RGB, alpha and fade settings; guard zero maximum hurt time.
+- DamageTint v3.3.0: preserve four `FloatBuffer` component hooks; Unbox RGB, alpha and fade settings; guard zero maximum hurt time; also update OptiFine's separate shader hurt-color uniform (optional hook when OptiFine is absent).
 - OverflowParticles v1.0.2: retain spawn filtering, per-layer count and particle scale/color hooks. Apply fixed scale/color at spawn; avoid upstream per-particle tessellator flushes. Supports density reduction and per-type visibility, not the full upstream per-particle editor/multiplication suite.
 - OverflowAnimations v2.2.5: selected 1.7 block-hit, bow/item positions, fishing rod and sway hooks. Remove upstream equip reset hooks so Antimations owns that interception point.
 - Antimations: equip-reset and first-person use-action controls. Configuration only is replaced.
@@ -39,3 +39,9 @@ python3 scripts/prepare-unpvp-performance.py
 `build-unpvp-pvp.py` compiles with Java 8 bytecode, generates Mixin SRG mappings using the same Mixin runtime bundled with RenderLib, and produces `src-tauri/resources/unpvp-pvp.jar`. The launcher copies this separately from `unpvp.jar` and the Patcher performance subset. `required: true` ensures failed hooks are visible at startup, rather than silently presenting non-working controls.
 
 All sources, modifications and license notices must accompany any future distribution as required by their respective licenses. This task builds local test artifacts only.
+
+Unbox `LatencyMixin` observes standard statistics request/reply timing for the HUD. It never cancels or modifies packets; this is an approximate connection response measurement, not the server-supplied player-list latency. The implementation is original; the protocol approach is also used publicly by Skytils. See `docs/104-unpvp对战与延迟排查.md` for rate limits, ambiguity and verification boundaries.
+
+Unbox Fullbright is an original client-lightmap implementation: fixed white lightmap while enabled, one texture upload per activation, and normal lightmap rebuilding on disable. It never changes gamma, world light values, spawning rules or server packets. It is exposed through the existing Unbox catalogue and may be overridden by shader-pack lighting. The public Patcher Fullbright implementation was reviewed as a reference; its world/chunk lighting suppression was not ported.
+
+Optional connection diagnostics observe KeepAlive handler turnaround and selected entity packets' main-thread queue time. Reports are local and bounded; network callbacks perform no disk I/O. A vanilla loopback TCP fixture verifies reply handling while the game thread is stalled.

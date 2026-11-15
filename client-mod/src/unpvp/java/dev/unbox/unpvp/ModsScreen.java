@@ -68,6 +68,8 @@ final class ModsScreen extends UiScreen {
             }
             bodyButton(x,y+6,180,28,"Open video settings",()->navigate(new net.minecraft.client.gui.GuiVideoSettings(this,mc.gameSettings)));
             bodyButton(x+192,y+6,180,28,"Uncap FPS",()->{mc.gameSettings.limitFramerate=260;mc.gameSettings.enableVsync=false;org.lwjgl.opengl.Display.setVSyncEnabled(false);mc.gameSettings.saveOptions();notice="Unlimited FPS. VSync off.";});y+=46;
+            bodyButton(x,y+6,220,28,"Feedback",()->navigate(new FeedbackScreen(this)));y+=36;
+            bodyButton(x,y+6,220,28,"Connection diagnostics",()->{ConnectionDiagnostics.toggle();notice=ConnectionDiagnostics.status;}).display=()->"Connection diagnostics: "+(UiState.flag("performance.connectionDiagnostics",false)?"On":"Off");y+=46;
             maxScroll=Math.max(0,y+scroll-bodyBottom);return;
         }
         List<UiState.Option> options=new ArrayList<>();UiState.Module mod=UiState.module(detail);

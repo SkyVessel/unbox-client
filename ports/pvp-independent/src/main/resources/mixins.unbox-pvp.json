@@ -38,7 +38,11 @@
     "PrivateHandshakeAccess",
     "NameBadgeMixin",
     "BadgeFontMixin",
-    "BadgeRosterMixin"
+    "BadgeRosterMixin",
+    "LatencyMixin",
+    "FullbrightMixin",
+    "PacketTimingMixin",
+    "FeedbackShutdownMixin"
   ],
   "injectors": {
     "defaultRequire": 1

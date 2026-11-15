@@ -13,6 +13,7 @@ class HomeScreen extends SolidScreen {
     HomeScreen(boolean inWorld){this(inWorld,null);}
     HomeScreen(boolean inWorld,GuiScreen parent){super(inWorld?"quick":"title",parent);this.inWorld=inWorld;}
     @Override void build(){
+        solidButton(104,30,128,40,"Feedback",SolidTheme.card(0),()->navigate(new FeedbackScreen(this)));
         if(page.equals("title")){
             hit(576,314,380,85,"Singleplayer",()->navigate(new GuiSelectWorld(this))).geometry("title-576-314");
             hit(576,403,380,85,"Multiplayer",()->navigate(new MultiplayerScreen(this))).geometry("title-576-403");
