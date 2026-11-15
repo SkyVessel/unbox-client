@@ -1,0 +1,19 @@
+{
+  "cloudflare": {
+    "version": "0.2.24",
+    "manifest": "https://printoria.printoria-studio.workers.dev/unbox/releases/latest.json",
+    "downloadsReachable": true
+  },
+  "github": {
+    "version": "0.2.24",
+    "manifest": "https://github.com/SkyVessel/unbox-client/releases/download/v0.2.24/latest.json",
+    "downloadsReachable": true
+  },
+  "release": {
+    "isDraft": false,
+    "isPrerelease": false,
+    "publishedAt": "2026-11-15T06:36:35Z",
+    "targetCommitish": "fbe91a7d605b05ae5e98155c32848e5ef1b0f12c",
+    "url": "https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.24"
+  }
+}

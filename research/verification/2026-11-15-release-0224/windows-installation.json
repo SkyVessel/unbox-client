@@ -1,0 +1,69 @@
+{
+  "conclusion": "success",
+  "headSha": "fbe91a7d605b05ae5e98155c32848e5ef1b0f12c",
+  "jobs": [
+    {
+      "completedAt": "2026-11-15T06:35:28Z",
+      "conclusion": "success",
+      "databaseId": 132726706498,
+      "name": "installer-smoke",
+      "startedAt": "2026-11-15T06:34:43Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-11-15T06:34:45Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-11-15T06:34:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-15T06:34:56Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-11-15T06:34:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-15T06:35:24Z",
+          "conclusion": "success",
+          "name": "Install old and new versions into a disposable folder",
+          "number": 3,
+          "startedAt": "2026-11-15T06:34:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-15T06:35:27Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 6,
+          "startedAt": "2026-11-15T06:35:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-11-15T06:35:27Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 7,
+          "startedAt": "2026-11-15T06:35:27Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/SkyVessel/unbox-client/actions/runs/43686071100/job/132726706498"
+    },
+    {
+      "completedAt": "2026-11-15T06:34:40Z",
+      "conclusion": "skipped",
+      "databaseId": 132726707488,
+      "name": "windows",
+      "startedAt": "2026-11-15T06:34:40Z",
+      "status": "completed",
+      "steps": [],
+      "url": "https://github.com/SkyVessel/unbox-client/actions/runs/43686071100/job/132726707488"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/SkyVessel/unbox-client/actions/runs/43686071100"
+}

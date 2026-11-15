@@ -1,0 +1,9 @@
+{
+  "authenticatedUpload": true,
+  "anonymousRejected": true,
+  "wrongAccountRejected": true,
+  "idempotent": true,
+  "storedBytes": 3306,
+  "windows": 3,
+  "privateIdentityVerified": true
+}

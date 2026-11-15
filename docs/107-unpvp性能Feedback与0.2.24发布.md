@@ -23,13 +23,15 @@
 - 下次启动隔离旧报告到 `unbox-feedback-previous.json`，不自动发送旧会话。
 - 强制杀进程/断电可能没有最终报告；启动器提前关闭也无法发送。本版本没有后台常驻上传器或自动重试。
 
-启动器校验本次随机 session、账户 UUID、consent、版本、窗口数量和大小。上传使用启动游戏时捕获的账户身份，切换账户不会误归属。
+启动器校验本次随机 session、账户 UUID、consent、版本、窗口数量和大小。微软账号复用好友系统原有的 `msa-UUID` 凭据命名空间，离线账号使用 `local-UUID`，已有回归检查。上传使用启动游戏时捕获的账户身份，切换账户不会误归属。
 
 ## 服务端
 
 沿用现有好友 Worker，新增私有 POST `/v1/connection-feedback`，与网站公开反馈板分离。没有公开读取接口。使用已有账户认证；服务端绑定 person_id、账户 UUID、账户种类和名称，不信任报告自行填写的归属。
 
-`cloudflare/connection-feedback.mjs` 严格筛选字段；同会话重复上传去重，每账户 UUID 每日最多 4 份、全局最多 2,000 行、单份最多 48 KB。保存 7 天，定时任务清理到期数据，物理删除可能晚于到期时间一个调度周期。可用 Cloudflare D1 管理工具按账户和时间查询，不能把表做成公开 API。
+`cloudflare/connection-feedback.mjs` 严格筛选字段；同会话重复上传去重，每账户 UUID 每日最多 4 份、全局最多 2,000 行、单份最多 48 KB。保存 7 天，线上已核对原有 `0 * * * *` 每小时任务会清理到期数据，物理删除可能晚于到期时间一个调度周期。可用 Cloudflare D1 管理工具按账户和时间查询，不能把表做成公开 API。
+
+管理员在现有好友服务 D1 中先查询 `connection_feedback` 的 `account_uuid`、`account_name`、`received_at` 和 `length(report)`，限定最近时间并 `LIMIT 20`；确定账号后再读取对应 `report`。不要批量下载其他人的报告或将报告附在公开 Issue 中。
 
 建表脚本：`cloudflare/connection-feedback-schema.sql`。线上部署保留原 Worker 绑定、密钥和最新版支持列表，仅加入该路由、模块与清理任务。
 
@@ -58,12 +60,12 @@
 
 ## 已执行验证
 
-- Node：86 通过；Rust：100 通过、6 个原有忽略项。
+- Node：86 通过；最终 Mac Rust：101 通过、6 个原有忽略项；Windows Rust：102 通过、7 个原有忽略项。包含 Feedback 账户凭据命名空间回归检查。
 - 服务端专项及社交测试：17 通过。
 - 真实 1.8.9：97 项 PvP 检查、战斗/连接/Feedback 检查通过；18 项徽章检查通过。
 - 最终游戏退出生成 3 窗口、3,345 字节报告，包含账户 UUID 与事件；正常退出改名流程通过。
 - 默认关闭、主动开启、停止丢弃、排队写入不能复活报告、大小限制均已检查。
-- 浅色和深色页面截图均检查，无裁切或文字对比问题。
+- 浅色和深色页面截图均检查，无裁切或文字对比问题；640×480 窗口自动缩放完整面板，最终含完整模组环境的 97 项检查再次通过。
 - 线上临时测试身份：认证上传、错账户拒绝、匿名拒绝、重复去重、私有归属通过；只删除本次创建的测试数据。
 - 稳定引擎和其他 Beta 引擎字节保持 v0.2.23；1.8.9 network/patcher 未更换。
 
@@ -75,4 +77,15 @@ Java：`Feedback.java`、`FeedbackScreen.java`、`ConnectionDiagnostics.java`、
 
 后续请用户开启 Feedback，进入同一 Hypixel 大厅和正式对局，复现后正常退出。先核对账户和版本，再比较 route/remoteAddress、包处理等待、帧时间和 GC。不要从 ping 数字单独推断击退问题，不能把本地测试写成 Windows 实玩验证。
 
-发布打包和渠道验证记录在本文件后续补充；构建通过不等于实际服务器对战通过。
+## 发布结果
+
+已发布 **0.2.24**，macOS ARM64 与 Windows x64；延续原 updater 公钥。GitHub Release：https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.24 。启动器更新入口仍为 `https://printoria.printoria-studio.workers.dev/unbox/releases/latest.json`，已核对两平台 URL 可下载、清单为 0.2.24。
+
+- 最终代码提交：`fbe91a7d605b05ae5e98155c32848e5ef1b0f12c`，发布工作分支 `codex/release-0.2.24`。后续文档提交不改变安装包。
+- Windows 最终构建：https://github.com/SkyVessel/unbox-client/actions/runs/43685565200 。
+- Windows 最终覆盖安装：https://github.com/SkyVessel/unbox-client/actions/runs/43686071100 。从 0.2.22 安装更新到 0.2.24，核对版本、稳定/Beta 引擎哈希，启动器运行 10 秒通过。此为安装与启动验证，未进行 Windows Hypixel 实玩。
+- macOS 包完成 ad-hoc 签名、65 项资源核对和启动测试；Windows 包同样核对 65 项资源。两平台都用原更新密钥签名，下载回读一致，验签及篡改拒绝检查通过。
+- GitHub 与 Cloudflare 两套公开清单已验证；公开更新入口在最终安装检查通过后才从 0.2.23 切换到 0.2.24。
+- 脱敏验证记录：`research/verification/2026-11-15-release-0224/`。本地完整构建和游戏测试记录位于主工作区 `.cache/release-0.2.24/`、`.cache/unpvp-tests/`；不公开玩家诊断报告。
+
+构建与安装通过不等于实际服务器对战通过；等待 Windows Hypixel 的主动 Feedback 记录后继续定位。

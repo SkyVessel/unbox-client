@@ -1,0 +1,16 @@
+{
+  "darwin-aarch64": {
+    "url": "https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.24/Unbox.Client_0.2.24_aarch64.app.tar.gz",
+    "sha256": "e84df4747203afc672edac5444af228191fe5d963d4105a1248fd023e6191083",
+    "bytes": 83080301,
+    "signatureVerified": true,
+    "tamperedPayloadRejected": true
+  },
+  "windows-x86_64": {
+    "url": "https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.24/Unbox.Client_0.2.24_windows-x64-setup.exe",
+    "sha256": "7b5a2c80ac86cbe89fcb4b00bbe07c97e8511bf2a15cd7a0c69bdd1ef5a94da8",
+    "bytes": 54158536,
+    "signatureVerified": true,
+    "tamperedPayloadRejected": true
+  }
+}

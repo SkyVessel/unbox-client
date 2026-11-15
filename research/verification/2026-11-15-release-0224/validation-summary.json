@@ -1,0 +1,34 @@
+{
+  "version": "0.2.24",
+  "sourceCommit": "fbe91a7d605b05ae5e98155c32848e5ef1b0f12c",
+  "base": "v0.2.23",
+  "nodeTests": {
+    "passed": 86
+  },
+  "rustTestsMac": {
+    "passed": 101,
+    "ignored": 6
+  },
+  "serverTests": {
+    "passed": 17
+  },
+  "gameTests": {
+    "pvp": 97,
+    "badges": 18,
+    "feedback": "default off; opt-in; discard race; bounds; shutdown ready-file; light/dark screenshots",
+    "combatAndConnection": "passed",
+    "smallWindow": "640x480, auto-fit panel, both themes visually checked; 97 PvP and combat/Feedback checks passed with complete mod pack"
+  },
+  "performanceScope": "Mac synthetic 64 players/48 holograms; not Windows Hypixel",
+  "networkConclusion": "Local direct-connect and packet handling checks passed. Windows Hypixel knockback root cause unconfirmed.",
+  "gcDecision": "G1 comparison showed no gain; existing collector preserved",
+  "privacy": "Explicit per-launch opt-in. Structured connection data, no chat/tokens/packet payload. Max 48 KB, 4/account/day, 2000 rows, 7-day expiry.",
+  "rustTestsWindows": {
+    "passed": 102,
+    "ignored": 7
+  },
+  "windowsBuild": "https://github.com/SkyVessel/unbox-client/actions/runs/43685565200",
+  "finalCodeCommit": "fbe91a7d605b05ae5e98155c32848e5ef1b0f12c",
+  "published": true,
+  "windowsInstallation": "https://github.com/SkyVessel/unbox-client/actions/runs/43686071100"
+}
