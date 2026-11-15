@@ -4,7 +4,7 @@ on:
     inputs:
       release_tag:
         required: true
-        default: v0.2.26
+        default: v0.2.27
       resources_sha256:
         required: true
       verify_only:
@@ -37,6 +37,8 @@ jobs:
           $zip = Join-Path $env:RUNNER_TEMP 'beta-resources.zip'
           if ((Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -ne $env:EXPECTED) { throw 'Resource digest mismatch' }
           Expand-Archive $zip -DestinationPath src-tauri/resources -Force
+      - name: Verify packaged engines
+        run: python scripts/verify-beta-bundle.py
       - run: npm ci
       - run: npm run build
       - name: Prepare Windows icon
