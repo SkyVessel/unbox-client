@@ -1,0 +1,15 @@
+{
+  "bindingsPreserved": [
+    "ADMIN_READ_TOKEN",
+    "ADMIN_WRITE_TOKEN",
+    "DB"
+  ],
+  "health": {
+    "service": "unbox-friends",
+    "configured": true,
+    "version": 2,
+    "accountAuth": "minecraft",
+    "emailVerification": false
+  },
+  "moduleSha256": "d523de0cfb5905138183ce3ef9b70dfb19deaabcb1a1d882c6ccc7b031c13de3"
+}

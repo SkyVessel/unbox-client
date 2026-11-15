@@ -1,0 +1,30 @@
+{
+  "version": "0.2.23",
+  "nativeBuildCommit": "ddbb3cc",
+  "macTests": {
+    "passed": 99,
+    "ignored": 6
+  },
+  "windowsTests": {
+    "passed": 100,
+    "ignored": 7
+  },
+  "uiTests": {
+    "passed": 84
+  },
+  "windowsBuild": "https://github.com/SkyVessel/unbox-client/actions/runs/43669265008",
+  "windowsInstall": "0.2.22 -> 0.2.23 silent installer, installed engine hashes and launcher process startup passed",
+  "windowsInstallAttempt": 2,
+  "firstAttempt": "Installer upload had not completed; download could not find the asset. No installation or source failure.",
+  "updaterSignatures": "Both verified; tampered payloads rejected",
+  "macInstall": "Real Tauri updater installed 0.2.23 into disposable 0.2.22 app; binary and all engines verified",
+  "runtimeChecks": [
+    "1.21.11 preparation, auto Java 21 and launch",
+    "1.8.9 preparation from packaged launcher"
+  ],
+  "limits": [
+    "No Windows gameplay check",
+    "No new world camera tests",
+    "No two-household/real Microsoft account end-to-end test"
+  ]
+}

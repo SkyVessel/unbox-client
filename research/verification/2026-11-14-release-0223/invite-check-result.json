@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "four distinct native invitation profiles",
+    "26.3 classic and Beta separate",
+    "1.8.9 child game directory",
+    "original profile and saves unchanged"
+  ]
+}
