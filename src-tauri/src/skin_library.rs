@@ -272,7 +272,7 @@ fn account_key(a: &Value) -> String {
 
 fn game(rt: &Runtime) -> Option<PathBuf> {
     let j = rt.job.lock().unwrap();
-    if j["stage"] != "Playing" {
+    if j["stage"] != "Playing" || j["cleanTest"]==true {
         return None;
     }
     let dir=profile_dir(rt,j["profileId"].as_str()?).ok()?;

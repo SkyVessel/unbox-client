@@ -173,7 +173,7 @@ fn key(a: &Value) -> String {
 }
 fn game(rt: &Runtime) -> Option<std::path::PathBuf> {
     let j = rt.job.lock().unwrap();
-    if j["stage"] != "Playing" {
+    if j["stage"] != "Playing" || j["cleanTest"]==true {
         return None;
     }
     let dir=profile_dir(rt,j["profileId"].as_str()?).ok()?;
@@ -486,6 +486,7 @@ pub fn start(rt: Runtime) {
         let mut fast_poll = true;
         loop {
             tokio::time::sleep(Duration::from_secs(1)).await;
+            if crate::unpvp::clean_active(&rt){continue;}
             ticks += 1;
             if !fast_poll && rt.social.lock().await.view["invitePolling"]==true {fast_poll=true;}
             if let Some(g) = game(&rt) {

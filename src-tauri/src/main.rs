@@ -38,7 +38,7 @@ pub fn profile_dir(rt: &Runtime, id: &str) -> Result<PathBuf,String> {
 }
 pub fn game_dir(rt:&Runtime,profile:&Value)->Result<PathBuf,String>{
  let dir=profile_dir(rt,profile["id"].as_str().ok_or("Missing profile ID")?)?;
- Ok(if profile["version"]=="1.8.9"&&profile["loader"]=="forge"{dir.join("unpvp-ui")}else{dir})
+ Ok(if profile["version"]=="1.8.9"&&profile["loader"]=="forge"{dir.join(if unpvp::clean_test(profile){"clean-test"}else{"unpvp-ui"})}else{dir})
 }
 #[tauri::command]
 async fn bootstrap(rt: tauri::State<'_,Runtime>) -> Result<Value,String> {
@@ -55,7 +55,7 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Va
     for p in state["profiles"].as_array().unwrap() {profile_dir(&rt,p["id"].as_str().ok_or("Missing ID")?)?;}
     for p in state["profiles"].as_array_mut().unwrap(){
         let dir=profile_dir(&rt,p["id"].as_str().unwrap())?;
-        if let Ok(bytes)=fs::read(dir.join("profile.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){p["channel"]=json!(versions::channel(&saved));}}
+        if let Ok(bytes)=fs::read(dir.join("profile.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){p["channel"]=json!(versions::channel(&saved));p["cleanTest"]=json!(unpvp::clean_test(&saved));}}
     }
     let _guard=rt.auth.lock().await;
     state["account"]=auth::restore_account(&rt,&state["account"])?;
@@ -65,13 +65,14 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Va
     atomic(&rt.root.join("state.json"),serde_json::to_vec_pretty(&state).map_err(|e|e.to_string())?.as_slice())?;Ok(state)
 }
 #[tauri::command]
-fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String, channel: Option<String>) -> Result<Value,String> {
+fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String, channel: Option<String>, clean_test: Option<bool>) -> Result<Value,String> {
     let channel=channel.as_deref().unwrap_or("stable");
+    let clean=clean_test.unwrap_or(false);if clean&&(version!="1.8.9"||loader!="forge"||channel!="beta"){return Err("Clean Test requires Forge 1.8.9".into())}
     if !versions::profile_supported(&version,&loader,channel){return Err("Unsupported Minecraft version, loader or release channel".into())}
     let name=name.trim(); if name.is_empty() || name.chars().count()>48 {return Err("Use a name between 1 and 48 characters".into())}
     if !["grass_block","stone","dirt","oak_planks","bricks","tnt","gold_block","iron_block"].contains(&icon.as_str()){return Err("Unknown block icon".into())}
     let id=uuid::Uuid::new_v4().to_string(); let dir=profile_dir(&rt,&id)?;
-    let profile=json!({"id":id,"name":name,"version":version,"loader":loader,"icon":icon,"channel":channel});
+    let profile=json!({"id":id,"name":name,"version":version,"loader":loader,"icon":icon,"channel":channel,"cleanTest":clean});
     atomic(&dir.join("profile.json"),&serde_json::to_vec_pretty(&profile).unwrap())?;
     Ok(profile)
 }
@@ -115,7 +116,7 @@ pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:St
 pub fn run_profile(runtime:Runtime,app:tauri::AppHandle,profile:Value,username:String,memory:u32,prepare_only:bool){
     tauri::async_runtime::spawn(async move {
         let mut current=profile.clone();
-        let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,Some(&app)).await?;if prepare_only{return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
+        let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,Some(&app)).await?;if prepare_only||unpvp::clean_test(&current){return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
         let mut job=runtime.job.lock().unwrap();
         *job=match result {Ok(_)=>json!({"busy":false,"stage":if prepare_only{"Ready"}else{"Game closed"},"progress":100,"profileId":current["id"]}),Err(e)=>json!({"busy":false,"stage":"Failed","error":e,"profileId":current["id"]})};
     });

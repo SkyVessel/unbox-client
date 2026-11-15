@@ -16,6 +16,17 @@ for entry in json.loads((res/'beta-mods-1.21.11.json').read_text()):
  assert len(entry['sha512'])==128
 for loader in ['','neoforge-']:
  assert (res/f'unbox-client-{loader}26.3.jar').read_bytes()!=(res/f'unbox-client-{loader}26.3-beta.jar').read_bytes()
-for name in ['look-behind-1.21.11','pvp-independent','patcher-performance','unpvp-network']:
+for name in ['look-behind-1.21.11','pvp-independent','patcher-performance','unpvp-network','clean-test']:
  with zipfile.ZipFile(res/(name+'-sources.zip')) as z:assert any(n.endswith('.java') for n in z.namelist())
-print('Verified old profile engines unchanged, four beta engines, pinned dependencies and sources')
+with zipfile.ZipFile(res/'unbox-clean-test-1.8.9.jar') as z:
+ names=z.namelist()
+ classes=[n for n in names if n.endswith('.class')]
+ assert classes and all(n.startswith('dev/unbox/cleantest/') for n in classes)
+ for n in classes:
+  data=z.read(n)
+  for forbidden in [b'java/net/',b'io/netty/',b'Feedback',b'SocialBridge',b'PvpSettings']:
+   assert forbidden not in data,(n,forbidden)
+ cfg=json.loads(z.read('mixins.unbox-clean-test.json'))
+ assert set(cfg['client'])=={'FullbrightMixin','ModelOcclusionMixin','ModelCullingOwnerMixin','ModelNamesAccess'}
+ assert 'dev.unbox.cleantest.bootstrap.CleanBootstrap' in z.read('META-INF/MANIFEST.MF').decode()
+print('Verified stable/full engines, Clean Test isolation, pinned dependencies and source archives')

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.7.10",
+  "package": "dev.unbox.cleantest.mixin",
+  "refmap": "mixins.unbox-clean-test.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "FullbrightMixin",
+    "ModelOcclusionMixin",
+    "ModelCullingOwnerMixin",
+    "ModelNamesAccess"
+  ]
+}

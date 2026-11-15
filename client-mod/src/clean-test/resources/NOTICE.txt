@@ -1,0 +1,1 @@
+Clean Test reuses Unbox Retina compatibility and the Patcher-derived model occlusion adapter (CC BY-NC-SA 4.0). Original upstream: https://github.com/Sk1erLLC/Patcher . No Unbox UI, social, identity badge, skin library, or Feedback code is included.
