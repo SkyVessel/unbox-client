@@ -8,29 +8,23 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-/** Native Unbox controls. Sprint intent survives menus; sneak/zoom stop while input is unavailable. */
+/** Native Unbox controls. Auto sprint is applied in vanilla player input by SprintMixin. */
 final class PvpControls {
     final KeyBinding zoom=new KeyBinding("Unbox zoom",Keyboard.KEY_V,"Unbox"),look=new KeyBinding("Unbox look back",Keyboard.KEY_R,"Unbox");
-    static boolean sneaking;private boolean sprinting,lastSprint,lastSneak,lastZoom,lastLook,zooming,looking;
+    static boolean sneaking;private boolean lastSneak,lastZoom,lastLook,zooming,looking;
     private int previousView;private Object world;private float factor=3,currentFactor=1;private long frame;
     static boolean down(KeyBinding k){int n=k.getKeyCode();return n<0?n>=-100&&Mouse.isButtonDown(n+100):n>0&&n<Keyboard.KEYBOARD_SIZE&&Keyboard.isKeyDown(n);}
     void tick(){Minecraft mc=Minecraft.getMinecraft();boolean playing=mc.thePlayer!=null&&mc.theWorld!=null&&mc.currentScreen==null&&mc.inGameHasFocus;
-        boolean z=playing&&down(zoom),l=playing&&down(look),s=down(mc.gameSettings.keyBindSprint),n=playing&&down(mc.gameSettings.keyBindSneak);
-        if(world!=mc.theWorld||!UiState.on("sprint"))sprinting=false;
+        boolean z=playing&&down(zoom),l=playing&&down(look),n=playing&&down(mc.gameSettings.keyBindSneak);
         if(!playing||world!=mc.theWorld){sneaking=zooming=false;restoreLook();}world=mc.theWorld;
         if(playing){
-            if(UiState.on("sprint")){
-                if(s&&!lastSprint){sprinting=!sprinting;if(!sprinting)mc.thePlayer.setSprinting(false);}
-                if(sprinting&&mc.thePlayer.movementInput.moveForward>=.8f&&!mc.thePlayer.isSneaking()&&!mc.thePlayer.isCollidedHorizontally&&!mc.thePlayer.isUsingItem()&&(mc.thePlayer.getFoodStats().getFoodLevel()>6||mc.thePlayer.capabilities.allowFlying))mc.thePlayer.setSprinting(true);
-                // An inactive toggle must leave vanilla hold/double-tap sprint alone.
-            }else sprinting=false;
             if(UiState.on("sneak")){if(n&&!lastSneak)sneaking=!sneaking;}else sneaking=false;
             if(!UiState.on("zoom"))zooming=false;else if(UiState.get("zoom.mode","Hold").equals("Hold"))zooming=z;else if(z&&!lastZoom)zooming=!zooming;
             if(z&&!lastZoom)factor=UiState.number("zoom.factor",3,2,12);
             boolean want=UiState.on("lookback")&&(UiState.get("lookback.mode","Hold").equals("Hold")?l:(l&&!lastLook?!looking:looking));
             if(want&&!looking){previousView=mc.gameSettings.thirdPersonView;mc.gameSettings.thirdPersonView=2;looking=true;mc.renderGlobal.setDisplayListEntitiesDirty();}else if(!want)restoreLook();
         }
-        lastSprint=s;lastSneak=n;lastZoom=z;lastLook=l;
+        lastSneak=n;lastZoom=z;lastLook=l;
     }
     private void restoreLook(){if(looking){Minecraft mc=Minecraft.getMinecraft();if(mc.gameSettings.thirdPersonView==2)mc.gameSettings.thirdPersonView=previousView;looking=false;mc.renderGlobal.setDisplayListEntitiesDirty();}}
     @SubscribeEvent public void wheel(MouseEvent e){if(zooming&&UiState.flag("zoom.scroll",true)&&e.dwheel!=0){factor=UiState.clamp(factor+(e.dwheel>0?.5f:-.5f),1.5f,16);e.setCanceled(true);}}
@@ -39,5 +33,5 @@ final class PvpControls {
         if(mc.gameSettings.showDebugInfo&&!UiState.flag("crosshair.inDebug",false)||mc.gameSettings.thirdPersonView!=0&&!UiState.flag("crosshair.thirdPerson",false)||mc.thePlayer.isSpectator()&&!UiState.flag("crosshair.spectator",false))return;
         e.setCanceled(true);Painter.begin(1,0);try{Preview.crosshair(e.resolution.getScaledWidth()/2f,e.resolution.getScaledHeight()/2f);}finally{Painter.end();}
     }
-    @SubscribeEvent public void status(RenderGameOverlayEvent.Post e){Minecraft mc=Minecraft.getMinecraft();if(e.type==RenderGameOverlayEvent.ElementType.ALL&&mc.thePlayer!=null&&mc.currentScreen==null&&!mc.gameSettings.hideGUI){String s=sneaking?"[Sneaking toggled]":sprinting&&UiState.flag("sprint.indicator",true)?"[Sprinting toggled]":"";if(!s.isEmpty())mc.fontRendererObj.drawStringWithShadow(s,4,e.resolution.getScaledHeight()-12,0xffffff);}}
+    @SubscribeEvent public void status(RenderGameOverlayEvent.Post e){Minecraft mc=Minecraft.getMinecraft();if(e.type==RenderGameOverlayEvent.ElementType.ALL&&mc.thePlayer!=null&&mc.currentScreen==null&&!mc.gameSettings.hideGUI){String s=sneaking?"[Sneaking toggled]":UiState.on("sprint")&&mc.thePlayer.isSprinting()&&UiState.flag("sprint.indicator",true)?"[Auto sprint]":"";if(!s.isEmpty())mc.fontRendererObj.drawStringWithShadow(s,4,e.resolution.getScaledHeight()-12,0xffffff);}}
 }

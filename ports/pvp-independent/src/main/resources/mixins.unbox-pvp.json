@@ -42,7 +42,8 @@
     "LatencyMixin",
     "FullbrightMixin",
     "PacketTimingMixin",
-    "FeedbackShutdownMixin"
+    "FeedbackShutdownMixin",
+    "SprintMixin"
   ],
   "injectors": {
     "defaultRequire": 1

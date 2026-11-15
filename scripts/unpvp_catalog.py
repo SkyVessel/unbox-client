@@ -15,7 +15,7 @@ def catalog_for(original):
   if m['id']=='chat':
    m['tabs']['General']=[o for o in m['tabs']['General'] if o['key'] not in {'chat.spacing','chat.focused','chat.unfocused'}]
    m['tabs']['General'].append(slider('chat.history','Stored chat lines',500,100,2000));m['hint']='Appearance and history. Ctrl+F in chat opens search.'
-  if m['id']=='sprint':m['title']='Toggle Sprint';m['hint']='Press your sprint key to toggle. Resumes after menus.'
+  if m['id']=='sprint':m['title']='Auto Sprint';m['hint']='Automatically sprint while moving forward. Double-tap W is disabled while enabled.'
   if m['id']=='nickname':m['hint']='Local display only; your account and messages retain their identity.'
   if m['id']=='scoreboard':m['hint']='VanillaHUD renderer, adapted to Unbox.'
  def add(id,title,group,hint,options):out.append(dict(id=id,title=title,group=group,hint=hint,tabs={'General':options}))

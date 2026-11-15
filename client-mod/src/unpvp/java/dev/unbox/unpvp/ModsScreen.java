@@ -75,7 +75,7 @@ final class ModsScreen extends UiScreen {
         List<UiState.Option> options=new ArrayList<>();UiState.Module mod=UiState.module(detail);
         if(settingQuery.isEmpty()&&tab.equals("General")){
             keyRow(x,y,w,"Toggle module",detail+".toggle");y+=46;
-            if(Arrays.asList("zoom","lookback","sprint","sneak").contains(detail)){keyRow(x,y,w,"Activation key",detail);y+=46;}
+            if(Arrays.asList("zoom","lookback","sneak").contains(detail)){keyRow(x,y,w,"Activation key",detail);y+=46;}
         }
         if(settingQuery.isEmpty())options.addAll(mod.tabs.get(tab));else for(List<UiState.Option> section:mod.tabs.values())for(UiState.Option o:section)if((o.label+" "+o.key).toLowerCase(Locale.ROOT).contains(settingQuery.toLowerCase(Locale.ROOT)))options.add(o);
         if(detail.equals("nickname")){
