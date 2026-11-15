@@ -18,7 +18,9 @@ final class SolidProbe {
                 case 4:check(screen.uploads==uploads,"Opacity does not rebuild surfaces");shot("mods-opacity-10");UiState.set("ui.opacity",90);break;
                 case 5:check(screen.uploads==uploads,"Second opacity change reuses surface");shot("mods-opacity-90");SolidTheme.select(1);screen.rebuild();break;
                 case 6:shot("mods-red");VectorModsScreen mods=(VectorModsScreen)screen;mods.scroll(300,400,-1);break;
-                case 7:shot("mods-scroll");check(screen.uploads==uploads+1,"Scrolling does not rebuild surfaces");mc.displayGuiScreen(null);check(SolidTexture.activeResidents()==0&&SolidTexture.residentBytes<=SolidTexture.LIMIT,"Page handles released; retained cache is bounded");SolidTexture.clearIdle();SolidText.clear();SolidGeometry.clear();check(SolidTexture.alive==0,"Closing releases GPU surfaces and masks");System.out.println("[unpvp-solid-test] PASS checks="+checks);mc.shutdown();break;
+                case 7:shot("mods-scroll");check(screen.uploads==uploads+1,"Scrolling does not rebuild surfaces");mc.displayGuiScreen(new SkinsScreen(screen));break;
+                case 8:shot("appearance");check(screen.controls.stream().anyMatch(c->c.label.equals("Use skin")),"Appearance has separate selection and apply");mc.displayGuiScreen(new HomeScreen(true));break;
+                case 9:shot("quick-feedback");check(screen.controls.stream().anyMatch(c->c.label.equals("Feedback")&&c.y>screen.logicalHeight-80),"Feedback stays at bottom-left");mc.displayGuiScreen(null);check(SolidTexture.activeResidents()==0&&SolidTexture.residentBytes<=SolidTexture.LIMIT,"Page handles released; retained cache is bounded");SolidTexture.clearIdle();SolidText.clear();SolidGeometry.clear();check(SolidTexture.alive==0,"Closing releases GPU surfaces and masks");System.out.println("[unpvp-solid-test] PASS checks="+checks);mc.shutdown();break;
             }
             stage++;frames=0;since=System.nanoTime();
         }catch(Throwable e){e.printStackTrace();System.out.println("[unpvp-solid-test] FAILED stage="+stage);mc.shutdown();}

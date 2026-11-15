@@ -13,7 +13,7 @@ class HomeScreen extends SolidScreen {
     HomeScreen(boolean inWorld){this(inWorld,null);}
     HomeScreen(boolean inWorld,GuiScreen parent){super(inWorld?"quick":"title",parent);this.inWorld=inWorld;}
     @Override void build(){
-        solidButton(104,30,128,40,"Feedback",SolidTheme.card(0),()->navigate(new FeedbackScreen(this)));
+        round(104,750,104,32,16,SolidTheme.card(0));center("Feedback",104,755,104,17,SolidTheme.text());hit(104,750,104,32,"Feedback",()->navigate(new FeedbackScreen(this)));
         if(page.equals("title")){
             hit(576,314,380,85,"Singleplayer",()->navigate(new GuiSelectWorld(this))).geometry("title-576-314");
             hit(576,403,380,85,"Multiplayer",()->navigate(new MultiplayerScreen(this))).geometry("title-576-403");
@@ -34,23 +34,26 @@ class HomeScreen extends SolidScreen {
     @Override public void updateScreen(){super.updateScreen();if(!page.equals("title"))social.tick();}
     @Override void live(float mx,float my,float partial){if(!page.equals("title"))social.draw();if(page.equals("title")){net.minecraft.client.network.NetworkPlayerInfo info=mc.getNetHandler()==null?null:mc.getNetHandler().getPlayerInfo(mc.getSession().getProfile().getId());mc.getTextureManager().bindTexture(LocalSkin.texture()!=null?LocalSkin.texture():info==null?new ResourceLocation("textures/entity/steve.png"):info.getLocationSkin());GlStateManager.color(1,1,1,1);Gui.drawScaledCustomSizeModalRect(32,32,8,8,8,8,50,50,64,64);return;}double h=viewport.previewHeight(),cx=viewport.previewCenterX(),cy=viewport.previewCenterY();skinX=(int)(cx-h*.4);skinY=(int)(cy-h/2);player(skinX,skinY,(int)(h*.8),(int)h,rotation,mx,my,rotating);}
     static void player(int x,int y,int w,int h,float angle,float mx,float my,boolean dragging){
+        player(x,y,w,h,angle,mx,my,dragging,null,null);
+    }
+    static void player(int x,int y,int w,int h,float angle,float mx,float my,boolean dragging,ResourceLocation selected,String selectedModel){
         net.minecraft.client.Minecraft mc=net.minecraft.client.Minecraft.getMinecraft();
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);GL11.glPushMatrix();
         try{
             GL11.glEnable(GL11.GL_DEPTH_TEST);GL11.glDepthMask(true);GL11.glDepthFunc(GL11.GL_LEQUAL);GL11.glEnable(GL11.GL_ALPHA_TEST);GL11.glAlphaFunc(GL11.GL_GREATER,.1f);
-            float yaw=dragging?0:(float)Math.atan((x+w/2f-mx)/40f)*20,pitch=dragging?0:(float)Math.atan((y+h/2f-my)/40f)*20;
+            float yaw=dragging?0:(float)Math.atan((mx-x-w/2f)/160f)*20,pitch=dragging?0:(float)Math.atan((my-y-h/2f)/160f)*20;
             GlStateManager.enableRescaleNormal();GlStateManager.enableColorMaterial();RenderHelper.enableGUIStandardItemLighting();GlStateManager.color(1,1,1,1);
             float size=h*.43f;GL11.glTranslatef(x+w/2f,y+h/2f,100);GL11.glScalef(size,size,size);GL11.glRotatef(-pitch,1,0,0);GL11.glRotatef(180+angle+yaw,0,1,0);GL11.glTranslatef(0,-.5f,0);
-            GlStateManager.bindTexture(0);mc.getTextureManager().bindTexture(LocalSkin.texture()!=null?LocalSkin.texture():mc.thePlayer==null?new ResourceLocation("textures/entity/steve.png"):mc.thePlayer.getLocationSkin());
-            if(model==null){model=new ModelPlayer(0,false);slimModel=new ModelPlayer(0,true);}ModelPlayer avatar=(LocalSkin.texture()!=null?LocalSkin.model().equals("slim"):mc.thePlayer!=null&&mc.thePlayer.getSkinType().equals("slim"))?slimModel:model;
+            GlStateManager.bindTexture(0);mc.getTextureManager().bindTexture(selected!=null?selected:LocalSkin.texture()!=null?LocalSkin.texture():mc.thePlayer==null?new ResourceLocation("textures/entity/steve.png"):mc.thePlayer.getLocationSkin());
+            if(model==null){model=new ModelPlayer(0,false);slimModel=new ModelPlayer(0,true);}ModelPlayer avatar=(selected!=null?"slim".equals(selectedModel):LocalSkin.texture()!=null?LocalSkin.model().equals("slim"):mc.thePlayer!=null&&mc.thePlayer.getSkinType().equals("slim"))?slimModel:model;
             avatar.bipedHead.rotateAngleY=yaw*(float)Math.PI/180;avatar.bipedHead.rotateAngleX=-pitch*(float)Math.PI/180;avatar.bipedHeadwear.rotateAngleY=avatar.bipedHead.rotateAngleY;avatar.bipedHeadwear.rotateAngleX=avatar.bipedHead.rotateAngleX;
             for(net.minecraft.client.model.ModelRenderer part:new net.minecraft.client.model.ModelRenderer[]{avatar.bipedHead,avatar.bipedBody,avatar.bipedLeftArm,avatar.bipedRightArm,avatar.bipedLeftLeg,avatar.bipedRightLeg,avatar.bipedHeadwear,avatar.bipedLeftArmwear,avatar.bipedRightArmwear,avatar.bipedLeftLegwear,avatar.bipedRightLegwear,avatar.bipedBodyWear})part.render(.0625f);
             RenderHelper.disableStandardItemLighting();GlStateManager.disableRescaleNormal();
-        }finally{GL11.glPopMatrix();GL11.glPopAttrib();GlStateManager.disableLighting();GlStateManager.disableDepth();GlStateManager.disableAlpha();GlStateManager.enableBlend();GlStateManager.tryBlendFuncSeparate(770,771,1,0);GlStateManager.color(1,1,1,1);}
+        }finally{GL11.glPopMatrix();GL11.glPopAttrib();GL11.glBindTexture(GL11.GL_TEXTURE_2D,0);GlStateManager.bindTexture(0);GlStateManager.disableLighting();GlStateManager.disableDepth();GlStateManager.disableAlpha();GlStateManager.enableBlend();GlStateManager.tryBlendFuncSeparate(770,771,1,0);GlStateManager.color(1,1,1,1);}
     }
 
     @Override boolean interceptClick(float x,float y,int b){if(!page.equals("title")&&b==0&&Math.abs(x-viewport.previewCenterX())<viewport.previewHeight()*.4&&Math.abs(y-viewport.previewCenterY())<viewport.previewHeight()/2){rotating=true;lastX=x;return true;}return false;}
-    @Override protected void mouseClickMove(int x,int y,int b,long held){if(rotating){float next=x/scale;rotation-=next-lastX;lastX=next;}else super.mouseClickMove(x,y,b,held);}
+    @Override protected void mouseClickMove(int x,int y,int b,long held){if(rotating){float next=x/scale;rotation+=next-lastX;lastX=next;}else super.mouseClickMove(x,y,b,held);}
     @Override protected void mouseReleased(int x,int y,int b){rotating=false;super.mouseReleased(x,y,b);}
     @Override void close(){if(inWorld)super.close();else if(!page.equals("title"))visit("title");}
 }

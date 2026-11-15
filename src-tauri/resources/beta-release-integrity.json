@@ -1,5 +1,5 @@
 {
-  "version": "0.2.26",
+  "version": "0.2.27",
   "stableSource": "v0.2.22",
   "stable": {
     "unbox-client.jar": "1883e505d66d0ea84a61d83183067c5bf5be0b36f369a9d64ec932dcca09d8ae",
@@ -10,10 +10,10 @@
     "unbox-client-neoforge-26.3.jar": "c314ca9ddd7a9c1dcc5c949700f120ecff9be1d00b7b6ef794efb6d4c8bd1f19"
   },
   "beta": {
-    "unbox-client-26.3-beta.jar": "b3aa0686963cd75d04cf471d4b079e04a2e191d90637e36d761ca4342176caf2",
-    "unbox-client-neoforge-26.3-beta.jar": "b09e2b28363a2a6333cd8acb33b060f773e3be3484aefd021998204128364907",
+    "unbox-client-26.3-beta.jar": "9425d8ee30df6e6aa57b2242679931920bdf4249fbf3b13744343ea1e6bc7329",
+    "unbox-client-neoforge-26.3-beta.jar": "b16052d971db345ab14f396317d48a559eff681c28d3a493d1694145e84c262b",
     "unbox-client-1.21.11-beta.jar": "c3681d2716734010c2df3ac6775744ec2485bd885681cf55ca5a0446a21fe48f",
-    "unpvp-forge-1.8.9.jar": "d2ac8e7dec91fae7033d08f283f18b16da1ff0cead399c3bf978e67b8474bdd6",
+    "unpvp-forge-1.8.9.jar": "7c0ab033edc2d03459ccb8f16cfaeaa51e7876c2f1e1f50551e00ccc20264c75",
     "unpvp-network.jar": "058ac1eea6ff4c12064487f35563b260f7a2fa2ba891368ad05221ccb6fdb4d9",
     "unpvp-pvp.jar": "82e4143102acc875ece3e9b3a5a77cf94e6dbe141a174d704d04c1590c2bba36",
     "unpvp-patcher-performance.jar": "baf4ca75811f31c2da542a481db78db0c9b539a2bbc69929f2bf597b298b6328",

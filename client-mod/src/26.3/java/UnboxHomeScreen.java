@@ -27,7 +27,7 @@ public class UnboxHomeScreen extends SolidScreen {
     public float menuScale(){return scale;}
     public float menuOffsetY(){return 0;}
     @Override protected void build(){
-        themePicker();
+        themePicker();round(104,750,104,32,16,SolidTheme.card(0));center("Feedback",104,755,104,17,SolidTheme.text());hit(104,750,104,32,"Feedback",()->minecraft.setScreen(new SyncFeedbackScreen(this)));
         if(page.equals("title")){buildTitle();return;}
         hit(598,372,144,70,"Edit HUD",()->{var s=new UnboxScreen(this);minecraft.setScreen(s);s.editHud();}).geometry("quick-598-372").active=minecraft.player!=null;
         icon("move",657,394,26,SolidTheme.text());

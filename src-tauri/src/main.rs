@@ -67,7 +67,7 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Va
 #[tauri::command]
 fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String, channel: Option<String>, clean_test: Option<bool>) -> Result<Value,String> {
     let channel=channel.as_deref().unwrap_or("stable");
-    let clean=clean_test.unwrap_or(false);if clean&&(version!="1.8.9"||loader!="forge"||channel!="beta"){return Err("Clean Test requires Forge 1.8.9".into())}
+    let clean=clean_test.unwrap_or(false);if clean{return Err("Clean Test has been retired. Choose 1.8.9 unpvp Beta.".into())}
     if !versions::profile_supported(&version,&loader,channel){return Err("Unsupported Minecraft version, loader or release channel".into())}
     let name=name.trim(); if name.is_empty() || name.chars().count()>48 {return Err("Use a name between 1 and 48 characters".into())}
     if !["grass_block","stone","dirt","oak_planks","bricks","tnt","gold_block","iron_block"].contains(&icon.as_str()){return Err("Unknown block icon".into())}
@@ -108,6 +108,7 @@ pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:St
     if username.is_empty()||username.len()>16||!username.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'_'){return Err("Local name must be 1–16 letters, numbers or underscores".into())}
     let dir=profile_dir(&rt,&id)?;
     let profile:Value=serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
+    if unpvp::clean_test(&profile){return Err("Clean Test has been retired. Choose 1.8.9 unpvp Beta.".into())}
     {let job=rt.job.lock().unwrap();if job["busy"]==true{return Err("A game or preparation is already running".into())}catalog::recover(&dir)?;}
     world_library::ensure(rt,&id)?;
     {let mut job=rt.job.lock().unwrap();if job["busy"]==true{return Err("A game or preparation is already running".into())}*job=json!({"busy":true,"stage":"Checking files","progress":0,"profileId":id});}
@@ -116,7 +117,7 @@ pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:St
 pub fn run_profile(runtime:Runtime,app:tauri::AppHandle,profile:Value,username:String,memory:u32,prepare_only:bool){
     tauri::async_runtime::spawn(async move {
         let mut current=profile.clone();
-        let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,Some(&app)).await?;if prepare_only||unpvp::clean_test(&current){return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
+        let result=async{for _ in 0..4{let run=launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,Some(&app)).await;let resumed=match run{Err(e)=>Err(e),Ok(()) if prepare_only=>Ok(None),Ok(())=>sharing::resume(&runtime,&current).await};feedback::finish_modern(&runtime,&current,&resumed).await;if let Some(next)=resumed?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
         let mut job=runtime.job.lock().unwrap();
         *job=match result {Ok(_)=>json!({"busy":false,"stage":if prepare_only{"Ready"}else{"Game closed"},"progress":100,"profileId":current["id"]}),Err(e)=>json!({"busy":false,"stage":"Failed","error":e,"profileId":current["id"]})};
     });

@@ -17,6 +17,11 @@ fn entries(manifest:&Value)->Result<Vec<(String,u64)>,String>{
 }
 /// Keep a single visible recent environment per friend; version-specific files remain isolated on disk.
 pub fn normalize_profiles(state:&mut Value){
+ // Retire the temporary diagnostic profile. Keep its directory/worlds on disk.
+ if let Some(profiles)=state["profiles"].as_array_mut(){profiles.retain(|p|!crate::unpvp::clean_test(p));}
+ if !state["profiles"].as_array().is_some_and(|ps|ps.iter().any(|p|p["id"]==state["selected"])){
+  state["selected"]=state["profiles"].get(0).map(|p|p["id"].clone()).unwrap_or(Value::Null);
+ }
  let Some(profiles)=state["profiles"].as_array() else{return};
  let mut latest=std::collections::HashMap::new();
  for (index,p) in profiles.iter().enumerate(){if let Some(host)=p["sharedHost"].as_str(){let stamp=p["sharedUpdatedAt"].as_u64().unwrap_or(0);let entry=latest.entry(host.to_owned()).or_insert((stamp,index));if stamp>=entry.0{*entry=(stamp,index);}}}
@@ -234,4 +239,9 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
   request["manifest"]["files"]=json!([{"hash":hash,"size":size,"id":"example"}]);fs::write(root.join(format!("shared-cache/{hash}.jar")),"corrupt").unwrap();assert!(apply(&rt,&source,&request).is_err());assert!(shared.join("mods/personal.jar").exists());
   request["manifest"]["files"]=json!([{"hash":"../escape","size":1,"id":"bad"}]);assert!(apply(&rt,&source,&request).is_err());assert!(shared.join("mods/personal.jar").exists());fs::rename(shared.join("mods"),shared.join(".mods-previous")).unwrap();recover(&shared).unwrap();assert!(shared.join("mods/personal.jar").exists());fs::remove_dir_all(root).unwrap();
  }
+}
+
+#[cfg(test)]mod retirement_tests{
+ use super::*;
+ #[test]fn clean_profiles_are_retired_without_changing_other_profiles(){let normal=json!({"id":"normal","version":"1.8.9","loader":"forge","channel":"beta"});let mut s=json!({"selected":"clean","profiles":[{"id":"clean","version":"1.8.9","loader":"forge","cleanTest":true},normal]});normalize_profiles(&mut s);assert_eq!(s["profiles"],json!([normal]));assert_eq!(s["selected"],"normal");}
 }

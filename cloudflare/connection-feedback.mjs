@@ -4,7 +4,19 @@ const number=(x)=>typeof x==='number'&&Number.isFinite(x)&&x>=0&&x<=1e15;
 const text=(x,n=128)=>typeof x==='string'&&x.length<=n&&!/[\x00-\x1f\x7f]/.test(x);
 const id=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 function stats(v){if(!v||!Number.isInteger(v.samples)||v.samples<0||v.samples>100000)return null;const o={samples:v.samples};for(const k of ['p50Ms','p95Ms','maxMs'])if(v[k]!==undefined){if(!number(v[k]))return null;o[k]=v[k]}return o}
+function validateSync(v){
+ if(!v||v.schema!==2||v.kind!=='mod-sync'||v.consent!==true||!id.test(v.session)||!number(v.startedAt)||v.minecraft!=='26.3'||!['fabric','neoforge'].includes(v.loader)||!text(v.clientVersion,32)||!Array.isArray(v.events)||v.events.length<1||v.events.length>120||JSON.stringify(v).length>48000)return null;
+ const events=[];
+ for(const e of v.events){
+  if(!e||!number(e.at)||e.at<v.startedAt||!number(e.bytes)||!number(e.total))return null;
+  const clean={at:e.at,bytes:e.bytes,total:e.total};
+  for(const k of ['stage','role','fileId','errorType','errorCode']){if(e[k]!==undefined){if(!text(e[k],64)||!/^[A-Za-z0-9_-]{0,64}$/.test(e[k]))return null;clean[k]=e[k]}}
+  if(!clean.stage||!clean.role)return null;events.push(clean);
+ }
+ return {schema:2,kind:'mod-sync',session:v.session,startedAt:v.startedAt,minecraft:v.minecraft,loader:v.loader,clientVersion:v.clientVersion,events};
+}
 export function validateReport(v){
+ if(v?.schema===2)return validateSync(v);
  if(!v||v.schema!==1||v.consent!==true||!id.test(v.session)||!number(v.startedAt)||v.minecraft!=='1.8.9'||!text(v.clientVersion,32)||!Array.isArray(v.windows)||v.windows.length<1||v.windows.length>40||JSON.stringify(v).length>48000)return null;
  const windows=[];
  for(const w of v.windows){

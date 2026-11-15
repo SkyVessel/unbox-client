@@ -51,24 +51,7 @@ final class CombatProbe {
   check(UiState.module("fullbright")!=null&&SolidSurface.iconShape("fullbright")!=null,"Fullbright is available in the existing panel with a vector icon");
  }
  private static void latencyCheck()throws Exception{
-  Latency.Measurement m=new Latency.Measurement();long start=1_000_000_000L;
-  net.minecraft.network.Packet request=m.request(start);m.sent(request,start);m.reply(start+189_000_000L);
-  check(Integer.valueOf(189).equals(m.value(start+200_000_000L)),"Latency uses response duration, independent of TAB ping");
-  check(m.request(start+2_000_000_000L)==null,"Latency requests are rate limited");
-  m.reset();check(m.value(start)==null,"World/connection reset clears old latency");
-  request=m.request(start);m.sent(request,start);m.sent(new net.minecraft.network.play.client.C16PacketClientStatus(net.minecraft.network.play.client.C16PacketClientStatus.EnumState.REQUEST_STATS),start+1);m.reply(start+1_000_000L);
-  check(m.value(start+2_000_000L)==null,"Another statistics request invalidates ambiguous latency");
-  m.reset();request=m.request(start);m.sent(request,start);m.reply(start+6_000_000_000L);
-  check(m.value(start+6_000_000_000L)==null&&m.request(start+60_000_000_000L)==null,"Timeout rejects late responses and stops probing until reset");
-  m.reset();request=m.request(start);m.sent(request,start);m.reply(start+200_000_000L);check(m.value(start+31_000_000_000L)==null,"Old latency expires instead of persisting across silence");
-  // Exercise real send/receive mixins on the isolated integrated server's connection.
-  java.lang.reflect.Field field=Latency.class.getDeclaredField("measurement");field.setAccessible(true);Latency.Measurement live=(Latency.Measurement)field.get(null);
-  synchronized(live){live.reset();request=live.request(System.nanoTime());}
-  Minecraft.getMinecraft().getNetHandler().getNetworkManager().sendPacket(request);
-  long deadline=System.nanoTime()+2_000_000_000L;
-  while(Latency.value()==null&&System.nanoTime()<deadline)Thread.sleep(5);
-  check(Latency.value()!=null,"Actual statistics request/reply produces a measured connection sample");
-  synchronized(live){live.reset();}
+  Latency.tick();check(Latency.value()==null,"Singleplayer does not report a public-server ping");
  }
  private static void inputCheck(EntityOtherPlayerMP target)throws Exception{
   Minecraft mc=Minecraft.getMinecraft();net.minecraft.network.NetworkManager network=mc.getNetHandler().getNetworkManager();java.lang.reflect.Field channel=net.minecraftforge.fml.relauncher.ReflectionHelper.findField(net.minecraft.network.NetworkManager.class,"channel","field_150746_k");io.netty.channel.Channel transport=(io.netty.channel.Channel)channel.get(network);java.util.List<Object> sent=new java.util.concurrent.CopyOnWriteArrayList<>();

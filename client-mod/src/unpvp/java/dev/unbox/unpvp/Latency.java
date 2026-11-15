@@ -1,83 +1,40 @@
 package dev.unbox.unpvp;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.achievement.GuiStats;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.C16PacketClientStatus;
-import net.minecraft.network.play.server.S01PacketJoinGame;
-import net.minecraft.network.play.server.S07PacketRespawn;
-import net.minecraft.network.play.server.S37PacketStatistics;
+import java.util.concurrent.*;
 
-/** Approximate game-connection response time, not the server's TAB latency field.
- * Statistics replies have no request ID: other observed requests invalidate our sample.
- * Includes server processing and outbound queue time; unsolicited replies remain ambiguous.
- */
+/** Server-list status ping, matching Lunar's measurement family. No gameplay packets. */
 public final class Latency {
-    private static final Measurement measurement=new Measurement();
+    private static final ExecutorService IO=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"unbox-status-ping");t.setDaemon(true);return t;});
+    private static volatile Integer sample;
+    private static volatile long updated,generation;
+    private static long next;
+    private static volatile boolean busy;
     private static NetworkManager network;
-    private static Object world;
-    private Latency(){}
-
+    private static String address="";
     static void tick(){
         Minecraft mc=Minecraft.getMinecraft();
         NetworkManager current=mc.getNetHandler()==null?null:mc.getNetHandler().getNetworkManager();
-        C16PacketClientStatus request;
-        synchronized(measurement){
-            if(current!=network||world!=mc.theWorld){network=current;world=mc.theWorld;measurement.reset();}
-            if(world==null||current==null||mc.isSingleplayer()||!UiState.on("ping")){measurement.reset();return;}
-            long now=System.nanoTime();
-            if(mc.currentScreen instanceof GuiStats){measurement.defer(now);return;}
-            request=measurement.request(now);
-        }
-        if(request!=null)current.sendPacket(request);
+        ServerData server=mc.getCurrentServerData();
+        String target=mc.theWorld!=null&&!mc.isSingleplayer()&&UiState.on("ping")&&server!=null?server.serverIP:"";
+        if(current!=network||!target.equals(address)){network=current;address=target;generation++;sample=null;updated=next=0;}
+        long now=System.nanoTime();
+        if(target.isEmpty()||current==null||busy||now<next)return;
+        next=now+10_000_000_000L;busy=true;final long epoch=generation;
+        IO.execute(()->{OldServerPinger pinger=new OldServerPinger();try{
+            ServerData data=new ServerData("Ping",target,false);data.pingToServer=-1;
+            pinger.ping(data);long deadline=System.nanoTime()+5_000_000_000L;
+            while(epoch==generation&&data.pingToServer<0&&System.nanoTime()<deadline){pinger.pingPendingNetworks();Thread.sleep(2);}
+            if(epoch==generation){sample=data.pingToServer>=0?(int)Math.min(Integer.MAX_VALUE,data.pingToServer):null;updated=System.nanoTime();}
+        }catch(Exception e){if(epoch==generation)sample=null;if(e instanceof InterruptedException)Thread.currentThread().interrupt();}
+        finally{pinger.clearPendingNetworks();busy=false;}});
     }
-
-    static Integer value(){synchronized(measurement){return measurement.value(System.nanoTime());}}
-
-    public static void sent(NetworkManager source,Packet packet){
-        if(!(packet instanceof C16PacketClientStatus)||((C16PacketClientStatus)packet).getStatus()!=C16PacketClientStatus.EnumState.REQUEST_STATS)return;
-        synchronized(measurement){if(source==network)measurement.sent(packet,System.nanoTime());}
-    }
-
-    public static void received(NetworkManager source,Packet packet){
-        if(!(packet instanceof S37PacketStatistics)&&!(packet instanceof S01PacketJoinGame)&&!(packet instanceof S07PacketRespawn))return;
-        synchronized(measurement){
-            if(source!=network)return;
-            if(packet instanceof S37PacketStatistics)measurement.reply(System.nanoTime());
-            else {measurement.reset();world=null;}
-        }
-    }
-
-    /** All calls are guarded by measurement; explicit times also permit deterministic tests. */
-    static final class Measurement {
-        private static final long INTERVAL=10_000_000_000L,TIMEOUT=5_000_000_000L;
-        private C16PacketClientStatus pending;
-        private long started,next,updated;
-        private boolean sent,blocked;
-        private Integer sample;
-        void reset(){pending=null;sample=null;started=next=updated=0;sent=blocked=false;}
-        void defer(long now){pending=null;sent=false;next=now+INTERVAL;}
-        C16PacketClientStatus request(long now){
-            expire(now);
-            if(blocked||pending!=null||now<next)return null;
-            pending=new C16PacketClientStatus(C16PacketClientStatus.EnumState.REQUEST_STATS);
-            started=now;sent=false;next=now+INTERVAL;return pending;
-        }
-        void sent(Packet packet,long now){
-            if(packet==pending){started=now;sent=true;}
-            else defer(now);
-        }
-        void reply(long now){
-            expire(now);
-            if(pending==null||!sent)return;
-            sample=(int)Math.max(0,Math.round((now-started)/1_000_000.0));updated=now;pending=null;sent=false;
-        }
-        Integer value(long now){expire(now);return sample!=null&&now-updated<3*INTERVAL?sample:null;}
-        private void expire(long now){
-            // No request IDs: after timeout do not risk assigning a late reply to a new request.
-            // A new world/connection (or toggling the HUD) resets this state.
-            if(pending!=null&&now-started>=TIMEOUT){pending=null;sample=null;sent=false;blocked=true;}
-        }
-    }
+    static Integer value(){return System.nanoTime()-updated<30_000_000_000L?sample:null;}
+    // Retain binary compatibility with the diagnostic packet hooks; never send REQUEST_STATS.
+    public static void sent(NetworkManager source,Packet packet){}
+    public static void received(NetworkManager source,Packet packet){}
 }
