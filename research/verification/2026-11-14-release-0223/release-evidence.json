@@ -26,5 +26,12 @@
     "No Windows gameplay check",
     "No new world camera tests",
     "No two-household/real Microsoft account end-to-end test"
+  ],
+  "windowsInstallRun": "https://github.com/SkyVessel/unbox-client/actions/runs/43669864912",
+  "publicationVerifiedAt": "2026-11-15T03:01:17.078445+00:00",
+  "release": "https://github.com/SkyVessel/unbox-client/releases/tag/v0.2.23",
+  "publicChannels": [
+    "Cloudflare",
+    "GitHub"
   ]
 }

@@ -1,0 +1,19 @@
+{
+  "removedTaskCopies": [
+    "launch-fixture",
+    "invite-check",
+    "unbox-update-fixture",
+    "windows-artifact",
+    "artifacts",
+    "stable",
+    "beta-resources.zip",
+    "old-mac.tar.gz"
+  ],
+  "preserved": [
+    "user profiles and saves",
+    "shared pre-existing runtime caches",
+    "other worktrees",
+    "production bundle and release resources",
+    "compact verification evidence"
+  ]
+}
