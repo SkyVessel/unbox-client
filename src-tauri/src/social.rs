@@ -581,9 +581,17 @@ pub fn start(rt: Runtime) {
 
 /// Held only in launcher memory for the account that started this game.
 pub(crate) struct FeedbackAccount { identity: Identity }
+fn feedback_key(uuid:&str,microsoft:bool)->String{key(&json!({"type":if microsoft{"microsoft"}else{"local"},"uuid":uuid}))}
 pub(crate) fn feedback_account(uuid: &str, microsoft: bool) -> Result<FeedbackAccount,String> {
-    Ok(FeedbackAccount { identity: identity(&format!("{}-{}",if microsoft {"microsoft"} else {"local"},uuid))? })
+    Ok(FeedbackAccount { identity: identity(&feedback_key(uuid,microsoft))? })
 }
 pub(crate) async fn send_feedback(rt:&Runtime, account:&FeedbackAccount, report:Value)->Result<(),String>{
     request(&endpoint(rt)?,&account.identity,"connection-feedback",report).await.map(|_|())
+}
+#[cfg(test)]mod feedback_tests{
+ use super::*;
+ #[test]fn feedback_reuses_registered_identity_namespace(){
+  assert_eq!(feedback_key("001122",true),"msa-001122");
+  assert_eq!(feedback_key("001122",false),"local-001122");
+ }
 }
