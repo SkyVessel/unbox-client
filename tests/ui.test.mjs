@@ -14,7 +14,7 @@ test('profile wizard validates input, retains draft on Back, and persists only o
  assert.equal(await p.getByRole('button',{name:'Confirm',exact:true}).isDisabled(),true);
  await p.getByRole('textbox',{name:'Profile name'}).fill('  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();
- assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.3 · Classic','26.3 · New UI · Beta','1.21.11 · PvP · Beta','1.8.9 · unpvp · Beta','26.1.2 · Java Edition','26.1 · Java Edition']);
+ assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.3 · Classic','26.3 · New UI · Beta','1.21.11 · PvP · Beta','1.8.9 · unpvp · Beta','1.8.9 · Clean Test','26.1.2 · Java Edition','26.1 · Java Edition']);
  await p.getByRole('button',{name:'Back',exact:true}).click();
  assert.equal(await p.getByRole('textbox',{name:'Profile name'}).inputValue(),'  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Confirm',exact:true}).click();
@@ -346,4 +346,15 @@ test('beta profiles are explicit, isolated from classic and retain their channel
   const profiles=await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')).profiles);assert.deepEqual(profiles[0],old);assert.equal(profiles.at(-1).channel,'beta');assert.equal(profiles.at(-1).loader,loader);assert.notEqual(profiles.at(-1).id,old.id);
  }
  await p.close();
+});
+
+test('Clean Test profile persists its mode and changing back to a normal version clears it',async()=>{
+ const p=await browser.newPage();await p.goto('http://127.0.0.1:1420');
+ async function start(name){await p.getByRole('button',{name:'Create profile',exact:true}).first().click();await p.getByRole('textbox',{name:'Profile name'}).fill(name);await p.getByRole('button',{name:'Confirm',exact:true}).click();}
+ async function finish(){await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Create profile',exact:true}).last().click();await p.getByRole('dialog').waitFor({state:'hidden'});}
+ await start('1.8.9 (Clean Test)');await p.getByLabel('Minecraft version').selectOption('1.8.9:beta:clean-test');await finish();
+ let saved=await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')));assert.equal(saved.profiles[0].cleanTest,true);assert.equal(saved.profiles[0].loader,'forge');assert.equal(saved.profiles[0].version,'1.8.9');
+ await p.reload();await p.getByRole('button',{name:'1.8.9 (Clean Test) · forge 1.8.9 · Clean Test',exact:true}).waitFor();
+ await start('Normal');await p.getByLabel('Minecraft version').selectOption('1.8.9:beta:clean-test');await p.getByLabel('Minecraft version').selectOption('26.3:stable');await finish();
+ saved=await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')));assert.equal(saved.profiles[1].cleanTest,false);assert.equal(saved.profiles[0].cleanTest,true);await p.close();
 });
