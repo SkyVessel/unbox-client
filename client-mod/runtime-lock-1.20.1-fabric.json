@@ -1,0 +1,364 @@
+{
+  "minecraft": "1.20.1",
+  "loader": "fabric",
+  "status": "development; building integration still in progress",
+  "mods": [
+    {
+      "slug": "itemphysic-lite",
+      "projectId": "OuyCgP8t",
+      "id": "ZoEtecc4",
+      "version": "1.6.13",
+      "filename": "ItemPhysicLite_FABRIC_v1.6.13_mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/OuyCgP8t/versions/ZoEtecc4/ItemPhysicLite_FABRIC_v1.6.13_mc1.20.1.jar",
+      "sha1": "cb4e9ad15d6402ccdd3bd2ac130eaff218f1b44b",
+      "sha512": "f029bc7c514afed31a96bf97fd9c8dabc2ea56d0753414220c49fd850e8467e9dacd264f8bbf57d5f055e37686d07f111237a03c70ef8ed64b975ff22b183c38"
+    },
+    {
+      "slug": "inventory-profiles-next",
+      "projectId": "O7RBXm3n",
+      "id": "ZTQIr2Z9",
+      "version": "fabric-1.20.1-1.10.20",
+      "filename": "InventoryProfilesNext-fabric-1.20-1.10.20.jar",
+      "url": "https://cdn.modrinth.com/data/O7RBXm3n/versions/ZTQIr2Z9/InventoryProfilesNext-fabric-1.20-1.10.20.jar",
+      "sha512": "91a031e86f08ca7a018c6c65c1e57aac39d5bf8a14d299d2ed8aab86f8deddbeecd54496fb4d8f3e2e00a30b8058ab9fe70910b448507829005733528c667685",
+      "sha1": "e45676c4193d69b0eb0ebdb7881a6daeb36a9b5e"
+    },
+    {
+      "slug": "veinminer",
+      "projectId": "OhduvhIc",
+      "id": "KTrObKTw",
+      "version": "2.0.4",
+      "filename": "Veinminer-2.0.4.jar",
+      "url": "https://cdn.modrinth.com/data/OhduvhIc/versions/KTrObKTw/Veinminer-2.0.4.jar",
+      "sha512": "6e924204246c53ec49f5f1d1a9fdaff7f64d18cbe53cf9cb44f0fb94c99bdcbbcf55bfa6433072895faf4d0800be8236cc5e61bd0dc6ac4a868e06928dee1cc7",
+      "sha1": "2c579a59210f7fb7b2c25c1b0332d559d4dba92b"
+    },
+    {
+      "slug": "fallingtree",
+      "projectId": "Fb4jn8m6",
+      "id": "SLGqTNx5",
+      "version": "1.20.1-4.3.6",
+      "filename": "FallingTree-1.20.1-4.3.6.jar",
+      "url": "https://cdn.modrinth.com/data/Fb4jn8m6/versions/SLGqTNx5/FallingTree-1.20.1-4.3.6.jar",
+      "sha1": "0d02a649a1a7713ae5d88a4408e3f389d40a6031",
+      "sha512": "5379f6161037d94190b040639f077314f151035b804f432a0f9082271a9fddd630eeee4a599ce4ff26a1a6fa57eedfc7b25c551d2d68cd130823f18bd2145ad9"
+    },
+    {
+      "slug": "fabric-api",
+      "projectId": "P7dR8mSH",
+      "id": "rvI2dfzR",
+      "version": "0.92.12+1.20.1",
+      "filename": "fabric-api-0.92.12+1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/rvI2dfzR/fabric-api-0.92.12%2B1.20.1.jar",
+      "sha1": "3e9cdd3e2f827ca9a259df9eb8e31949437b6bd4",
+      "sha512": "de9da2344043b3e9ef9fb7dbfff5f2577b06000c4f73f2a37959a80123141169084cece19133bd299b45feaaa4648bdaca2ea085684888cc8c55cc9134a477ca"
+    },
+    {
+      "slug": "creativecore",
+      "projectId": "OsZiaDHq",
+      "id": "6RGWec5b",
+      "version": "2.12.42",
+      "filename": "CreativeCore_FABRIC_v2.12.42_mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/OsZiaDHq/versions/6RGWec5b/CreativeCore_FABRIC_v2.12.42_mc1.20.1.jar",
+      "sha512": "ddc1838c3e5ccb102b8f3744911009404e03fa3d4341278cc4038d7e3f2c99d60e2c9f15db9afd5b6f6f8e8960b9caebf7da83fc922884cc60ddac62eabfc6d5",
+      "sha1": "bb8c420d826ee7334fc470c4f73cc2d48a1cb358"
+    },
+    {
+      "slug": "libipn",
+      "projectId": "onSQdWhM",
+      "id": "Uygzs3iI",
+      "version": "fabric-1.20-4.0.2",
+      "filename": "libIPN-fabric-1.20-4.0.2.jar",
+      "url": "https://cdn.modrinth.com/data/onSQdWhM/versions/Uygzs3iI/libIPN-fabric-1.20-4.0.2.jar",
+      "sha512": "34961bc3a172115b6747248305b484f3cb8d26c4b41994bb8b5759359f817df0c3c73725b8bbaeb15c59c8798a13321ed9875282dbe9a1b81606f381b532a8cd",
+      "sha1": "c8c4d93037efb226b6bd3264e33df4c010cb111b"
+    },
+    {
+      "slug": "fabric-language-kotlin",
+      "projectId": "Ha28R6CL",
+      "id": "SKW1BTL3",
+      "version": "1.14.2+kotlin.2.4.21",
+      "filename": "fabric-language-kotlin-1.14.2+kotlin.2.4.21.jar",
+      "url": "https://cdn.modrinth.com/data/Ha28R6CL/versions/SKW1BTL3/fabric-language-kotlin-1.14.2%2Bkotlin.2.4.21.jar",
+      "sha512": "7fb475c4a7e7bdf8d0aca4b5798a58a354c51443d5b1fbde3e8cf34dfbf7191ef4238b5f07d08ec9490ec180b371624523326c3ad45d4ed2b2be541de9407e5d",
+      "sha1": "f1d4ab6ecd54d9782521333a87eb50724ecb03e0"
+    },
+    {
+      "slug": "mouse-tweaks",
+      "projectId": "aC3cM3Vq",
+      "id": "mjuG4AYd",
+      "version": "1.20-2.26-fabric",
+      "filename": "MouseTweaks-fabric-mc1.20-2.26.jar",
+      "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/mjuG4AYd/MouseTweaks-fabric-mc1.20-2.26.jar",
+      "sha512": "d0faf200dda358efddad2d2809f646023f4dd06254572369e07f3bf33cb6941f0fcdb02db4675b30b4f3bd542cbf6196e135680ba91a2b74c2b071f34978e2d5",
+      "sha1": "6a6b977e671b1ab625e740fc70fb5300c21bb841"
+    },
+    {
+      "slug": "easy-shulker-boxes",
+      "projectId": "gA5euN8S",
+      "id": "4lqXxnhw",
+      "version": "v8.0.2-1.20.1-Fabric",
+      "filename": "EasyShulkerBoxes-v8.0.2-1.20.1-Fabric.jar",
+      "url": "https://cdn.modrinth.com/data/gA5euN8S/versions/4lqXxnhw/EasyShulkerBoxes-v8.0.2-1.20.1-Fabric.jar",
+      "sha1": "2cdab4e9cddbe73387bce5e7effd29544e0cb0f0",
+      "sha512": "24c6c9f6ffc7ac456f9056ff0bd2c23e47d40aa4951b297ea711ec7fe062afce0837a4464addf2577be7222e8857443decac1fd63f23246a0c85bd526231e581"
+    },
+    {
+      "slug": "puzzles-lib",
+      "projectId": "QAGBst4M",
+      "id": "QSW0oJPl",
+      "version": "v8.1.36-1.20.1-Fabric",
+      "filename": "PuzzlesLib-v8.1.36-1.20.1-Fabric.jar",
+      "url": "https://cdn.modrinth.com/data/QAGBst4M/versions/QSW0oJPl/PuzzlesLib-v8.1.36-1.20.1-Fabric.jar",
+      "sha512": "3f06be6865b04be0916593f56f98a52969721b4ea059752be792ae0844201bc21df900e00629d826d1a5574beec2e4b07d1cb304bca31679d00a4165c8104178",
+      "sha1": "0a256fa6230f6cc22b7291e6b224769628095f5f"
+    },
+    {
+      "slug": "forge-config-api-port",
+      "projectId": "ohNO6lps",
+      "id": "HvR3IdRE",
+      "version": "v8.0.3-1.20.1-Fabric",
+      "filename": "ForgeConfigAPIPort-v8.0.3-1.20.1-Fabric.jar",
+      "url": "https://cdn.modrinth.com/data/ohNO6lps/versions/HvR3IdRE/ForgeConfigAPIPort-v8.0.3-1.20.1-Fabric.jar",
+      "sha1": "41f146d16a37f62e84e60cab226058d1a87f9cec",
+      "sha512": "15144d6d7b74dfbe2eede6e3b0aa0c841670be1bd6121608bc28f3b1e46846ccd36b506060a081c988da96cf46fce8bf2e55601e3934b9a52d22dc2fa6cbfd32"
+    },
+    {
+      "slug": "status-effect-bars",
+      "projectId": "x02cBj9Y",
+      "id": "mTjPtAMK",
+      "version": "1.0.3",
+      "filename": "status-effect-bars-1.0.3.jar",
+      "url": "https://cdn.modrinth.com/data/x02cBj9Y/versions/mTjPtAMK/status-effect-bars-1.0.3.jar",
+      "sha512": "90a8a716630e8dc7d01473706e58fcc31478252ddd8fb8bde6d4e8cba6953f5c4a1f11125b5f7f988585551e84588f0db27ca514bf112bd4cb79dbcf61fe3d62",
+      "sha1": "ef6d7078a0e7afd0fabd8bc32394c5a84b2c2bc2"
+    },
+    {
+      "slug": "chiseled-bookshelf-visualizer",
+      "projectId": "SQeCtvGg",
+      "id": "nPRsPPoM",
+      "version": "2.0",
+      "filename": "(Fabric)Chiseled-Bookshelf-Visualizer-1.20-2.0.jar",
+      "url": "https://cdn.modrinth.com/data/SQeCtvGg/versions/nPRsPPoM/%28Fabric%29Chiseled-Bookshelf-Visualizer-1.20-2.0.jar",
+      "sha512": "504cf099f47c26f0accf0ec6a7b20d171be636b83653643c32dba310b05ccbc66178014c1e3d66252873822e1c860346d8a782ad26a7c027cbefeeaa768ae775",
+      "sha1": "8d61096ca676e1733bddb9aa30bd1680786aa8ed"
+    },
+    {
+      "slug": "anvians-lib",
+      "projectId": "PuTjrq4T",
+      "id": "AjIzEnXQ",
+      "version": "1.4.2",
+      "filename": "anvianslib-fabric-1.20-1.4.2.jar",
+      "url": "https://cdn.modrinth.com/data/PuTjrq4T/versions/AjIzEnXQ/anvianslib-fabric-1.20-1.4.2.jar",
+      "sha1": "fe7901b313608ffc0b85ea9dca0a3c81abacbff3",
+      "sha512": "c501b75f05259863738fb809061141d7a777fbdd99b6a7fc81caa96270f3fd149a3b2641969d99e808b54f9fda7accdfa8d8f5b86fb1b2e6adef000170f60cf1"
+    },
+    {
+      "slug": "resourcify",
+      "projectId": "RLzHAoZe",
+      "id": "yUt9B3ZX",
+      "version": "1.8.7",
+      "filename": "Resourcify (1.20.1-fabric)-1.8.7.jar",
+      "url": "https://cdn.modrinth.com/data/RLzHAoZe/versions/yUt9B3ZX/Resourcify%20%281.20.1-fabric%29-1.8.7.jar",
+      "sha512": "ebb167822e3548ca79a3546e361d5daec597d5e511ea1474011541e9bb1f77ae8ad2b8326c49d1ad4574a917199a992f1dfcdd6b94dd1f3411122dad52e50b5c",
+      "sha1": "d659af0a7c68d355d820345813401301767eb133"
+    },
+    {
+      "slug": "spatial-gui",
+      "projectId": "zLBn2IE4",
+      "id": "TyDIMNP6",
+      "version": "1.8-fabric+1.20.1",
+      "filename": "spatial-gui-1.8+1.20.1-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/zLBn2IE4/versions/TyDIMNP6/spatial-gui-1.8%2B1.20.1-fabric.jar",
+      "sha1": "0eb66e4aa002b567dfdef9469b8edfb9e4823286",
+      "sha512": "4b8feb471f81eb83c1417611aba82c18babf3d510455922da23d47052b09cf5bdcb7289ebc2fbbbcc171ec26cdb9d94c0ebcb26b6f96660478ebc3c91a5bf6a6"
+    },
+    {
+      "slug": "yacl",
+      "projectId": "1eAoo2KR",
+      "id": "dvS5DjUA",
+      "version": "3.6.6+1.20.1-fabric",
+      "filename": "yet_another_config_lib_v3-3.6.6+1.20.1-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/dvS5DjUA/yet_another_config_lib_v3-3.6.6%2B1.20.1-fabric.jar",
+      "sha1": "dc5ac6c6c4d1e48e8e520b9a41b41e704e82cf55",
+      "sha512": "20f282b3cdaec7c83a96840edb756336677c5816ed943145022f1ce1eafac0c9aa7c621939e15abe6f4309626738bc56d3d1b8434f5175d22e7409108630b02b"
+    },
+    {
+      "slug": "modmenu",
+      "projectId": "mOgUt4GM",
+      "id": "lEkperf6",
+      "version": "7.2.2",
+      "filename": "modmenu-7.2.2.jar",
+      "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/lEkperf6/modmenu-7.2.2.jar",
+      "sha1": "099c68feeb74887cbbbd8ce9a27c6123804a2c5a",
+      "sha512": "9a7837e04bb34376611b207a3b20e5fe1c82a4822b42929d5b410809ec4b88ff3cac8821c4568f880775bafa3c079dfc7800f8471356a4046248b12607e855eb"
+    },
+    {
+      "slug": "placeholder-api",
+      "projectId": "eXts2L7r",
+      "id": "DaV2ycYi",
+      "version": "2.1.4+1.20.1",
+      "filename": "placeholder-api-2.1.4+1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/eXts2L7r/versions/DaV2ycYi/placeholder-api-2.1.4%2B1.20.1.jar",
+      "sha512": "80a4721abf9654a8bbfb9e23fbb7493bfa379d3116adb9d0d98f05482b25150d91994346dd230b691935f64f57ce0840deecce6bb279fbfaa3ebab30ad426db8",
+      "sha1": "722efc56827ba973673b15ccc2e446c269a16faa"
+    },
+    {
+      "slug": "cloth-config",
+      "projectId": "9s6osm5g",
+      "id": "2xQdCMyG",
+      "version": "11.1.136+fabric",
+      "filename": "cloth-config-11.1.136-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/2xQdCMyG/cloth-config-11.1.136-fabric.jar",
+      "sha1": "d5fe84a0cc9ed5c7290a76ba570e1f8716afecab",
+      "sha512": "2da85c071c854223cc30c8e46794391b77e53f28ecdbbde59dc83b3dbbdfc74be9e68da9ed464e7f98b4361033899ba4f681ebff1f35edc2c60e599a59796f1c"
+    },
+    {
+      "slug": "freecam",
+      "projectId": "XeEZ3fK2",
+      "id": "dKy60O1Y",
+      "version": "1.2.1+mc1.20.1",
+      "filename": "freecam-fabric-1.2.1+1.20.jar",
+      "url": "https://cdn.modrinth.com/data/XeEZ3fK2/versions/dKy60O1Y/freecam-fabric-1.2.1%2B1.20.jar",
+      "sha1": "6b3cd76183cc840a9e40c7a4d648fafdc25e682f",
+      "sha512": "82aa4e926b564476fed5a07a52811c9c28c348f5506c4b5648c4979bf6fa69033c86ff15e474d6e26a7f6029ab70ee16aef2a131686c9c83d85357c033a73f26"
+    },
+    {
+      "slug": "lithium",
+      "projectId": "gvQqBUqZ",
+      "id": "iEcXOkz4",
+      "version": "mc1.20.1-0.11.4-fabric",
+      "filename": "lithium-fabric-mc1.20.1-0.11.4.jar",
+      "url": "https://cdn.modrinth.com/data/gvQqBUqZ/versions/iEcXOkz4/lithium-fabric-mc1.20.1-0.11.4.jar",
+      "sha1": "048227ed60a3005cf9fa55880dfe0cf20b0ba680",
+      "sha512": "31938b7e849609892ffa1710e41f2e163d11876f824452540658c4b53cd13c666dbdad8d200989461932bd9952814c5943e64252530c72bdd5d8641775151500"
+    },
+    {
+      "slug": "immediatelyfast",
+      "projectId": "5ZwdcRci",
+      "id": "iwYUrQJO",
+      "version": "1.5.5+1.20.4-fabric",
+      "filename": "ImmediatelyFast-Fabric-1.5.5+1.20.4.jar",
+      "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/iwYUrQJO/ImmediatelyFast-Fabric-1.5.5%2B1.20.4.jar",
+      "sha1": "9f0110b60dc752ca093f2fc10a72d221b6dc8ac3",
+      "sha512": "8733e4f1fcd64581979f93f2580ae9f530e64ba21e90b2a46d4c1bdcb802e5a53a49a160e4dae06ec9e4d7829ea34715c9c9e1c2bfd7238b4de7fccfbc482ffd"
+    },
+    {
+      "slug": "entityculling",
+      "projectId": "NNAgCjsB",
+      "id": "xSrd3qsM",
+      "version": "1.11.3",
+      "filename": "entityculling-fabric-1.11.3-mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/NNAgCjsB/versions/xSrd3qsM/entityculling-fabric-1.11.3-mc1.20.1.jar",
+      "sha1": "42d17e5455f5015fa9b9c918a9b599683ff83f1c",
+      "sha512": "6bb4af050ec3bb5f4e2f76b33abc2bb6e0096c94849ba728979200beddeed8b2c3a5a962ecbec9cf79f11a99ba996a847814f1aabdb8ffad54105800fc0fed72"
+    },
+    {
+      "slug": "ferrite-core",
+      "projectId": "uXXizFIs",
+      "id": "unerR5MN",
+      "version": "6.0.1",
+      "filename": "ferritecore-6.0.1-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/unerR5MN/ferritecore-6.0.1-fabric.jar",
+      "sha1": "8fa3b84fc5860dbc30fdf8cced02af68dffcf3fa",
+      "sha512": "9b7dc686bfa7937815d88c7bbc6908857cd6646b05e7a96ddbdcada328a385bd4ba056532cd1d7df9d2d7f4265fd48bd49ff683f217f6d4e817177b87f6bc457"
+    },
+    {
+      "slug": "dynamic-fps",
+      "projectId": "LQ3K71Q1",
+      "id": "QwPQBhiQ",
+      "version": "3.11.4",
+      "filename": "dynamic-fps-3.11.4+minecraft-1.20.0-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/LQ3K71Q1/versions/QwPQBhiQ/dynamic-fps-3.11.4%2Bminecraft-1.20.0-fabric.jar",
+      "sha512": "3689a13abe56e02adc3ee96bb0426b185c7ae02588bbea1a3f350414768c260d0436682a7f59418bdd62306bc486af0b6184a24c50666e47b662993d2b789a14",
+      "sha1": "38196ee5bcfb3605f9bb9e52a45916b250216313"
+    },
+    {
+      "slug": "freelook",
+      "projectId": "g4pR0Fmy",
+      "id": "3nc2KA9G",
+      "version": "1.1.3",
+      "filename": "freelook-1.1.3.jar",
+      "url": "https://cdn.modrinth.com/data/g4pR0Fmy/versions/3nc2KA9G/freelook-1.1.3.jar",
+      "sha512": "30e89177faf81eea284f4c0c9cb3c2a04da439726aa7778cca3a9b56225752ca52d4d7bd2ba7adf8b6101c12ce3d54951e1e521614bac413e0007fed072fac63",
+      "sha1": "dd490c50501ca64c7c8670e30d8fd7406f1880fb"
+    },
+    {
+      "slug": "e4mc",
+      "projectId": "qANg5Jrr",
+      "id": "8wsUJ306",
+      "version": "6.2.3-fabric",
+      "filename": "e4mc-fabric-6.2.3.jar",
+      "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/8wsUJ306/e4mc-fabric-6.2.3.jar",
+      "sha512": "de52773df77c5653500b139781173386e4e779bcfae79a91c93e4c3cd31ba412c3b1110360701efa6433733a6f6cf7738c11cbdafc88fccad786ef7412eabf1a",
+      "sha1": "5420209f8560df548625f1defc24ebb94682f0fd"
+    },
+    {
+      "slug": "iris",
+      "projectId": "YL57xq9U",
+      "id": "s5eFLITc",
+      "version": "1.7.6+1.20.1",
+      "filename": "iris-1.7.6+mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/s5eFLITc/iris-1.7.6%2Bmc1.20.1.jar",
+      "sha512": "f1337b0441c31269bd3bfcb28647d521326a83e73128c1ac8d065615f8a5a4ca1e8c96a468b356584236ece5b164ec8d8a52b1878064f4e391ecf4f32885e301",
+      "sha1": "880c0b9ce38bb4997645793407c1801df83f4233"
+    },
+    {
+      "slug": "sodium",
+      "projectId": "AANobbMI",
+      "id": "OihdIimA",
+      "version": "mc1.20.1-0.5.13-fabric",
+      "filename": "sodium-fabric-0.5.13+mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/AANobbMI/versions/OihdIimA/sodium-fabric-0.5.13%2Bmc1.20.1.jar",
+      "sha1": "bcdbf37d9494e405cba210d7a80ed58e756297b5",
+      "sha512": "81c64f9c2d3402dfa43ee54d8f5a054f5243bfb08984e3addcab9fe885073c79c43c1c8c41e8f30b625d26a656f82a8e5f370bbbbf222ff1c08f4b324edb7ea4"
+    },
+    {
+      "slug": "owo-lib",
+      "projectId": "ccKDOlHs",
+      "id": "zyOBB7J4",
+      "version": "0.11.2+1.20",
+      "filename": "owo-lib-0.11.2+1.20.jar",
+      "url": "https://cdn.modrinth.com/data/ccKDOlHs/versions/zyOBB7J4/owo-lib-0.11.2%2B1.20.jar",
+      "sha512": "807e4a3daf493e92c5ff0d5657efbba2a4e0cd2a9b753f2d6f153422629415f189345842a6dd258c87d4c02ebf38950a517bcd8a7ed929af6ed6485ae46cf77e",
+      "sha1": "be88938ca5df78271e64bc9f85c3575754f33e2a"
+    },
+    {
+      "slug": "silk",
+      "projectId": "aTaCgKLW",
+      "id": "3H0nUJhq",
+      "version": "1.10.1",
+      "filename": "silk-all-1.10.1.jar",
+      "url": "https://cdn.modrinth.com/data/aTaCgKLW/versions/3H0nUJhq/silk-all-1.10.1.jar",
+      "sha1": "db808d34e1a41e0216c3df6b612a4f6c604757a6",
+      "sha512": "d5e8d8108f5d91ea1a89332e65705482378702dfe23b185a9784b0349df28f429d4af5b8908181bd4820ba89bf6aca9b2687523543daaf6b79c946d4fe7908c0"
+    },
+    {
+      "slug": "wick",
+      "minecraft": "1.20.1",
+      "loader": "fabric",
+      "fileId": 9092522,
+      "version": "1.0.1+mc1.20-1.20.1",
+      "filename": "wick-1.0.1+mc1.20-1.20.1.jar",
+      "url": "https://mediafilez.forgecdn.net/files/9092/522/wick-1.0.1%2Bmc1.20-1.20.1.jar",
+      "size": 100533,
+      "sha1": "e625b03c701dc9e24f6ec5ebe9d2affb5552a9a1",
+      "sha512": "c965eb9cb806f8ac0966534a09972ab565f492a982de25bc8dd747be95cb9c05f4db224bb7cbfa03b046623867408ef6fb9a4dc1c41ee5a97c887e46a1abd99d",
+      "source": "https://github.com/comedy01/Wick",
+      "license": "MIT",
+      "metadataUrl": "https://www.curseforge.com/api/v1/mods/1728334/files/9092522"
+    },
+    {
+      "slug": "colour-scroller",
+      "filename": "colour-scroller-1.0.0-unbox.1-1.20.1-fabric.jar",
+      "version": "1.0.0-unbox.1",
+      "buildProject": "ports/colour-scroller/backports-fabric",
+      "buildProperties": {
+        "minecraft": "1.20.1"
+      },
+      "artifact": ".cache/ports/colour-scroller-fabric-1.20.1/libs/colour-scroller-1.0.0-unbox.1-1.20.1-fabric.jar",
+      "sha1": "cb0bed950789944a1501e55f57078eb12d98a9ea",
+      "sha512": "fbecb17e6324eafd015a6d52a1b7da53da92881560c685eda6f4e1f73a938ea3b1ab9132a0bd6c55ebafca1a6f0dcfada5511d3b7a8824009a97581840015df2"
+    }
+  ]
+}

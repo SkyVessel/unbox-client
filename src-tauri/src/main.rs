@@ -9,6 +9,8 @@ mod windows_vault;
 mod launcher;
 mod neoforge;
 mod versions;
+mod unpvp;
+mod beta;
 mod auth;
 mod content;
 mod catalog;
@@ -17,6 +19,7 @@ mod social;
 mod updates;
 mod news;
 mod sharing;
+mod fabric_metadata;
 use serde_json::{json, Value};
 use std::{fs, path::PathBuf, sync::{Arc, Mutex}};
 use tauri::Manager;
@@ -32,6 +35,10 @@ pub fn profile_dir(rt: &Runtime, id: &str) -> Result<PathBuf,String> {
     uuid::Uuid::parse_str(id).map_err(|_|"Invalid profile ID")?;
     Ok(rt.root.join("profiles").join(id))
 }
+pub fn game_dir(rt:&Runtime,profile:&Value)->Result<PathBuf,String>{
+ let dir=profile_dir(rt,profile["id"].as_str().ok_or("Missing profile ID")?)?;
+ Ok(if profile["version"]=="1.8.9"&&profile["loader"]=="forge"{dir.join("unpvp-ui")}else{dir})
+}
 #[tauri::command]
 async fn bootstrap(rt: tauri::State<'_,Runtime>) -> Result<Value,String> {
     let path=rt.root.join("state.json");
@@ -45,6 +52,10 @@ async fn bootstrap(rt: tauri::State<'_,Runtime>) -> Result<Value,String> {
 async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Value,String> {
     if !state.is_object() || !state["profiles"].is_array() {return Err("Invalid state".into())}
     for p in state["profiles"].as_array().unwrap() {profile_dir(&rt,p["id"].as_str().ok_or("Missing ID")?)?;}
+    for p in state["profiles"].as_array_mut().unwrap(){
+        let dir=profile_dir(&rt,p["id"].as_str().unwrap())?;
+        if let Ok(bytes)=fs::read(dir.join("profile.json")){if let Ok(saved)=serde_json::from_slice::<Value>(&bytes){p["channel"]=json!(versions::channel(&saved));}}
+    }
     let _guard=rt.auth.lock().await;
     state["account"]=auth::restore_account(&rt,&state["account"])?;
     state["profiles"].as_array_mut().unwrap().retain(|p|profile_dir(&rt,p["id"].as_str().unwrap()).is_ok_and(|d|d.join("profile.json").is_file()));
@@ -53,13 +64,13 @@ async fn save_state(rt: tauri::State<'_,Runtime>, mut state: Value) -> Result<Va
     atomic(&rt.root.join("state.json"),serde_json::to_vec_pretty(&state).map_err(|e|e.to_string())?.as_slice())?;Ok(state)
 }
 #[tauri::command]
-fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String) -> Result<Value,String> {
-    if !versions::supported(&version) {return Err("Unsupported Minecraft version".into())}
-    if !["fabric","vanilla","neoforge"].contains(&loader.as_str()) {return Err("This loader has not passed Unbox launch validation yet".into())}
+fn create_profile(rt: tauri::State<Runtime>, name: String, version: String, loader: String, icon: String, channel: Option<String>) -> Result<Value,String> {
+    let channel=channel.as_deref().unwrap_or("stable");
+    if !versions::profile_supported(&version,&loader,channel){return Err("Unsupported Minecraft version, loader or release channel".into())}
     let name=name.trim(); if name.is_empty() || name.chars().count()>48 {return Err("Use a name between 1 and 48 characters".into())}
     if !["grass_block","stone","dirt","oak_planks","bricks","tnt","gold_block","iron_block"].contains(&icon.as_str()){return Err("Unknown block icon".into())}
     let id=uuid::Uuid::new_v4().to_string(); let dir=profile_dir(&rt,&id)?;
-    let profile=json!({"id":id,"name":name,"version":version,"loader":loader,"icon":icon});
+    let profile=json!({"id":id,"name":name,"version":version,"loader":loader,"icon":icon,"channel":channel});
     atomic(&dir.join("profile.json"),&serde_json::to_vec_pretty(&profile).unwrap())?;
     Ok(profile)
 }
@@ -103,7 +114,7 @@ pub fn launch_profile(runtime:Runtime,app:tauri::AppHandle,id:String,username:St
 pub fn run_profile(runtime:Runtime,app:tauri::AppHandle,profile:Value,username:String,memory:u32,prepare_only:bool){
     tauri::async_runtime::spawn(async move {
         let mut current=profile.clone();
-        let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,&app).await?;if prepare_only{return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
+        let result=async{for _ in 0..4{launcher::run(&runtime,&current,&username,memory.clamp(2048,16384),prepare_only,false,Some(&app)).await?;if prepare_only{return Ok(())}if let Some(next)=sharing::resume(&runtime,&current).await?{current=next;*runtime.job.lock().unwrap()=json!({"busy":true,"stage":"Preparing friend’s mods","profileId":current["id"]});}else{return Ok(())}}Err::<(),String>("Host mods keep changing. Ask for a new invitation.".into())}.await;
         let mut job=runtime.job.lock().unwrap();
         *job=match result {Ok(_)=>json!({"busy":false,"stage":if prepare_only{"Ready"}else{"Game closed"},"progress":100,"profileId":current["id"]}),Err(e)=>json!({"busy":false,"stage":"Failed","error":e,"profileId":current["id"]})};
     });
@@ -114,7 +125,7 @@ async fn list_content(rt: tauri::State<'_,Runtime>, id: String, kind: String) ->
 }
 fn managed_mod_names(game:&std::path::Path)->std::collections::HashSet<String>{
     let mut names=std::collections::HashSet::from(["unbox-client.jar".to_owned()]);
-    for manifest in ["unbox-performance-lock.json","unbox-survival-mods-lock.json"]{if let Ok(bytes)=fs::read(game.join(manifest)){if let Ok(Value::Array(entries))=serde_json::from_slice::<Value>(&bytes){for m in entries{if let Some(name)=m["filename"].as_str(){names.insert(name.to_owned());}}}}}
+    for manifest in ["unbox-performance-lock.json","unbox-survival-mods-lock.json","unbox-beta-mods.json"]{if let Ok(bytes)=fs::read(game.join(manifest)){if let Ok(Value::Array(entries))=serde_json::from_slice::<Value>(&bytes){for m in entries{if let Some(name)=m["filename"].as_str(){names.insert(name.to_owned());}}}}}
     names
 }
 #[cfg(test)]mod content_tests{
@@ -152,6 +163,14 @@ fn open_licenses(rt: tauri::State<Runtime>) -> Result<(),String> {
     crate::process::command(program).arg(index).spawn().map_err(|e|e.to_string())?;Ok(())
 }
 fn main() {
+    #[cfg(debug_assertions)] if std::env::args().nth(1).as_deref()==Some("--beta-launch-fixture") {
+        let args:Vec<String>=std::env::args().collect();let root=PathBuf::from(&args[2]).canonicalize().expect("Fixture directory");assert!(root.to_string_lossy().contains("/.cache/release-"),"Isolated release fixture only");
+        let rt=Runtime{root:root.clone(),resources:PathBuf::from(&args[3]),job:Arc::default(),auth:Arc::default(),social:Arc::default()};
+        let profile:Value=serde_json::from_slice(&fs::read(&args[4]).unwrap()).unwrap();
+        let result=tauri::async_runtime::block_on(launcher::run(&rt,&profile,"UnboxBetaTest",4096,args[5]=="prepare",true,None));
+        match result{Ok(())=>println!("BETA_LAUNCH_FIXTURE_OK"),Err(e)=>{eprintln!("{e}");std::process::exit(1)}}return;
+    }
+
     #[cfg(all(debug_assertions,target_os="macos"))] if std::env::args().nth(1).as_deref()==Some("--private-proof-fixture") {
         let input=PathBuf::from(std::env::args().nth(2).expect("Fixture input required"));assert!(input.to_string_lossy().contains("/.cache/network-tests/"),"Fixture only");
         let b:Value=serde_json::from_slice(&fs::read(input).unwrap()).unwrap();let root=PathBuf::from(std::env::var("HOME").unwrap()).join("Library/Application Support/dev.unbox.client");
@@ -180,7 +199,7 @@ fn main() {
             let dir=profile_dir(&rt,profile["id"].as_str().unwrap()).map_err(std::io::Error::other)?;
             atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile)?).map_err(std::io::Error::other)?;
             let copy=rt.clone();let handle=app.handle().clone();
-            tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,&handle).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
+            tauri::async_runtime::spawn(async move {let result=launcher::run(&copy,&profile,"UnboxTest",4096,false,true,Some(&handle)).await;println!("UNBOX_SMOKE_RESULT: {:?}",result);if let Err(e)=result{*copy.job.lock().unwrap()=json!({"busy":false,"stage":"Failed","error":e});}});
         }
         social::start(rt.clone());skin_library::start(rt.clone());app.manage(rt);Ok(())
     }).invoke_handler(tauri::generate_handler![catalog::catalog_project,catalog::catalog_search,catalog::catalog_categories,catalog::catalog_plan,catalog::catalog_install,catalog::catalog_status,catalog::catalog_cancel,news::news_feed,skin_library::skin_library_list,skin_library::skin_library_rename,skin_library::skin_library_folder,skin_library::skin_library_import,skin_library::skin_library_delete,skin_library::skin_library_apply,world_library::list_worlds, world_library::preflight_world, world_library::set_profile_environment, updates::check_update,updates::install_update,updates::update_status,auth::auth_local_rename,auth::auth_info,auth::auth_accounts,auth::auth_select,auth::auth_local,auth::auth_refresh_profile,auth::auth_upload_skin,auth::auth_begin,auth::auth_open,auth::auth_poll,auth::auth_cancel,auth::auth_sign_out,bootstrap,save_state,create_profile,save_modules,read_modules,status,start_game,list_content,open_folder,open_licenses,removal::remove_content,removal::remove_profile,removal::restore_removed,content::import_content,content::open_content_folder,social::social_status,social::social_action,social::asset_action]).run(tauri::generate_context!()).expect("Unable to start Unbox Client");

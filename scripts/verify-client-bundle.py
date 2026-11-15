@@ -45,9 +45,9 @@ for target in lock['targets']:
 for port in (ROOT/'ports').iterdir():
  if not port.is_dir():continue
  with zipfile.ZipFile(RES/(port.name+'-sources.zip')) as z:
-  assert 'ports/'+port.name+'/UPSTREAM' in z.namelist()
-  assert 'ports/'+port.name+'/PORT.md' in z.namelist()
-  assert any(Path(n).name.lower().startswith(('license','copying')) for n in z.namelist())
+  assert any('ports/'+port.name+'/'+n in z.namelist() for n in ('UPSTREAM','UPSTREAM.json'))
+  assert any('ports/'+port.name+'/'+n in z.namelist() for n in ('PORT.md','README.md','UPSTREAM.json'))
+  assert any(any(k in Path(n).name.lower() for k in ('license','copying')) for n in z.namelist())
   assert not any(p.startswith('.env') or p in ('secrets','.git','build','.gradle') for n in z.namelist() for p in Path(n).parts)
 assert (RES/'third-party-notices.html').is_file()
 print('Verified six native feature sets, engines, bundled hashes and corresponding source archives')

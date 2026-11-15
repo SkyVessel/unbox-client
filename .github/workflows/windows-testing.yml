@@ -1,149 +1,51 @@
-name: Windows testing build
+name: Beta profiles Windows build
 on:
   workflow_dispatch:
     inputs:
-      verify_update:
-        description: Verify the published Cloudflare update in an isolated Windows installation
-        type: boolean
-        default: false
       release_tag:
-        description: Draft release containing the compiled Unbox client module
         required: true
-        default: v0.2.20
-      neoforge_module_sha256:
-        description: Expected SHA-256 of unbox-client-neoforge.jar
-        required: true
-      module_sha256:
-        description: Expected SHA-256 of unbox-client.jar
-        required: true
-      module_2612_sha256:
-        description: Expected SHA-256 of unbox-client-26.1.2.jar
-        required: true
-      neoforge_2612_sha256:
-        description: Expected SHA-256 of unbox-client-neoforge-26.1.2.jar
-        required: true
-      module_263_sha256:
-        description: Expected SHA-256 of unbox-client-26.3.jar
-        required: true
-      neoforge_263_sha256:
-        description: Expected SHA-256 of unbox-client-neoforge-26.3.jar
+        default: v0.2.23
+      resources_sha256:
         required: true
 permissions:
-  # GitHub restricts draft release downloads to tokens with push access.
   contents: write
 jobs:
   windows:
-    if: ${{ !inputs.verify_update }}
     runs-on: windows-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Fetch verified game module
+      - name: Download pinned release resources
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ inputs.release_tag }}
-          MODULE_263_SHA256: ${{ inputs.module_263_sha256 }}
-          NEOFORGE_263_SHA256: ${{ inputs.neoforge_263_sha256 }}
-          MODULE_2612_SHA256: ${{ inputs.module_2612_sha256 }}
-          NEOFORGE_2612_SHA256: ${{ inputs.neoforge_2612_sha256 }}
-          MODULE_SHA256: ${{ inputs.module_sha256 }}
-          NEOFORGE_MODULE_SHA256: ${{ inputs.neoforge_module_sha256 }}
+          EXPECTED: ${{ inputs.resources_sha256 }}
         run: |
-          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Invalid release tag' }
-          if ($env:MODULE_SHA256 -notmatch '^[a-f0-9]{64}$') { throw 'Invalid module digest' }
-          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern unbox-client.jar --dir src-tauri/resources
-          if ($LASTEXITCODE -ne 0) { throw 'Module download failed' }
-          if ((Get-FileHash src-tauri/resources/unbox-client.jar -Algorithm SHA256).Hash.ToLower() -ne $env:MODULE_SHA256) { throw 'Module checksum mismatch' }
-          if ($env:NEOFORGE_MODULE_SHA256 -notmatch '^[a-f0-9]{64}$') { throw 'Invalid NeoForge module digest' }
-          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern unbox-client-neoforge.jar --dir src-tauri/resources
-          if ($LASTEXITCODE -ne 0) { throw 'NeoForge module download failed' }
-          if ((Get-FileHash src-tauri/resources/unbox-client-neoforge.jar -Algorithm SHA256).Hash.ToLower() -ne $env:NEOFORGE_MODULE_SHA256) { throw 'NeoForge module checksum mismatch' }
-          foreach ($entry in @(@('unbox-client-26.1.2.jar', $env:MODULE_2612_SHA256), @('unbox-client-neoforge-26.1.2.jar', $env:NEOFORGE_2612_SHA256), @('unbox-client-26.3.jar', $env:MODULE_263_SHA256), @('unbox-client-neoforge-26.3.jar', $env:NEOFORGE_263_SHA256))) {
-            $filename = $entry[0]; $digest = $entry[1]
-            if ($digest -notmatch '^[a-f0-9]{64}$') { throw 'Invalid versioned module digest' }
-            gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern $filename --dir src-tauri/resources
-            if ($LASTEXITCODE -ne 0) { throw 'versioned module download failed' }
-            if ((Get-FileHash "src-tauri/resources/$filename" -Algorithm SHA256).Hash.ToLower() -ne $digest) { throw 'versioned module checksum mismatch' }
-          }
-      - name: Verify native modules and open-source distributions
-        run: python scripts/verify-client-bundle.py
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '25'
-      - name: Native Windows UDP and transport regression checks
-        run: python scripts/test-voxlink-bundle.py
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Invalid tag' }
+          if ($env:EXPECTED -notmatch '^[a-f0-9]{64}$') { throw 'Invalid digest' }
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern beta-resources.zip --dir $env:RUNNER_TEMP
+          if ($LASTEXITCODE -ne 0) { throw 'Resource download failed' }
+          $zip = Join-Path $env:RUNNER_TEMP 'beta-resources.zip'
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -ne $env:EXPECTED) { throw 'Resource digest mismatch' }
+          Expand-Archive $zip -DestinationPath src-tauri/resources -Force
+      - run: python scripts/verify-client-bundle.py
+      - run: python scripts/verify-beta-bundle.py
       - run: npm ci
+      - run: npm run build
       - name: Prepare Windows icon
         run: npm run tauri -- icon src-tauri/icons/icon.png --output src-tauri/icons
-      - name: Prepare embedded frontend
-        run: npm run build
-      - name: Native Windows checks
-        run: cargo test --locked --manifest-path src-tauri/Cargo.toml
-      - name: Build testing installer with Unbox Microsoft sign-in
+      - run: cargo test --locked --manifest-path src-tauri/Cargo.toml
+      - name: Build Windows installer
         run: npm run tauri -- build --debug --config src-tauri/tauri.windows-testing.conf.json --bundles nsis
-      - name: Verify launcher uses the Windows GUI subsystem
-        run: python scripts/verify-windows-gui.py src-tauri/target/debug/unbox-client.exe
+      - run: python scripts/verify-windows-gui.py src-tauri/target/debug/unbox-client.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: unbox-windows-testing
+          name: unbox-beta-windows
           path: src-tauri/target/debug/bundle/nsis/*.exe
           if-no-files-found: error
           retention-days: 7
-  update-smoke:
-    if: ${{ inputs.verify_update }}
-    runs-on: windows-latest
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - name: Prepare Windows test executable icon
-        run: npm run tauri -- icon src-tauri/icons/icon.png --output src-tauri/icons
-      - name: Install previous release and apply the signed Cloudflare update
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $fixture = Join-Path $env:RUNNER_TEMP 'unbox-update-fixture'
-          $old = Join-Path $env:RUNNER_TEMP 'unbox-old.exe'
-          $log = Join-Path $env:RUNNER_TEMP 'unbox-update-smoke.log'
-          Invoke-WebRequest 'https://printoria.printoria-studio.workers.dev/unbox/releases/v0.2.20/Unbox.Client_0.2.20_windows-x64-setup.exe' -OutFile $old
-          $install = Start-Process $old -ArgumentList @('/S', "/D=$fixture") -Wait -PassThru
-          if ($install.ExitCode -ne 0) { throw "Old installer failed: $($install.ExitCode)" }
-          $exe = Join-Path $fixture 'unbox-client.exe'
-          if (!(Test-Path $exe)) { throw 'Previous application missing' }
-          if ((Get-Item $exe).VersionInfo.ProductVersion -notlike '0.2.20*') { throw 'Wrong previous version' }
-          # Cargo examples do not inherit the app binary's Windows activation manifest.
-          # https://github.com/tauri-apps/tauri/blob/dev/examples/api/src-tauri/build.rs
-          $manifest = (Resolve-Path 'src-tauri/examples/windows-app-manifest.xml').Path
-          cargo rustc --locked --manifest-path src-tauri/Cargo.toml --example cloudflare-update-smoke -- -C 'link-arg=/MANIFEST:EMBED' -C "link-arg=/MANIFESTINPUT:$manifest"
-          if ($LASTEXITCODE -ne 0) { throw 'Updater harness build failed' }
-          & 'src-tauri/target/debug/examples/cloudflare-update-smoke.exe' $exe 2>&1 | Tee-Object -FilePath $log
-          if ($LASTEXITCODE -ne 0) { throw 'Updater harness failed' }
-          $deadline = (Get-Date).AddMinutes(3)
-          do {
-            Start-Sleep -Seconds 2
-            $version = (Get-Item $exe).VersionInfo.ProductVersion
-          } while ($version -notlike '0.2.21*' -and (Get-Date) -lt $deadline)
-          if ($version -notlike '0.2.21*') { throw "Update not installed: $version" }
-          if (!(Select-String -Path $log -Pattern 'Invalid signature rejected' -Quiet)) { throw 'Signature rejection not tested' }
-          Write-Output "Actual Windows installation updated from 0.2.20 to $version through Cloudflare."
-          $app = Start-Process $exe -PassThru
-          Start-Sleep -Seconds 8
-          if ($app.HasExited) { throw 'Updated application exited during startup' }
-          Stop-Process -Id $app.Id
-          Write-Output 'Updated Windows application started successfully.'
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: unbox-cloudflare-update-smoke
-          path: ${{ runner.temp }}/unbox-update-smoke.log

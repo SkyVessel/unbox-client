@@ -1,0 +1,29 @@
+import groovy.json.JsonOutput
+plugins { id 'fabric-loom' version '1.14.10' }
+version = '1.0.0-unbox.1'
+group = 'net.anware.tmc'
+base.archivesName = 'colour-scroller'
+def mc = providers.gradleProperty('minecraft').getOrElse('1.21.11')
+def jdk = mc == '1.20.1' ? 17 : 21
+java { toolchain.languageVersion = JavaLanguageVersion.of(jdk) }
+layout.buildDirectory = file('../../../.cache/ports/colour-scroller-fabric-' + mc)
+dependencies {
+    minecraft "com.mojang:minecraft:${mc}"
+    mappings loom.officialMojangMappings()
+    modImplementation 'net.fabricmc:fabric-loader:0.19.5'
+}
+def generated=layout.buildDirectory.dir('sources')
+tasks.register('compatibleSources',Exec) { workingDir '../../..'; commandLine 'python3','scripts/prepare-colour-backport.py',mc; inputs.dir('../src'); inputs.file('../../../scripts/prepare-colour-backport.py'); outputs.dir(generated) }
+sourceSets.main.java.setSrcDirs([generated])
+tasks.compileJava { dependsOn 'compatibleSources'; options.release = jdk }
+def metadata = layout.buildDirectory.dir('metadata')
+tasks.register('modMetadata') {
+    inputs.property('minecraft',mc); outputs.dir(metadata)
+    doLast {
+        def root=metadata.get().asFile; root.mkdirs()
+        new File(root,'fabric.mod.json').text=JsonOutput.toJson([schemaVersion:1,id:'colourscroller',version:project.version,name:'ColourScroller (Unbox shape preset)',environment:'client',license:'MIT',depends:[minecraft:mc,java:'>='+jdk]])
+    }
+}
+tasks.processResources { dependsOn 'modMetadata'; from metadata; from('..') { include 'LICENSE','UPSTREAM','PORT.md' } }
+tasks.withType(AbstractArchiveTask).configureEach { preserveFileTimestamps=false; reproducibleFileOrder=true }
+tasks.remapJar { archiveClassifier=mc+'-fabric' }

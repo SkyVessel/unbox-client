@@ -1,6 +1,34 @@
 use crate::{managed_mod_names, profile_dir, Runtime};
 use serde_json::{json, Value};
 use std::{fs, io::Read, path::Path};
+/// Some Fabric descriptors contain literal whitespace inside description strings.
+/// Normalize only those characters in memory; keep all other JSON validation intact.
+pub(crate) fn fabric_metadata(source: impl Read) -> Result<Value, String> {
+    let mut bytes = Vec::new();
+    source.take(262145).read_to_end(&mut bytes).map_err(|e| e.to_string())?;
+    if bytes.len() > 262144 { return Err("Mod metadata is too large".into()); }
+    let mut normalized = Vec::with_capacity(bytes.len());
+    let (mut quoted, mut escaped) = (false, false);
+    for byte in bytes {
+        if escaped {
+            escaped = false;
+        } else if quoted && byte == b'\\' {
+            escaped = true;
+        } else if byte == b'"' {
+            quoted = !quoted;
+        } else if quoted {
+            let replacement: Option<&[u8]> = match byte {
+                b'\n' => Some(b"\\n"), b'\r' => Some(b"\\r"), b'\t' => Some(b"\\t"), _ => None,
+            };
+            if let Some(replacement) = replacement {
+                normalized.extend_from_slice(replacement);
+                continue;
+            }
+        }
+        normalized.push(byte);
+    }
+    serde_json::from_slice(&normalized).map_err(|e| e.to_string())
+}
 fn sha256(path: &Path) -> Option<String> {
     use sha2::{Digest, Sha256};
     let bytes = fs::read(path).ok()?;
@@ -47,7 +75,7 @@ pub(crate) fn metadata(path: &Path, kind: &str) -> Result<Value, String> {
             if f.size() < 262144 {
                 let mut s = String::new();
                 let _ = f.read_to_string(&mut s);
-                if let Ok(m) = serde_json::from_str::<Value>(&s) {
+                if let Ok(m) = fabric_metadata(s.as_bytes()) {
                     result["modId"] = m["id"].clone();
                     result["title"] = m["name"].clone();
                     if let Some(i) = m["icon"].as_str() {
@@ -249,6 +277,22 @@ mod tests {
     struct Fixture {
         rt: Runtime,
         id: String,
+    }
+    #[test]
+    fn fabric_description_accepts_literal_whitespace_without_changing_escapes() {
+        let input = b"{\"id\":\"spatial-gui\",\"description\":\"Line one.\n\r\n\tLine two.\"}";
+        let parsed = fabric_metadata(input.as_slice()).unwrap();
+        assert_eq!(parsed["description"], "Line one.\n\r\n\tLine two.");
+        let valid = json!({"id":"demo", "description":"Quoted \"text\", slash \\, literal \\n, newline\n雪"});
+        assert_eq!(fabric_metadata(serde_json::to_vec(&valid).unwrap().as_slice()).unwrap(), valid);
+    }
+    #[test]
+    fn fabric_metadata_still_rejects_invalid_json_and_oversized_input() {
+        for input in [b"{\"id\":\"bad\x00id\"}".as_slice(), b"{\"id\":\"bad\\q\"}",
+            b"{\"id\":\"bad\\\nvalue\"}", b"{\"id\":\"unterminated\n", b"{\"id\":\"ok\",}"] {
+            assert!(fabric_metadata(input).is_err());
+        }
+        assert!(fabric_metadata(vec![b' ';262145].as_slice()).unwrap_err().contains("too large"));
     }
     impl Fixture {
         fn new() -> Self {

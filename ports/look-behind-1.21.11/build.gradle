@@ -1,0 +1,13 @@
+plugins { id 'fabric-loom' version '1.14.10' }
+version='1.0.2+unbox.1.21.11'
+group='dev.unbox.ports'
+java { toolchain.languageVersion = JavaLanguageVersion.of(21) }
+repositories { mavenCentral() }
+dependencies {
+ minecraft 'com.mojang:minecraft:1.21.11'
+ mappings loom.officialMojangMappings()
+ modImplementation 'net.fabricmc:fabric-loader:0.19.5'
+ modImplementation fileTree('../../.cache/1.21.11/fabric-api') { include '*.jar' }
+}
+loom { mixin { useLegacyMixinAp=true; defaultRefmapName='lookbehind.refmap.json' } }
+tasks.jar { from('LICENSE');from('UPSTREAM.json');from('src/main/java') { into 'META-INF/unbox-source' } }

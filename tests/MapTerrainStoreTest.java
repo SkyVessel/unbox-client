@@ -12,11 +12,29 @@ public final class MapTerrainStoreTest {
 
     public static void main(String[] args) throws Exception {
         Path root = Path.of(args[0]);
+        hotTileRespectsUpdatesAndEviction(root);
         maximumViewportRetainsVisibleTiles(root);
         evictionPreservesPendingCells(root);
         failedWriteRetries(root);
         oldRetryDoesNotOverwriteReopenedWorld(root);
         damagedTileDoesNotStarveOtherTiles(root);
+    }
+
+    private static void hotTileRespectsUpdatesAndEviction(Path root) {
+        var store=new MapTerrainStore(root,"hot-tile","overworld");
+        try {
+            var tile=store.chunk(-1,-1);tile.loaded=true;
+            store.capture(-1,-1,FIRST);long revision=tile.revision;
+            check(store.color(-1,-1)==FIRST,"Hot tile must expose captured cells");
+            store.capture(-1,-1,SECOND);
+            check(store.color(-1,-1)==SECOND&&tile.revision>revision,"Hot tile must retain dirty revisions");
+            store.capture(-1,-1,SECOND);
+            long unchanged=tile.revision;store.color(-1,-1);
+            check(tile.revision==unchanged,"Reading a hot tile must not dirty it");
+            for(int x=0;x<16384;x++)store.chunk(x,0);
+            check(store.chunk(-1,-1)!=tile,"Hot reference must not resurrect an evicted tile");
+            System.out.println("PASS: loaded hot tile preserves updates, revisions and eviction");
+        } finally {store.close();}
     }
 
     private static void maximumViewportRetainsVisibleTiles(Path root) {

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import pathlib,subprocess,zipfile,struct
+import pathlib,subprocess,zipfile,struct,os
 root=pathlib.Path(__file__).resolve().parents[1]
 asm=next((root/'.cache/neoforge/runtime/libraries/org/ow2/asm/asm').rglob('asm-9.10.1.jar'))
-classes=root/'.cache/silent-agent/classes';classes.mkdir(parents=True,exist_ok=True)
-subprocess.run(['javac','-cp',str(asm),'-d',str(classes),str(root/'tests/silent/SilentGameAgent.java')],check=True)
+output=pathlib.Path(os.environ.get('UNBOX_SILENT_AGENT_OUTPUT',str(root/'.cache/silent-agent')))
+classes=output/'classes';classes.mkdir(parents=True,exist_ok=True)
+subprocess.run(['javac','--release',os.environ.get('UNBOX_SILENT_AGENT_JAVA','25'),'-cp',str(asm),'-d',str(classes),str(root/'tests/silent/SilentGameAgent.java')],check=True)
 def shade(data):
     # Relocate ASM so Fabric's duplicate-class guard and the game's ASM version remain independent.
     out=bytearray(data[:10]);offset=10;index=1;count=struct.unpack('>H',data[8:10])[0]
@@ -19,7 +20,7 @@ def shade(data):
             if tag in (5,6):index+=1
         index+=1
     out.extend(data[offset:]);return out
-jar=root/'.cache/silent-agent/agent.jar'
+jar=output/'agent.jar'
 with zipfile.ZipFile(jar,'w') as z:
  z.writestr('META-INF/MANIFEST.MF','Manifest-Version: 1.0\nPremain-Class: SilentGameAgent\n\n')
  for p in classes.rglob('*.class'):z.writestr(str(p.relative_to(classes)),shade(p.read_bytes()))

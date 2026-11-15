@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/Sk1erLLC/Patcher",
+  "commit": "4ce6e196e5ad1339f8a0ab96eb5680c2f6464583",
+  "license": "CC-BY-NC-SA-4.0",
+  "mixins": [
+    "performance/BlockPosMixin_ReduceAllocations",
+    "performance/MinecraftMixin_SkipTwitchStuff",
+    "performance/NBTTagStringMixin_DataCache",
+    "performance/GameRulesValueMixin_Optimization",
+    "performance/EntityMixin_Capability",
+    "performance/ModelRendererMixin_BatchDrawing",
+    "performance/TexturedQuadMixin_BatchDraw",
+    "accessors/WorldRendererAccessor",
+    "performance/MinecraftMixin_OptimizedWorldSwapping"
+  ],
+  "changes": [
+    "Performance subset only; Essential, UI, social/network, duplicate entity culling and unrelated gameplay changes excluded.",
+    "Minimal Forge entry point and batch-model configuration supplied by Unbox.",
+    "Enabled upstream optimized world swapping; automatic JVM garbage collection remains active."
+  ]
+}

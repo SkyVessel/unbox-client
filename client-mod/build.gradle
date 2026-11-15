@@ -1,0 +1,86 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+plugins { id 'fabric-loom' version '1.14.10' }
+
+def mc = providers.gradleProperty('minecraft').getOrElse('1.21.11')
+def targets = new JsonSlurper().parse(file('port-targets.json'))
+if (!targets.containsKey(mc)) throw new GradleException('Unsupported backport target: ' + mc)
+def target = targets[mc]
+version = new JsonSlurper().parse(file('src/main/resources/fabric.mod.json')).version
+group = 'dev.unbox'
+base.archivesName = 'unbox-client'
+layout.buildDirectory = file('build/fabric-' + mc)
+java { toolchain.languageVersion = JavaLanguageVersion.of(target.java as Integer) }
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://api.modrinth.com/maven' }
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${mc}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${target.fabricLoader}"
+    target.dependencies.each { dep -> modImplementation files("../.cache/${mc}/${dep.filename}") }
+    modImplementation fileTree("../.cache/${mc}/fabric-api") { include '*.jar' }
+    implementation fileTree("../.cache/${mc}/compile-libs") { include '*.jar' }
+}
+loom {
+    if (mc == '1.20.1') accessWidenerPath = file('src/1.20.1/resources/unbox-1201.accesswidener')
+    mixin { useLegacyMixinAp = true; defaultRefmapName = 'unbox.refmap.json' }
+    runs {
+        client {
+            runDir '../.cache/' + mc + '/run-fabric'
+            property 'unbox.startupDiagnostics', 'true'
+            if (providers.gradleProperty('homeSmoke').isPresent()) property 'unbox.homeSmoke', 'true'
+            programArgs '--username', 'UnboxPortTest', '--width', '1280', '--height', '800'
+        }
+    }
+}
+def generated = file('build/sources-fabric-' + mc)
+tasks.register('compatibleSources', Exec) {
+    workingDir '..'
+    commandLine 'python3', 'scripts/prepare-version-sources.py', mc, 'fabric'
+    inputs.files(fileTree('src/main/java'), fileTree('src/fabric/java'), fileTree('src/' + mc + '/java'), fileTree('src/' + mc + '/fabric/java'), file('../scripts/prepare-version-sources.py'))
+    inputs.files(fileTree('src/26.3/java'), file('../scripts/solid-backport.py'))
+    inputs.property('minecraft', mc)
+    inputs.file('../scripts/port1201.py')
+    outputs.dir(generated)
+}
+sourceSets.main.java.setSrcDirs([generated, '../ports/voxlink/src'])
+if (mc == '1.20.1') sourceSets.main.resources.srcDir('src/1.20.1/resources')
+// Modern opt-in game fixtures are retained as generated sources, but use APIs
+// that are absent on 1.20.1. Legacy runtime checks have their own entry point.
+if (mc == '1.20.1') sourceSets.main.java.exclude('**/*SmokeTest.java', '**/*Checks.java', '**/GraphicsAccess.java', '**/GraphicsMixin.java')
+tasks.compileJava {
+    dependsOn 'compatibleSources'
+    options.release = target.java as Integer
+    options.compilerArgs += ['-Xmaxerrs', '1000']
+}
+tasks.processResources {
+    if (mc == '1.21.11') from('.') { include 'pvp-lock-1.21.11-fabric.json'; rename { 'unbox-pvp.json' } }
+    if (mc == '1.21.11') from('src/26.3/resources') { include 'assets/**' }
+    inputs.property('minecraft', mc)
+    inputs.property('java', target.java)
+    doLast {
+        def descriptor = new File(destinationDir, 'fabric.mod.json')
+        def metadata = new JsonSlurper().parse(descriptor)
+        metadata.depends.minecraft = mc
+        if (mc == '1.20.1') metadata.accessWidener = 'unbox-1201.accesswidener'
+        metadata.depends.java = '>=' + target.java
+        descriptor.text = JsonOutput.prettyPrint(JsonOutput.toJson(metadata))
+        def config = new File(destinationDir, 'unbox.mixins.json')
+        def mixins = new JsonSlurper().parse(config)
+        mixins.compatibilityLevel = 'JAVA_' + target.java
+        if (mc == '1.21.11') mixins.client.addAll(['OpaqueSolidMenuMixin','UiTransitionMixin','UiTransitionMixin$Frame','ViewmodelMixin','DaytimeMixin','PvpHudBackgroundMixin'])
+        mixins.refmap = 'unbox.refmap.json'
+        if (mc == '1.21.11') mixins.client.addAll(['PerformanceRenderMixin$LevelExtraction','ShulkerTooltipGateMixin','ShulkerTooltipGateMixin$Counts','SpatialBlurMixin','SpatialBlurMixin$BeforePanel'])
+        if (mc == '1.20.1') { mixins.client.removeAll(['HappyGhastRecallMixin','GraphicsMixin']); mixins.client.addAll(['LegacyEditBoxMixin','LegacyZoomKeyMixin','SpatialBlurMixin']) }
+        config.text = JsonOutput.prettyPrint(JsonOutput.toJson(mixins))
+    }
+    from('../ports/voxlink') {
+        include 'LICENSE', 'README.md', 'upstream.json', 'src/**/*.java'
+        into 'META-INF/licenses/voxlink'
+    }
+}
+tasks.remapJar { archiveClassifier = mc + '-fabric' }

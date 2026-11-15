@@ -1,0 +1,31 @@
+// Test driver only: leaves normal source sets and delivered JAR unchanged.
+allprojects {
+    afterEvaluate { p ->
+        if (p.plugins.hasPlugin('fabric-loom')) {
+            def compiled = p.layout.buildDirectory.dir('customer-sync/classes')
+            def compileFixture = p.tasks.register('compileCustomerSyncFixture', JavaCompile) {
+                dependsOn p.tasks.named('compileJava')
+                source p.file('../tests/customer-sync/PrivateWorldSmokeTest.java')
+                classpath = p.sourceSets.main.compileClasspath + p.sourceSets.main.output
+                destinationDirectory = compiled
+                javaCompiler = p.tasks.compileJava.javaCompiler
+                options.release = 21
+                options.compilerArgs = ['-proc:none']
+            }
+            def fixture = p.tasks.register('customerSyncJar', Jar) {
+                dependsOn compileFixture, p.tasks.named('jar')
+                archiveFileName = 'customer-sync-named.jar'
+                destinationDirectory = p.file('../.cache/customer-sync')
+                from(p.zipTree(p.tasks.jar.archiveFile.get().asFile)) { exclude 'dev/unbox/client/PrivateWorldSmokeTest*' }
+                from(compiled)
+            }
+            p.tasks.register('remapCustomerSyncFixture', p.tasks.remapJar.getClass().superclass) {
+                dependsOn fixture
+                inputFile = fixture.flatMap { it.archiveFile }
+                archiveFileName = 'unbox-test-1.21.11.jar'
+                destinationDirectory = p.file('../.cache/customer-sync')
+                addNestedDependencies = false
+            }
+        }
+    }
+}

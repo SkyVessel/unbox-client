@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "wick",
+    "minecraft": "1.21.11",
+    "loader": "fabric",
+    "fileId": 9092565,
+    "version": "1.0.1+mc1.21.11",
+    "filename": "wick-1.0.1+mc1.21.11.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9092/565/wick-1.0.1%2Bmc1.21.11.jar",
+    "size": 98642,
+    "sha1": "db84940465cfcf5a80466b31ef6d8db14e6acaae",
+    "sha512": "1626a1613349a54de6c86e8c9679af2b1bb5e066095c435c126ee0cae3e2c27b16644fb9bb580a142d08c5d2de283b1e01a3c1c1a4a762da18fcc027d503ea1f",
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT",
+    "metadataUrl": "https://www.curseforge.com/api/v1/mods/1728334/files/9092565"
+  },
+  {
+    "slug": "wick",
+    "minecraft": "1.21.11",
+    "loader": "neoforge",
+    "fileId": 9070038,
+    "version": "1.0.0+mc1.21.11",
+    "filename": "wick-neoforge-1.0.0+mc1.21.11.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9070/38/wick-neoforge-1.0.0%2Bmc1.21.11.jar",
+    "size": 95110,
+    "sha1": "e7dd71b7d51e5755c615d832219bf068e8294222",
+    "sha512": "4789c53eba1d1b4ec5ccb40825ebb3e9ee78c2b204af418ac43a7f669ee397216b40659237921c2dcc8c5bdef7e5ee0ab8bf4cc2e4796da236f26aa9c0e249d0",
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT",
+    "metadataUrl": "https://www.curseforge.com/api/v1/mods/1728334/files/9070038"
+  },
+  {
+    "slug": "wick",
+    "minecraft": "1.20.1",
+    "loader": "fabric",
+    "fileId": 9092522,
+    "version": "1.0.1+mc1.20-1.20.1",
+    "filename": "wick-1.0.1+mc1.20-1.20.1.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9092/522/wick-1.0.1%2Bmc1.20-1.20.1.jar",
+    "size": 100533,
+    "sha1": "e625b03c701dc9e24f6ec5ebe9d2affb5552a9a1",
+    "sha512": "c965eb9cb806f8ac0966534a09972ab565f492a982de25bc8dd747be95cb9c05f4db224bb7cbfa03b046623867408ef6fb9a4dc1c41ee5a97c887e46a1abd99d",
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT",
+    "metadataUrl": "https://www.curseforge.com/api/v1/mods/1728334/files/9092522"
+  },
+  {
+    "slug": "wick",
+    "minecraft": "1.20.1",
+    "loader": "forge",
+    "fileId": 9070072,
+    "version": "1.0.0+mc1.20.1",
+    "filename": "wick-forge-1.0.0+mc1.20.1.jar",
+    "url": "https://mediafilez.forgecdn.net/files/9070/72/wick-forge-1.0.0%2Bmc1.20.1.jar",
+    "size": 731484,
+    "sha1": "9672c203341f7b8c66e94ed2b6e5ecc15a6bb0e8",
+    "sha512": "c39059d9ca62fb30253823bb82febb2a0bb104ad5800a23fe9b3859c485d31aebc689bce0bb315462bf62ffe0db577701daa9e02f557546e9cae68acb2ee410e",
+    "source": "https://github.com/comedy01/Wick",
+    "license": "MIT",
+    "metadataUrl": "https://www.curseforge.com/api/v1/mods/1728334/files/9070072"
+  }
+]

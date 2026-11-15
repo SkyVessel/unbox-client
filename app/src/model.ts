@@ -1,6 +1,6 @@
 import catalogue from './mod-options.json';
 export type Account={accountId?:string;provider?:string;needsSignIn?:boolean;skinStatus?:"ready"|"cached"|"unavailable";name:string;type:"local"|"microsoft"|"unbox";uuid?:string;skin?:string;skinModel?:"classic"|"slim"};
-export type Profile = { id:string; name:string; version:'26.1'|'26.1.2'|'26.3'; loader:'fabric'|'vanilla'|'neoforge'; icon:string; sharedHost?:string; sharedHostName?:string; sharedHostFace?:string|null; sharedWorld?:string; sharedUpdatedAt?:number };
+export type Profile = { id:string; name:string; version:'26.1'|'26.1.2'|'26.3'|'1.21.11'|'1.8.9'; loader:'fabric'|'vanilla'|'neoforge'|'forge'; channel?:'stable'|'beta'; icon:string; sharedHost?:string; sharedHostName?:string; sharedHostFace?:string|null; sharedWorld?:string; sharedUpdatedAt?:number };
 export type Config = Record<string,boolean|number|string>;
 export type State = {profiles:Profile[];selected:string|null;settings:{memory:number;reducedMotion:boolean;reducedTransparency:boolean;minimize:boolean};account:Account|null;modules?:Record<string,Config>};
 export const defaults:Config = {fps:true,cps:false,coordinates:true,armor:true,crosshair:false,chat:false,sprint:false,zoom:true,minimap:false,ping:false};
@@ -10,3 +10,5 @@ export const empty:State = {profiles:[],selected:null,settings:{memory:4096,redu
 export const blocks = ['grass_block','stone','dirt','oak_planks','bricks','tnt','gold_block','iron_block'];
 export const blockLabel=(s:string)=>s.replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
 export const validName=(s:string)=>s.trim().length>0 && s.trim().length<=48;
+
+export const profileVersion=(p:Profile)=>`${p.version}${p.channel==='beta'?' · Beta':''}`;

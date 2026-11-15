@@ -275,7 +275,9 @@ fn game(rt: &Runtime) -> Option<PathBuf> {
     if j["stage"] != "Playing" {
         return None;
     }
-    profile_dir(rt, j["profileId"].as_str()?).ok()
+    let dir=profile_dir(rt,j["profileId"].as_str()?).ok()?;
+    let profile:Value=serde_json::from_slice(&fs::read(dir.join("profile.json")).ok()?).ok()?;
+    crate::game_dir(rt,&profile).ok()
 }
 fn publish(rt: &Runtime, g: &Path) -> Result<(), String> {
     let account = auth::restore_account(rt, &Value::Null)?;
@@ -291,7 +293,18 @@ fn publish(rt: &Runtime, g: &Path) -> Result<(), String> {
         .skins
         .iter()
         .into_iter()
-        .map(|e| {let face=public(rt,e).ok().and_then(|s|crate::social::face(&s));json!({"id":e.id,"name":e.name,"model":e.model,"created":e.created,"face":face})})
+        .map(|e| {
+            // Content-addressed previews let the game select without applying a skin.
+            if let Ok(source) = file(rt, &e.id) {
+                let previews = g.join("unbox-skin-previews");
+                let destination = previews.join(format!("{}.png", e.id));
+                if !destination.is_file() {
+                    if fs::create_dir_all(&previews).is_ok() {
+                        if let Ok(bytes) = fs::read(source) { let _ = atomic(&destination, &bytes); }
+                    }
+                }
+            }
+            let face=public(rt,e).ok().and_then(|s|crate::social::face(&s));json!({"id":e.id,"name":e.name,"model":e.model,"created":e.created,"face":face})})
         .collect::<Vec<_>>();
     let active_json = if let Some(e) = active {
         let bytes = fs::read(file(rt, &e.id)?).map_err(|_| "A saved skin file is missing")?;

@@ -1,0 +1,72 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+plugins { id 'java'; id 'net.neoforged.moddev' version '2.0.147' }
+
+def mc = providers.gradleProperty('minecraft').getOrElse('1.21.11')
+def target = new JsonSlurper().parse(file('../port-targets.json'))[mc]
+if (!target?.neoforge) throw new GradleException('Unsupported NeoForge backport target: ' + mc)
+version = new JsonSlurper().parse(file('../src/main/resources/fabric.mod.json')).version
+group = 'dev.unbox'
+base.archivesName = 'unbox-client'
+layout.buildDirectory = file('../build/neoforge-' + mc)
+java { toolchain.languageVersion = JavaLanguageVersion.of(target.java as Integer) }
+repositories { mavenCentral() }
+neoForge {
+    version = target.neoforge
+    runs {
+        client {
+            client()
+            systemProperty 'java.awt.headless', 'true'
+            gameDirectory = file(providers.gradleProperty('portUi').isPresent()?'../../.cache/' + mc + '/ui-neoforge-nov14':'../../.cache/' + mc + '/run-neoforge')
+            if (providers.gradleProperty('portUi').isPresent()) systemProperty 'unbox.portUiTest', 'true'
+            systemProperty 'unbox.startupDiagnostics', 'true'
+            if (providers.gradleProperty('homeSmoke').isPresent()) systemProperty 'unbox.homeSmoke', 'true'
+            programArguments.addAll('--username', 'UnboxPortTest', '--width', '1280', '--height', '800')
+        }
+    }
+    mods { unbox { sourceSet sourceSets.main } }
+}
+dependencies {
+    target.neoforgeDependencies.each { dep -> implementation files("../../.cache/${mc}/neoforge/${dep.filename}") }
+    implementation fileTree("../../.cache/${mc}/neoforge/compile-libs") { include '*.jar' }
+}
+def generated = file('../build/sources-neoforge-' + mc)
+tasks.register('compatibleSources', Exec) {
+    workingDir '../..'
+    commandLine 'python3', 'scripts/prepare-version-sources.py', mc, 'neoforge'
+    inputs.files(fileTree('../src/main/java'), fileTree('../src/neoforge/java'), fileTree('../src/' + mc + '/java'), file('../../scripts/prepare-version-sources.py'))
+    inputs.files(fileTree('../src/26.3/java'), file('../../scripts/solid-backport.py'))
+    inputs.property('minecraft', mc)
+    inputs.file('../../scripts/port1201.py')
+    outputs.dir(generated)
+}
+sourceSets.main.java.setSrcDirs([generated, '../../ports/voxlink/src'])
+sourceSets.main.resources.setSrcDirs(['../src/main/resources','../src/neoforge/resources'])
+tasks.compileJava {
+    dependsOn 'compatibleSources'
+    options.release = target.java as Integer
+    options.compilerArgs += ['-proc:none', '-Xmaxerrs', '1000']
+}
+tasks.processResources {
+    if (mc == '1.21.11') from('../src/26.3/resources') { include 'assets/**' }
+    exclude 'fabric.mod.json'
+    inputs.property('minecraft', mc)
+    doLast {
+        def config = new File(destinationDir, 'unbox.mixins.json')
+        def mixins = new JsonSlurper().parse(config)
+        mixins.compatibilityLevel = 'JAVA_' + target.java
+        if (mc == '1.21.11') mixins.client.addAll(['OpaqueSolidMenuMixin','UiTransitionMixin','UiTransitionMixin$Frame'])
+        mixins.client.remove('FreelookMixin')
+        mixins.client.addAll(['NeoFreelookCameraMixin','NeoLoginQueryMixin','NeoLoginAnswerMixin','NeoLoginClientMixin','NeoLoginServerMixin','PerformanceRenderMixin$LevelExtraction'])
+        mixins.client.addAll(['ShulkerTooltipGateMixin','ShulkerTooltipGateMixin$Counts','SpatialBlurMixin','SpatialBlurMixin$BeforePanel'])
+        config.text = JsonOutput.prettyPrint(JsonOutput.toJson(mixins))
+        def descriptor = new File(destinationDir, 'META-INF/neoforge.mods.toml')
+        descriptor.text = descriptor.text.replace('loaderVersion="[11,)"', 'loaderVersion="[10,)"').replace('versionRange="[26.1]"', 'versionRange="[' + mc + ']"').replace('versionRange="[26.1.0.19-beta,26.2)"', 'versionRange="[' + target.neoforge + ',21.12)"')
+    }
+    from('../../ports/voxlink') {
+        include 'LICENSE', 'README.md', 'upstream.json', 'src/**/*.java'
+        into 'META-INF/licenses/voxlink'
+    }
+}
+tasks.jar { archiveClassifier = mc + '-neoforge' }

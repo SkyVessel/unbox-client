@@ -1,0 +1,454 @@
+{
+  "minecraft": "1.21.11",
+  "loader": "fabric",
+  "mods": [
+    {
+      "slug": "crosshair-addons-public",
+      "title": "Crosshair Addons Public",
+      "id": "crosshairaddons",
+      "project_id": "QrKEZXN9",
+      "version_id": "MVhSfA50",
+      "version": "2.2.2+1.21.11",
+      "filename": "CrosshairAddons-2.2.2+1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/QrKEZXN9/versions/MVhSfA50/CrosshairAddons-2.2.2%2B1.21.11.jar",
+      "sha512": "e30940cf71874eb1b1789e516c5f422adba050e3aeba68b0d195234da1f1644167092c11cd1763f39e11fd6d7120431953a34cea97042957925e9762751e30fb",
+      "sha1": "6db9f5478ff3d6e8e17d0643cf82365355b0e3bb",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/Walksy/Crosshair-Addons",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "walksylib",
+      "title": "WalksyLib",
+      "id": "walksylib",
+      "project_id": "7P86n6Vg",
+      "version_id": "exxN7KBX",
+      "version": "2.0.5+1.21.11",
+      "filename": "WalksyLib-2.0.5+1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/7P86n6Vg/versions/exxN7KBX/WalksyLib-2.0.5%2B1.21.11.jar",
+      "sha512": "8da17e37eaa6e389b313af83ecd192318d4903d3ceb684f63d981099c4d77957fb9232ca8f8ca722d25b9283d94e6f5fd2d8f806905f23f8d64c70b27f701916",
+      "sha1": "dd16e30d163bf6b6ec51b05cc7030c7c39dbb0eb",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/Walksy/WalksyLib",
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "complete-shield-fixes",
+      "title": "Shield Fixes",
+      "id": "shieldfixes",
+      "project_id": "HfLFMeJe",
+      "version_id": "U0KdeHqo",
+      "version": "2.1.0+1.21.11",
+      "filename": "ShieldFixes-2.1.0+1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/HfLFMeJe/versions/U0KdeHqo/ShieldFixes-2.1.0%2B1.21.11.jar",
+      "sha1": "936f01cce1b994a6b8934065f9f02238473df61d",
+      "sha512": "8480360ff8c504164df4bab02f9f16632d906f239be0b268834079f0903356bf3c71ed580af728cfa1ca2cecbfde1c0c11ccf86f9b04363458f7e08ccd4b1745",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/Walksy/ShieldFixes",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "better-totem-counter",
+      "title": "Better Totem Counter",
+      "id": "bettertotemcounter",
+      "project_id": "fsDp8XL8",
+      "version_id": "f1aWRKqv",
+      "version": "0.3.0+1.21.11",
+      "filename": "bettertotemcounter-0.1.0.jar",
+      "url": "https://cdn.modrinth.com/data/fsDp8XL8/versions/f1aWRKqv/bettertotemcounter-0.1.0.jar",
+      "sha512": "629f2726d44890bd073cae45cdceaeaba43a04621f4bbd06234c0c2c77d8c8930dd9ba05ef0bf94b5505e0656768b600e37c6e809761335b4d7b47565c38eb68",
+      "sha1": "75bc86ceef08add548a77c0cca909a2381e9a8f6",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": null,
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "dtslib",
+      "title": "DTS Lib",
+      "id": "dtslib",
+      "project_id": "7Etwo97z",
+      "version_id": "DpcZkdv8",
+      "version": "0.2.0+1.21.11",
+      "filename": "dtslib-0.2.0.jar",
+      "url": "https://cdn.modrinth.com/data/7Etwo97z/versions/DpcZkdv8/dtslib-0.2.0.jar",
+      "sha512": "4240f104cce38cc7665e230ca46bf6a4d504fd7dcffd4d7bc6aeada9f815d5edbf724c3863f53505e2878878b6e856b344914f4ea049356b1780af29f215005a",
+      "sha1": "f86d6fa9e6a849964768720364e27fa27e218e0a",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": null,
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "statuseffecttimer",
+      "title": "Status Effect Timer",
+      "id": "statuseffecttimer",
+      "project_id": "T9FDHbY5",
+      "version_id": "bARFUUiZ",
+      "version": "2.0.0+1.21.6",
+      "filename": "statuseffecttimer-2.0.0+1.21.6.jar",
+      "url": "https://cdn.modrinth.com/data/T9FDHbY5/versions/bARFUUiZ/statuseffecttimer-2.0.0%2B1.21.6.jar",
+      "sha1": "a7eca0f6869c0b86f50a4088ab359afbce2411eb",
+      "sha512": "c5531fde368e3b9fa0e74aa5aa36a04696a7fe448caaef27bde0002a4101a324c28aa6e575f613ea924ab470775ba75c395cefbebb0fc3235964ee2e8068bca5",
+      "license": {
+        "id": "LGPL-3.0-only",
+        "name": "GNU Lesser General Public License v3.0 only",
+        "url": null
+      },
+      "source": "https://github.com/magicus/statuseffecttimer",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "appleskin",
+      "title": "AppleSkin",
+      "id": "appleskin",
+      "project_id": "EsAfCjCV",
+      "version_id": "59ti1rvg",
+      "version": "3.0.8+mc1.21.11",
+      "filename": "appleskin-fabric-mc1.21.11-3.0.8.jar",
+      "url": "https://cdn.modrinth.com/data/EsAfCjCV/versions/59ti1rvg/appleskin-fabric-mc1.21.11-3.0.8.jar",
+      "sha1": "441fdbf4e9c34fb61517ceb8e15618950dc4d314",
+      "sha512": "d32206cb8d6fac7f0b579f7269203135777283e1639ccb68f8605e9f5469b5b54305fd36ba82c64b48b89ae4f1a38501bfb5827284520c3ec622d95edcfa34de",
+      "license": {
+        "id": "Unlicense",
+        "name": "The Unlicense",
+        "url": null
+      },
+      "source": "https://github.com/squeek502/AppleSkin",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "combat-hitboxes",
+      "title": "Combat Hitboxes",
+      "id": "combat-hitboxes",
+      "project_id": "geGZinIB",
+      "version_id": "xDTFU0cD",
+      "version": "1.0.10",
+      "filename": "combat-hitbox-1.0.10.jar",
+      "url": "https://cdn.modrinth.com/data/geGZinIB/versions/xDTFU0cD/combat-hitbox-1.0.10.jar",
+      "sha1": "095764fbc6a053ebc8d16382c9fb28901a55a0dc",
+      "sha512": "b2a3ef56a8c44f5d86165175a6c1a78a7c7b7897c526da53624ebd811500242009275eb03be67d35a81013034539381c48ac7c8aa9ddf18c727b2d2bd603acad",
+      "license": {
+        "id": "Apache-2.0",
+        "name": "Apache License 2.0",
+        "url": null
+      },
+      "source": "https://github.com/sootysplash/combat-hitboxes",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "cloth-config",
+      "title": "Cloth Config API",
+      "id": "cloth-config",
+      "project_id": "9s6osm5g",
+      "version_id": "xuX40TN5",
+      "version": "21.11.153+fabric",
+      "filename": "cloth-config-21.11.153-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/xuX40TN5/cloth-config-21.11.153-fabric.jar",
+      "sha1": "4c224606a963bce223db5b27edb4959ecf40d4ee",
+      "sha512": "8f455489d4b71069e998568cf4e1450116f4360a4eb481cd89117f629c6883164886cf63ca08ac4fc929dd13d1112152755a6216d4a1498ee6406ef102093e51",
+      "license": {
+        "id": "LGPL-3.0-only",
+        "name": "GNU Lesser General Public License v3.0 only",
+        "url": null
+      },
+      "source": "https://github.com/shedaniel/ClothConfig/",
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "modmenu",
+      "title": "Mod Menu",
+      "id": "modmenu",
+      "project_id": "mOgUt4GM",
+      "version_id": "cLkYaVuL",
+      "version": "17.0.1",
+      "filename": "modmenu-17.0.1.jar",
+      "url": "https://cdn.modrinth.com/data/mOgUt4GM/versions/cLkYaVuL/modmenu-17.0.1.jar",
+      "sha512": "cb68cc39c8da66d05a1d2054a0e7b62144881e0cdb5fd681bc4f337b1313fafac394246f4e0aa0c4b6343db9e9750250a00c1bb72689b762da685ce1ccfee51f",
+      "sha1": "d5612d70bda58e0179b177ca9990e57471e67d19",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/TerraformersMC/ModMenu",
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "placeholder-api",
+      "title": "Text Placeholder API",
+      "id": "placeholder-api",
+      "project_id": "eXts2L7r",
+      "version_id": "qxjzQ9xY",
+      "version": "2.8.2+1.21.10",
+      "filename": "placeholder-api-2.8.2+1.21.10.jar",
+      "url": "https://cdn.modrinth.com/data/eXts2L7r/versions/qxjzQ9xY/placeholder-api-2.8.2%2B1.21.10.jar",
+      "sha1": "bbdc920ecff993148cd6e81a208536132245ce40",
+      "sha512": "507ab10b7938dcd14d33121b8462649bdbe575cef248e917dfdf7566078ab5d0195ca1add95eae4863de3f652eb56db0a8669a67d5b5344e094d086f9dab5a08",
+      "license": {
+        "id": "LGPL-3.0-only",
+        "name": "GNU Lesser General Public License v3.0 only",
+        "url": null
+      },
+      "source": "https://github.com/Patbox/TextPlaceholderAPI",
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "natural-motion-blur",
+      "title": "Natural Motion Blur",
+      "id": "naturalmotionblur",
+      "project_id": "RlEyqCCv",
+      "version_id": "va14I2ZU",
+      "version": "1.4.5",
+      "filename": "naturalmotionblur-1.4.5+mc1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/RlEyqCCv/versions/va14I2ZU/naturalmotionblur-1.4.5%2Bmc1.21.11.jar",
+      "sha512": "796547cc12f617e1a5dc4ac1d0f5c316d06c22a2cc332a1095c9314677019ccbc1ab991c650dc41dc4f3386fe29d670ab4c8ed070feaf65cc5a91168c08c1e79",
+      "sha1": "1e143cf0f3d230efb806f0d2cbeff1ebf964c31c",
+      "license": {
+        "id": "LGPL-3.0-only",
+        "name": "GNU Lesser General Public License v3.0 only",
+        "url": null
+      },
+      "source": "https://github.com/ItsPasi/natural-motionblur-fabric",
+      "primary": true,
+      "defaultEnabled": false
+    },
+    {
+      "slug": "bactromod",
+      "title": "BactroMod",
+      "id": "bactromod",
+      "project_id": "2Ok6dkOD",
+      "version_id": "kJoTy4V3",
+      "version": "3.5",
+      "filename": "bactromod-3.5.jar",
+      "url": "https://cdn.modrinth.com/data/2Ok6dkOD/versions/kJoTy4V3/bactromod-3.5.jar",
+      "sha1": "b9fb2aa3d1d00a5de570e1d372a3f971905e5858",
+      "sha512": "ee7cc4c27fa5abb66f68b030eca8ffb24eb31716d5aa97e06a23e4b45962c0be9edd2b2fdb29420140ec388c09fc2a27cf5029841c1dfe9117be59cbb5926606",
+      "license": {
+        "id": "LGPL-3.0-only",
+        "name": "GNU Lesser General Public License v3.0 only",
+        "url": null
+      },
+      "source": "https://github.com/Bactrosaurus/bactromod",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "shulkerboxtooltip",
+      "title": "Shulker Box Tooltip",
+      "id": "shulkerboxtooltip",
+      "project_id": "2M01OLQq",
+      "version_id": "rZovgkWT",
+      "version": "5.2.16+1.21.11-fabric",
+      "filename": "shulkerboxtooltip-fabric-5.2.16+1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/2M01OLQq/versions/rZovgkWT/shulkerboxtooltip-fabric-5.2.16%2B1.21.11.jar",
+      "sha512": "98cd0950adafa086201d4595e558c15697ba1c9eda1b47c30803081ae48e2594e74cae5b743b3283990fa9d0da6caab87958bf2e97125bc3cb9107f6ab6f1882",
+      "sha1": "3f889de77a0aec69ffcfd28bf6fb2c077443788a",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/MisterPeModder/ShulkerBoxTooltip",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "elytra-swapper-mrdefault",
+      "title": "Elytra Swapper +",
+      "id": "elytraswapperplus",
+      "project_id": "MCFkNZ5U",
+      "version_id": "MFtxxdeO",
+      "version": "1.0.0-1.21.11",
+      "filename": "ElytraSwapperPlus-1.0.0-1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/MCFkNZ5U/versions/MFtxxdeO/ElytraSwapperPlus-1.0.0-1.21.11.jar",
+      "sha1": "cff69ee8747c4673e139e9e5639d5408180ddc7e",
+      "sha512": "713f5b19f296d6ff268c2ff017c19238c220691bea69dc81154b36e2604d7ffac82b7243896f39ebfd8c1a696eb5a1afc19800d895be393fe6a92ad4f9f9fe1a",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/PavitraXD/Elytra-Swapper",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "elytrapitch",
+      "title": "Elytra Pitch",
+      "id": "elytrapitch",
+      "project_id": "NSHJxibg",
+      "version_id": "R6jWgYEl",
+      "version": "1.4.5",
+      "filename": "elytrapitch-1.4.5.jar",
+      "url": "https://cdn.modrinth.com/data/NSHJxibg/versions/R6jWgYEl/elytrapitch-1.4.5.jar",
+      "sha1": "76e4e61274e9b43e6754bee5064e47ac839bd155",
+      "sha512": "c55054f9449c9097486a71af48b11905a9ca1547e6b6cbd362d84ba72c87720000bce5a6d485194b944c13dff75bcedcb2542f295717cf9993aafa934ddc9f70",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": "https://github.com/kennethsible/elytrapitch/blob/main/LICENSE"
+      },
+      "source": "https://github.com/kennethsible/elytrapitch",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "tweakhands",
+      "title": "TweakHands",
+      "id": "handtweaks",
+      "project_id": "kSdQkquZ",
+      "version_id": "hCL0TAJt",
+      "version": "1.0.0",
+      "filename": "tweakhands-1.0.0.jar",
+      "url": "https://cdn.modrinth.com/data/kSdQkquZ/versions/hCL0TAJt/tweakhands-1.0.0.jar",
+      "sha1": "269b1687e400e406d59469104c634b04b0c9e246",
+      "sha512": "3880c04e2dc3ab0644de9f09b9d7fd8b92db251a01ec53c8e2276dc3c017df8c28ddacc7567352aa3684ad522c55253f4990a1c97a121ee50c915669d9bf7a2b",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": null,
+      "primary": true,
+      "defaultEnabled": false
+    },
+    {
+      "slug": "look-behind",
+      "title": "Look Behind",
+      "id": "lookbehind",
+      "project_id": "PgTT7cgt",
+      "version_id": "qxOid5sZ",
+      "version": "1.0.2+unbox.1.21.11",
+      "filename": "unbox-look-behind-1.0.2+unbox.1.21.11.jar",
+      "sha512": "767493fcdcde88b05d2dd7a2f40c3c07270fb8344cebc8693b394f4591885cac94aabef139161d878569fa2c4f2299ef542921be6ebedea715342819eeeecfaa",
+      "sha1": "04e8e705945a11fe85102ee89b89042680ba6ae7",
+      "license": {
+        "id": "GPL-3.0-or-later",
+        "name": "GNU General Public License v3.0 or later",
+        "url": null
+      },
+      "source": "https://github.com/R4z0rX/LookBehind",
+      "primary": true,
+      "defaultEnabled": true,
+      "upstreamFile": {
+        "filename": "lookbehind-1.0.2-1.21.9.jar",
+        "version": "1.0.2",
+        "url": "https://cdn.modrinth.com/data/PgTT7cgt/versions/qxOid5sZ/lookbehind-1.0.2-1.21.9.jar",
+        "sha1": "481c75ec39b2b287d121e86aeae65150c84d3b30",
+        "sha512": "ef0400ac8eb33978492de866329f7e986efa0e587793658eb4862e95fc011183d7506c8c5cbf3c1d9b41a555d223b415ff8e09ed58609efa3de47d215424aafa"
+      },
+      "localArtifact": "ports/look-behind-1.21.11/build/libs/unbox-look-behind-1.0.2+unbox.1.21.11.jar",
+      "sourceRecord": "ports/look-behind-1.21.11/UPSTREAM.json"
+    },
+    {
+      "slug": "shield-cooldown-hud",
+      "title": "Shield Cooldown HUD",
+      "id": "shieldreturn",
+      "project_id": "iMC3E00e",
+      "version_id": "H6a15jOw",
+      "version": "1.2.0",
+      "filename": "shieldcooldownhud-1.21.11-fabric-1.2.0.jar",
+      "url": "https://cdn.modrinth.com/data/iMC3E00e/versions/H6a15jOw/shieldcooldownhud-1.21.11-fabric-1.2.0.jar",
+      "sha512": "1ba8ffb463fe00d6df0e8dacc797f61a37e694f4748a78f537a93d2cf8ca35bb14decd1b7642686384c68346dba2e826bd1c4e65ecc13063920afe0632bec135",
+      "sha1": "e3d10bef68f14925be75115e7f88d9a804881dd1",
+      "license": {
+        "id": "LicenseRef-All-Rights-Reserved",
+        "name": "",
+        "url": null
+      },
+      "source": null,
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "hitcolor",
+      "title": "HitColor",
+      "id": "hitcolor",
+      "project_id": "VXFg68YU",
+      "version_id": "eUPVN3ut",
+      "version": "1.1.0+mc1.21.11",
+      "filename": "hitcolor-1.1.0+mc1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/VXFg68YU/versions/eUPVN3ut/hitcolor-1.1.0%2Bmc1.21.11.jar",
+      "sha512": "0b61312e75482159e7fa22cdf6fd729afc48ccb65ed64f0921e35ae92555c3639b72f2b79862e642db40f503195942350ef504a8920cfff480bc33ac1ad68c83",
+      "sha1": "b7bc0c21e0b0ecc00e5981e4cb4745bcef917a3e",
+      "license": {
+        "id": "MIT",
+        "name": "MIT License",
+        "url": null
+      },
+      "source": "https://github.com/femboyPig/HitColor",
+      "primary": true,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "yacl",
+      "title": "YetAnotherConfigLib (YACL)",
+      "id": "yet_another_config_lib_v3",
+      "project_id": "1eAoo2KR",
+      "version_id": "pHWDw3Vc",
+      "version": "3.8.2+1.21.11-fabric",
+      "filename": "yet_another_config_lib_v3-3.8.2+1.21.11-fabric.jar",
+      "url": "https://cdn.modrinth.com/data/1eAoo2KR/versions/pHWDw3Vc/yet_another_config_lib_v3-3.8.2%2B1.21.11-fabric.jar",
+      "sha512": "392db7d471030cca27483ecf58c626a14cd73d71a18afe6d4173c6b030948b8a925b36e708d4cc2c897dfa3f20a7f23b999fc18aa6d36c156da29037601153ac",
+      "sha1": "f99cda70903f16dd6927a276150b2762b4d5ab66",
+      "license": {
+        "id": "LGPL-3.0-or-later",
+        "name": "GNU Lesser General Public License v3.0 or later",
+        "url": null
+      },
+      "source": "https://github.com/isXander/YetAnotherConfigLib",
+      "primary": false,
+      "defaultEnabled": true
+    },
+    {
+      "slug": "betterhitreg",
+      "title": "Better Hitreg",
+      "id": "betterhitreg",
+      "project_id": "MIKwzoiY",
+      "version_id": "dQLrH5Dg",
+      "version": "1.0.7+1.21.11",
+      "filename": "BetterHitreg-1.0.7+1.21.11.jar",
+      "url": "https://cdn.modrinth.com/data/MIKwzoiY/versions/dQLrH5Dg/BetterHitreg-1.0.7%2B1.21.11.jar",
+      "sha1": "04b77df31c742b515e29915dfa2104b4f09a5d21",
+      "sha512": "c39ec51a7923536fd10f665f6df2732bbc8470f09087d3a50e48a06aaccdb941aefde6130199eb6a0840980181d9be05cc335a59a49684db70c261c5150bbebb",
+      "license": {
+        "id": "Apache-2.0",
+        "name": "Apache License 2.0",
+        "url": null
+      },
+      "source": "https://github.com/jasspir/BetterHitreg",
+      "primary": true,
+      "defaultEnabled": true
+    }
+  ]
+}

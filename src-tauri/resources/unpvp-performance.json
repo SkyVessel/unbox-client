@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "minecraft": "1.8.9",
+  "mods": [
+    {
+      "name": "OptiFine",
+      "version": "HD U M5",
+      "path": "OptiFine_1.8.9_HD_U_M5.jar",
+      "downloadPage": "https://optifine.net/adloadx?f=OptiFine_1.8.9_HD_U_M5.jar",
+      "sha1": "d362d58a28f5373b141b9e426e8e160638bfafcd",
+      "sha512": "459dd48fd88cbf3e91e7b02790e272279465978a5bde8e85409afa28cd1b0c9022195588afcc2f63acdec5688ac3e93adf7e9870da28548c3b1c292a598426de",
+      "source": "https://optifine.net/downloads"
+    },
+    {
+      "name": "nothirium-1.8.9-port",
+      "version": "1.8.9-0.4.9-beta-2",
+      "path": "Nothirium-1.8.9-port-1.8.9-0.4.9-beta-2.jar",
+      "url": "https://cdn.modrinth.com/data/BpzUOKOJ/versions/nYfUTYGh/Nothirium-1.8.9-port-1.8.9-0.4.9-beta-2.jar",
+      "sha1": "43af82a95779c31324680a01f9c47d20080422a6",
+      "sha512": "910b7760111f27d0574bae2f68c1e885097bba4fe992e2b3f420c74bd8e578316e16de626b0fe401f468b1e695269d8347589d0e89dc9f5262cf009612dc71ed",
+      "source": "https://modrinth.com/mod/nothirium-1.8.9-port"
+    },
+    {
+      "name": "entityculling-1.8.9-port",
+      "version": "1.8.9-6.5.0",
+      "path": "EntityCulling-1.8.9-port-1.8.9-6.5.0.jar",
+      "url": "https://cdn.modrinth.com/data/iLSM6CCG/versions/sWY9VgnG/EntityCulling-1.8.9-port-1.8.9-6.5.0.jar",
+      "sha1": "b68f0490bb5b1421a0763f4ac63b2aa1e66e3a98",
+      "sha512": "43c9a44b354df5de0fad7c086ba9f1b3a44627a5ddae02de9993d7c560f53bd2648f73ddf3f7a3ee578251c27089695d821b12783ad6397c97ccb3b9d8651ab9",
+      "source": "https://modrinth.com/mod/entityculling-1.8.9-port"
+    },
+    {
+      "name": "phosphorlegacyforge",
+      "version": "7",
+      "path": "phosphor-universal.jar",
+      "url": "https://cdn.modrinth.com/data/oCBQFmrZ/versions/iECFoMt9/phosphor-universal.jar",
+      "sha1": "f9329954e829f98c1fdb6762f930b33a63ba0690",
+      "sha512": "18f4437026b29127e4439b92b27eeb4d596bdb44bfd37e358c213ec9b7ebd26705f138b2e475546f02f2127f0ee4a4807c4e3356a86df9015df0b4cd55a0aa73",
+      "source": "https://modrinth.com/mod/phosphorlegacyforge"
+    },
+    {
+      "name": "foamfix",
+      "version": "0.6.3a",
+      "path": "foamfix-0.6.3a-anarchy-1.8.x.jar",
+      "url": "https://cdn.modrinth.com/data/jupr7Bf5/versions/MqLKfrk2/foamfix-0.6.3a-anarchy-1.8.x.jar",
+      "sha1": "58f4f9165f1c91222e33493175c805879e75db6b",
+      "sha512": "d66854ac4680e7b7677a8cc43588dbe01d29724a36c66cbfa0808a110f6d96377918e831606a765358cd7d6ead0b7363bd0c62cb3b0d7941697d328dee9fc7be",
+      "source": "https://modrinth.com/mod/foamfix"
+    },
+    {
+      "name": "renderlib-1.8.9-port",
+      "version": "1.8.9-1.4.5.5",
+      "path": "RenderLib-1.8.9-port-1.8.9-1.4.5.5.jar",
+      "url": "https://cdn.modrinth.com/data/xgpAkTGi/versions/tetHVoRW/RenderLib-1.8.9-port-1.8.9-1.4.5.5.jar",
+      "sha1": "e5f1285affc2021a47934f1e23e40d18c04802af",
+      "sha512": "4abe78f92ca3eaf5b360a31de5ad63a8dc49f172a74a302ef487f9ee5eb7dcb66de1444e17e69b8be35289dc399125576e4bb20777d821192d5d71fec66597e1",
+      "source": "https://modrinth.com/mod/renderlib-1.8.9-port"
+    },
+    {
+      "name": "configurationsbackport",
+      "version": "1.8.9-1.1",
+      "path": "ConfigurationsBackport-1.8.9-1.1.jar",
+      "url": "https://cdn.modrinth.com/data/w6x8nHjH/versions/bf6YiW1X/ConfigurationsBackport-1.8.9-1.1.jar",
+      "sha1": "fe5d40017b24d07d6ee30229033efa874c9f918b",
+      "sha512": "f04c856f722a1e0ec94048bde270b1810a2cfe983acd89075a670a635523030094fc85e994450d429786215fdfcb70b38258bc2fa3db3b008672af21df45043c",
+      "source": "https://modrinth.com/mod/configurationsbackport"
+    }
+  ],
+  "localPatcher": {
+    "resource": "unpvp-patcher-performance.jar",
+    "source": "https://github.com/Sk1erLLC/Patcher",
+    "scope": "Eight upstream performance mixins, without Essential or OneConfig"
+  }
+}

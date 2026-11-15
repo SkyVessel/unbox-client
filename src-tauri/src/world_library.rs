@@ -298,6 +298,8 @@ pub fn ensure(rt: &Runtime, id: &str) -> Result<(), String> {
     }
     drop(job);
     let profile = profile_dir(rt, id)?;
+    let metadata:Value=fs::read(profile.join("profile.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).unwrap_or(Value::Null);
+    if metadata["channel"]=="beta"{return Ok(())}
     if !personal_profile(&profile) {
         return Ok(());
     }
@@ -391,6 +393,7 @@ fn modified(path: &Path) -> u64 {
 pub fn list_worlds(rt: tauri::State<Runtime>) -> Result<Value, String> {
     ensure_all(&rt)?;
     let root = rt.root.join("library/worlds");
+    fs::create_dir_all(&root).map_err(|e| e.to_string())?;
     let mut worlds = Vec::new();
     for entry in fs::read_dir(&root).map_err(|e| e.to_string())?.flatten() {
         if !entry.path().is_dir() || !entry.path().join("level.dat").is_file() {
@@ -732,4 +735,13 @@ mod tests {
         assert!(!profile.join("resourcepacks.unbox-profile-copy").exists());
         fs::remove_dir_all(rt.root).unwrap();
     }
+}
+
+#[cfg(test)]mod beta_isolation_tests{
+ use super::*;
+ #[test]fn beta_worlds_and_packs_never_join_the_stable_library(){
+  let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:Default::default(),auth:Default::default(),social:Default::default()};
+  let id=uuid::Uuid::new_v4().to_string();let dir=profile_dir(&rt,&id).unwrap();atomic(&dir.join("profile.json"),&serde_json::to_vec(&json!({"id":id,"version":"26.3","loader":"fabric","channel":"beta"})).unwrap()).unwrap();atomic(&dir.join("saves/Test/level.dat"),b"beta").unwrap();atomic(&root.join("library/worlds/Old/level.dat"),b"stable").unwrap();
+  ensure(&rt,&id).unwrap();assert_eq!(fs::read(dir.join("saves/Test/level.dat")).unwrap(),b"beta");assert!(!fs::symlink_metadata(dir.join("saves")).unwrap().file_type().is_symlink());assert!(!root.join("library/worlds/Test").exists());assert_eq!(fs::read(root.join("library/worlds/Old/level.dat")).unwrap(),b"stable");fs::remove_dir_all(root).unwrap();
+ }
 }

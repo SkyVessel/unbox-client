@@ -14,11 +14,11 @@ test('profile wizard validates input, retains draft on Back, and persists only o
  assert.equal(await p.getByRole('button',{name:'Confirm',exact:true}).isDisabled(),true);
  await p.getByRole('textbox',{name:'Profile name'}).fill('  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();
- assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.3 · Java Edition','26.1.2 · Java Edition','26.1 · Java Edition']);
+ assert.deepEqual(await p.getByLabel('Minecraft version').locator('option').allTextContents(),['26.3 · Classic','26.3 · New UI · Beta','1.21.11 · PvP · Beta','1.8.9 · unpvp · Beta','26.1.2 · Java Edition','26.1 · Java Edition']);
  await p.getByRole('button',{name:'Back',exact:true}).click();
  assert.equal(await p.getByRole('textbox',{name:'Profile name'}).inputValue(),'  Spruce Valley  ');
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Confirm',exact:true}).click();
- assert.equal(await p.getByRole('button',{name:'Forge Integration pending',exact:true}).isDisabled(),true);assert.equal(await p.getByRole('button',{name:'NeoForge Native client modules',exact:true}).isDisabled(),false);
+ assert.equal(await p.getByRole('button',{name:'Forge Not available',exact:true}).isDisabled(),true);assert.equal(await p.getByRole('button',{name:'NeoForge Native client modules',exact:true}).isDisabled(),false);
  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByRole('button',{name:'Stone',exact:true}).click();
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')||'{}').profiles?.length||0),0);
  await p.getByRole('button',{name:'Create profile',exact:true}).last().click();await p.getByRole('button',{name:'LAUNCH 26.3',exact:true}).waitFor();await p.reload();
@@ -330,4 +330,20 @@ test('project description errors retry and missing cover or failed icon has a vi
  const p=await browser.newPage();await marketFixture(p);await p.evaluate(()=>{window.__noCover=true;window.__detailFail=true});await p.getByLabel('Search Modrinth').fill('no cover');await p.locator('.market-cover-fallback img').first().waitFor();
  await p.route('https://cdn.modrinth.com/**/broken.png',r=>r.abort());await p.getByRole('button',{name:'View Forest Details'}).click();await p.getByRole('alert').getByText('Description unavailable').waitFor();
  await p.evaluate(()=>window.__detailFail=false);await p.getByRole('button',{name:'Retry description'}).click();await p.getByRole('heading',{name:'About this mod'}).waitFor();await p.getByRole('button',{name:'Back to results'}).click();await p.evaluate(()=>window.__brokenIcon=true);await p.getByLabel('Search Modrinth').fill('broken icon');await p.locator('.market-cover-fallback .market-initial').first().waitFor();assert.equal(await p.locator('.market-icon .market-initial').first().innerText(),'F');await p.close();
+});
+
+test('beta profiles are explicit, isolated from classic and retain their channel after reload',async()=>{
+ const p=await browser.newPage();await p.goto('http://127.0.0.1:1420');
+ const old={id:'00000000-0000-4000-8000-000000000111',name:'Classic world',version:'26.3',loader:'fabric',icon:'stone'};
+ await p.evaluate(old=>localStorage.setItem('unbox-preview',JSON.stringify({profiles:[old],selected:old.id,settings:{memory:4096},account:null})),old);await p.reload();
+ for(const [version,loader] of [['26.3','fabric'],['1.21.11','fabric'],['1.8.9','forge']]){
+  await p.getByRole('button',{name:'Create profile',exact:true}).first().click();await p.getByLabel('Profile name').fill('Beta '+version);await p.getByRole('button',{name:'Confirm',exact:true}).click();
+  await p.getByLabel('Minecraft version').selectOption(version+':beta');await p.getByRole('button',{name:'Confirm',exact:true}).click();
+  if(version==='1.8.9')assert.equal(await p.getByRole('button',{name:'Fabric Recommended',exact:true}).isDisabled(),true);
+  if(version==='1.21.11')assert.equal(await p.getByRole('button',{name:'NeoForge Native client modules',exact:true}).isDisabled(),true);
+  await p.getByRole('button',{name:'Confirm',exact:true}).click();await p.getByText('Beta test build.',{exact:false}).waitFor();await p.getByRole('button',{name:'Create profile',exact:true}).last().click();
+  await p.getByRole('button',{name:`LAUNCH ${version} · Beta`,exact:true}).waitFor();await p.reload();await p.getByRole('button',{name:`LAUNCH ${version} · Beta`,exact:true}).waitFor();
+  const profiles=await p.evaluate(()=>JSON.parse(localStorage.getItem('unbox-preview')).profiles);assert.deepEqual(profiles[0],old);assert.equal(profiles.at(-1).channel,'beta');assert.equal(profiles.at(-1).loader,loader);assert.notEqual(profiles.at(-1).id,old.id);
+ }
+ await p.close();
 });

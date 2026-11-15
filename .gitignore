@@ -2,6 +2,8 @@ node_modules/
 dist/
 src-tauri/target/
 client-mod/.gradle/
+client-mod/neoforge/.gradle/
+client-mod/forge/.gradle/
 client-mod/build/
 .cache/
 test-results/
@@ -58,3 +60,8 @@ ports/**/build/
 ports/**/.kotlin/
 ports/**/jars/
 ports/**/logs/
+
+# Native engines are pinned Release resources, not Git source.
+src-tauri/resources/*-beta.jar
+src-tauri/resources/beta-12111-*.jar
+src-tauri/resources/unpvp-*.jar

@@ -1,0 +1,103 @@
+{
+  "1.21.11": {
+    "java": 21,
+    "metadata": {
+      "url": "https://piston-meta.mojang.com/v1/packages/35f8a9bc4874e2c95e51b3ad21e043a33776f7c2/1.21.11.json",
+      "sha1": "35f8a9bc4874e2c95e51b3ad21e043a33776f7c2"
+    },
+    "fabricLoader": "0.19.5",
+    "dependencies": [
+      {
+        "slug": "fabric-api",
+        "id": "6qAuTtLR",
+        "version": "0.141.6+1.21.11",
+        "filename": "fabric-api-0.141.6+1.21.11.jar",
+        "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/6qAuTtLR/fabric-api-0.141.6%2B1.21.11.jar",
+        "sha1": "c98467cbbaf4d197377266795ae015f4130d65b6",
+        "sha512": "852d3682c4f353fd0ca86546af8578513e8bcf628377fa9d49c556bc59c5024c69ab56c92fc6dfba11fed19e4316a3f5636e7e07fd3d96f7043b531aef59b637"
+      },
+      {
+        "slug": "e4mc",
+        "id": "8wsUJ306",
+        "version": "6.2.3-fabric",
+        "filename": "e4mc-fabric-6.2.3.jar",
+        "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/8wsUJ306/e4mc-fabric-6.2.3.jar",
+        "sha1": "5420209f8560df548625f1defc24ebb94682f0fd",
+        "sha512": "de52773df77c5653500b139781173386e4e779bcfae79a91c93e4c3cd31ba412c3b1110360701efa6433733a6f6cf7738c11cbdafc88fccad786ef7412eabf1a"
+      },
+      {
+        "slug": "freelook",
+        "id": "elzgeThs",
+        "version": "1.2.8",
+        "filename": "freelook-1.2.8.jar",
+        "url": "https://cdn.modrinth.com/data/g4pR0Fmy/versions/elzgeThs/freelook-1.2.8.jar",
+        "sha512": "7a8c49832f54dba87153804a4eab86475b51487db1b5c6e7ed7825565e0c81f4ddfd69b0296ca52c7cb176e49aadebc30dbcb1e7d347e281eb7e31da9d6c2b77",
+        "sha1": "5f2352446c497c371834fdbea8f39d8dff229625"
+      }
+    ],
+    "neoforge": "21.11.48",
+    "neoforgeDependencies": [
+      {
+        "slug": "e4mc",
+        "id": "HXD8kS5O",
+        "version": "6.2.3-neoforge",
+        "filename": "e4mc-neoforge-6.2.3.jar",
+        "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/HXD8kS5O/e4mc-neoforge-6.2.3.jar",
+        "sha512": "6d029c61c71503dbf03710a0a944b462fc0351a862db773d4ffe39ffe8d8a205d12a4f031361d82867d365a2335abbdc91859a2777108ca4c9c14fe243b92197",
+        "sha1": "7127478b19531091257b3f58cd734a638200e481"
+      }
+    ]
+  },
+  "1.20.1": {
+    "java": 17,
+    "metadata": {
+      "url": "https://piston-meta.mojang.com/v1/packages/72ae93b0934df5541860e3e6b72cf883c74da491/1.20.1.json",
+      "sha1": "72ae93b0934df5541860e3e6b72cf883c74da491"
+    },
+    "fabricLoader": "0.19.5",
+    "dependencies": [
+      {
+        "slug": "fabric-api",
+        "id": "rvI2dfzR",
+        "version": "0.92.12+1.20.1",
+        "filename": "fabric-api-0.92.12+1.20.1.jar",
+        "url": "https://cdn.modrinth.com/data/P7dR8mSH/versions/rvI2dfzR/fabric-api-0.92.12%2B1.20.1.jar",
+        "sha1": "3e9cdd3e2f827ca9a259df9eb8e31949437b6bd4",
+        "sha512": "de9da2344043b3e9ef9fb7dbfff5f2577b06000c4f73f2a37959a80123141169084cece19133bd299b45feaaa4648bdaca2ea085684888cc8c55cc9134a477ca"
+      },
+      {
+        "slug": "e4mc",
+        "id": "8wsUJ306",
+        "version": "6.2.3-fabric",
+        "filename": "e4mc-fabric-6.2.3.jar",
+        "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/8wsUJ306/e4mc-fabric-6.2.3.jar",
+        "sha1": "5420209f8560df548625f1defc24ebb94682f0fd",
+        "sha512": "de52773df77c5653500b139781173386e4e779bcfae79a91c93e4c3cd31ba412c3b1110360701efa6433733a6f6cf7738c11cbdafc88fccad786ef7412eabf1a"
+      },
+      {
+        "slug": "freelook",
+        "id": "3nc2KA9G",
+        "version": "1.1.3",
+        "filename": "freelook-1.1.3.jar",
+        "url": "https://cdn.modrinth.com/data/g4pR0Fmy/versions/3nc2KA9G/freelook-1.1.3.jar",
+        "sha512": "30e89177faf81eea284f4c0c9cb3c2a04da439726aa7778cca3a9b56225752ca52d4d7bd2ba7adf8b6101c12ce3d54951e1e521614bac413e0007fed072fac63",
+        "sha1": "dd490c50501ca64c7c8670e30d8fd7406f1880fb"
+      }
+    ],
+    "forge": "47.4.28",
+    "excludedFeatures": [
+      "ghast"
+    ],
+    "forgeDependencies": [
+      {
+        "slug": "e4mc",
+        "id": "VYizGDdc",
+        "version": "6.2.3-forge",
+        "filename": "e4mc-forge-6.2.3.jar",
+        "url": "https://cdn.modrinth.com/data/qANg5Jrr/versions/VYizGDdc/e4mc-forge-6.2.3.jar",
+        "sha1": "64beea3eefd083e7b2b90e8c295cdd2071a40e84",
+        "sha512": "fef5b5a489a26410d51aa8ffa07b7e24b164797c91a33565603cfc16b61f68d7dae071c147c3aa3260108543a35b812f2c636e79b56e5b1339e72950a874c621"
+      }
+    ]
+  }
+}

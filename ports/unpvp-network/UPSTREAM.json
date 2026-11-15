@@ -1,0 +1,22 @@
+{
+  "project": "e4mc Retro",
+  "repository": "https://github.com/xhyrom/e4mc-retro",
+  "commit": "0d9894c09e41973dabc5273bf006e4d58107a224",
+  "license": [
+    "MIT",
+    "Apache-2.0"
+  ],
+  "artifact": {
+    "id": "j0llNKti",
+    "hashes": {
+      "sha1": "a8285a1bbe211c8a2cd997d922da9d3519e573f3",
+      "sha512": "29bd729d10ecf5622a36109e4181f37f41940639fa0bb2a91423537e7f409ad3c027fd5758092c8cbb7401e723e4190e7fd0a330ad66b2dc246860b35fa5bc88"
+    },
+    "url": "https://cdn.modrinth.com/data/L6TtRc14/versions/Mn6M6Lg8/e4mc-retro_forge-1.0.2%2B1.8.x.jar",
+    "filename": "e4mc-retro_forge-1.0.2+1.8.x.jar",
+    "primary": true,
+    "size": 18804304,
+    "file_type": null
+  },
+  "scope": "Only relocated Netty/native dependencies are extracted. QuiclimeSession is adapted as UnboxRelay; no upstream Forge entrypoint, mixins, commands, configuration UI or bundled Mixin runtime is loaded."
+}

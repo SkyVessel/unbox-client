@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "net.razrcraft.lookbehind.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "lookbehind.refmap.json",
+  "client": [
+    "CameraMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

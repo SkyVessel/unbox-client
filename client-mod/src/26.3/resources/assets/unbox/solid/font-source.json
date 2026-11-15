@@ -1,0 +1,10 @@
+{
+  "outfit.ttf": {
+    "url": "https://raw.githubusercontent.com/Outfitio/Outfit-Fonts/main/fonts/ttf/Outfit-Regular.ttf",
+    "sha256": "3b64ac4f6ab6a8eebddd4b0bc03c811c43602e11e176382ab0ee6be615ab861b"
+  },
+  "OFL.txt": {
+    "url": "https://raw.githubusercontent.com/Outfitio/Outfit-Fonts/main/OFL.txt",
+    "sha256": "c676351bf8576b9aba743cd5eaa8c0e7ee0d51f805d720447b4df4ddb6a2e416"
+  }
+}

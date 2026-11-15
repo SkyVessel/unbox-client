@@ -7,7 +7,7 @@ pub(crate) fn managed_id(id:&str)->bool{["unbox","fabric-api","sodium","iris","l
 fn kind(e:&Value)->&str{e["kind"].as_str().unwrap_or("mods")}
 fn safe_pack(name:&str)->bool{!name.is_empty()&&name.len()<=180&&!name.starts_with('.')&&!name.contains(['/', '\\', '\r', '\n', ':', '='])&&name.to_ascii_lowercase().ends_with(".zip")}
 fn entries(manifest:&Value)->Result<Vec<(String,u64)>,String>{
- if ![json!(1),json!(2)].contains(&manifest["schema"])||!crate::versions::supported(manifest["minecraft"].as_str().unwrap_or(""))||!((manifest["loader"]=="fabric"&&manifest["loaderVersion"]=="0.19.5")||(manifest["loader"]=="neoforge"&&crate::versions::neoforge(manifest["minecraft"].as_str().unwrap_or("")).is_some_and(|(version,_)|manifest["loaderVersion"]==version))){return Err("Unsupported shared environment".into())}
+ if ![json!(1),json!(2)].contains(&manifest["schema"])||!crate::versions::shared_supported(manifest["loader"].as_str().unwrap_or(""),manifest["minecraft"].as_str().unwrap_or(""))||!((manifest["loader"]=="fabric"&&manifest["loaderVersion"]=="0.19.5")||(manifest["loader"]=="neoforge"&&crate::versions::neoforge(manifest["minecraft"].as_str().unwrap_or("")).is_some_and(|(version,_)|manifest["loaderVersion"]==version))){return Err("Unsupported shared environment".into())}
  let files=manifest["files"].as_array().ok_or("Invalid shared file list")?;if files.len()>512{return Err("Too many shared files".into())}
  let mut out=Vec::new();let mut names=std::collections::HashSet::new();let mut total=0;
  for e in files{let hash=e["hash"].as_str().ok_or("Missing checksum")?;let id=e["id"].as_str().ok_or("Missing file id")?;let size=e["size"].as_u64().ok_or("Invalid file size")?;let k=kind(e);let name=if k=="mods"{id}else{e["name"].as_str().ok_or("Missing pack name")?};
@@ -54,10 +54,10 @@ pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
   if kind(expected)!="mods"{let names:Vec<String>=zip.file_names().map(str::to_owned).collect();if kind(expected)=="resourcepacks"&&!names.iter().any(|n|n=="pack.mcmeta")||kind(expected)=="shaderpacks"&&!names.iter().any(|n|n.starts_with("shaders/")){return Err("Invalid downloaded pack".into())}continue;}
   if manifest["loader"]=="neoforge"{let metadata=zip.by_name("META-INF/neoforge.mods.toml").map_err(|_|"Downloaded mod is not for NeoForge")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let mut text=String::new();metadata.take(262145).read_to_string(&mut text).map_err(|_|"Invalid mod metadata")?;let m:toml::Value=toml::from_str(&text).map_err(|_|"Invalid NeoForge metadata")?;let mods=m.get("mods").and_then(|v|v.as_array()).ok_or("Missing NeoForge mod entries")?;
    if mods.is_empty()||mods.len()>64||mods[0].get("modId").and_then(|v|v.as_str())!=expected["id"].as_str()||mods.iter().any(|v|v.get("modId").and_then(|v|v.as_str()).is_some_and(managed_id))||m.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)||mods.iter().all(|v|v.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)){return Err("Downloaded mod metadata does not match the shared list".into())}
-  }else{let metadata=zip.by_name("fabric.mod.json").map_err(|_|"Downloaded mod is not for Fabric")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let m:Value=serde_json::from_reader(metadata).map_err(|_|"Invalid mod metadata")?;if m["id"]!=expected["id"]||m["environment"]=="client"||m["environment"]=="server"{return Err("Downloaded mod metadata does not match the shared list".into())}}
+  }else{let metadata=zip.by_name("fabric.mod.json").map_err(|_|"Downloaded mod is not for Fabric")?;if metadata.size()>262144{return Err("Mod metadata is too large".into())}let m:Value=crate::fabric_metadata::read(metadata)?;if m["id"]!=expected["id"]||m["environment"]=="client"||m["environment"]=="server"{return Err("Downloaded mod metadata does not match the shared list".into())}}
 
  }
- let loader=manifest["loader"].as_str().unwrap();let version=manifest["minecraft"].as_str().unwrap();let namespace=crate::versions::shared_namespace(loader,version);let id=uuid::Uuid::new_v3(&host_uuid,namespace.as_bytes()).to_string();let dir=profile_dir(rt,&id)?;let original=profile_dir(rt,source["id"].as_str().ok_or("Missing source profile")?)?;
+ let loader=manifest["loader"].as_str().unwrap();let version=manifest["minecraft"].as_str().unwrap();let channel=if version=="1.21.11"{ "beta" }else{crate::versions::channel(source)};let namespace=crate::versions::channel_namespace(loader,version,channel);let id=uuid::Uuid::new_v3(&host_uuid,namespace.as_bytes()).to_string();let dir=profile_dir(rt,&id)?;let original=profile_dir(rt,source["id"].as_str().ok_or("Missing source profile")?)?;
  fs::create_dir_all(&dir).map_err(|e|e.to_string())?;let stage=dir.join(format!(".mods-{}",uuid::Uuid::new_v4()));fs::create_dir(&stage).map_err(|e|e.to_string())?;
  let result=(||->Result<(),String>{
   // Keep only personal client-side mods. Gameplay is exactly the host manifest.
@@ -81,11 +81,11 @@ pub fn apply(rt:&Runtime,source:&Value,request:&Value)->Result<Value,String>{
   let iris=dir.join("config/iris.properties");let previous=fs::read_to_string(&iris).unwrap_or_default();let mut lines:Vec<String>=previous.lines().filter(|l|!l.starts_with("shaderPack=")&&!l.starts_with("enableShaders=")).map(str::to_owned).collect();lines.push(format!("shaderPack={}",manifest["shaderPack"].as_str().unwrap()));lines.push(format!("enableShaders={}",manifest["shadersEnabled"].as_bool().unwrap()));atomic(&iris,(lines.join("\n")+"\n").as_bytes())?;
  }
  let mut profile:Value=fs::read(dir.join("profile.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).filter(Value::is_object).unwrap_or_else(||json!({"name":format!("Friend · {}",&host[..8]),"icon":"grass_block"}));
- profile["id"]=json!(id);profile["version"]=json!(version);profile["loader"]=json!(loader);profile["sharedHost"]=json!(host);
+ profile["id"]=json!(id);profile["version"]=json!(version);profile["loader"]=json!(loader);profile["sharedHost"]=json!(host);profile["channel"]=json!(channel);
  atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;atomic(&dir.join("unbox-shared-manifest.json"),&serde_json::to_vec(manifest).unwrap())?;
  Ok(profile)
 }
-fn client_only(p:&Path,loader:&str)->bool{( ||->Option<bool>{if !fs::symlink_metadata(p).ok()?.is_file(){return None}let mut zip=zip::ZipArchive::new(fs::File::open(p).ok()?).ok()?;if loader=="neoforge"{let mut f=zip.by_name("META-INF/neoforge.mods.toml").ok()?;if f.size()>262144{return None}let mut text=String::new();f.read_to_string(&mut text).ok()?;let m:toml::Value=toml::from_str(&text).ok()?;return Some(m.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)||m.get("mods")?.as_array()?.iter().all(|v|v.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)))}let f=zip.by_name("fabric.mod.json").ok()?;if f.size()>262144{return None}let m:Value=serde_json::from_reader(f).ok()?;Some(m["environment"]=="client")})().unwrap_or(false)}
+fn client_only(p:&Path,loader:&str)->bool{( ||->Option<bool>{if !fs::symlink_metadata(p).ok()?.is_file(){return None}let mut zip=zip::ZipArchive::new(fs::File::open(p).ok()?).ok()?;if loader=="neoforge"{let mut f=zip.by_name("META-INF/neoforge.mods.toml").ok()?;if f.size()>262144{return None}let mut text=String::new();f.read_to_string(&mut text).ok()?;let m:toml::Value=toml::from_str(&text).ok()?;return Some(m.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)||m.get("mods")?.as_array()?.iter().all(|v|v.get("clientSideOnly").and_then(|v|v.as_bool())==Some(true)))}let f=zip.by_name("fabric.mod.json").ok()?;if f.size()>262144{return None}let m:Value=crate::fabric_metadata::read(f).ok()?;Some(m["environment"]=="client")})().unwrap_or(false)}
 pub fn recover(dir:&Path)->Result<(),String>{for folder in ["mods","resourcepacks","shaderpacks"]{let backup=dir.join(format!(".{folder}-previous"));let target=dir.join(folder);if backup.exists(){if target.exists(){fs::remove_dir_all(backup).map_err(|e|e.to_string())?}else{fs::rename(backup,target).map_err(|e|e.to_string())?}}}Ok(())}
 /// Select an isolated native-loader profile before a game exists. Never use a personal gameplay folder.
 pub fn invite_profile(rt:&Runtime,view:&Value,invite_id:&str,account_uuid:&str)->Result<Value,String>{
@@ -94,22 +94,31 @@ pub fn invite_profile(rt:&Runtime,view:&Value,invite_id:&str,account_uuid:&str)-
  let invite=view["invites"].as_array().and_then(|list|list.iter().find(|i|i["id"]==invite_id&&i["receiver"]==view["self"]["id"]&&i["expires"].as_u64().is_some_and(|n|n>now))).ok_or("Invitation expired; ask your friend to invite again")?;
  let host=invite["sender"].as_str().ok_or("Missing host")?;let host_uuid=uuid::Uuid::parse_str(host).map_err(|_|"Invalid host")?;
  let loader=invite["room"]["loader"].as_str().ok_or("Ask your friend to update Unbox and send a new invitation")?;
- if !["fabric","neoforge"].contains(&loader)||!crate::versions::supported(invite["room"]["minecraft"].as_str().unwrap_or("")){return Err("Unsupported host game version or loader".into())}
- let version=invite["room"]["minecraft"].as_str().unwrap();let namespace=crate::versions::shared_namespace(loader,version);
+ let channel=if invite["room"]["channel"]=="beta"||matches!(invite["room"]["minecraft"].as_str(),Some("1.21.11"|"1.8.9")){"beta"}else{"stable"};
+ if !crate::versions::profile_supported(invite["room"]["minecraft"].as_str().unwrap_or(""),loader,channel){return Err("Unsupported host game version or loader".into())}
+ let version=invite["room"]["minecraft"].as_str().unwrap();let namespace=crate::versions::channel_namespace(loader,version,channel);
  let id=uuid::Uuid::new_v3(&host_uuid,namespace.as_bytes()).to_string();let dir=profile_dir(rt,&id)?;
  let mut saved:Value=serde_json::from_slice(&fs::read(rt.root.join("state.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
  let mut profile=if dir.join("profile.json").is_file(){serde_json::from_slice(&fs::read(dir.join("profile.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{
-  let p=json!({"id":id,"name":format!("Friend · {}",invite["senderName"].as_str().unwrap_or(&host[..8])),"version":version,"loader":loader,"icon":"grass_block","sharedHost":host});
+  let p=json!({"id":id,"name":format!("Friend · {}",invite["senderName"].as_str().unwrap_or(&host[..8])),"version":version,"loader":loader,"icon":"grass_block","sharedHost":host,"channel":channel});
   atomic(&dir.join("profile.json"),&serde_json::to_vec(&p).unwrap())?;
-  if let Some(source)=saved["selected"].as_str().and_then(|s|profile_dir(rt,s).ok()){for rel in ["options.txt","config/unbox.properties"]{if source.join(rel).is_file(){atomic(&dir.join(rel),&fs::read(source.join(rel)).map_err(|e|e.to_string())?)?;}}}p
+  if let Some(source)=saved["selected"].as_str().and_then(|s|profile_dir(rt,s).ok()){
+   let source_profile:Value=fs::read(source.join("profile.json")).ok().and_then(|b|serde_json::from_slice(&b).ok()).unwrap_or(Value::Null);
+   let legacy=version=="1.8.9";let source_legacy=source_profile["version"]=="1.8.9";
+   if legacy==source_legacy {let source=if source_legacy{source.join("unpvp-ui")}else{source};let target=crate::game_dir(rt,&p)?;
+    let files: &[&str]=if legacy{&["options.txt","optionsof.txt","config/unpvp-ui.properties"]}else{&["options.txt","config/unbox.properties"]};
+    for rel in files{if source.join(rel).is_file(){atomic(&target.join(rel),&fs::read(source.join(rel)).map_err(|e|e.to_string())?)?;}}
+   }
+  }p
  };
  describe_friend(&mut profile,view,invite,now);atomic(&dir.join("profile.json"),&serde_json::to_vec(&profile).unwrap())?;select_shared(&mut saved,&profile)?;
  atomic(&rt.root.join("state.json"),&serde_json::to_vec(&saved).unwrap())?;
- atomic(&dir.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":invite_id,"at":now,"expires":invite["expires"],"accountUuid":account_uuid,"worldName":invite["room"]["name"]})).unwrap())?;
- let mut bridge=view.clone();bridge["updated"]=json!(now);bridge["seenInvites"]=json!([invite_id]);crate::social::atomic(&dir.join("unbox-social-view.json"),&serde_json::to_vec(&bridge).unwrap())?;Ok(profile)
+ let game=crate::game_dir(rt,&profile)?;
+ atomic(&game.join("unbox-rejoin.json"),&serde_json::to_vec(&json!({"id":invite_id,"at":now,"expires":invite["expires"],"accountUuid":account_uuid,"worldName":invite["room"]["name"]})).unwrap())?;
+ let mut bridge=view.clone();bridge["updated"]=json!(now);bridge["seenInvites"]=json!([invite_id]);crate::social::atomic(&game.join("unbox-social-view.json"),&serde_json::to_vec(&bridge).unwrap())?;Ok(profile)
 }
 pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
- let dir=profile_dir(rt,source["id"].as_str().ok_or("Missing profile")?)?;
+ let dir=crate::game_dir(rt,source)?;
  let switch=dir.join("unbox-switch-request.json");if switch.exists(){let bytes=fs::read(&switch).map_err(|e|e.to_string())?;fs::remove_file(switch).map_err(|e|e.to_string())?;if bytes.len()>4096{return Err("Invalid invitation switch".into())}let r:Value=serde_json::from_slice(&bytes).map_err(|_|"Invalid invitation switch")?;let _guard=rt.auth.lock().await;let a=crate::auth::restore_account(rt,&Value::Null)?;let uuid=a["uuid"].as_str().unwrap_or("").replace('-',"");if uuid.is_empty()||r["accountUuid"].as_str().unwrap_or("").replace('-',"")!=uuid{return Err("Account changed before joining".into())}let view=rt.social.lock().await.view.clone();return invite_profile(rt,&view,r["id"].as_str().unwrap_or(""),&uuid).map(Some)}
  let path=dir.join("unbox-sync-request.json");if !path.exists(){return Ok(None)}let bytes=fs::read(&path).map_err(|e|e.to_string())?;fs::remove_file(path).map_err(|e|e.to_string())?;if bytes.len()>200000{return Err("Shared manifest is too large".into())}let request:Value=serde_json::from_slice(&bytes).map_err(|_|"Invalid sync completion")?;
  let now=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_millis()as u64;if request["at"].as_u64().is_none_or(|n|now.saturating_sub(n)>120000){return Err("Sync completion expired; join again".into())}
@@ -122,6 +131,33 @@ pub async fn resume(rt:&Runtime,source:&Value)->Result<Option<Value>,String>{
 #[cfg(test)]mod tests{
  use super::*;use std::io::Write;
  fn jar(p:&Path,id:&str,environment:&str){let mut z=zip::ZipWriter::new(fs::File::create(p).unwrap());z.start_file("fabric.mod.json",zip::write::SimpleFileOptions::default()).unwrap();write!(z,"{}",json!({"id":id,"environment":environment})).unwrap();z.finish().unwrap();}
+ #[test]fn multiline_fabric_descriptions_sync_and_preserve_personal_mods(){
+  let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:Default::default(),auth:Default::default(),social:Default::default()};
+  let source=json!({"id":uuid::Uuid::new_v4().to_string(),"loader":"fabric","version":"26.3"});let dir=profile_dir(&rt,source["id"].as_str().unwrap()).unwrap();fs::create_dir_all(dir.join("mods")).unwrap();fs::create_dir_all(root.join("shared-cache")).unwrap();
+  for (name,id,side) in [("personal.jar","personal","client"),("host.jar","example","*")]{let mut z=zip::ZipWriter::new(fs::File::create(dir.join("mods").join(name)).unwrap());z.start_file("fabric.mod.json",zip::write::SimpleFileOptions::default()).unwrap();write!(z,"{{\"id\":\"{id}\",\"environment\":\"{side}\",\"description\":\"First line\nSecond line\"}}").unwrap();z.finish().unwrap();}
+  let input=dir.join("mods/host.jar");let hash=digest(&input).unwrap();let size=fs::metadata(&input).unwrap().len();fs::copy(&input,root.join(format!("shared-cache/{hash}.jar"))).unwrap();
+  assert_eq!(crate::launcher::jar_mod_ids(&input).unwrap(),vec!["example"]);
+  let request=json!({"hostId":uuid::Uuid::new_v4().to_string(),"manifest":{"schema":1,"minecraft":"26.3","loader":"fabric","loaderVersion":"0.19.5","files":[{"hash":hash,"size":size,"id":"example"}]}});
+  let profile=apply(&rt,&source,&request).unwrap();let target=profile_dir(&rt,profile["id"].as_str().unwrap()).unwrap();assert_eq!(fs::read(target.join(format!("mods/{hash}.jar"))).unwrap(),fs::read(input).unwrap());assert!(target.join("mods/personal.jar").exists());fs::remove_dir_all(root).unwrap();
+ }
+ #[test]
+ #[ignore = "Requires the public screenshot JARs and scanned-manifest.json in UNBOX_METADATA_FIXTURE"]
+ fn public_screenshot_mods_pass_native_shared_preparation(){
+  let fixture=std::path::PathBuf::from(std::env::var("UNBOX_METADATA_FIXTURE").expect("fixture directory"));
+  let manifest:Value=serde_json::from_slice(&fs::read(fixture.join("scanned-manifest.json")).unwrap()).unwrap();
+  let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let rt=Runtime{root:root.clone(),resources:root.clone(),job:Default::default(),auth:Default::default(),social:Default::default()};
+  let source=json!({"id":uuid::Uuid::new_v4().to_string(),"loader":"fabric","version":"26.3"});let dir=profile_dir(&rt,source["id"].as_str().unwrap()).unwrap();fs::create_dir_all(dir.join("mods")).unwrap();fs::create_dir_all(root.join("shared-cache")).unwrap();
+  let mut strict_rejections=Vec::new();
+  for entry in manifest["files"].as_array().unwrap(){
+   let original=fixture.join("mods").join(entry["name"].as_str().unwrap());let hash=entry["hash"].as_str().unwrap();assert_eq!(digest(&original).unwrap(),hash);
+   let mut zip=zip::ZipArchive::new(fs::File::open(&original).unwrap()).unwrap();let f=zip.by_name("fabric.mod.json").unwrap();if serde_json::from_reader::<_,Value>(f).is_err(){strict_rejections.push(entry["name"].as_str().unwrap().to_owned());}
+   fs::hard_link(&original,root.join(format!("shared-cache/{hash}.jar"))).unwrap();
+  }
+  assert!(strict_rejections.iter().any(|n|n=="better-end-26.302.1.jar"));println!("Original strict parser rejects: {strict_rejections:?}");
+  let request=json!({"hostId":uuid::Uuid::new_v4().to_string(),"manifest":manifest});let p=apply(&rt,&source,&request).unwrap();let target=profile_dir(&rt,p["id"].as_str().unwrap()).unwrap();
+  for entry in manifest["files"].as_array().unwrap(){let hash=entry["hash"].as_str().unwrap();assert_eq!(digest(&target.join(format!("mods/{hash}.jar"))).unwrap(),hash);}
+  println!("Prepared {} real screenshot gameplay JARs with unchanged hashes",manifest["files"].as_array().unwrap().len());fs::remove_dir_all(root).unwrap();
+ }
  #[test]fn recent_friend_profiles_replace_by_host_and_survive_stale_ui_saves(){
   let personal=json!({"id":"personal","name":"My world"});
   let old=json!({"id":"old","sharedHost":"alice","sharedUpdatedAt":10,"sharedHostFace":"old-face"});

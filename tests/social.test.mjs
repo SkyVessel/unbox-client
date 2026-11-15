@@ -53,6 +53,15 @@ test('world invitations preserve the native loader and reject unknown versions',
  assert.equal(room(sampleRoom()).loader,undefined); // Legacy invitations still work with a running game.
 });
 
+test('backport invitations preserve exact native pairs without cross-loader substitution',()=>{
+ for(const [minecraft,loaders] of [['1.21.11',['fabric','neoforge']],['1.20.1',['fabric','forge']]]){
+  for(const loader of loaders){const result=room({...sampleRoom(),loader,minecraft});assert.equal(result.loader,loader);assert.equal(result.minecraft,minecraft);}
+ }
+ for(const [minecraft,loader] of [['1.20.1','neoforge'],['1.21.11','forge'],['26.3','forge'],['1.20.2','fabric'],['1.21.10','neoforge']]){
+  assert.throws(()=>room({...sampleRoom(),loader,minecraft}),/Unsupported world environment/);
+ }
+});
+
 test('badge lookup returns only requested, active, verified player UUIDs',async()=>{
  const db=database(),original=globalThis.fetch;
  try{

@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/R4z0rX/LookBehind",
+  "commit": "cabe14501168ccbcc17f185bc6f785f985a70fbb",
+  "license": "GPL-3.0-or-later",
+  "changes": [
+    "Mojang mappings and native 1.21.11 Camera.setup(Level, Entity, boolean, boolean, float)",
+    "Only act while in a focused world without a screen",
+    "Preserve player HUD visibility; do not force hideGui every tick"
+  ]
+}

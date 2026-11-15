@@ -176,7 +176,9 @@ fn game(rt: &Runtime) -> Option<std::path::PathBuf> {
     if j["stage"] != "Playing" {
         return None;
     }
-    profile_dir(rt, j["profileId"].as_str()?).ok()
+    let dir=profile_dir(rt,j["profileId"].as_str()?).ok()?;
+    let profile:Value=serde_json::from_slice(&fs::read(dir.join("profile.json")).ok()?).ok()?;
+    crate::game_dir(rt,&profile).ok()
 }
 fn game_status(rt: &Runtime, a: &Value) -> Value {
     game(rt)
@@ -188,6 +190,12 @@ fn game_status(rt: &Runtime, a: &Value) -> Value {
                 .is_some_and(|n| now().saturating_sub(n) < 10000)
                 && s["accountName"] == a["name"]
                 && (a["type"] == "local" || s["accountUuid"] == a["uuid"])
+        })
+        .map(|mut world|{
+            if world["room"].is_object(){
+                let id=rt.job.lock().unwrap()["profileId"].as_str().unwrap_or("").to_owned();
+                if let Ok(dir)=profile_dir(rt,&id){if let Ok(bytes)=fs::read(dir.join("profile.json")){if let Ok(p)=serde_json::from_slice::<Value>(&bytes){world["room"]["channel"]=json!(crate::versions::channel(&p));}}}
+            }world
         })
         .unwrap_or(Value::Null)
 }

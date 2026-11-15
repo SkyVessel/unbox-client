@@ -71,11 +71,13 @@ def allowed(library):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('version', choices=NEOFORGE)
+    parser.add_argument('version', choices=(*NEOFORGE, '1.21.11', '1.20.1'))
     parser.add_argument('--neoforge', action='store_true')
     parser.add_argument('--reuse-runtime', type=Path, default=Path.home() / 'Library/Application Support/dev.unbox.client/runtime')
     args = parser.parse_args()
     version = args.version
+    if args.neoforge and version not in NEOFORGE:
+        parser.error('No verified NeoForge installer is pinned for ' + version)
     runtime = ROOT / f'.cache/runtime-{version}'
     runtime.mkdir(parents=True, exist_ok=True)
     meta_path = ROOT / f'.cache/{version}.json'

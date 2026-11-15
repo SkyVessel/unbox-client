@@ -1,0 +1,69 @@
+[
+  {
+    "project": "DamageTint-forge",
+    "repository": "https://github.com/Polyfrost/DamageTint",
+    "tag": "v3.3.0",
+    "commit": "a99fbc369cefee92f7fd231d587cf07b00338f35",
+    "license": "LGPL-3.0"
+  },
+  {
+    "project": "OverflowParticles-forge",
+    "repository": "https://github.com/Polyfrost/OverflowParticles",
+    "tag": "v1.0.2",
+    "commit": "1b84aba5285a5bb858a405a4785f2000f694e737",
+    "license": "GPL-3.0 with Minecraft linking exception"
+  },
+  {
+    "project": "OverflowAnimationsV2-forge",
+    "repository": "https://github.com/Polyfrost/OverflowAnimationsV2",
+    "tag": "v2.2.5",
+    "commit": "cf947c9536f684d7766ba924ac082bfa9ea55216",
+    "license": "LGPL-3.0"
+  },
+  {
+    "project": "VanillaHUD-forge",
+    "repository": "https://github.com/Polyfrost/VanillaHUD",
+    "tag": "v2.2.12",
+    "commit": "6ad9670b840268670e2a2e2ec44f450bb4e65a87",
+    "license": "GPL-3.0 with Minecraft linking exception"
+  },
+  {
+    "project": "PolyTime-forge",
+    "repository": "https://github.com/Polyfrost/PolyTime",
+    "tag": "v1.0.2",
+    "commit": "407008ed5ce220301e2903e9009e020e7a0dd743",
+    "license": "GPL-3.0 with Minecraft linking exception"
+  },
+  {
+    "project": "PolyBlur-forge",
+    "repository": "https://github.com/Polyfrost/PolyBlur",
+    "tag": "v1.0.2",
+    "commit": "66ea9ae2bafe45b4bcd9b057d0c9066a111d4d57",
+    "license": "GPL-3.0 with Minecraft linking exception"
+  },
+  {
+    "project": "NoScreenShake",
+    "repository": "Nickotato/NoScreenShake",
+    "commit": "513ec629ec8ef85c7c2131e06079ad5f9cdd979b",
+    "license": "MIT"
+  },
+  {
+    "project": "Antimations",
+    "repository": "Yedelo/Antimations",
+    "commit": "cbd1d81b574f81006d240040789e89a40744160f",
+    "license": "LGPL-3.0"
+  },
+  {
+    "project": "ItemPhysicLite",
+    "repo": "CreativeMD/ItemPhysicLite",
+    "commit": "c9635d9a15152e0583529a8941270ba57e8924db",
+    "license": "GPL-3.0"
+  },
+  {
+    "project": "Patcher model occlusion",
+    "repository": "https://github.com/Sk1erLLC/Patcher",
+    "commit": "4ce6e196e5ad1339f8a0ab96eb5680c2f6464583",
+    "license": "CC-BY-NC-SA-4.0",
+    "scope": "ModelOcclusion: adapted asynchronous GL15 bounding-box query and original-name preservation; conservative movement invalidation, bounded state and RenderLib ownership are Unbox integration."
+  }
+]

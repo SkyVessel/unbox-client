@@ -16,8 +16,13 @@ pub(crate) fn performance_lock(loader:&str,version:&str)->Result<Value,String>{
     };
     serde_json::from_str(text).map_err(|e|e.to_string())
 }
-fn phase(rt:&Runtime,name:&str,progress:usize){let mut j=rt.job.lock().unwrap();j["stage"]=json!(name);j["progress"]=json!(progress);}
+pub(crate) fn phase(rt:&Runtime,name:&str,progress:usize){let mut j=rt.job.lock().unwrap();j["stage"]=json!(name);j["progress"]=json!(progress);}
 fn verified(path:&Path,hash:&str)->bool{fs::read(path).map(|b|format!("{:x}",Sha1::digest(b))==hash).unwrap_or(false)}
+fn write_if_changed(path:&Path,data:&[u8])->Result<(),String>{
+    // Stable client JAR metadata lets loaders retain their own caches across launches.
+    if fs::read(path).is_ok_and(|current|current==data){return Ok(())}
+    atomic(path,data)
+}
 async fn json_get(client:&reqwest::Client,url:&str)->Result<Value,String>{client.get(url).send().await.map_err(|e|e.to_string())?.error_for_status().map_err(|e|e.to_string())?.json().await.map_err(|e|e.to_string())}
 pub(crate) async fn download(client:&reqwest::Client,url:&str,path:&Path,hash:Option<&str>)->Result<(),String>{
     if let Some(hash)=hash {if verified(path,hash){return Ok(())}}
@@ -43,21 +48,28 @@ pub(crate) fn safe_path(root:&Path,relative:&str)->Result<PathBuf,String>{let p=
 pub fn args(values:&Value,vars:&std::collections::HashMap<&str,String>)->Vec<String>{
     let mut out=Vec::new();if let Some(values)=values.as_array(){for v in values{if !allowed(v){continue}let items=if let Some(s)=v.as_str(){vec![s.to_string()]}else if let Some(s)=v["value"].as_str(){vec![s.to_string()]}else{v["value"].as_array().map(|a|a.iter().filter_map(|v|v.as_str().map(str::to_owned)).collect()).unwrap_or_default()};for mut s in items{for(k,v)in vars{s=s.replace(&format!("${{{k}}}"),v)}out.push(s)}}}out
 }
-fn java()->Result<PathBuf,String>{
+fn java(required:u32)->Result<PathBuf,String>{
     let mut candidates=Vec::new();
-    #[cfg(target_os="macos")] {if let Ok(out)=crate::process::command("/usr/libexec/java_home").args(["-v","25"]).output(){if out.status.success(){candidates.push(PathBuf::from(String::from_utf8_lossy(&out.stdout).trim()).join("bin/java"));}}}
+    #[cfg(target_os="macos")] {if let Ok(out)=crate::process::command("/usr/libexec/java_home").args(["-v",&required.to_string()]).output(){if out.status.success(){candidates.push(PathBuf::from(String::from_utf8_lossy(&out.stdout).trim()).join("bin/java"));}}}
     if let Some(home)=std::env::var_os("JAVA_HOME"){candidates.push(PathBuf::from(home).join(if cfg!(windows){"bin/java.exe"}else{"bin/java"}));}
     candidates.push(PathBuf::from("java"));
-    for p in candidates{if let Ok(out)=crate::process::command(&p).arg("-version").output(){let s=String::from_utf8_lossy(&out.stderr);if out.status.success()&&s.contains("version \"25"){return Ok(p)}}}
-    Err("Java 25 is required. Install Temurin 25, then retry.".into())
+    for p in candidates{if let Ok(out)=crate::process::command(&p).arg("-version").output(){let s=String::from_utf8_lossy(&out.stderr);if out.status.success()&&s.split('"').nth(1).and_then(|v|v.split(['.','-','+']).next()).and_then(|v|v.parse::<u32>().ok())==Some(required){return Ok(p)}}}
+    Err(format!("Java {required} is required. Install Temurin {required}, then retry."))
 }
-pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_only:bool,verification:bool,app:&tauri::AppHandle)->Result<(),String>{
+pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_only:bool,verification:bool,app:Option<&tauri::AppHandle>)->Result<(),String>{
     let version=profile["version"].as_str().unwrap_or("");
-    if !crate::versions::supported(version)||!["fabric","vanilla","neoforge"].contains(&profile["loader"].as_str().unwrap_or("")){return Err("This game version or mod loader is not supported by Unbox yet".into())}
+    if !crate::versions::profile_supported(version,profile["loader"].as_str().unwrap_or(""),crate::versions::channel(profile)){return Err("This game version or mod loader is not supported by Unbox yet".into())}
+    if version=="1.8.9"{return crate::unpvp::run(rt,profile,username,memory,prepare_only,verification,app).await;}
     let (session,local_name)=if prepare_only||(verification&&cfg!(debug_assertions)){(None,username.to_owned())}else{crate::auth::launch_account(rt).await?};
     if !prepare_only&&!(verification&&cfg!(debug_assertions))&&profile["loader"]=="vanilla"&&!session.as_ref().is_some_and(|s|s.token!="0"){return Err("Local play requires a Fabric or NeoForge profile for private-world access controls".into())}
-    let java=java()?;
+    let required=crate::versions::java_major(version).ok_or("Unknown Java requirement for this game version")?;
+    let installed_java=java(required);
     let client=reqwest::Client::builder().no_proxy().user_agent("UnboxClient/0.1 (local desktop launcher)").connect_timeout(Duration::from_secs(15)).timeout(Duration::from_secs(180)).build().map_err(|e|e.to_string())?;
+    let java=match installed_java{Ok(p)=>p,Err(e) if version=="1.21.11"=>{
+        let lock:Value=serde_json::from_str(include_str!("../resources/beta-java21.json")).map_err(|e|e.to_string())?;
+        let key=if cfg!(all(target_os="macos",target_arch="aarch64")){"mac-aarch64"}else if cfg!(all(target_os="windows",target_arch="x86_64")){"windows-x64"}else{return Err(e)};
+        phase(rt,"Preparing Beta · Java 21",2);crate::unpvp::java(&client,&rt.root.join("runtime/beta-java"),&lock[key]).await?
+    },Err(e)=>return Err(e)};
     let id=profile["id"].as_str().ok_or("Missing profile")?;let game=profile_dir(rt,id)?;crate::sharing::recover(&game)?;let shared=rt.root.join("runtime");
     let cache=shared.join(format!("{version}.json"));
     let meta:Value=if cache.exists(){serde_json::from_slice(&fs::read(&cache).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?}else{
@@ -99,12 +111,12 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
             let hash=hash.split_whitespace().next().ok_or("Missing checksum")?;download(&client,&url,&path,Some(hash)).await?;classpath.push(path.to_string_lossy().to_string());
         }
         if let Some(a)=fabric["arguments"]["jvm"].as_array(){extra_jvm.extend(a.iter().filter_map(|v|v.as_str().map(str::to_owned)));}
-        let mut lock:Value=performance_lock("fabric",version)?;
-        append_wick(&mut lock,"fabric",version)?;
+        let mut lock:Value=if version=="1.21.11"{json!([])}else{performance_lock("fabric",version)?};
+        if version!="1.21.11"{append_wick(&mut lock,"fabric",version)?;}
         check_survival_shared_dependency(&game,&lock)?;
         fs::create_dir_all(game.join("mods")).map_err(|e|e.to_string())?;
         for m in lock.as_array().unwrap(){phase(rt,&format!("Installing {}",m["slug"].as_str().unwrap()),85);let path=safe_path(&game.join("mods"),m["filename"].as_str().ok_or("Missing mod filename")?)?;download(&client,m["url"].as_str().ok_or("Missing mod URL")?,&path,m["sha1"].as_str()).await?;}
-        let own=rt.resources.join(crate::versions::client_resource("fabric",version)?);if own.exists(){atomic(&game.join("mods/unbox-client.jar"),&fs::read(own).map_err(|e|e.to_string())?)?;}else{return Err("Unbox in-game module is missing from this build".into())}
+        let own=rt.resources.join(crate::versions::profile_resource(profile)?);if own.exists(){write_if_changed(&game.join("mods/unbox-client.jar"),&fs::read(own).map_err(|e|e.to_string())?)?;}else{return Err("Unbox in-game module is missing from this build".into())}
         migrate_managed_mods(&game,&lock)?;
         atomic(&game.join("unbox-performance-lock.json"),&serde_json::to_vec_pretty(&lock).unwrap())?;
     }
@@ -119,11 +131,11 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
         let mut lock:Value=performance_lock("neoforge",version)?;
         append_wick(&mut lock,"neoforge",version)?;
         for m in lock.as_array().unwrap(){phase(rt,&format!("Installing {}",m["slug"].as_str().unwrap()),85);download(&client,m["url"].as_str().unwrap(),&safe_path(&game.join("mods"),m["filename"].as_str().unwrap())?,m["sha1"].as_str()).await?;}
-        let own=rt.resources.join(crate::versions::client_resource("neoforge",version)?);
-        atomic(&game.join("mods/unbox-client.jar"),&fs::read(own).map_err(|_|"Unbox NeoForge module is missing from this build")?)?;
+        let own=rt.resources.join(crate::versions::profile_resource(profile)?);
+        write_if_changed(&game.join("mods/unbox-client.jar"),&fs::read(own).map_err(|_|"Unbox NeoForge module is missing from this build")?)?;
         migrate_managed_mods(&game,&lock)?;atomic(&game.join("unbox-performance-lock.json"),&serde_json::to_vec_pretty(&lock).unwrap())?;
     }
-    if let Some(loader @ ("fabric" | "neoforge"))=profile["loader"].as_str(){prepare_survival_mods(rt,&client,&game,loader,version).await?;}
+    if version=="1.21.11"{crate::beta::prepare(rt,&client,&game).await?;}else if let Some(loader @ ("fabric" | "neoforge"))=profile["loader"].as_str(){prepare_survival_mods(rt,&client,&game,loader,version).await?;}
     if profile["loader"]!="neoforge"{classpath.push(jar.to_string_lossy().to_string());}
     for folder in ["resourcepacks","shaderpacks","logs"]{fs::create_dir_all(game.join(folder)).map_err(|e|e.to_string())?;}
     atomic(&game.join("unbox-ready.json"),&serde_json::to_vec(&json!({"version":version,"verified":true})).unwrap())?;
@@ -135,14 +147,14 @@ pub async fn run(rt:&Runtime,profile:&Value,username:&str,memory:u32,prepare_onl
         ("library_directory",library_root.to_string_lossy().into_owned()),("natives_directory",natives.to_string_lossy().into_owned()),("launcher_name","Unbox Client".into()),("launcher_version",env!("CARGO_PKG_VERSION").into()),("classpath",classpath.join(sep)),
         ("auth_player_name",player.into()),("version_name",version.into()),("game_directory",game.to_string_lossy().into_owned()),("assets_root",assets.to_string_lossy().into_owned()),("assets_index_name",index_id.into()),("auth_uuid",digest),
         ("auth_access_token",session.as_ref().map(|s|s.token.clone()).unwrap_or("0".into())),("clientid",session.as_ref().map(|s|s.client_id.clone()).unwrap_or_default()),("auth_xuid",session.as_ref().map(|s|s.xuid.clone()).unwrap_or_default()),("user_type",if session.as_ref().is_some_and(|s|s.token!="0"){"msa"}else{"legacy"}.into()),("version_type","release".into())]);
-    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(format!("-Dunbox.accountKind={}",if session.as_ref().is_some_and(|s|s.token!="0"){"microsoft"}else{"local"}));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
+    let mut argv=args(&meta["arguments"]["jvm"],&vars);argv.extend(args(&json!(extra_jvm),&vars));argv.push(format!("-Xmx{memory}M"));argv.push("-Xms512M".into());if version=="26.3"||version=="1.21.11"{argv.push("-Djava.awt.headless=true".into());}argv.push(format!("-Dunbox.channel={}",crate::versions::channel(profile)));argv.push(format!("-Dunbox.sharedCache={}",rt.root.join("shared-cache").display()));argv.push(format!("-Dunbox.accountKind={}",if session.as_ref().is_some_and(|s|s.token!="0"){"microsoft"}else{"local"}));argv.push(main);argv.extend(args(&meta["arguments"]["game"],&vars));argv.extend(args(&extra_game,&vars));
     if argv.iter().any(|s|s.contains("${")){return Err("Unresolved launch argument".into())}
     let log=fs::File::create(game.join("logs/unbox-launch.log")).map_err(|e|e.to_string())?;
     let mut child=crate::process::async_command(java).args(argv).current_dir(&game).stdout(log.try_clone().map_err(|e|e.to_string())?).stderr(log).spawn().map_err(|e|e.to_string())?;
     phase(rt,"Playing",100);
     let minimize=fs::read(rt.root.join("state.json")).ok().and_then(|b|serde_json::from_slice::<Value>(&b).ok()).is_none_or(|s|s["settings"]["minimize"]!=false);
-    if minimize{if let Some(w)=app.get_webview_window("main"){let _=w.minimize();}}
-    let result=child.wait().await.map_err(|e|e.to_string())?;if let Some(w)=app.get_webview_window("main"){let _=w.unminimize();}
+    if minimize{if let Some(w)=app.and_then(|a|a.get_webview_window("main")){let _=w.minimize();}}
+    let result=child.wait().await.map_err(|e|e.to_string())?;if let Some(w)=app.and_then(|a|a.get_webview_window("main")){let _=w.unminimize();}
     if !result.success(){return Err(format!("Minecraft exited with {}. Open the profile folder → logs/unbox-launch.log",result))}Ok(())
 }
 // Kept separate from performance mods: these include host-controlled gameplay modules.
@@ -158,7 +170,7 @@ pub(crate) fn jar_mod_ids(path:&Path)->Result<Vec<String>,String>{
     let mut ids=Vec::new();
     if let Ok(f)=zip.by_name("fabric.mod.json"){
         if f.size()>262144{return Err("Mod metadata is too large".into())}
-        let m:Value=serde_json::from_reader(f).map_err(|e|e.to_string())?;
+        let m:Value=crate::fabric_metadata::read(f).map_err(|e|format!("Cannot read fabric.mod.json in {}: {e}",path.file_name().unwrap_or_default().to_string_lossy()))?;
         if let Some(id)=m["id"].as_str(){ids.push(id.to_owned())}
         if let Some(provides)=m["provides"].as_array(){ids.extend(provides.iter().filter_map(|v|v.as_str().map(str::to_owned)));}
     }
@@ -194,6 +206,7 @@ pub(crate) fn jar_mod_ids(path:&Path)->Result<Vec<String>,String>{
             }
         }
     }
+    let mut seen=std::collections::HashSet::new();ids.retain(|id|seen.insert(id.clone()));
     Ok(ids)
 }
 async fn prepare_survival_mods(rt:&Runtime,client:&reqwest::Client,game:&Path,loader:&str,version:&str)->Result<(),String>{
@@ -209,12 +222,14 @@ async fn prepare_survival_entries(rt:&Runtime,client:&reqwest::Client,game:&Path
     let mods=game.join("mods");
     let mut filenames=std::collections::HashSet::new();
     let mut ids=std::collections::HashSet::new();
+    let mut installed=std::collections::HashSet::new();
     for entry in entries{
         let filename=entry["filename"].as_str().ok_or("Missing survival mod filename")?;
         if Path::new(filename).components().count()!=1||!filename.ends_with(".jar")||!filenames.insert(filename){return Err("Invalid or duplicate survival filename".into())}
         for id in entry["modIds"].as_array().ok_or("Missing survival mod IDs")?{ids.insert(id.as_str().ok_or("Invalid survival mod ID")?);}
         let path=safe_path(&mods,filename)?;
-        if fs::symlink_metadata(&path).is_ok()&&!survival_digest(&path,entry)&&!old.iter().any(|o|o["filename"]==filename&&survival_digest(&path,o)){
+        if survival_digest(&path,entry){installed.insert(filename);}
+        else if fs::symlink_metadata(&path).is_ok()&&!old.iter().any(|o|o["filename"]==filename&&survival_digest(&path,o)){
             return Err(format!("{filename} differs from the bundled version. Your file was preserved; move it out of mods before retrying."))
         }
     }
@@ -231,6 +246,7 @@ async fn prepare_survival_entries(rt:&Runtime,client:&reqwest::Client,game:&Path
     }}
     for entry in old{
         let path=safe_path(&mods,entry["filename"].as_str().ok_or("Missing installed survival filename")?)?;
+        if installed.contains(entry["filename"].as_str().unwrap()){continue}
         if fs::symlink_metadata(&path).is_ok()&&!survival_digest(&path,entry)&&!managed.iter().any(|m|m["filename"]==entry["filename"]&&survival_digest(&path,m)){
             return Err(format!("Managed survival mod {} was changed. Your file was preserved; move it out of mods before retrying.",path.display()))
         }
@@ -246,8 +262,12 @@ async fn prepare_survival_entries(rt:&Runtime,client:&reqwest::Client,game:&Path
             if Path::new(resource).components().count()!=1||!resource.ends_with(".jar"){return Err("Invalid bundled mod resource".into())}
             let source=rt.resources.join("resources").join(resource);
             if !survival_digest(&source,entry){return Err(format!("Bundled dependency checksum failed: {resource}"))}
+            if installed.contains(entry["filename"].as_str().unwrap()){continue}
             if !survival_digest(&cached,entry){atomic(&cached,&fs::read(source).map_err(|e|e.to_string())?)?;}
         }else{
+            // An already verified installation needs no download/cache copy. A missing
+            // shared cache must not force an otherwise ready profile back online.
+            if installed.contains(entry["filename"].as_str().unwrap()){continue}
             download(client,entry["url"].as_str().ok_or("Missing survival download URL")?,&cached,entry["sha1"].as_str()).await?;
         }
         if !survival_digest(&cached,entry){return Err(format!("Survival dependency checksum failed: {}",entry["slug"]))}
@@ -332,6 +352,14 @@ pub(crate) fn md5_offline(name:&str)->String{
 }
 #[cfg(test)]mod tests{
     use super::*;
+    #[test]fn unchanged_client_keeps_metadata_but_new_content_is_installed(){
+        let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());let path=root.join("client.jar");
+        write_if_changed(&path,b"first").unwrap();let before=fs::metadata(&path).unwrap();
+        write_if_changed(&path,b"first").unwrap();let after=fs::metadata(&path).unwrap();
+        assert_eq!(before.modified().unwrap(),after.modified().unwrap());
+        #[cfg(unix)]{use std::os::unix::fs::MetadataExt;assert_eq!(before.ino(),after.ino());}
+        write_if_changed(&path,b"next").unwrap();assert_eq!(fs::read(&path).unwrap(),b"next");fs::remove_dir_all(root).unwrap();
+    }
     #[test]fn disallow_traversal(){assert!(safe_path(Path::new("/tmp/root"),"../escape.jar").is_err());assert!(safe_path(Path::new("/tmp/root"),"/absolute.jar").is_err());assert!(safe_path(Path::new("/tmp/root"),"group/mod.jar").is_ok());
         #[cfg(target_os="windows")]for path in [r"\absolute.jar",r"C:escape.jar",r"C:\absolute.jar",r"\\server\share\mod.jar"]{assert!(safe_path(Path::new("C:/root"),path).is_err(),"{path}");}
     }
@@ -375,6 +403,15 @@ pub(crate) fn md5_offline(name:&str)->String{
         assert_eq!(fs::read(f.game.join("mods/feature.jar")).unwrap(),b"pinned artifact");assert_eq!(fs::read(f.game.join("mods/personal.jar")).unwrap(),personal);
         let installed:Value=serde_json::from_slice(&fs::read(f.game.join(SURVIVAL_MANIFEST)).unwrap()).unwrap();assert_eq!(installed,json!([entry]));
         assert!(crate::managed_mod_names(&f.game).contains("feature.jar"));assert!(!crate::managed_mod_names(&f.game).contains("personal.jar"));
+    }
+    #[tokio::test]async fn verified_install_works_without_cache_and_still_rejects_changed_files(){
+        let f=Fixture::new();let entry=f.cached("feature.jar","feature",b"pinned artifact");f.old(&entry,b"pinned artifact");
+        fs::remove_dir_all(f.root.join("runtime/survival-mods")).unwrap();
+        prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry.clone()]).await.unwrap();
+        assert!(!f.root.join("runtime/survival-mods").exists());
+        fs::write(f.game.join("mods/feature.jar"),b"changed artifact").unwrap();
+        assert!(prepare_survival_entries(&f.rt,&offline_client(),&f.game,&[entry]).await.unwrap_err().contains("preserved"));
+        assert_eq!(fs::read(f.game.join("mods/feature.jar")).unwrap(),b"changed artifact");
     }
     #[tokio::test]async fn same_name_and_renamed_native_conflicts_preserve_user_files(){
         for (name,metadata,content) in [("feature.jar","fabric.mod.json",br#"{"id":"feature"}"#.as_slice()),("renamed.jar","fabric.mod.json",br#"{"id":"other","provides":["feature"]}"#.as_slice()),("renamed.jar","META-INF/neoforge.mods.toml",b"[[mods]]\nmodId='feature'\n".as_slice())]{

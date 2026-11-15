@@ -1,0 +1,66 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+plugins { id 'net.neoforged.moddev.legacyforge' version '2.0.147' }
+
+def mc = '1.20.1'
+def target = new JsonSlurper().parse(file('../port-targets.json'))[mc]
+version = new JsonSlurper().parse(file('../src/main/resources/fabric.mod.json')).version
+group = 'dev.unbox'
+base.archivesName = 'unbox-client'
+layout.buildDirectory = file('../build/forge-' + mc)
+java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
+repositories { mavenCentral() }
+legacyForge {
+    enable { forgeVersion = mc + '-' + target.forge; disableRecompilation = true }
+    runs {
+        client {
+            client()
+            gameDirectory = file('../../.cache/' + mc + '/run-forge')
+            systemProperty 'unbox.startupDiagnostics', 'true'
+            if (providers.gradleProperty('homeSmoke').isPresent()) systemProperty 'unbox.homeSmoke', 'true'
+            programArguments.addAll('--username', 'UnboxPortTest', '--width', '1280', '--height', '800')
+        }
+    }
+    mods { unbox { sourceSet sourceSets.main } }
+}
+dependencies {
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    target.forgeDependencies.each { dep -> modImplementation files("../../.cache/${mc}/forge/${dep.filename}") }
+    implementation fileTree("../../.cache/${mc}/forge/compile-libs") { include '*.jar' }
+}
+def generated = file('../build/sources-forge-' + mc)
+tasks.register('compatibleSources', Exec) {
+    workingDir '../..'
+    commandLine 'python3', 'scripts/prepare-version-sources.py', mc, 'forge'
+    inputs.files(fileTree('../src/main/java'), fileTree('../src/forge/java'), fileTree('../src/' + mc + '/java'), file('../../scripts/prepare-version-sources.py'))
+    inputs.file('../../scripts/port1201.py')
+    outputs.dir(generated)
+}
+sourceSets.main.java.setSrcDirs([generated, '../../ports/voxlink/src'])
+sourceSets.main.resources.setSrcDirs(['../src/main/resources','../src/forge/resources'])
+tasks.compileJava {
+    dependsOn 'compatibleSources'
+    options.release = 17
+    options.compilerArgs += ['-Xmaxerrs', '1000']
+}
+mixin { add sourceSets.main, 'unbox.refmap.json'; config 'unbox.mixins.json' }
+tasks.processResources {
+    exclude 'fabric.mod.json'
+    doLast {
+        def config = new File(destinationDir, 'unbox.mixins.json')
+        def mixins = new JsonSlurper().parse(config)
+        mixins.compatibilityLevel = 'JAVA_17'
+        mixins.refmap = 'unbox.refmap.json'
+        mixins.client.remove('HappyGhastRecallMixin')
+        config.text = JsonOutput.prettyPrint(JsonOutput.toJson(mixins))
+    }
+    from('../../ports/voxlink') {
+        include 'LICENSE', 'README.md', 'upstream.json', 'src/**/*.java'
+        into 'META-INF/licenses/voxlink'
+    }
+}
+tasks.jar {
+    archiveClassifier = mc + '-forge'
+    manifest.attributes(['MixinConfigs':'unbox.mixins.json'])
+}

@@ -1,0 +1,31 @@
+{
+  "java": {
+    "name": "zulu8.98.0.111-ca-jre8.0.512-macosx_aarch64.tar.gz",
+    "url": "https://cdn.azul.com/zulu/bin/zulu8.98.0.111-ca-jre8.0.512-macosx_aarch64.tar.gz",
+    "sha256": "54758f5d72e8832c4862ec7d9b53be24616048db42ca325cdf7d29a20bb63132",
+    "directory": "java8-osx-arm64-8u512"
+  },
+  "libraries": [
+    {
+      "path": "org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar",
+      "sha1": "697517568c68e78ae0b4544145af031c81082dfe",
+      "size": 1047168,
+      "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar"
+    },
+    {
+      "path": "org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar",
+      "sha1": "d51a7c040a721d13efdfbd34f8b257b2df882ad0",
+      "size": 173887,
+      "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar"
+    }
+  ],
+  "natives": {
+    "path": "unbox/lwjgl2-mmachina/2.9.4-20150209-mmachina.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar",
+    "url": "https://github.com/MinecraftMachina/lwjgl/releases/download/2.9.4-20150209-mmachina.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar",
+    "sha1": "69ad53df9bfb1ee8034fb59fafa31f70be24a7f6",
+    "sha256": "076f9392f8597cd8bf68b1620a60638927ad55d49670523f1905a39ed6193fc8"
+  },
+  "nativeDirectory": "natives-osx-arm64-mmachina1-retina",
+  "source": "https://github.com/MinecraftMachina/lwjgl/releases/tag/2.9.4-20150209-mmachina.1",
+  "retinaNote": "mmachina.2 forces setWantsBestResolutionOpenGLSurface:NO, conflicting with Unbox backing-pixel rendering. mmachina.1 retains the HighDPI-enabled surface."
+}

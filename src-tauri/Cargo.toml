@@ -1,6 +1,6 @@
 [package]
 name = "unbox-client"
-version = "0.2.21"
+version = "0.2.23"
 edition = "2021"
 
 [build-dependencies]
@@ -28,6 +28,14 @@ tauri-plugin-updater = "2"
 strip = true
 lto = true
 codegen-units = 1
+
+# Local debug apps still verify every game asset and mod. Keep cryptographic
+# compression optimized without disabling debug information for launcher code.
+[profile.dev.package.sha1]
+opt-level = 3
+
+[profile.dev.package.sha2]
+opt-level = 3
 
 
 [target.'cfg(target_os = "macos")'.dependencies]

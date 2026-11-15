@@ -16,8 +16,10 @@ else
 fi
 cp -R .cache/voxlink/classes/. client-mod/build/classes/
 cp -R client-mod/src/main/resources/. client-mod/build/classes/
+if [ "$version" = "26.3" ]; then cp -R client-mod/src/26.3/resources/. client-mod/build/classes/; fi
 suffix=""
 if [ "$version" != "26.1" ]; then suffix="-$version"; fi
 UNBOX_MINECRAFT_VERSION="$version" python3 -c 'import os,json,pathlib; p=pathlib.Path("client-mod/build/classes/fabric.mod.json"); v=json.loads(p.read_text()); v["depends"]["minecraft"]=os.environ["UNBOX_MINECRAFT_VERSION"]; p.write_text(json.dumps(v))'
+if [ "$version" = "26.3" ]; then suffix="-26.3-beta"; fi
 jar --create --file "src-tauri/resources/unbox-client${suffix}.jar" -C client-mod/build/classes .
 echo "Built src-tauri/resources/unbox-client${suffix}.jar"

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "lookbehind",
+  "version": "1.0.2+unbox.1.21.11",
+  "name": "Look Behind (Unbox native port)",
+  "environment": "client",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    "R4z0rX",
+    "Unbox adaptation"
+  ],
+  "entrypoints": {
+    "client": [
+      "net.razrcraft.lookbehind.client.LookBehindClient"
+    ]
+  },
+  "mixins": [
+    "lookbehind.unbox.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*"
+  }
+}

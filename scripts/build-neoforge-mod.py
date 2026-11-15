@@ -45,8 +45,10 @@ for file in build.rglob('*.class'):
 shutil.copytree(ROOT/'.cache/voxlink/classes',build,dirs_exist_ok=True)
 shutil.copytree(ROOT/'client-mod/src/main/resources',build,dirs_exist_ok=True);(build/'fabric.mod.json').unlink()
 shutil.copytree(ROOT/'client-mod/src/neoforge/resources',build,dirs_exist_ok=True)
+if version=='26.3':shutil.copytree(ROOT/'client-mod/src/26.3/resources',build,dirs_exist_ok=True)
 toml=build/'META-INF/neoforge.mods.toml';toml.write_text(toml.read_text().replace('versionRange="[26.1]"',f'versionRange="[{version}]"'))
 if version=='26.3':toml.write_text(toml.read_text().replace('versionRange="[26.1.0.19-beta,26.2)"','versionRange="[26.3.0.86,26.4)"'))
 p=build/'unbox.mixins.json';d=json.loads(p.read_text());d['client'].remove('FreelookMixin');d['client']+=['NeoFreelookCameraMixin','NeoLoginQueryMixin','NeoLoginAnswerMixin','NeoLoginClientMixin','NeoLoginServerMixin'];p.write_text(json.dumps(d))
+if version=='26.3':suffix='-26.3-beta'
 subprocess.run(['jar','--create','--file',str(ROOT/('src-tauri/resources/unbox-client-neoforge'+suffix+'.jar')),'-C',str(build),'.'],check=True)
 print('Built native NeoForge Unbox module')

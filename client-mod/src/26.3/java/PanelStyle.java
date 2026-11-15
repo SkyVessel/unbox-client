@@ -1,0 +1,57 @@
+package dev.unbox.client;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.Identifier;
+
+final class PanelStyle {
+    private static float opacity=1;
+    static void opacity(float value){opacity=value;}
+    static int tint(int color){return (color&0xffffff)|(Math.round((color>>>24)*opacity)<<24);}
+    static void fill(GuiGraphicsExtractor g,int x,int y,int right,int bottom,int color){g.fill(x,y,right,bottom,tint(color));}
+    static void outline(GuiGraphicsExtractor g,int x,int y,int w,int h,int color){g.outline(x,y,w,h,tint(color));}
+    static final int TEXT=0xffeef2f4,MUTED=0xff9da8b1,ACCENT=0xff86aaff;
+    static final FontDescription FONT=new FontDescription.Resource(Identifier.fromNamespaceAndPath("unbox","solid-small"));
+    static Component text(String s){return Component.literal(s).withStyle(Style.EMPTY.withFont(FONT));}
+    private static final net.minecraft.resources.Identifier GLYPHS=Identifier.fromNamespaceAndPath("unbox","textures/ui/glyphs.png"), ROUND=Identifier.fromNamespaceAndPath("unbox","textures/ui/rounded.png");
+    private static String characters;private static int[] advances;
+    private static void metrics(){if(advances!=null)return;try(var in=PanelStyle.class.getResourceAsStream("/assets/unbox/ui/metrics.json")){var j=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();characters=j.get("chars").getAsString();advances=new com.google.gson.Gson().fromJson(j.get("advances"),int[].class);}catch(Exception e){throw new IllegalStateException("Unbox font atlas is missing",e);}}
+    static int glyph(char c){metrics();return characters.indexOf(c);}
+    static float advance(char c){int i=glyph(c);return i<0?6:advances[i]/8f;}
+    static int width(String s){return Minecraft.getInstance().font.width(text(s));}
+    static void label(GuiGraphicsExtractor g,String s,int x,int y,int color){g.text(Minecraft.getInstance().font,text(s),x,y,tint(color),false);}
+    static void center(GuiGraphicsExtractor g,String s,int x,int y,int color){label(g,s,x-width(s)/2,y,color);}
+    // Four filtered, anti-aliased texture corners + three solid spans. Constant work at any radius.
+    static void round(GuiGraphicsExtractor g,int x,int y,int w,int h,int r,int color){
+        roundCorners(g,x,y,w,h,r,color,15);
+    }
+    static void roundCorners(GuiGraphicsExtractor g,int x,int y,int w,int h,int r,int color,int corners){
+        color=tint(color);if(w<=0||h<=0)return;r=Math.min(r,Math.min(w,h)/2);if(r<1){g.fill(x,y,x+w,y+h,color);return;}
+        g.fill(x+r,y,x+w-r,y+h,color);g.fill(x,y+r,x+r,y+h-r,color);g.fill(x+w-r,y+r,x+w,y+h-r,color);
+        for(int a=0;a<2;a++)for(int b=0;b<2;b++){int cx=x+a*(w-r),cy=y+b*(h-r);if((corners&(1<<(a+2*b)))==0)g.fill(cx,cy,cx+r,cy+r,color);else g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,ROUND,cx,cy,a*128f,b*128f,r,r,128,128,256,256,color);}
+    }
+    static void bottomRound(GuiGraphicsExtractor g,int x,int y,int w,int h,int r,int color){
+        color=tint(color);g.fill(x,y,x+w,y+h-r,color);g.fill(x+r,y+h-r,x+w-r,y+h,color);
+        for(int a=0;a<2;a++)g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,ROUND,x+a*(w-r),y+h-r,a*128f,128f,r,r,128,128,256,256,color);
+    }
+    // HUD uses the game pixel font, including resource-pack font overrides.
+    static void hudLabel(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){g.text(Minecraft.getInstance().font,s,x,y,color,shadow);}
+    static void hudCenter(GuiGraphicsExtractor g,String s,int x,int y,int color,boolean shadow){hudLabel(g,s,x-hudWidth(s)/2,y,color,shadow);}
+    static int hudWidth(String s){return Minecraft.getInstance().font.width(s);}
+    static int mix(int a,int b,float t){int c=0;for(int s=0;s<32;s+=8)c|=(Math.round(((a>>>s)&255)*(1-t)+((b>>>s)&255)*t)&255)<<s;return c;}
+    static final class Motion{private float value;private long time;float to(float target){if(SolidTheme.reduced()){value=target;time=0;return target;}long now=System.nanoTime();float dt=time==0?1:Math.min(.1f,(now-time)/1e9f);time=now;value+=(target-value)*(1-(float)Math.exp(-dt*18));return value;}}
+    static void icon(GuiGraphicsExtractor g,String id,int x,int y,int color){icon(g,id,x,y,32,color);}
+    static void icon(GuiGraphicsExtractor g,String id,int x,int y,int size,int color){if(id.equals("fullbright")){SolidGeometry.draw(g,"icon-fullbright",x,y,size,size,tint(color));return;}
+        int resolution=id.startsWith("unbox-")?512:id.equals("logo")?768:id.equals("badge")?96:384;
+        // Match the approved variants' box width and bottom to the base logo; ornaments extend above it.
+        if(id.equals("unbox-creator-crown")||id.equals("unbox-fluttering-cash")){
+            boolean crown=id.equals("unbox-creator-crown");
+            int scaled=Math.round(size*(crown?1.45f:1.586f));
+            x+=Math.round((size-scaled)/2f);
+            y+=Math.round(size*.9398f-scaled*(crown?.8979f:.9266f));
+            size=scaled;
+        }
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,Identifier.fromNamespaceAndPath("unbox","textures/ui/"+id+".png"),x,y,0f,0f,size,size,resolution,resolution,resolution,resolution,tint(color));
+    }
+}

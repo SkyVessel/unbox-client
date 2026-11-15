@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+[[mods]]
+modId="unbox"
+version="0.2.20"
+displayName="Unbox Client"
+description="Personal HUD, controls, maps and private worlds."
+[[dependencies.unbox]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.28,48)"
+ordering="NONE"
+side="CLIENT"
+[[dependencies.unbox]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="NONE"
+side="CLIENT"
+[[dependencies.unbox]]
+modId="e4mc"
+mandatory=true
+versionRange="[6.2.3,)"
+ordering="NONE"
+side="CLIENT"

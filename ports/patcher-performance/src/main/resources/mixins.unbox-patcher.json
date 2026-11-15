@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "compatibilityLevel": "JAVA_8",
+  "package": "club.sk1er.patcher.mixins",
+  "refmap": "mixins.unbox-patcher.refmap.json",
+  "client": [
+    "performance.BlockPosMixin_ReduceAllocations",
+    "performance.MinecraftMixin_SkipTwitchStuff",
+    "performance.NBTTagStringMixin_DataCache",
+    "performance.GameRulesValueMixin_Optimization",
+    "performance.EntityMixin_Capability",
+    "performance.ModelRendererMixin_BatchDrawing",
+    "performance.TexturedQuadMixin_BatchDraw",
+    "accessors.WorldRendererAccessor",
+    "performance.MinecraftMixin_OptimizedWorldSwapping"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
