@@ -6,6 +6,7 @@ on:
         required: true
         default: v0.2.27
       resources_sha256:
+        description: SHA-256 of beta-resources.zip for builds, or of the signed installer for verify_only
         required: true
       verify_only:
         type: boolean
@@ -51,3 +52,41 @@ jobs:
           path: src-tauri/target/debug/bundle/nsis/*.exe
           if-no-files-found: error
           retention-days: 7
+
+  verify-installer:
+    if: ${{ inputs.verify_only }}
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    timeout-minutes: 8
+    steps:
+      - name: Verify and launch the published Windows installer
+        shell: pwsh
+        env:
+          TAG: ${{ inputs.release_tag }}
+          EXPECTED: ${{ inputs.resources_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$' -or $env:EXPECTED -notmatch '^[a-f0-9]{64}$') { throw 'Invalid release input' }
+          $name = 'Unbox.Client_' + $env:TAG.Substring(1) + '_windows-x64-setup.exe'
+          $file = Join-Path $env:RUNNER_TEMP $name
+          Invoke-WebRequest "https://printoria.printoria-studio.workers.dev/unbox/releases/$env:TAG/$name" -OutFile $file
+          if ((Get-FileHash $file -Algorithm SHA256).Hash.ToLower() -ne $env:EXPECTED) { throw 'Installer digest mismatch' }
+          $dir = Join-Path $env:RUNNER_TEMP 'unbox-update-fixture'
+          $setup = Start-Process $file -ArgumentList '/S',"/D=$dir" -PassThru -Wait
+          if ($setup.ExitCode -ne 0) { throw "Install failed: $($setup.ExitCode)" }
+          $exe = Join-Path $dir 'unbox-client.exe'
+          $app = Start-Process $exe -PassThru
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 45; $i++) {
+              Start-Sleep -Seconds 1
+              $app.Refresh()
+              if ($app.HasExited) { throw "Launcher exited: $($app.ExitCode)" }
+              if ($app.MainWindowHandle -ne 0 -and $app.Responding) { $ready = $true; break }
+            }
+            if (!$ready) { throw 'Launcher did not open a responsive window' }
+            Write-Output "$env:TAG installed and opened on Windows x64"
+          } finally {
+            if (!$app.HasExited) { Stop-Process -Id $app.Id }
+          }
